@@ -1,0 +1,126 @@
+/* slideshow */
+.CarouselFade {
+    /* margin-top: 2rem; */
+}
+
+/* h1 {
+    font-weight: 700 !important;
+    font-size: 2em !important;
+    padding: 1rem 0rem !important;
+}
+
+.slideshow-link {
+    color: unset !important;
+    text-decoration: unset !important;
+}
+
+.slideshow-link:hover {
+    color: unset;
+}
+
+.carousel-indicators.slideshow {
+    position: unset;
+}
+
+.carousel-indicators.slideshow li {
+    height: 10px;
+}
+
+.carousel-inner.slideshow {
+    box-shadow: 0 0 7px 0px #000;
+}
+
+.slideshow-item {
+    display: flex;
+    flex-flow: column;
+}
+
+.slideshow-item-left > img {
+    width: 100%;
+}
+
+@media (min-width: 992px) {
+    .slideshow-item {
+        flex-flow: row;
+    }
+
+    .sub-img {
+        padding: 0rem 2px;
+    }
+
+    .slideshow-item-left > img {
+        height: 395px;
+    }
+}
+
+.slideshow-item-left {
+    flex: 1 1 65%;
+    box-shadow: 0 0 10px 5px #000;
+}
+
+@media (max-width: 992px) {
+    .slideshow-item-left {
+        flex: none;
+        box-shadow: 0 0 10px 5px #000;
+        height: 370px;
+        overflow: hidden;
+    }
+}
+@media (max-width: 760px) {
+    .slideshow-item-left {
+        flex: none;
+        box-shadow: 0 0 10px 5px #000;
+        height: 270px;
+        overflow: hidden;
+    }
+}
+@media (max-width: 360px) {
+    .slideshow-item-left {
+        flex: none;
+        box-shadow: 0 0 10px 5px #000;
+        height: 170px;
+        overflow: hidden;
+    }
+}
+
+.slideshow-item-right {
+    flex: 1 1 35%;
+    display: flex;
+    flex-flow: column;
+    padding: 0rem 0.5rem;
+}
+
+.slideshow-name {
+    padding: 0.5rem 1rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.slideshow-sub {
+    flex: 1;
+    align-items: center;
+    display: flex;
+}
+
+.slideshow-row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.slideshow-price {
+    padding: 0.5rem 1rem 1rem 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.sub-img {
+    width: 100%;
+}
+
+.sub-img {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.slideshow-sub-price {
+} */
