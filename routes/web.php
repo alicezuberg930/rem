@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\checkoutController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SalesController;
 use Illuminate\Support\Facades\Route;
@@ -30,6 +31,16 @@ Route::get('/filter', function () {
     return view('product.filter');
 });
 
+Route::get('/vnpay/checkout', function () {
+    return view('vnpay.checkout');
+});
+
+Route::get('/vnpay/vnpay_return', function () {
+    return view('vnpay.vnpay_return');
+});
+
+Route::post('vnpay/vnpay_payment', [checkoutController::class, 'vnpayPayment']);
+
 Route::get('/', [ProductController::class, 'indexPage']);
 // Route::get('/cart', [ProductController::class, 'getCartProducts']);
 //->middleware('isLoggedIn');
@@ -40,6 +51,8 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 //giỏ hàng
 Route::post('/add_cart', [ProductController::class, 'addCart'])->name('add_cart');
 Route::get('/remove_cart', [ProductController::class, 'removeCart'])->name('remove_cart');
+Route::get('/increase_incart', [ProductController::class, 'increaseIncart'])->name('increase_incart');
+Route::get('/decrease_incart', [ProductController::class, 'decreaseIncart'])->name('decrease_incart');
 //chi tiết sản phẩm
 Route::get('/product_details/{id}', [ProductController::class, 'getProductDetails'])->name('product_details');
 //CRUD sản phẩm

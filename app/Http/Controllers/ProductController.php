@@ -47,13 +47,30 @@ class ProductController extends Controller
         return response()->json(['message' => 'Đã xóa sản phẩm', 'id' => $request->input('id')]);
     }
 
+    public function increaseIncart(Request $request)
+    {
+
+        $id = $request->input('id');
+        @dd("sjceri");
+        @dd(product::where('id', $id));
+        $cart = session('cart');
+        if ($cart[$id]['quantity'] < product::where('id', $id)->amount)
+            $cart[$id]['quantity'] += 1;
+        else
+            return response()->json(['message' => "Vượt số lượng trong kho", 'status' => 0]);
+    }
+
+    public function decreaseIncart(Request $request)
+    {
+    }
+
     public function getCartProducts()
     {
     }
 
     public function getNewProducts()
     {
-        $NewProducts = product::leftjoin('sales', 'products.id', '=', 'sales.id')
+        $NewProducts = product::leftjoin('sales', 'products.discount', '=', 'sales.id')
             ->orderBy('products.created_at', 'desc')
             ->get(['products.id as ProductsID', 'sales.id as SaleID', 'products.created_at', 'products.updated_at', 'products.image', 'products.name', 'products.price', 'products.origin', 'sales.percent']);
         return $NewProducts;
@@ -61,8 +78,7 @@ class ProductController extends Controller
 
     public function getSaleProducts()
     {
-        $SaleProducts = product::join('sales', 'products.id', '=', 'sales.id')
-            ->orderBy('sales.created_at', 'desc')
+        $SaleProducts = product::join('sales', 'products.discount', '=', 'sales.id')
             ->get(['products.id as ProductsID', 'sales.id as SaleID', 'products.created_at', 'products.updated_at', 'products.image', 'products.name', 'products.price', 'products.origin', 'sales.percent']);
         return $SaleProducts;
     }

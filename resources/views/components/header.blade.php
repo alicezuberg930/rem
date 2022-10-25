@@ -62,7 +62,6 @@
     </div>
     <div class="container">
         <nav class="navbar navbar-expand-md navbar-dark font-weight-bold">
-            {{-- <div style="width: 80px; height: 40px"></div> --}}
             <a href="/" class="position-relative" style="width: 5rem;">
                 <img src="{{ url('black-fire-logo.png') }}" width="50" height="50"
                     class="d-inline-block align-top position-absolute" alt="" style="top: -40px; left: 0px">

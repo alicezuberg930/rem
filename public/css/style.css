@@ -3,7 +3,7 @@
     --sub-color: #1f2833;
     --sub2-color: #0051a8;
     --sub3-color: rgba(255, 255, 255, 0.5);
-    --mid-color: #161B23;
+    --mid-color: #161b23;
 }
 
 ::-webkit-scrollbar {
@@ -13,11 +13,11 @@
 
 ::-webkit-scrollbar-track {
     background: var(--main-color);
-    border-left: 1px solid hsla(0,0%,100%,0.1);
+    border-left: 1px solid hsla(0, 0%, 100%, 0.1);
 }
 
 ::-webkit-scrollbar-thumb {
-    background: hsla(0,0%,100%,0.4);
+    background: hsla(0, 0%, 100%, 0.4);
 }
 
 a {
@@ -34,15 +34,15 @@ html {
 }
 
 body {
-    background-color: var(--main-color) !important;
-    color: white !important;
+    /* background-color: var(--main-color) !important;
+    color: white !important; */
 }
 
 hr {
     border: 0;
-    clear:both;
-    display:block;
-    width: 100%;               
+    clear: both;
+    display: block;
+    width: 100%;
     height: 1px;
     background-color: var(--sub-color);
 }
@@ -53,16 +53,8 @@ h1 {
     padding: 1rem 0rem !important;
 }
 
-.form-control {
-    border: 0px solid #ced4da !important;
-}
-
-.form-control[readonly] {
-    cursor: unset;
-}
-
 .form-select {
-    display: block;
+    /* display: block;
     width: 100%;
     padding: .375rem 2.25rem .375rem .75rem;
     font-size: 1rem;
@@ -78,7 +70,7 @@ h1 {
     border-radius: .25rem;
     -webkit-appearance: none;
     -moz-appearance: none;
-    appearance: none;
+    appearance: none; */
 }
 
 .close-x {
@@ -89,7 +81,7 @@ h1 {
 }
 
 .bw-0 {
-   border-width: 0px !important; 
+    border-width: 0px !important;
 }
 
 .center {
@@ -112,7 +104,7 @@ h1 {
     background-color: var(--sub-color) !important;
 }
 
-.text-main {
+/* .text-main {
     color: var(--main-color) !important;
 }
 
@@ -126,7 +118,7 @@ h1 {
 
 .text-sub3 {
     color: var(--sub3-color) !important;
-}
+} */
 
 .text-white-after::after {
     color: white !important;
@@ -178,11 +170,7 @@ h1 {
 }
 
 label:hover {
-   cursor: pointer; 
-}
-
-@media (min-width: 576px) {
-
+    cursor: pointer;
 }
 
 @media (min-width: 768px) {
@@ -190,8 +178,8 @@ label:hover {
         grid-template-columns: 75% 25%;
         grid-template-rows: minmax(36px, 70px) auto;
         grid-template-areas:
-        "sort filter"
-        "product filter" !important;
+            "sort filter"
+            "product filter" !important;
     }
 
     #browse-filter {
@@ -206,14 +194,6 @@ label:hover {
         width: unset !important;
     }
 }
-
-@media (min-width: 992px) {
-
-}
-
-@media (min-width: 1200px) {
-}
-
 /* Drop down*/
 .dropdown-menu.animation.show {
     animation: growDown 300ms ease-in-out forwards;
@@ -233,7 +213,7 @@ label:hover {
 }
 
 /* Login */
-.dropdown-login:hover{
+.dropdown-login:hover {
     background-color: var(--primary) !important;
 }
 
@@ -277,13 +257,25 @@ label:hover {
 }
 
 @keyframes fadein {
-    from {right: -100px; opacity: 0;}
-    to {right: 0px; opacity: 1;}
+    from {
+        right: -100px;
+        opacity: 0;
+    }
+    to {
+        right: 0px;
+        opacity: 1;
+    }
 }
 
 @keyframes fadeout {
-    from {right: 0px; opacity: 1;}
-    to {right: -100px; opacity: 0;}
+    from {
+        right: 0px;
+        opacity: 1;
+    }
+    to {
+        right: -100px;
+        opacity: 0;
+    }
 }
 /* Header */
 #header-bar {
@@ -304,7 +296,7 @@ label:hover {
 .card-product .card-body,
 .card-product .card-text {
     border-color: var(--main-color) !important;
-    background-color: var(--main-color) import !important;
+    /* background-color: var(--main-color) import !important; */
 }
 
 .card-img {
@@ -347,7 +339,7 @@ label:hover {
 }
 
 .card-img:hover {
-    box-shadow: inset 0 0 0 1000px rgba(0,0,0,.2);
+    box-shadow: inset 0 0 0 1000px rgba(0, 0, 0, 0.2);
 }
 
 #browse {
@@ -358,15 +350,15 @@ label:hover {
     display: grid;
     width: 100%;
     grid-template-areas:
-    "filter"
-    "sort"
-    "product";
+        "filter"
+        "sort"
+        "product";
 }
 
 #search-title {
     font-size: 2rem;
     margin: 0.2rem;
-    color:white;
+    color: white;
 }
 
 #browse-sort {
@@ -384,10 +376,6 @@ label:hover {
     grid-area: product;
     margin-left: -1em;
     margin-right: -1em;
-}
-
-#product-items {
-
 }
 
 #product-pages {
@@ -409,7 +397,7 @@ label:hover {
 }
 
 /* Sort */
-.browse-sort-item:hover{
+.browse-sort-item:hover {
     background-color: var(--primary) !important;
 }
 
@@ -479,7 +467,6 @@ label:hover {
     color: var(--sub3-color);
 }
 
-
 .genre-display:hover,
 .genre-display.checked {
     color: white;
@@ -491,7 +478,7 @@ label:hover {
 
 .filter-title {
     line-height: 2.25em;
-    color: white; 
+    color: white;
 }
 
 .filter-header {
@@ -511,7 +498,7 @@ label:hover {
 .page-item {
     display: inline-block;
     color: white;
-    font-size: 1.0em;
+    font-size: 1em;
     padding-right: 0.6em;
     padding-left: 0.6em;
 }
