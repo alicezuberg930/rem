@@ -6,10 +6,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
-    {{-- <link rel="shortcut icon" href="../icon/favicon.ico">
-    <link rel="stylesheet" type="text/css" href="../style/header.css">
-    <link rel="stylesheet" type="text/css" href="../style/footer.css"> --}}
-    {{-- <link rel="stylesheet" href="../library/sweetalert2/dist/sweetalert2.min.css"> --}}
     <script type="module" src="{{ url('./js/LoginRegister.js') }}"></script>
     <script src="{{ url('./jquery/dist/jquery.min.js') }}"></script>
     <script src="{{ url('./bootstrap/dist/js/bootstrap.min.js') }}"></script>
@@ -19,8 +15,8 @@
 </head>
 
 <body>
-    <nav class="nav-bar"></nav>
-    <div class="loginregister-container">
+    <div class="loginregister-container" style="background-image: url({{ url('login-register-background.jpg') }})">
+        <x-header />
         <div class="form-box">
             <div class="button-box">
                 <div id="slider" class="lr-slider"></div>
@@ -116,7 +112,7 @@
             Hello, world! This is a toast message.
         </div>
     </div>
-    {{-- <script src="../config/HeaderFooter.js"></script> --}}
+    <x-footer />
 </body>
 
 </html>

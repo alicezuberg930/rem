@@ -4,7 +4,7 @@
         <?php $a = 0; ?>
         @foreach ($NewProducts as $product)
             <?php $price = $product->price; ?>
-            <div class="disable-select product-item col-6 col-md-4 col-lg-2 mb-4">
+            <div class="disable-select product-item col-md-3 col-lg-3 mb-4">
                 <div class="card card-product h-100" role="button">
                     <div class="card-quick-cart">
                         @csrf
@@ -23,7 +23,7 @@
                     <a class="h-100 d-flex flex-column text-decoration-none"
                         href="/product_detail/{{ $product->ProductsID }}">
                         <div>
-                            <img src="{{ url('image/' . $product->image) }}" class="card-img">
+                            <img src="{{ url('image/' . $product->image) }}" class="product-img card-img">
                         </div>
                         <div class="p-1">
                             <div class="card-text text-wrap text-dark font-weight-bold">{{ $product->name }}</div>
@@ -55,7 +55,7 @@
                 </div>
             </div>
             <?php
-            if ($a != 11) {
+            if ($a != 7) {
                 $a++;
             } else {
                 break;

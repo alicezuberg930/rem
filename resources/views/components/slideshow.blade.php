@@ -6,18 +6,9 @@
         </div>
         <div class="carousel-inner">
             <div class="h-90 active carousel-item"><img class="d-block w-100" src="{{ url('/zippo_banner_2.jpg') }}"
-                    alt="Second slide">
-                {{-- <div class="carousel-caption">
-                    <h3>Second slide label</h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                </div> --}}
-            </div>
+                    alt="Second slide"></div>
             <div class="carousel-item"><img class="d-block w-100" src="{{ url('/zippo_banner_2.jpg') }}"
                     alt="Third slide">
-                {{-- <div class="carousel-caption">
-                    <h3>Third slide label</h3>
-                    <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur.</p>
-                </div> --}}
             </div>
         </div>
         <a class="carousel-control-prev" role="button" tabindex="0" href="#">
@@ -38,7 +29,6 @@
                 <span class="border p-1 col-md-2 fs-3 fw-semibold">Thể loại zippo</span>
                 <hr class="col-md-5" />
             </div>
-
             <div class="row row-cols-1 row-cols-lg-3 gy-2 align-items-stretch">
                 <div class="col">
                     <div class="card card-cover h-100  text-bg-dark rounded-4 shadow-lg"
@@ -48,7 +38,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="col">
                     <div class="card card-cover h-100  text-bg-dark rounded-4 shadow-lg"
                         style="background-image: url('https://i.pinimg.com/736x/99/78/6f/99786f008c01c25bda4b744873fdb456.jpg'); background-size: cover;min-height: 234px;">
@@ -68,7 +57,6 @@
 
             </div>
         </div>
-
         <div class="mt-4 mb-4">
             <div class="d-flex align-items-center justify-content-center text-center p-0">
                 <hr class="col-5" />
@@ -94,7 +82,6 @@
             </div>';
             }
         @endphp --}}
-
             <div class="col col-md-6 bg-dark pt-3 pt-md-5 px-md-5 text-center text-white"
                 style="background-image: url('https://images.fineartamerica.com/images/artworkimages/mediumlarge/2/red-wine-on-a-dark-background-maryana-kankulova.jpg');">
                 <div class="my-3 py-3">
@@ -118,7 +105,6 @@
                 </div>
                 <div class="shadow-sm mx-auto" style="width: 80%; height: 180px; border-radius: 21px 21px 0 0;">
                     <button class="btn btn-outline-light">Tìm hiểu thêm</button>
-
                 </div>
             </div>
             <div class="col col-md-12 bg-dark pt-3 pt-md-5 px-md-5 text-center text-white"
@@ -131,7 +117,6 @@
                 </div>
                 <div class="shadow-sm mx-auto" style="width: 80%; height: 180px; border-radius: 21px 21px 0 0;">
                     <button class="btn btn-outline-light">Tìm hiểu thêm</button>
-
                 </div>
             </div>
         </div>
@@ -144,7 +129,6 @@
                 </div>
             </div>
             <div class="introducesText col-md-7 mb-2">
-
                 <span class="lh-lg lead">Thương hiệu Winemart được thành lập vào năm
                     2015 với mục tiêu đem lại cho người tiêu dùng những dịch vụ và sản phẩm tốt nhất. Winemart
                     chuyên cung cấp các loại rượu vang, rượu mạnh, bia nhập khẩu cùng với các loại thực phẩm cao
@@ -156,24 +140,26 @@
                     src="https://www.itourvn.com/images/easyblog_articles/644/b2ap3_large_buy-wine-hcm-cover.jpg">
             </div>
         </div>
-        <div class="row row-cols-2 row-cols-md-4 mb-3 justify-content-between text-center m-3 shadow-sm">
+        <div class="row row-cols-2 row-cols-md-4 mb-3 justify-content-between text-center m-3 shadow-lg">
             <div class="col-md-3">
                 <div class="card h-100 border-0">
                     <div class="card-body">
-                        <h1 class="card-title"><i class="bi bi-emoji-laughing" style="font-size: 80px"></i></h1>
-                        <p class="card-text text-dark">Nhiều năm kinh nghiệm trong lĩnh vực nhập khẩu,
-                            phân phối rượu vang cùng kiến thức sản phẩm chuyên sâu,
-                            cam kết mang đến Quý Khách hàng sự hài lòng.</p>
+                        <h1 class="card-title">
+                            <i class="bi bi-emoji-laughing" style="font-size: 80px"></i>
+                        </h1>
+                        <p class="card-text text-dark">Nhiều năm kinh nghiệm trong lĩnh vực nhập khẩu, phân phối rượu
+                            vang cùng kiến thức sản phẩm chuyên sâu, cam kết mang đến Quý Khách hàng sự hài lòng.</p>
                     </div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="card h-100 border-0">
                     <div class="card-body">
-                        <h1 class="card-title"><i class="bi bi-coin" style="font-size: 80px"></i></h1>
-                        <p class="card-text text-dark">Giá thành sản phẩm được tính toán, so sánh với thị trường để đảm bảo
-                            lợi ích của Quý Khách hàng
-                            và giá trị thật của từng sản phẩm rượu vang tuyệt hảo.</p>
+                        <h1 class="card-title">
+                            <i class="bi bi-coin" style="font-size: 80px"></i>
+                        </h1>
+                        <p class="card-text text-dark">Giá thành sản phẩm được tính toán, so sánh với thị trường để đảm
+                            bảo lợi ích của Quý Khách hàng và giá trị thật của từng sản phẩm rượu vang tuyệt hảo.</p>
                     </div>
 
                 </div>
@@ -181,19 +167,22 @@
             <div class="col-md-3">
                 <div class="card h-100 border-0">
                     <div class="card-body">
-                        <h1 class="card-title"><i class="bi bi-patch-check" style="font-size: 80px"></i></h1>
-                        <p class="card-text text-dark">Cam kết ượu vang chất lượng quý khách được trả hoặc đổi nếu
-                            không hài lòng về chất lượng sản phẩm, dịch vụ của chúng tôi.</p>
+                        <h1 class="card-title">
+                            <i class="bi bi-patch-check" style="font-size: 80px"></i>
+                        </h1>
+                        <p class="card-text text-dark">Cam kết ượu vang chất lượng quý khách được trả hoặc đổi
+                            nếu không hài lòng về chất lượng sản phẩm, dịch vụ của chúng tôi.</p>
                     </div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="card h-100 border-0">
                     <div class="card-body">
-                        <h1 class="card-title"><i class="bi bi-telephone-outbound" style="font-size: 80px"></i>
+                        <h1 class="card-title">
+                            <i class="bi bi-telephone-outbound" style="font-size: 80px"></i>
                         </h1>
-                        <p class="card-text text-dark">Quý Khách hàng có thể liên hệ qua tất cả các kênh: Website, Facebook,
-                            Zalo, Hotline,… TM Wine sẵn sàng phục vụ bạn bất kể khi nào bạn có nhu cầu.</p>
+                        <p class="card-text text-dark">Quý Khách hàng có thể liên hệ qua tất cả các kênh: Website,
+                            Facebook, Zalo, Hotline,… TM Wine sẵn sàng phục vụ bạn bất kể khi nào bạn có nhu cầu.</p>
                     </div>
                 </div>
             </div>
