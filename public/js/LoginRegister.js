@@ -47,10 +47,10 @@ $("#login").on('click', (e) => {
         dataType: 'json',
         data: { email: email, password: password },
         success: function (data) {
-            if (data.status == 0)
-                ErrorNotification($("#l-password-error"), $("#l-password-success"), $(".l-password"), $(".form-box").find("span").eq(1), data.message)
-            if (data.status == -1)
-                ErrorNotification($("#l-email-error"), $("#l-email-success"), $(".l-email"), $(".form-box").find("span").eq(0), data.message)
+            if (data.status == 0) ErrorNotification($("#l-password-error"), $("#l-password-success"), $(".l-password"), $(".form-box").find("span").eq(3), data.message)
+            else SuccessNotification($("#l-password-success"), $("#l-password-error"), $(".l-password"), $(".form-box").find("span").eq(3))
+            if (data.status == -1) ErrorNotification($("#l-email-error"), $("#l-email-success"), $(".l-email"), $(".form-box").find("span").eq(2), data.message)
+            else SuccessNotification($("#l-email-success"), $("#l-email-error"), $(".l-email"), $(".form-box").find("span").eq())
             if (data.status == 1) {
                 $('.toast').toast('show')
                 $('.toast-body').html('Đăng nhập thành công')
@@ -59,7 +59,6 @@ $("#login").on('click', (e) => {
         }
     })
 })
-
 $("#register").on('click', () => {
     let username = $(".r-username").val()
     let email = $(".r-email").val()
@@ -69,68 +68,47 @@ $("#register").on('click', () => {
     let gender = $("input:radio[name=gender]:checked").val()
     let a = 0, b = 0, c = 0, d = 0, e = 0
     if (username.length < 7) {
-        ErrorNotification($("#r-username-error"), $("#r-username-success"), $(".r-username"), $(".form-box").find("span").eq(2), "Tên người dùng không hợp lệ")
+        ErrorNotification($("#r-username-error"), $("#r-username-success"), $(".r-username"), $(".form-box").find("span").eq(4), "Tên người dùng không hợp lệ")
     } else {
-        SuccessNotification($("#r-username-success"), $("#r-username-error"), $(".r-username"), $(".form-box").find("span").eq(2))
+        SuccessNotification($("#r-username-success"), $("#r-username-error"), $(".r-username"), $(".form-box").find("span").eq(4))
         a = 1
     } if (!isEmailValid(email)) {
-        ErrorNotification($("#r-email-error"), $("#r-email-success"), $(".r-email"), $(".form-box").find("span").eq(3), "Email không hợp lệ")
+        ErrorNotification($("#r-email-error"), $("#r-email-success"), $(".r-email"), $(".form-box").find("span").eq(5), "Email không hợp lệ")
     } else {
-        SuccessNotification($("#r-email-success"), $("#r-email-error"), $(".r-email"), $(".form-box").find("span").eq(3))
+        SuccessNotification($("#r-email-success"), $("#r-email-error"), $(".r-email"), $(".form-box").find("span").eq(5))
         b = 1
     } if (!isPasswordValid(password)) {
-        ErrorNotification($("#r-password-error"), $("#r-password-success"), $(".r-password"), $(".form-box").find("span").eq(4), "Mật khẩu gồm có chữ và số & trong khoảng (8,16) từ")
+        ErrorNotification($("#r-password-error"), $("#r-password-success"), $(".r-password"), $(".form-box").find("span").eq(6), "Mật khẩu gồm có chữ và số & trong khoảng (8,16) từ")
     } else {
-        SuccessNotification($("#r-password-success"), $("#r-password-error"), $(".r-password"), $(".form-box").find("span").eq(4))
+        SuccessNotification($("#r-password-success"), $("#r-password-error"), $(".r-password"), $(".form-box").find("span").eq(6))
         c = 1
     } if (checkpassword !== password || checkpassword.length == 0) {
-        ErrorNotification($("#r-check-password-error"), $("#r-check-password-success"), $(".r-check-password"), $(".form-box").find("span").eq(5), "Mật khẩu không trùng")
+        ErrorNotification($("#r-check-password-error"), $("#r-check-password-success"), $(".r-check-password"), $(".form-box").find("span").eq(7), "Mật khẩu không trùng")
     } else {
-        SuccessNotification($("#r-check-password-success"), $("#r-check-password-error"), $(".r-check-password"), $(".form-box").find("span").eq(5))
+        SuccessNotification($("#r-check-password-success"), $("#r-check-password-error"), $(".r-check-password"), $(".form-box").find("span").eq(7))
         d = 1
     } if (!isPhonenumberValid(phonenumber)) {
-        ErrorNotification($("#r-phone-number-error"), $("#r-phone-number-success"), $(".r-phone-number"), $(".form-box").find("span").eq(6), "Số điện thoại không hợp lệ")
+        ErrorNotification($("#r-phone-number-error"), $("#r-phone-number-success"), $(".r-phone-number"), $(".form-box").find("span").eq(8), "Số điện thoại không hợp lệ")
     } else {
-        SuccessNotification($("#r-phone-number-success"), $("#r-phone-number-error"), $(".r-phone-number"), $(".form-box").find("span").eq(6))
+        SuccessNotification($("#r-phone-number-success"), $("#r-phone-number-error"), $(".r-phone-number"), $(".form-box").find("span").eq(8))
         e = 1
     }
     if (a == 1 && b == 1 && c == 1 && d == 1 && e == 1) {
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
-            }
-        });
         $.ajax({
             url: "register",
             method: "POST",
             dataType: 'json',
             data: { username: username, email: email, password: password, phonenumber: phonenumber, gender: gender },
             success: function (data) {
-                if (data.status == 1)
+                console.log(data)
+                if (data.status == 1 || data.status == 0) {
                     $('.toast').toast('show')
-                if (data.status == -1)
-                    ErrorNotification($("#r-email-error"), $("#r-email-success"), $(".r-email"), $(".form-box").find("span").eq(3), data.message)
-                // let Obj = JSON.parse(data)
-                // if (Obj.Email != '') {
-                //     ErrorNotification($("#r-email-error"), $("#r-email-success"), $(".r-email"), $(".form-box").find("span").eq(3), Obj.Email)
-                // } else {
-                //     SuccessNotification($("#r-email-success"), $("#r-email-error"), $(".r-email"), $(".form-box").find("span").eq(3))
-                // } if (Obj.Phonenumber != '') {
-                //     ErrorNotification($("#r-phone-number-error"), $("#r-phone-number-success"), $(".r-phone-number"), $(".form-box").find("span").eq(6), Obj.Phonenumber)
-                // } else {
-                //     SuccessNotification($("#r-phone-number-success"), $("#r-phone-number-error"), $(".r-phone-number"), $(".form-box").find("span").eq(6))
-                // }
-                // if (Obj.Response == "Success") {
-                //     let welcome = "<h3>Chào mừng " + username + "<h3>"
-                //     Swal.fire({
-                //         position: 'center',
-                //         icon: 'success',
-                //         html: welcome,
-                //         showConfirmButton: false,
-                //         timer: 1400
-                //     })
-                //     setTimeout(() => { window.location.href = "./index.html" }, 1400)
-                // }
+                    $('.toast-body').html(data.message)
+                }
+                if (data.status == -1) ErrorNotification($("#r-email-error"), $("#r-email-success"), $(".r-email"), $(".form-box").find("span").eq(5), data.message)
+                else SuccessNotification($("#r-email-success"), $("#r-email-error"), $(".r-email"), $(".form-box").find("span").eq(5))
+                if (data.status == -2) ErrorNotification($("#r-phone-number-error"), $("#r-phone-number-success"), $(".r-phone-number"), $(".form-box").find("span").eq(8), data.message)
+                else SuccessNotification($("#r-phone-number-success"), $("#r-phone-number-error"), $(".r-phone-number"), $(".form-box").find("span").eq(8))
             }
         })
     }

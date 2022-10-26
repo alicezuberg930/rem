@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('material', 40);
             $table->string('origin', 40);
             $table->text('description');
-            $table->bigIncrements('discount')->nullable();
+            $table->unsignedBigInteger('discount')->nullable();
             $table->index('discount');
             $table->foreign('discount')->references('id')->on('sales')->nullOnDelete()->onUpdate('cascade');
         });

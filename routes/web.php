@@ -2,7 +2,8 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\checkoutController;
+use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SalesController;
 use Illuminate\Support\Facades\Route;
@@ -35,11 +36,9 @@ Route::get('/vnpay/checkout', function () {
     return view('vnpay.checkout');
 });
 
-Route::get('/vnpay/vnpay_return', function () {
-    return view('vnpay.vnpay_return');
-});
+Route::get('/vnpay/vnpay_return', [CheckoutController::class, 'paymentsResult']);
 
-Route::post('vnpay/vnpay_payment', [checkoutController::class, 'vnpayPayment']);
+Route::post('vnpay/vnpay_payment', [CheckoutController::class, 'vnpayPayment']);
 
 Route::get('/', [ProductController::class, 'indexPage']);
 // Route::get('/cart', [ProductController::class, 'getCartProducts']);

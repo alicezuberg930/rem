@@ -1,49 +1,3 @@
-<?php ob_start();
-$vnp_HashSecret = 'OUNLJDFELTPRZUKCHFBFBBSMVNROUCGB';
-$vnp_SecureHash = $_GET['vnp_SecureHash'];
-$inputData = [];
-foreach ($_GET as $key => $value) {
-    if (substr($key, 0, 4) == 'vnp_') {
-        $inputData[$key] = $value;
-    }
-}
-unset($inputData['vnp_SecureHashType']);
-unset($inputData['vnp_SecureHash']);
-ksort($inputData);
-$i = 0;
-$hashData = $Result = '';
-foreach ($inputData as $key => $value) {
-    if ($i == 1) {
-        $hashData = $hashData . '&' . $key . '=' . $value;
-    } else {
-        $hashData = $hashData . $key . '=' . $value;
-        $i = 1;
-    }
-}
-$secureHash = hash('sha256', $vnp_HashSecret . $hashData);
-if ($secureHash == $vnp_SecureHash) {
-    if ($_GET['vnp_ResponseCode'] == '00') {
-        //         $Time = date("d-m-Y", strtotime($_GET['vnp_PayDate']));
-        //         $_SESSION["Order"]["OrderDate"] = $Time;
-        //         $PaymentArray = array(
-        //             "OrderID" => $_SESSION["Order"]["OrderID"], "Total" => $_GET['vnp_Amount'] / 100, "Note" => $_GET['vnp_OrderInfo'],
-        //             "PaymentTime" => $Time, "vnp_response_code" => $_GET['vnp_ResponseCode'],
-        //             "code_vnpay" => $_GET['vnp_TransactionNo'], "BankCode" => $_GET['vnp_BankCode']
-        //         );
-        //         $_SESSION["Payment"] = $PaymentArray;
-        //         if (GetRows("select count(*) from payments where OrderID = '" . $_SESSION["Order"]["OrderID"] . "'") == 1) {
-        //             return;
-        //         }
-        //         if (AddOrder($_SESSION["Order"]) != 0 && AddPayment($_SESSION["Payment"]) != 0 && AddOrderDetails($_SESSION["OrderDetail"]) != 0) {
-        $Result = 'Giao dịch thành công';
-        //         }
-    } else {
-        $Result = 'Giao dịch không thành công';
-    }
-} else {
-    $Result = 'Chu kỳ không hợp lệ';
-}
-?>
 <!DOCTYPE html>
 <html>
 
@@ -84,33 +38,35 @@ if ($secureHash == $vnp_SecureHash) {
         </div>
         <div class="table-responsive">
             <div class="form-group">
-                <label class="form-control">Mã đơn hàng: <?php echo $_GET['vnp_TxnRef']; ?></label>
+                <label class="form-control">Mã đơn hàng: {{ $vnp_TxnRef }}</label>
             </div>
             <div class="form-group">
-                <label class="form-control">Tổng số tiền: <?php echo number_format($_GET['vnp_Amount'] / 100); ?> VNĐ</label>
+                <label class="form-control">Tổng số tiền: {{ number_format(session('orders')['vnp_Amount']) }}
+                    VNĐ</label>
             </div>
             <div class="form-group">
-                <label class="form-control">Nội dung thanh toán: <?php echo $_GET['vnp_OrderInfo']; ?></label>
+                <label class="form-control">Nội dung thanh toán: {{ $vnp_OrderInfo }}</label>
             </div>
             <div class="form-group">
-                <label class="form-control">Mã phản hồi (vnp_ResponseCode): <?php echo $_GET['vnp_ResponseCode']; ?></label>
+                <label class="form-control">Mã phản hồi: {{ $vnp_ResponseCode }}</label>
             </div>
             <div class="form-group">
-                <label class="form-control">Mã giao dịch của VNPAY: <?php echo $_GET['vnp_TransactionNo']; ?></label>
+                <label class="form-control">Mã giao dịch của VNPAY: {{ $vnp_TransactionNo }}</label>
             </div>
             <div class="form-group">
-                <label class="form-control">Mã Ngân hàng: <?php echo $_GET['vnp_BankCode']; ?></label>
+                <label class="form-control">Mã Ngân hàng: {{ $vnp_BankCode }} </label>
             </div>
             <div class="form-group">
-                <label class="form-control">Thời gian thanh toán: <?php echo date('d-m-Y h:i:s', strtotime($_GET['vnp_PayDate'])); ?></label>
+                <label class="form-control">Thời gian thanh toán:
+                    {{ date('d-m-Y h:i:s', strtotime($vnp_PayDate)) }}</label>
             </div>
             <div class="form-group">
-                <label class="form-control">Người thanh toán: {{ session()->get('UserID') }}</label>
+                <label class="form-control">Người thanh toán: {{ session('orders')['fullname'] }}</label>
             </div>
             <div class="form-group">
-                <label class="form-control">Kết quả: <?php echo $Result; ?></label>
+                <label class="form-control">Kết quả: {{ $Result }}</label>
             </div>
-            <a href="../pages/member-orders.html" class="btn btn-primary">Quay lại</a>
+            <a href="/cart" class="btn btn-primary">Quay lại</a>
         </div>
         <footer class="footer">
             <p>&copy; Trang web bán bật lửa Zippo trực tuyến 2022</p>

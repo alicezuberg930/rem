@@ -43,12 +43,12 @@
                 </div>
                 <div class="term">
                     <input type="checkbox" class="check-box">
-                    <small>Nhớ mật khẩu</small>
+                    <small>Nhớ tôi</small>
                 </div>
                 <p><a href="./reset-index.php">Quên mật khẩu?</a></p>
                 <button class="submit" id="login">Đăng Nhập</button>
             </form>
-            <form method="POST" id="register_form" class="input-groups" action="./loginregister/register">
+            <form method="GET" id="register_form" class="input-groups" action="/register">
                 @csrf
                 <div class="form-controls">
                     <input type="text" name="r-username" class="user-id r-username" placeholder="Nhập họ tên">
@@ -99,20 +99,8 @@
             </form>
         </div>
     </div>
-    <div class="description"></div>
-    <div class="toast" role="alert" style="position: absolute; bottom: 0; right: 0;" data-animation="true"
-        data-autohide="true" data-delay="2000" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header">
-            <img src="..." class="rounded me-2" alt="...">
-            <strong class="me-auto">Bootstrap</strong>
-            <small>11 mins ago</small>
-            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-        <div class="toast-body">
-            Hello, world! This is a toast message.
-        </div>
-    </div>
     <x-footer />
+    <x-toast />
 </body>
 
 </html>

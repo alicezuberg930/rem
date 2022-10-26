@@ -43,7 +43,6 @@
                     "id": $(this).attr('data-name')
                 },
                 success: function(result) {
-                    console.log(result);
                     $('.toast').toast('show')
                     $('.toast-body').html(result.message)
                 }

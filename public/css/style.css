@@ -539,6 +539,8 @@ label:hover {
 
 .product-item:hover .product-img {
     animation: change-image 1s forwards;
-    /* animation-name: change-image;
-    animation-duration: 1s; */
+}
+
+.nav-item:hover {
+    color: #fff;
 }

@@ -5,7 +5,7 @@
             <i class="fa-solid fa-info"></i>
         </div>
         <strong class="me-auto">Thông báo</strong>
-        <small>1 giây trước</small>
+        {{-- <small>1 giây trước</small> --}}
         <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
     </div>
     <div class="toast-body text-dark">

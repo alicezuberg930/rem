@@ -4,9 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Http\Controllers\Controller;
 
 class AuthController extends Controller
 {
@@ -67,24 +66,16 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-        // return response()->json([
-        //     'a' => $request->all()
-        // ],200);
-        // $validator = Validator::make($request()->all(), [
-        //     'username' => 'required',
-        //     'email' => 'required|email|unique:users',
-        //     'password' => 'required|min:6',
-        //     'phonenumber' => 'required',
-        //     'gender' => 'required'
-        // ]);
-        // if ($validator->fails())
-        //     return response()->json($validator->errors()->toJson(), 400);
-        // $CheckUser = User::where('email', '=', $request->input('email'))->first();
-        // if ($CheckUser)
-        //     return response()->json([
-        //         'message' => 'Email đã được sử dụng',
-        //         'status' => -1
-        //     ], 201);
+        if (count(User::where('email', '=', $request->input('email'))->get()) > 0)
+            return response()->json([
+                'message' => 'Email đã được sử dụng',
+                'status' => -1
+            ]);
+        if (count(User::where('phonenumber', '=', $request->input('phonenumber'))->get()) > 0)
+            return response()->json([
+                'message' => 'Số điện thoại đã được sử dụng',
+                'status' => -2
+            ]);
         $user = new User();
         $user->email = $request->input('email');
         $user->gender = $request->input('gender');
@@ -108,6 +99,5 @@ class AuthController extends Controller
         //     $validator->validated(),
         //     ['password' => bcrypt($password)]
         // ]));
-
     }
 }

@@ -34,14 +34,15 @@
                                 </tr>
                             </thead>
                             <tbody id="cart-table">
-                                <?php $sum = $total_price = $total_discount = 0; ?>
+                                <?php $quantity = $total_price = $total_discount = 0; ?>
                                 @if (session()->has('cart') && count(session('cart')) > 0)
                                     @foreach (session()->get('cart') as $cart)
                                         <?php $discount_price = $cart['price'] * (1 - doubleval($cart['percent'] / 100));
                                         $total_price_per_product = $discount_price * $cart['quantity'];
                                         $total_price += $cart['price'] * $cart['quantity'];
                                         $total_discount += ($cart['price'] - $discount_price) * $cart['quantity'];
-                                        $total_final = $total_price - $total_discount; ?>
+                                        $total_final = $total_price - $total_discount;
+                                        $quantity += $cart['quantity']; ?>
                                         <tr>
                                             <td>
                                                 <div class="d-flex">
@@ -128,14 +129,14 @@
                             <div class="row mb-3">
                                 <label for="inputEmail3" class="col-sm-4 col-form-label fs-6">Họ và tên</label>
                                 <div class="col-sm-8">
-                                    <input type="text" class="form-control" id="pay-name" name="pay-name"
+                                    <input type="text" class="form-control" id="pay-name" name="fullname"
                                         value="Nguyễn Thị Minh Thư">
                                 </div>
                             </div>
                             <div class="row mb-3"><label for="inputPassword3" class="col-sm-4 col-form-label">Số điện
                                     thoại</label>
                                 <div class="col-sm-8">
-                                    <input type="phone" class="form-control" id="pay-phone" name="pay-phone"
+                                    <input type="phone" class="form-control" id="pay-phone" name="phonenumber"
                                         value="0921123435">
                                 </div>
                             </div>
@@ -143,31 +144,36 @@
                             <div class="row mb-3"><label for="inputPassword3"
                                     class="col-sm-4 col-form-label">Email</label>
                                 <div class="col-sm-8"><input type="email" class="form-control" id="pay-email"
-                                        name="pay-email" value="minhthu@gmail.com"></div>
+                                        name="email" value="minhthu@gmail.com"></div>
                             </div>
                             <hr>
                             <div class="row mb-3">
                                 <label for="inputPassword3" class="col-sm-4 col-form-label">Địa chỉ</label>
                                 <div class="col-sm-8">
-                                    <select class="form-select mb-2" aria-label="Default select example"
-                                        id="thanhpho" onchange="getDistric(this)">
+                                    <select name="city" class="form-select mb-2"
+                                        aria-label="Default select example" id="thanhpho"
+                                        onchange="getDistric(this)">
                                         <option selected class="text-center">------Thành phố------</option>
+                                        <option value="Hồ Chí Minh">Hồ Chí Minh</option>
                                         <?php
                                         // for ($i = 0; $i < sizeof($apiOk); $i++) {
                                         //     echo '<option value="' . $apiOk[$i]['code'] . '">' . $apiOk[$i]['name'] . '</option>';
                                         // }
                                         ?>
                                     </select>
-                                    <select class="form-select mb-2" aria-label="Default select example"
-                                        id="quan-huyen" onchange="getBlock(this)">
+                                    <select name="district" class="form-select mb-2"
+                                        aria-label="Default select example" id="quan-huyen"
+                                        onchange="getBlock(this)">
                                         <option selected class="text-center">------Quận, huyện------</option>
+                                        <option value="Quận 5" class="text-center">Quận 5</option>
                                     </select>
-                                    <select class="form-select mb-2" aria-label="Default select example"
-                                        id="phuong-xa">
+                                    <select name="ward" class="form-select mb-2"
+                                        aria-label="Default select example" id="phuong-xa">
                                         <option selected class="text-center">------Phường, xã------</option>
+                                        <option name="Phường 1" class="text-center">Phường 1</option>
                                     </select>
-                                    <textarea class="form-control" id="pay-address" id="pay-address" placeholder="Số nhà, tên đường"
-                                        style="height: 50px;">99 An Dương Vương</textarea>
+                                    <textarea name="full-address" class="form-control" id="pay-address" id="pay-address"
+                                        placeholder="Số nhà, tên đường" style="height: 50px;">99 An Dương Vương</textarea>
                                 </div>
                             </div>
                             <div class="row mb-3">
@@ -201,7 +207,8 @@
                                 <div class="col-sm-8">
                                     <span class="form-control fw-semibold bg-white"
                                         id="pay-sum">{{ number_format($total_final) }} VND</span>
-                                    <input name="amount" class="d-none" value="{{ $total_final }}" />
+                                    <input name="total_price" class="d-none" value="{{ $total_final }}" />
+                                    <input name="quantity" class="d-none" value="{{ $quantity }}" />
                                 </div>
                             </div>
                             <button type="submit" class="btn btn-primary" name="redirect">Đặt hàng</button>
