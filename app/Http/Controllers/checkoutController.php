@@ -131,8 +131,6 @@ class CheckoutController extends Controller
         $vnpTranId = $inputData['vnp_TransactionNo']; //Mã giao dịch tại VNPAY
         $vnp_BankCode = $inputData['vnp_BankCode'];
         $secureHash = hash_hmac('sha512', $hashData, $this->vnp_HashSecret);
-        $Status = 0;
-        @dd($secureHash . '---' . $vnp_SecureHash);
         // $vnp_SecureHash = $request->input('vnp_SecureHash');
         // $inputData = [];
         // foreach ($request->all() as $key => $value) {
