@@ -105,10 +105,7 @@ class CheckoutController extends Controller
 
     public function paymentsResult(Request $request)
     {
-        $vnp_HashSecret = 'OUNLJDFELTPRZUKCHFBFBBSMVNROUCGB'; //Secret key
         $inputData = [];
-        $returnData = [];
-        $data = $_REQUEST;
         foreach ($_GET as $key => $value) {
             if (substr($key, 0, 4) == 'vnp_') {
                 $inputData[$key] = $value;
@@ -128,30 +125,7 @@ class CheckoutController extends Controller
                 $i = 1;
             }
         }
-        $vnpTranId = $inputData['vnp_TransactionNo']; //Mã giao dịch tại VNPAY
-        $vnp_BankCode = $inputData['vnp_BankCode'];
         $secureHash = hash_hmac('sha512', $hashData, $this->vnp_HashSecret);
-        // $vnp_SecureHash = $request->input('vnp_SecureHash');
-        // $inputData = [];
-        // foreach ($request->all() as $key => $value) {
-        //     if (substr($key, 0, 4) == 'vnp_') {
-        //         $inputData[$key] = $value;
-        //     }
-        // }
-        // unset($inputData['vnp_SecureHashType']);
-        // unset($inputData['vnp_SecureHash']);
-        // ksort($inputData);
-        // $i = 0;
-        // $hashData = $Result = '';
-        // foreach ($inputData as $key => $value) {
-        //     if ($i == 1) {
-        //         $hashData = $hashData . '&' . $key . '=' . $value;
-        //     } else {
-        //         $hashData = $hashData . $key . '=' . $value;
-        //         $i = 1;
-        //     }
-        // }
-        // $secureHash = hash('sha256', $this->vnp_HashSecret . $hashData);
         if ($secureHash == $vnp_SecureHash) {
             //     if ($_GET['vnp_ResponseCode'] == '00') {
             //         $orders = new orders();
