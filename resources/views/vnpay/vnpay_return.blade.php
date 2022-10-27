@@ -41,7 +41,7 @@
                 <label class="form-control">Mã đơn hàng: {{ $vnp_TxnRef }}</label>
             </div>
             <div class="form-group">
-                <label class="form-control">Tổng số tiền: {{ number_format(session('orders')['vnp_Amount']) }}
+                {{-- <label class="form-control">Tổng số tiền: {{ number_format(session('orders')['vnp_Amount']) }} --}}
                     VNĐ</label>
             </div>
             <div class="form-group">

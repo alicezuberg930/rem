@@ -32,7 +32,7 @@ foreach ($inputData as $key => $value) {
     }
 }
 $vnpTranId = $inputData['vnp_TransactionNo']; //Mã giao dịch tại VNPAY
-$vnp_BankCode = $inputData['vnp_BankCode'];
+$vnp_BankCode = $inputData['vnp_BankCode']; 
 $secureHash = hash('sha256', $vnp_HashSecret . $hashData);
 $Status = 0;
 $orderId = $inputData['vnp_TxnRef'];

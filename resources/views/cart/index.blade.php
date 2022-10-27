@@ -10,8 +10,8 @@
     <script src="{{ url('./jquery/dist/jquery.min.js') }}"></script>
     <script src="{{ url('./bootstrap/dist/js/bootstrap.min.js') }}"></script>
     <script src="{{ url('./popper/dist/umd/popper.min.js') }}"></script>
-    <link rel="stylesheet" href="{{ url('./css/style.css') }}">
     <link rel="stylesheet" href="{{ url('./bootstrap/dist/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url('./css/style.css') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.0.0/css/all.css">
@@ -123,7 +123,7 @@
                 </div>
                 @if (session()->has('cart') && count(session('cart')) > 0)
                     <div class="col-md-4">
-                        <form method="POST" action="vnpay/vnpay_payment" class="p-3 mb-3 border">
+                        <form method="POST" action="/vnpay/vnpay_payment" class="p-3 mb-3 border">
                             @csrf
                             <h4>THÔNG TIN KHÁCH HÀNG</h4>
                             <div class="row mb-3">

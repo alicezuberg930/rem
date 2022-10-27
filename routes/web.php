@@ -32,14 +32,6 @@ Route::get('/filter', function () {
     return view('product.filter');
 });
 
-Route::get('/vnpay/checkout', function () {
-    return view('vnpay.checkout');
-});
-
-Route::get('/vnpay/vnpay_return', [CheckoutController::class, 'paymentsResult']);
-
-Route::post('vnpay/vnpay_payment', [CheckoutController::class, 'vnpayPayment']);
-
 Route::get('/', [ProductController::class, 'indexPage']);
 // Route::get('/cart', [ProductController::class, 'getCartProducts']);
 //->middleware('isLoggedIn');
@@ -66,3 +58,6 @@ Route::get('/delete_category/{id}', [CategoryController::class, 'deleteCategory'
 Route::get('/add_sale', [SalesController::class, 'addSale']);
 Route::get('/edit_sale/{id}', [ProductController::class, 'editSale']);
 Route::get('/delete_sale/{id}', [ProductController::class, 'deleteSale']);
+//Thánh toán
+Route::get('/vnpay/vnpay_return', [CheckoutController::class, 'paymentsResult']);
+Route::post('/vnpay/vnpay_payment', [CheckoutController::class, 'vnpayPayment']);
