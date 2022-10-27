@@ -171,7 +171,7 @@ class CheckoutController extends Controller
             //                 $orderdetails->product_price = $item['price'];
             //                 $orderdetails->save();
             //             }
-            //             $Result = 'Giao dịch thành công';
+            $Result = 'Giao dịch thành công';
             //         }
             // } else {
             //     $Result = 'Giao dịch không thành công';
