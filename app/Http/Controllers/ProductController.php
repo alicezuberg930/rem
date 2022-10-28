@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\product;
+use App\Models\User;
 use Illuminate\Cache\Repository;
 use Illuminate\Http\Request;
 use PDO;
@@ -51,17 +52,25 @@ class ProductController extends Controller
     {
 
         $id = $request->input('id');
-        @dd("sjceri");
-        @dd(product::where('id', $id));
         $cart = session('cart');
-        if ($cart[$id]['quantity'] < product::where('id', $id)->amount)
+        if ($cart[$id]['quantity'] < product::where('id', $id)->first()->amount) {
             $cart[$id]['quantity'] += 1;
-        else
+            session()->put('cart', $cart);
+            session()->save();
+        } else
             return response()->json(['message' => "Vượt số lượng trong kho", 'status' => 0]);
     }
 
     public function decreaseIncart(Request $request)
     {
+        $id = $request->input('id');
+        $cart = session('cart');
+        if ($cart[$id]['quantity'] > 0) {
+            $cart[$id]['quantity'] -= 1;
+            session()->put('cart', $cart);
+            session()->save();
+        } else
+            return response()->json(['message' => "Số lượng không được dưới 0", 'status' => 0]);
     }
 
     public function getCartProducts()

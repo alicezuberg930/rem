@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
@@ -22,7 +23,7 @@ class AuthController extends Controller
                 session()->put('UserID', $user->id);
                 return response()->json([
                     'message' => 'Đăng nhập thành công',
-                    'status' => 1
+                    'status' => 1,
                 ]);
             } else
                 return response()->json([
@@ -35,6 +36,10 @@ class AuthController extends Controller
                 'status' => -1
             ]);
         }
+        // $validator = Validator::make($request->all(), [
+        //     'email' => 'required|email',
+        //     'password' => 'required|min:6'
+        // ]);
         // if (!$token = auth()->attempt($validator->validated()))
         //     return response()->json(['error' => 'Người dùng không hợp lệ'], 401);
         // return $this->CreateNewToken($token);
@@ -50,15 +55,10 @@ class AuthController extends Controller
         ]);
     }
 
-    public function profile()
-    {
-        return view('welcome');
-        // return response()->json([auth()->user()]);
-    }
-
     public function logout()
     {
         auth()->logout();
+        session()->forget('UserID');
         return response()->json([
             'message' => 'Đã đăng xuất thành công'
         ]);

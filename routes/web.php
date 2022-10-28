@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrdersController;
@@ -32,6 +33,10 @@ Route::get('/filter', function () {
     return view('product.filter');
 });
 
+Route::get('/admin/form_qly_sanpham', function () {
+    return view("admin.form_qly_sanpham");
+});
+
 Route::get('/', [ProductController::class, 'indexPage']);
 // Route::get('/cart', [ProductController::class, 'getCartProducts']);
 //->middleware('isLoggedIn');
@@ -61,3 +66,6 @@ Route::get('/delete_sale/{id}', [ProductController::class, 'deleteSale']);
 //Thánh toán
 Route::get('/vnpay/vnpay_return', [CheckoutController::class, 'paymentsResult']);
 Route::post('/vnpay/vnpay_payment', [CheckoutController::class, 'vnpayPayment']);
+//Quản lý
+Route::get('/cart/get_district', [CartController::class, 'getDistrict'])->name('getDistrict');
+Route::get('/cart/get_ward', [CartController::class, 'getWard'])->name('getWard');

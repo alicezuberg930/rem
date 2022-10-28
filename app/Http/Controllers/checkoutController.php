@@ -21,7 +21,7 @@ class CheckoutController extends Controller
             'fullname' => $request->input('fullname'),
             'phonenumber' => $request->input('phonenumber'),
             'email' => $request->input('email'),
-            'address' => $request->input('city') . ' ' . $request->input('district') . ' ' . $request->input('ward'),
+            'address' => $request->input('city') . ' ' . explode('-', $request->input('district'))[0] . ' ' . $request->input('ward'),
             'total_price' => $request->input('total_price'),
             'quantity' => $request->input('quantity')
         ]);

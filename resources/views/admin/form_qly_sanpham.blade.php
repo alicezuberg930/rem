@@ -2,11 +2,11 @@
     <div class="col-md-auto">
         <input type="radio" class="btn-check" autocomplete="off" value="Tổng đơn">
         <label class="btn btn-outline-primary btn-sm" for="btnradio1">Tổng sản phẩm
-            <span class="badge bg-danger" id="badge_tongdon"> <?php echo $pagin; ?></span>
+            <span class="badge bg-danger" id="badge_tongdon"> <?php echo $pagin = 1; ?></span>
         </label>
     </div>
     <div class="col-md-auto">
-        <a class="btn btn-primary btn-sm" href="{{ route('add-product') }}">Thêm sản phẩm </a>
+        <a class="btn btn-primary btn-sm" href="{{ "route('add-product')" }}">Thêm sản phẩm </a>
     </div>
     <div class="col-md-auto">
         <div class="input-group">

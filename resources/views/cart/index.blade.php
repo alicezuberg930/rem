@@ -55,10 +55,9 @@
                                                 <div class="d-flex">
                                                     <button class="btn bi bi-dash-circle minus-btn"
                                                         data-id="{{ $cart['id'] }}"></button>
-                                                    <input id="inp{{ $cart['id'] }}" type="number" min="1"
-                                                        max="99" class="bg-white border-0 text-center"
-                                                        step="1" disabled value="{{ $cart['quantity'] }}"
-                                                        size="1">
+                                                    <input name="quantity" type="number" min="1" max="99"
+                                                        class="bg-white border-0 text-center" step="1" disabled
+                                                        value="{{ $cart['quantity'] }}" size="1">
                                                     <button class="btn bi bi-plus-circle plus-btn"
                                                         data-id="{{ $cart['id'] }}"></button>
                                                 </div>
@@ -78,8 +77,8 @@
                                             </td>
                                             <td>
                                                 <div class="row">
-                                                    <span
-                                                        class="col-12">{{ number_format($total_price_per_product) }}</span>
+                                                    <span class="col-12">{{ number_format($total_price_per_product) }}
+                                                        VND</span>
                                                     <span class="remove-cart"
                                                         class="col-12 text-decoration-underline text-danger"
                                                         data-id="{{ $cart['id'] }}">
@@ -151,24 +150,20 @@
                                 <label for="inputPassword3" class="col-sm-4 col-form-label">Địa chỉ</label>
                                 <div class="col-sm-8">
                                     <select name="city" class="form-select mb-2"
-                                        aria-label="Default select example" id="thanhpho"
-                                        onchange="getDistric(this)">
+                                        aria-label="Default select example" id="city-select">
                                         <option selected class="text-center">------Thành phố------</option>
-                                        <option value="Hồ Chí Minh">Hồ Chí Minh</option>
-                                        <?php
-                                        // for ($i = 0; $i < sizeof($apiOk); $i++) {
-                                        //     echo '<option value="' . $apiOk[$i]['code'] . '">' . $apiOk[$i]['name'] . '</option>';
-                                        // }
-                                        ?>
+                                        <?php $respon = Http::get('https://provinces.open-api.vn/api/p');
+                                        $apiOk = $respon->json();
+                                        for ($i = 0; $i < sizeof($apiOk); $i++) {
+                                            echo '<option value="' . $apiOk[$i]['name'] . '" data-id="' . $apiOk[$i]['code'] . '">' . $apiOk[$i]['name'] . '</option>';
+                                        } ?>
                                     </select>
                                     <select name="district" class="form-select mb-2"
-                                        aria-label="Default select example" id="quan-huyen"
-                                        onchange="getBlock(this)">
+                                        aria-label="Default select example" id="district-select">
                                         <option selected class="text-center">------Quận, huyện------</option>
-                                        <option value="Quận 5" class="text-center">Quận 5</option>
                                     </select>
                                     <select name="ward" class="form-select mb-2"
-                                        aria-label="Default select example" id="phuong-xa">
+                                        aria-label="Default select example" id="ward-select">
                                         <option selected class="text-center">------Phường, xã------</option>
                                         <option name="Phường 1" class="text-center">Phường 1</option>
                                     </select>
@@ -221,72 +216,95 @@
     <x-footer />
     <x-toast />
     <script>
-        function getDistric(ele) {
-            console.log(ele);
-            var newele = document.getElementById('quan-huyen');
-            var newele2 = document.getElementById('phuong-xa');
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
-                    console.log(JSON.parse(this.responseText));
-                    arrcity = JSON.parse(this.responseText);
-                    newele.length = 1;
-                    newele2.length = 1;
-                    for (var i = 0; i < arrcity.length; i++) {
-                        newele.add(new Option(arrcity[i]['name'], arrcity[i]['code']));
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        $(document).on('change', '#city-select', function() {
+            let id = $(this).find(':selected').attr('data-id')
+            let district = document.getElementById('district-select');
+            let ward = document.getElementById('ward-select');
+            $.ajax({
+                url: "/cart/get_district",
+                method: "GET",
+                dataType: 'json',
+                data: {
+                    "id": id
+                },
+                success: function(result) {
+                    district.length = 1;
+                    ward.length = 1;
+                    for (var i = 0; i < result.length; i++) {
+                        district.add(new Option(result[i]['name'],result[i]['name'] + '-' + result[i]['code']));
                     }
                 }
-            };
-            xhttp.open("POST", "/cart/distric?id=" + ele.value, true);
-            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            xhttp.setRequestHeader("X-CSRF-TOKEN", document.head.querySelector("[name=csrf-token]").content);
-            xhttp.send();
-        }
+            });
+        })
 
-        function getBlock(ele) {
-            console.log(ele);
-            var newele = document.getElementById('phuong-xa');
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
-                    console.log(JSON.parse(this.responseText));
-                    arrcity = JSON.parse(this.responseText);
-                    newele.length = 1;
-                    for (var i = 0; i < arrcity.length; i++) {
-                        newele.add(new Option(arrcity[i]['name'], arrcity[i]['code']));
+        $(document).on('change', '#district-select', function() {
+            let id = $(this).find(':selected').val().split('-')[1]
+            let ward = document.getElementById('ward-select');
+            $.ajax({
+                url: "/cart/get_ward",
+                method: "GET",
+                dataType: 'json',
+                data: {
+                    "id": id
+                },
+                success: function(result) {
+                    ward.length = 1;
+                    for (var i = 0; i < result.length; i++) {
+                        ward.add(new Option(result[i]['name'], result[i]['code']));
                     }
                 }
-            };
-            xhttp.open("GET", "/cart/block?id=" + ele.value, true);
-            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            xhttp.setRequestHeader("X-CSRF-TOKEN", document.head.querySelector("[name=csrf-token]").content);
-            xhttp.send();
-        }
+            });
+        })
 
-        $(document).on('click', '.minus-btn', function() {
+        // function getBlock(ele) {
+        //     console.log(ele);
+        //     var newele = document.getElementById('ward');
+        //     var xhttp = new XMLHttpRequest();
+        //     xhttp.onreadystatechange = function() {
+        //         if (this.readyState == 4 && this.status == 200) {
+        //             console.log(JSON.parse(this.responseText));
+        //             arrcity = JSON.parse(this.responseText);
+        //             newele.length = 1;
+        //             for (var i = 0; i < arrcity.length; i++) {
+        //                 newele.add(new Option(arrcity[i]['name'], arrcity[i]['code']));
+        //             }
+        //         }
+        //     };
+        //     xhttp.open("GET", "/cart/get_ward?id=" + ele.value, true);
+        //     xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        //     xhttp.setRequestHeader("X-CSRF-TOKEN", document.head.querySelector("[name=csrf-token]").content);
+        //     xhttp.send();
+        // }
+
+        $(document).on('click', '.minus-btn', function(e) {
             let id = $(this).attr('data-id')
             $.ajax({
-                url: "/decrease_incart",
-                method: "get",
+                url: "decrease_incart",
+                method: "GET",
                 dataType: 'json',
                 data: {
                     "id": id
                 },
                 success: function(result) {
                     console.log(result)
+                    if (result.status == 0) {
+                        $('.toast').toast('show')
+                        $('.toast-body').html(result.message)
+                    }
                 }
             });
         })
 
-        $(document).on('click', '.plus-btn', function() {
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
+        $(document).on('click', '.plus-btn', function(e) {
             let id = $(this).attr('data-id')
             $.ajax({
-                url: "/increase_incart",
+                url: "increase_incart",
                 method: "GET",
                 dataType: 'json',
                 data: {
@@ -305,7 +323,7 @@
         $(document).on('click', '.remove-cart', function() {
             let id = $(this).attr('data-id')
             $.ajax({
-                url: "/remove_cart",
+                url: "remove_cart",
                 method: "get",
                 dataType: 'json',
                 data: {

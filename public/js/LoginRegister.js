@@ -47,6 +47,7 @@ $("#login").on('click', (e) => {
         dataType: 'json',
         data: { email: email, password: password },
         success: function (data) {
+            console.log(data)
             if (data.status == 0) ErrorNotification($("#l-password-error"), $("#l-password-success"), $(".l-password"), $(".form-box").find("span").eq(3), data.message)
             else SuccessNotification($("#l-password-success"), $("#l-password-error"), $(".l-password"), $(".form-box").find("span").eq(3))
             if (data.status == -1) ErrorNotification($("#l-email-error"), $("#l-email-success"), $(".l-email"), $(".form-box").find("span").eq(2), data.message)

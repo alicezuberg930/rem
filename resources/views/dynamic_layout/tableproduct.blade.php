@@ -11,8 +11,8 @@
         </tr>
     </thead>
     <tbody id="show-product">
-        <?php $stt = ($currentpage - 1) * 10; ?>
-        @foreach ($productArray as $value)
+        <?php $stt = ($currentpage = 2 - 1) * 10; ?>
+        {{-- @foreach ($productArray as $value)
             <tr>
                 <th scope="row"><?php echo ++$stt; ?></th>
                 <th scope="row"><?php echo $value['id']; ?></th>
@@ -173,7 +173,7 @@
                     </div>
                 </div>
             </div>
-        @endforeach
+        @endforeach --}}
     </tbody>
 </table>
 <nav aria-label="Page navigation example" class="col-md-12 my-3">
