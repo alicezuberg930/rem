@@ -4,11 +4,10 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CheckoutController;
-use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SalesController;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\ViewErrorBag;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,9 +28,9 @@ Route::get('/cart', function () {
     return view('cart.index');
 });
 
-Route::get('/filter', function () {
-    return view('product.filter');
-});
+// Route::get('/filter', function () {
+//     return view('product.filter');
+// });
 
 Route::get('/admin/form_qly_sanpham', function () {
     return view("admin.form_qly_sanpham");
@@ -43,14 +42,14 @@ Route::get('/', [ProductController::class, 'indexPage']);
 //đăng nhập & đăng ký
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/register', [AuthController::class, 'register'])->name('register');
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 //giỏ hàng
 Route::post('/add_cart', [ProductController::class, 'addCart'])->name('add_cart');
 Route::get('/remove_cart', [ProductController::class, 'removeCart'])->name('remove_cart');
 Route::get('/increase_incart', [ProductController::class, 'increaseIncart'])->name('increase_incart');
 Route::get('/decrease_incart', [ProductController::class, 'decreaseIncart'])->name('decrease_incart');
 //chi tiết sản phẩm
-Route::get('/product_details/{id}', [ProductController::class, 'getProductDetails'])->name('product_details');
+Route::get('/product_detail/{id}', [ProductController::class, 'getProductDetails'])->name('product_details');
 //CRUD sản phẩm
 Route::get('/add_product', [ProductController::class, 'addProduct']);
 Route::get('/edit_product/{id}', [ProductController::class, 'editProduct']);
@@ -66,6 +65,12 @@ Route::get('/delete_sale/{id}', [ProductController::class, 'deleteSale']);
 //Thánh toán
 Route::get('/vnpay/vnpay_return', [CheckoutController::class, 'paymentsResult']);
 Route::post('/vnpay/vnpay_payment', [CheckoutController::class, 'vnpayPayment']);
-//Quản lý
+//Lấy thông tin api
 Route::get('/cart/get_district', [CartController::class, 'getDistrict'])->name('getDistrict');
 Route::get('/cart/get_ward', [CartController::class, 'getWard'])->name('getWard');
+//Xác thực thông tin đăng ký
+Route::get('/verification/{token}', [AuthController::class, 'verifyUser']);
+//Lọc sản phẩm
+Route::get('/filter/search', [ProductController::class, 'filterProducts']);
+Route::get('/filter/paginate', [ProductController::class, 'filterProducts']);
+Route::get('/filter', [ProductController::class, 'searchPage']);

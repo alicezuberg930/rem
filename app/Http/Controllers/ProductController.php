@@ -3,10 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\product;
-use App\Models\User;
-use Illuminate\Cache\Repository;
 use Illuminate\Http\Request;
-use PDO;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
@@ -16,7 +14,7 @@ class ProductController extends Controller
         $cart = session('cart');
         $product = product::where('products.id', '=', $id)
             ->leftjoin('sales', 'products.discount', '=', 'sales.id')
-            ->get(['sales.percent', 'products.amount', 'products.image', 'products.name', 'products.price', 'products.origin', 'products.category']);;
+            ->get(['sales.percent', 'products.amount', 'products.image', 'products.name', 'products.price', 'products.origin', 'products.category']);
         // @dd($product);
         if (isset($cart[$id])) {
             if ($cart[$id]['quantity'] < $product[0]->amount)
@@ -97,18 +95,49 @@ class ProductController extends Controller
         return view("index", ['NewProducts' => $this->getNewProducts(), 'SaleProducts' => $this->getSaleProducts()]);
     }
 
+    public function searchPage()
+    {
+        return view("product.filter", [
+            'Caterogies' => CategoryController::getCategory(),
+            'Materials' => product::select('material')->distinct()->get(),
+            'Countries' => product::select('origin')->distinct()->get()
+        ]);
+    }
+
     public function getProductDetails($id)
     {
-        $product = product::where('id', '=', $id)
-            ->join('sales', 'products.id', '=', 'sales.id')
+        $product = product::where('products.id', '=', $id)
+            ->leftjoin('sales', 'products.id', '=', 'sales.id')
             ->get(['products.id as ProductsID', 'sales.id as SaleID', 'products.created_at', 'products.updated_at', 'products.image', 'products.name', 'products.price', 'products.origin', 'sales.percent']);;
         return view("product.details", ['product' => $product]);
     }
 
     public function filterProducts(Request $request)
     {
-        $categories = $request->input('categories') == NULL;
+        $category = $request->input('categories');
+        $country = $request->input('countries');
+        $material = $request->input('materials');
+        $firstprice = $request->input('firstprice') == NULL ? 0 : $request->input('firstprice');
+        $lastprice = $request->input('lastprice') == NULL ? 9999999999 : $request->input('lastprice');
+        $current_page = $request->input('page') == NULL ? 1 : $request->input('page');
+        $sort = $request->input('sort') == NULL ? 'ASC' : $request->input('sort');
+        $products = DB::table('products')
+            ->leftjoin('sales', 'products.discount', '=', 'sales.id')
+            ->whereIn('category', $category)
+            ->whereIn('origin', $country)
+            ->whereIn('material', $material)
+            ->whereBetween('price', [$firstprice, $lastprice])
+            ->orderBy('price', $sort)
+            ->take(9)
+            ->skip(($current_page - 1) * 9)
+            ->get(['products.id as ProductsID', 'sales.id as SaleID', 'products.created_at', 'products.updated_at', 'products.image', 'products.name', 'products.price', 'products.origin', 'sales.percent']);
+        $paginate = product::count();
+        return view('dynamic_layout.filterview', compact('products', 'paginate', 'current_page', 'sort'));
     }
+
+    // Card #: 4162 9601 5493 7537
+    // Exp date : 11/27
+    // Cvv: 381
 
     public function addProduct(Request $request)
     {

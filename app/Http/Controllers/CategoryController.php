@@ -10,7 +10,10 @@ class CategoryController extends Controller
 
     public function addCategory(Request $request)
     {
-        return category::create($request->all());
+        // return category::create($request->all());
+        $Category = new category;
+        // $Category->name = "BẬT LỬA ZIPPO PHỔ THÔNG";
+        // $Category->save();
     }
 
     public function editCategory(Request $request)
@@ -26,7 +29,8 @@ class CategoryController extends Controller
         return category::findOrFail($request->input('id'))->delete();
     }
 
-    public function getCategory()
+    public static function getCategory()
     {
+        return category::all();
     }
 }

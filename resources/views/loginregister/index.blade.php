@@ -12,7 +12,7 @@
     <link rel="stylesheet" type="text/css" href="{{ url('./bootstrap/dist/css/bootstrap.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url('./css/Login-Register.css') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-</head>
+</head> 
 
 <body>
     <div class="loginregister-container" style="background-image: url({{ url('login-register-background.jpg') }})">

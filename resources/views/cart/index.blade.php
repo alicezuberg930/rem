@@ -152,11 +152,12 @@
                                     <select name="city" class="form-select mb-2"
                                         aria-label="Default select example" id="city-select">
                                         <option selected class="text-center">------Thành phố------</option>
-                                        <?php $respon = Http::get('https://provinces.open-api.vn/api/p');
-                                        $apiOk = $respon->json();
-                                        for ($i = 0; $i < sizeof($apiOk); $i++) {
-                                            echo '<option value="' . $apiOk[$i]['name'] . '" data-id="' . $apiOk[$i]['code'] . '">' . $apiOk[$i]['name'] . '</option>';
-                                        } ?>
+                                        <?php $cities = Http::get('https://provinces.open-api.vn/api/p'); ?>
+                                        @foreach ($cities->json() as $city)
+                                            <option value="{{ $city['name'] }}" data-id="{{ $city['code'] }}">
+                                                {{ $city['name'] }}
+                                            </option>
+                                        @endforeach
                                     </select>
                                     <select name="district" class="form-select mb-2"
                                         aria-label="Default select example" id="district-select">
@@ -165,7 +166,6 @@
                                     <select name="ward" class="form-select mb-2"
                                         aria-label="Default select example" id="ward-select">
                                         <option selected class="text-center">------Phường, xã------</option>
-                                        <option name="Phường 1" class="text-center">Phường 1</option>
                                     </select>
                                     <textarea name="full-address" class="form-control" id="pay-address" id="pay-address"
                                         placeholder="Số nhà, tên đường" style="height: 50px;">99 An Dương Vương</textarea>
@@ -237,7 +237,9 @@
                     district.length = 1;
                     ward.length = 1;
                     for (var i = 0; i < result.length; i++) {
-                        district.add(new Option(result[i]['name'],result[i]['name'] + '-' + result[i]['code']));
+                        district.add(new Option(result[i]['name'], result[i]['name'] + '-' + result[i][
+                            'code'
+                        ]));
                     }
                 }
             });
@@ -261,26 +263,6 @@
                 }
             });
         })
-
-        // function getBlock(ele) {
-        //     console.log(ele);
-        //     var newele = document.getElementById('ward');
-        //     var xhttp = new XMLHttpRequest();
-        //     xhttp.onreadystatechange = function() {
-        //         if (this.readyState == 4 && this.status == 200) {
-        //             console.log(JSON.parse(this.responseText));
-        //             arrcity = JSON.parse(this.responseText);
-        //             newele.length = 1;
-        //             for (var i = 0; i < arrcity.length; i++) {
-        //                 newele.add(new Option(arrcity[i]['name'], arrcity[i]['code']));
-        //             }
-        //         }
-        //     };
-        //     xhttp.open("GET", "/cart/get_ward?id=" + ele.value, true);
-        //     xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        //     xhttp.setRequestHeader("X-CSRF-TOKEN", document.head.querySelector("[name=csrf-token]").content);
-        //     xhttp.send();
-        // }
 
         $(document).on('click', '.minus-btn', function(e) {
             let id = $(this).attr('data-id')

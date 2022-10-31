@@ -127,29 +127,29 @@ class CheckoutController extends Controller
         }
         $secureHash = hash_hmac('sha512', $hashData, $this->vnp_HashSecret);
         if ($secureHash == $vnp_SecureHash) {
-            //     if ($_GET['vnp_ResponseCode'] == '00') {
-            //         $orders = new orders();
-            //         $orders->order_date = $request->input('vnp_PayDate');
-            //         $orders->fullname = session('orders')['fullname'];
-            //         $orders->phone_number = session('orders')['phone_number'];
-            //         $orders->address = session('orders')['address'];
-            //         $orders->quantity = session('orders')['quantity'];
-            //         $orders->total_price = session('orders')['total_price'];
-            //         $orders->user_id = session('UserID');
-            //         if ($orders->save()) {
-            //             foreach (session()->get('cart') as $item) {
-            //                 $orderdetails = new orderdetails();
-            //                 $orderdetails->order_id = orders::max('id') + 1;
-            //                 $orderdetails->product_id = $item['id'];
-            //                 $orderdetails->quantity = $item['quantity'];
-            //                 $orderdetails->product_price = $item['price'];
-            //                 $orderdetails->save();
-            //             }
-            $Result = 'Giao dịch thành công';
-            //         }
-            // } else {
-            //     $Result = 'Giao dịch không thành công';
-            // }
+            if ($_GET['vnp_ResponseCode'] == '00') {
+                $orders = new orders();
+                $orders->order_date = $request->input('vnp_PayDate');
+                $orders->fullname = session('orders')['fullname'];
+                $orders->phone_number = session('orders')['phone_number'];
+                $orders->address = session('orders')['address'];
+                $orders->quantity = session('orders')['quantity'];
+                $orders->total_price = session('orders')['total_price'];
+                $orders->user_id = session('UserID');
+                if ($orders->save()) {
+                    foreach (session()->get('cart') as $item) {
+                        $orderdetails = new orderdetails();
+                        $orderdetails->order_id = orders::max('id') + 1;
+                        $orderdetails->product_id = $item['id'];
+                        $orderdetails->quantity = $item['quantity'];
+                        $orderdetails->product_price = $item['price'];
+                        $orderdetails->save();
+                    }
+                    $Result = 'Giao dịch thành công';
+                }
+            } else {
+                $Result = 'Giao dịch không thành công';
+            }
         } else {
             $Result = 'Chu kỳ không hợp lệ';
         }

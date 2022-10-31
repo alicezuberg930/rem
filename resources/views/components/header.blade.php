@@ -23,7 +23,7 @@
                         <div class="dropdown-menu animation bg-sub" aria-labelledby="dropdownAccountMenu">
                             <div id="user-edit-information" class="dropdown-item dropdown-login text-white">Đổi thông
                                 tin</div>
-                            <a href="/game/purchase_history/">
+                            <a href="/purchase_history">
                                 <div id="user-purchase-history" class="dropdown-item dropdown-login text-white">Lịch sử
                                     mua hàng</div>
                             </a>
@@ -31,7 +31,8 @@
                             </div>
                         </div>
                         <div class="mx-2"> | </div>
-                        <a id="login-logout" class="d-flex text-danger font-weight-bold" href="#">
+                        <a id="login-logout" class="d-flex text-decoration-none text-danger font-weight-bold"
+                            href="/logout">
                             Đăng xuất
                             <svg style="padding-top: 2px" version="1.0" xmlns="http://www.w3.org/2000/svg"
                                 width="25px" height="25px" viewBox="0 0 512.000000 512.000000"
@@ -54,7 +55,8 @@
                     </div>
                     <div class="mx-2"> | </div>
                     <div class="font-weight-bold">
-                        <a id="login-logout" class="nav-link text-white font-weight-bold" href="/loginregister"> Đăng ký </a>
+                        <a id="login-logout" class="nav-link text-white font-weight-bold" href="/loginregister"> Đăng ký
+                        </a>
                     </div>
                 </div>
             @endif
@@ -76,7 +78,7 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item">
-                        <a class="nav-link d-flex" href="/game/">
+                        <a class="nav-link d-flex" href="/">
                             <svg class="pr-1" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="home"
                                 role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" width="25px"
                                 height="25px">
@@ -121,9 +123,10 @@
                 </ul>
             </div>
             <form id="search-bar" action="/search" method="GET" class="form-inline my-2 my-md-0">
-                <div class="input-group rounded">
-                    <input type="search" class="form-control rounded" name="search"
-                        placeholder="Nhập tên tìm kiếm" aria-label="Search" aria-describedby="search-addon" />
+                <div class="input-group rounded-pill">
+                    <input type="text" class="form-control" placeholder="Nhập tên sản phẩm..."
+                        id="search_name">
+                    <i class="btn bg-white text-dark bi bi-search"></i>
                 </div>
             </form>
         </nav>
