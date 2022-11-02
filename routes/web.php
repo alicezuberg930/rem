@@ -4,9 +4,12 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SalesController;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,22 +23,23 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+//Giao diện trang đăng nhập & đăng ký
 Route::get('/loginregister', function () {
-    return view('loginregister.index');
+    return view('login_register.index');
 });
-
+// Giao diện trang giỏ hàng
 Route::get('/cart', function () {
     return view('cart.index');
 });
-
-// Route::get('/filter', function () {
-//     return view('product.filter');
-// });
-
+//Giao diện trang quản lý
 Route::get('/admin/form_qly_sanpham', function () {
     return view("admin.form_qly_sanpham");
 });
-
+// Giao diện trang quên mật khẩu
+Route::get('/reset_password', function () {
+    return view("forget_password.reset_password");
+});
+// Giao diện trang chủ
 Route::get('/', [ProductController::class, 'indexPage']);
 // Route::get('/cart', [ProductController::class, 'getCartProducts']);
 //->middleware('isLoggedIn');
@@ -74,3 +78,37 @@ Route::get('/verification/{token}', [AuthController::class, 'verifyUser']);
 Route::get('/filter/search', [ProductController::class, 'filterProducts']);
 Route::get('/filter/paginate', [ProductController::class, 'filterProducts']);
 Route::get('/filter', [ProductController::class, 'searchPage']);
+//Quản lý thống kê
+Route::get('/admin/statistic', [CategoryController::class, 'manageCategoryPage']);
+Route::get('/admin/manage_category/add', [CategoryController::class, 'addCategory']);
+Route::get('/admin/manage_category/edit', [CategoryController::class, 'editCategory']);
+Route::get('/admin/manage_category/delete', [CategoryController::class, 'deleteCategory']);
+//Quản lý sản phẩm
+Route::get('/admin/manage_products', [CategoryController::class, 'manageCategoryPage']);
+Route::get('/admin/manage_category/add', [CategoryController::class, 'addCategory']);
+Route::get('/admin/manage_category/edit', [CategoryController::class, 'editCategory']);
+Route::get('/admin/manage_category/delete', [CategoryController::class, 'deleteCategory']);
+//Quản lý đơn hàng
+Route::get('/admin/manage_orders', [CategoryController::class, 'manageCategoryPage']);
+Route::get('/admin/manage_category/add', [CategoryController::class, 'addCategory']);
+Route::get('/admin/manage_category/edit', [CategoryController::class, 'editCategory']);
+Route::get('/admin/manage_category/delete', [CategoryController::class, 'deleteCategory']);
+//Quản lý khách hàng
+Route::get('/admin/manage_accounts', [CategoryController::class, 'manageCategoryPage']);
+Route::get('/admin/manage_category/add', [CategoryController::class, 'addCategory']);
+Route::get('/admin/manage_category/edit', [CategoryController::class, 'editCategory']);
+Route::get('/admin/manage_category/delete', [CategoryController::class, 'deleteCategory']);
+//Quản lý thể loại
+Route::get('/admin/manage_category', [CategoryController::class, 'manageCategoryPage']);
+Route::get('/admin/manage_category/add', [CategoryController::class, 'addCategory']);
+Route::get('/admin/manage_category/edit', [CategoryController::class, 'editCategory']);
+Route::get('/admin/manage_category/delete', [CategoryController::class, 'deleteCategory']);
+//Quản lý giảm giá
+Route::get('/admin/manage_sales', [CategoryController::class, 'manageCategoryPage']);
+Route::get('/admin/manage_category/add', [CategoryController::class, 'addCategory']);
+Route::get('/admin/manage_category/edit', [CategoryController::class, 'editCategory']);
+Route::get('/admin/manage_category/delete', [CategoryController::class, 'deleteCategory']);
+//Lấy lại mật khẩu
+Route::post('/reset_password_request', [PasswordResetController::class, 'resetPasswordRequest']);
+Route::get('/create_new_password/{selector}/{token}', [PasswordResetController::class, 'createNewPasswordPage']);
+Route::post('/reset_password_handler', [PasswordResetController::class, 'resetPasswordHandler']);

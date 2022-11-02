@@ -45,7 +45,7 @@
                     <input type="checkbox" class="check-box">
                     <small>Nhớ tôi</small>
                 </div>
-                <p><a href="./reset-index.php">Quên mật khẩu?</a></p>
+                <p><a href="/reset_password">Quên mật khẩu?</a></p>
                 <button class="submit" id="login">Đăng Nhập</button>
             </form>
             <form method="GET" id="register_form" class="input-groups" action="/register">

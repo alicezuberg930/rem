@@ -8,6 +8,7 @@ use App\Models\orders;
 use App\Models\product;
 use Illuminate\Database\DeadlockException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
 use Psy\TabCompletion\Matcher\FunctionsMatcher;
 
 class CheckoutController extends Controller
@@ -27,7 +28,7 @@ class CheckoutController extends Controller
         ]);
         session()->save();
         $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-        $vnp_Returnurl = "http://127.0.0.1:8001/vnpay/vnpay_return";
+        $vnp_Returnurl = URL::to("/vnpay/vnpay_return");
         $vnp_TxnRef = random_int(PHP_INT_MIN, PHP_INT_MAX);
         // $_POST['order_id']; //Mã đơn hàng. Trong thực tế Merchant cần insert đơn hàng vào DB và gửi mã này sang VNPAY
         $vnp_OrderInfo = "Thanh toan hoa don";
@@ -37,7 +38,7 @@ class CheckoutController extends Controller
         $vnp_Amount = $request->input('total_price') * 100;
         $vnp_Locale = 'vn';
         // $_POST['language'];
-        $vnp_BankCode = 'NCB';
+        $vnp_BankCode = '';
         // $_POST['bank_code'];
         $vnp_IpAddr = $_SERVER['REMOTE_ADDR'];
         //Add Params of 2.0.1 Version

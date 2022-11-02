@@ -17,11 +17,11 @@
 <body class="vh-100">
     <div class="container-fluid">
         <div class="row vh-100">
-            @include('layout.sidebar')
-            @yield('content_quanly')
+            @include('admin.sidebar')
+            @yield('body_manager')
         </div>
     </div>
-    {{-- @include('layout.footer_mn') --}}
+    <x-toast />
 </body>
 
 </html>

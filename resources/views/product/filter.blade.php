@@ -129,7 +129,7 @@
                 </form>
             </div>
             <div class="col-lg-9" id="show-product">
-                @include('dynamic_layout.filterview')
+                @include('dynamic_layout.filter_reload')
             </div>
         </div>
     </div>

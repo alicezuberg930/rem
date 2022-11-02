@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\category;
 use App\Models\product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -15,7 +16,7 @@ class ProductController extends Controller
         $product = product::where('products.id', '=', $id)
             ->leftjoin('sales', 'products.discount', '=', 'sales.id')
             ->get(['sales.percent', 'products.amount', 'products.image', 'products.name', 'products.price', 'products.origin', 'products.category']);
-        // @dd($product);
+
         if (isset($cart[$id])) {
             if ($cart[$id]['quantity'] < $product[0]->amount)
                 $cart[$id]['quantity'] += 1;
@@ -98,7 +99,7 @@ class ProductController extends Controller
     public function searchPage()
     {
         return view("product.filter", [
-            'Caterogies' => CategoryController::getCategory(),
+            'Caterogies' => category::all(),
             'Materials' => product::select('material')->distinct()->get(),
             'Countries' => product::select('origin')->distinct()->get()
         ]);
@@ -134,10 +135,6 @@ class ProductController extends Controller
         $paginate = product::count();
         return view('dynamic_layout.filterview', compact('products', 'paginate', 'current_page', 'sort'));
     }
-
-    // Card #: 4162 9601 5493 7537
-    // Exp date : 11/27
-    // Cvv: 381
 
     public function addProduct(Request $request)
     {

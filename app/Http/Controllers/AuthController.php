@@ -6,8 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -29,7 +30,7 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $token = Str::random(20);
+        $token = $request->input('_token');
         $user = User::where('email', '=', $request->input('email'))->first();
         if ($user) {
             if (($request->input('password') == $user->password)) {
@@ -92,7 +93,7 @@ class AuthController extends Controller
                 'message' => 'Số điện thoại đã được sử dụng',
                 'status' => -2
             ]);
-        $token = Str::random(20);
+        $token = $request->input('_token');
         $RegisteredEmail = $request->input('email');
         $user = new User();
         $user->email = $RegisteredEmail;
@@ -103,7 +104,7 @@ class AuthController extends Controller
         $user->remember_token = $token;
         $res = $user->save();
         if ($res) {
-            Mail::send("email.register", ['token' => $token, 'username' => $request->input('username')], function ($email) use ($RegisteredEmail) {
+            Mail::send("email_templates.register", ['token' => $token, 'username' => $request->input('username')], function ($email) use ($RegisteredEmail) {
                 $email->subject('Thông báo đăng ký');
                 $email->to($RegisteredEmail, "Header");
             });
@@ -119,13 +120,10 @@ class AuthController extends Controller
             ], 200);
         }
     }
-    public function aaa()
+    public function setCookie(Request $request)
     {
-        $token = 'a';
-        $username = 'a';
-        Mail::send("email.register", ['token' => $token, 'username' => $username], function ($email) {
-            $email->subject('Thông báo đăng ký');
-            $email->to("tien23851@gmail.com", "");
-        });
+        Cookie::queue('name', 'valusase', 60);
+        $value = Cookie::get('name');
+        dd($value);
     }
 }
