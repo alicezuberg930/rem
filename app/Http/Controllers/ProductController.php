@@ -122,19 +122,23 @@ class ProductController extends Controller
         $lastprice = $request->input('lastprice') == NULL ? 9999999999 : $request->input('lastprice');
         $current_page = $request->input('page') == NULL ? 1 : $request->input('page');
         $sort = $request->input('sort') == NULL ? 'ASC' : $request->input('sort');
-        $products = DB::table('products')
+        $search = $request->input('search') == NULL ? "" : $request->input("search");
+        $query = DB::table('products')
             ->leftjoin('sales', 'products.discount', '=', 'sales.id')
             ->whereIn('category', $category)
             ->whereIn('origin', $country)
             ->whereIn('material', $material)
             ->whereBetween('price', [$firstprice, $lastprice])
-            ->orderBy('price', $sort)
-            ->take(9)
+            ->where('name', 'like', '%' . $search . '%')
+            ->orderBy('price', $sort);
+        $paginate = $query->count();
+        $products = $query->take(9)
             ->skip(($current_page - 1) * 9)
             ->get(['products.id as ProductsID', 'sales.id as SaleID', 'products.created_at', 'products.updated_at', 'products.image', 'products.name', 'products.price', 'products.origin', 'sales.percent']);
-        $paginate = product::count();
-        return view('dynamic_layout.filterview', compact('products', 'paginate', 'current_page', 'sort'));
+        return view('dynamic_layout.filter_reload', compact('products', 'paginate', 'current_page', 'sort'));
     }
+
+
 
     public function addProduct(Request $request)
     {

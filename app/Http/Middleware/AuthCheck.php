@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
 
@@ -16,13 +17,13 @@ class AuthCheck
      */
     public function handle(Request $request, Closure $next)
     {
-        if (!session()->has('UserID')) {
-            return redirect('loginregister')->with('fail', 'You have to log in first');
+        if (session()->has('UserID')) {
+            $user = User::where('id', '=', session()->get("UserID"))->first();
+            if ($user->remember_token != session()->get('token')) {
+                session()->forget('UserID');
+                return redirect('/')->with('invalid_token', 'Token không hợp lệ');
+            }
         }
-        // if (session()->has('UserID')) {
-        //     return back();
-        // }
-
         return $next($request);
     }
 }

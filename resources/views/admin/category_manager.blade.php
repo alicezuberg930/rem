@@ -8,7 +8,7 @@
                         <input type="radio" class="btn-check" autocomplete="off" value="Tổng đơn">
                         <label class="btn btn-outline-primary btn-sm" for="btnradio1">
                             Tổng thể loại
-                            <span class="badge bg-danger" id="badge_tongdon"> <?php echo $pagin = 8; ?></span>
+                            <span class="badge bg-danger" id="badge_tongdon">{{ $total }}</span>
                         </label>
                     </div>
                     <div class="col-md-auto">
@@ -18,130 +18,196 @@
                 </div>
                 <div class="col-md-auto">
                     <div class="input-group">
-                        <input type="text" class="form-control form-control-sm" value="" placeholder="Tên..."
+                        <input type="text" class="form-control form-control-sm" placeholder="Tên thể loại"
                             id="search_id">
                         <button class="btn btn-sm btn-primary" onclick="searched(this.parentElement)"
                             type="button">Search</button>
                     </div>
                 </div>
             </div>
-            <div class="table-responsive" id="quanlytheloai">
+            <div class="table-responsive" id="category-table">
                 @include('dynamic_layout.category_reload')
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="themtheloai" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel2">Thêm thể loại</h5>
+                    <button type="lbutton" class="btn-close" data-bs-dismiss="modal" aria-labe="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row justify-content-center justify-content-around">
+                        <div class="mb-3 row">
+                            <label for="staticEmail" class="col-sm-2 col-form-label fw-semibold">Tên</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control-plaintext" id="name-category-add"
+                                    value="Thương hiệu A">
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="inputPassword" class="col-sm-2 col-form-label fw-semibold">Mô tả</label>
+                            <div class="col-sm-10">
+                                <textarea class="form-control" id="desc-category-add" placeholder="Mô tả gì đó" style="height: 10rem">Rượu vang đỏ hay còn gọi là vang đỏ hay rượu nho đỏ là một dạng phổ biến của rượu vang được làm từ những loại nho đậm màu.</textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="add-btn">Thêm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade edit-modal" id="edit-category" tabindex="-1" aria-labelledby="staticBackdropLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Sửa thương hiệu</h5>
+                    <button type="lbutton" class="btn-close" data-bs-dismiss="modal" aria-labe="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row justify-content-center justify-content-around">
+                        <div class="col-md-12">
+                            <div class="row col-md-auto">
+                                <div class="col-md-3">
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" name="name-category-modal" disabled
+                                            id="id-category-modal">
+                                        <label for="floatingInput">Mã</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="form-floating mb-3">
+                                        <input name="name-category-modal" id="name-category-modal" class="form-control"
+                                            value="">
+                                        <label for="floatingInput">Tên thương hiệu</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-floating mb-3">
+                                        <textarea class="form-control desc" id="description-category-modal" placeholder="Mô tả gì đó"
+                                            style="height: 12rem"></textarea>
+                                        <label for="floatingInput">Mô tả</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="edit-btn">Sửa</button>
+                </div>
             </div>
         </div>
     </div>
     </body>
     <script>
-        function deleted(ele, page) {
-            console.log(ele);
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
-                    document.getElementById('quanlytheloai').innerHTML = this.responseText;
-                    const toastLiveExample = document.getElementById('liveToast')
-                    toastLiveExample.innerHTML =
-                        '<div class="d-flex">' +
-                        '<div class="toast-body">Xóa thành công</div>' +
-                        '<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>' +
-                        '</div>'
-                    const toast = new bootstrap.Toast(toastLiveExample)
-                    toast.show()
+        $("#add-btn").on('click', function() {
+            let name = $('#name-category-add').val();
+            let description = $('#desc-category-add').val();
+            $.ajax({
+                url: "/admin/manage_category/add",
+                method: "get",
+                data: {
+                    name: name,
+                    description: description,
+                    page: "{{ $currentpage }}"
+                },
+                success: function(result) {
+                    $("#category-table").html(result.response)
+                    $('.toast').toast('show')
+                    $('.toast-body').html(result.message)
+                    if (result.status == 1)
+                        $('.toast').css('background-color', 'rgb(71, 201, 71)')
+                    else
+                        $('.toast').css('background-color', 'rgb(239, 73, 73)')
                 }
-            };
-            xhttp.open("DELETE", '/admin/categories/' + ele + '?page=' + page, true);
-            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            xhttp.setRequestHeader("X-CSRF-TOKEN", document.head.querySelector("[name=csrf-token]").content);
-            xhttp.send();
-        }
+            })
+        })
 
-        function edit(ele) {
-            var name = document.getElementById('name-category-modal-' + ele).value;
-            var desc = document.getElementById('desc-category-modal-' + ele).value;
-            var ss1 = document.getElementById(ele).parentElement.parentElement;
-            console.log(ele, name, desc, ss1);
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
-                    console.log(this.responseText);
-                    ss1.children[1].innerHTML = name;
-                    ss1.children[2].innerHTML = desc;
-                    const toastLiveExample = document.getElementById('liveToast')
-                    toastLiveExample.innerHTML =
-                        '<div class="d-flex">' +
-                        '<div class="toast-body">Sửa thành công</div>' +
-                        '<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>' +
-                        '</div>'
-                    const toast = new bootstrap.Toast(toastLiveExample)
-                    toast.show()
+        $(document).on('click', '.edit-btn', function() {
+            let id = $(this).attr('data-id')
+            let name = $(this).parent().parent().children().eq(1).text()
+            let description = $(this).parent().parent().children().eq(2).text().trim()
+            $("#id-category-modal").val(id)
+            $("#name-category-modal").val(name)
+            $("#description-category-modal").val(description)
+        })
+
+        $("#edit-btn").on('click', function() {
+            $.ajax({
+                url: "/admin/manage_category/edit",
+                method: "get",
+                data: {
+                    id: $("#id-category-modal").val(),
+                    name: $("#name-category-modal").val(),
+                    description: $("#description-category-modal").val(),
+                    page: "{{ $currentpage }}"
+                },
+                success: function(result) {
+                    $("#category-table").html(result.response)
+                    $('.toast').toast('show')
+                    $('.toast-body').html(result.message)
+                    if (result.status == 1)
+                        $('.toast').css('background-color', 'rgb(71, 201, 71)')
+                    else
+                        $('.toast').css('background-color', 'rgb(239, 73, 73)')
                 }
-            };
-            xhttp.open("PUT", '/admin/categories/' + ele + '?name=' + name + '&description=' + desc, true);
-            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            xhttp.setRequestHeader("X-CSRF-TOKEN", document.head.querySelector("[name=csrf-token]").content);
-            xhttp.send();
-        }
+            })
+        })
 
-        function add(page) {
-            var name = document.getElementById('name-category-add').value;
-            var desc = document.getElementById('desc-category-add').value;
-            console.log(name, desc);
-
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
-                    console.log(this.responseText);
-                    document.getElementById('quanlytheloai').innerHTML = this.responseText;
-
-                    const toastLiveExample = document.getElementById('liveToast')
-                    toastLiveExample.innerHTML =
-                        '<div class="d-flex">' +
-                        '<div class="toast-body">Thêm thành công</div>' +
-                        '<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>' +
-                        '</div>'
-                    const toast = new bootstrap.Toast(toastLiveExample)
-                    toast.show()
+        $(document).on('click', '.delete-btn', function() {
+            let id = $(this).attr('data-id')
+            $.ajax({
+                url: "/admin/manage_category/delete",
+                method: "get",
+                data: {
+                    id: id,
+                    page: "{{ $currentpage }}"
+                },
+                success: function(result) {
+                    $("#category-table").html(result.response)
+                    $('.toast').toast('show')
+                    $('.toast-body').html(result.message)
+                    if (result.status == 1)
+                        $('.toast').css('background-color', 'rgb(71, 201, 71)')
+                    else
+                        $('.toast').css('background-color', 'rgb(239, 73, 73)')
                 }
-            };
-            xhttp.open("POST", '/admin/add-category', true);
-            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            xhttp.setRequestHeader("X-CSRF-TOKEN", document.head.querySelector("[name=csrf-token]").content);
-            xhttp.send(
-                'name=' + name +
-                '&description=' + desc +
-                '&page=' + page
-            );
-        }
-
-        function phantrang(page) {
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
-                    console.log(this.responseText);
-                    document.getElementById('quanlytheloai').innerHTML = this.responseText;
+            })
+        })
+        $("#search_id").on('keyup', function() {
+            $.ajax({
+                url: "/admin/manage_category/search",
+                method: "get",
+                data: {
+                    name: $(this).val(),
+                    page: "{{ $currentpage }}"
+                },
+                success: function(result) {
+                    $("#category-table").html(result)
                 }
-            };
-            xhttp.open("GET", '/admin/categories/' + page, true);
-            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            xhttp.setRequestHeader("X-CSRF-TOKEN", document.head.querySelector("[name=csrf-token]").content);
-            xhttp.send();
-        }
+            })
+        })
 
-        function searched(ele) {
-            var search = document.getElementById('search_id').value;
-            console.log(search);
-            // var ss1 = document.getElementById(ele).parentElement.parentElement;
-            // console.log(ss1);
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
-                    console.log(this.responseText);
-                    document.getElementById('quanlytheloai').innerHTML = this.responseText;
+        $(document).on('click', '.page-item', function() {
+            $.ajax({
+                url: "/admin/manage_category/paginate/" + $(this).text(),
+                method: "get",
+                success: function(result) {
+                    console.log(result);
+                    $("#category-table").html(result)
                 }
-            };
-            xhttp.open("GET", '/admin/search-category?name=' + search, true);
-            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            xhttp.setRequestHeader("X-CSRF-TOKEN", document.head.querySelector("[name=csrf-token]").content);
-            xhttp.send();
-        }
+            })
+        })
     </script>
 @endsection

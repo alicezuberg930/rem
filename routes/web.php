@@ -40,9 +40,7 @@ Route::get('/reset_password', function () {
     return view("forget_password.reset_password");
 });
 // Giao diện trang chủ
-Route::get('/', [ProductController::class, 'indexPage']);
-// Route::get('/cart', [ProductController::class, 'getCartProducts']);
-//->middleware('isLoggedIn');
+Route::get('/', [ProductController::class, 'indexPage'])->middleware('isLoggedIn');
 //đăng nhập & đăng ký
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/register', [AuthController::class, 'register'])->name('register');
@@ -79,35 +77,37 @@ Route::get('/filter/search', [ProductController::class, 'filterProducts']);
 Route::get('/filter/paginate', [ProductController::class, 'filterProducts']);
 Route::get('/filter', [ProductController::class, 'searchPage']);
 //Quản lý thống kê
-Route::get('/admin/statistic', [CategoryController::class, 'manageCategoryPage']);
-Route::get('/admin/manage_category/add', [CategoryController::class, 'addCategory']);
-Route::get('/admin/manage_category/edit', [CategoryController::class, 'editCategory']);
-Route::get('/admin/manage_category/delete', [CategoryController::class, 'deleteCategory']);
+Route::get('/admin/manage_statistic', [CategoryController::class, 'manageCategoryPage']);
+Route::get('/admin/age_category/add', [CategoryController::class, 'addCategory']);
+Route::get('/admin/age_category/edit', [CategoryController::class, 'editCategory']);
+Route::get('/admin/age_category/delete', [CategoryController::class, 'deleteCategory']);
 //Quản lý sản phẩm
 Route::get('/admin/manage_products', [CategoryController::class, 'manageCategoryPage']);
-Route::get('/admin/manage_category/add', [CategoryController::class, 'addCategory']);
-Route::get('/admin/manage_category/edit', [CategoryController::class, 'editCategory']);
-Route::get('/admin/manage_category/delete', [CategoryController::class, 'deleteCategory']);
+Route::get('/admin/age_category/add', [CategoryController::class, 'addCategory']);
+Route::get('/admin/age_category/edit', [CategoryController::class, 'editCategory']);
+Route::get('/admin/age_category/delete', [CategoryController::class, 'deleteCategory']);
 //Quản lý đơn hàng
 Route::get('/admin/manage_orders', [CategoryController::class, 'manageCategoryPage']);
-Route::get('/admin/manage_category/add', [CategoryController::class, 'addCategory']);
-Route::get('/admin/manage_category/edit', [CategoryController::class, 'editCategory']);
-Route::get('/admin/manage_category/delete', [CategoryController::class, 'deleteCategory']);
+Route::get('/admin/age_category/add', [CategoryController::class, 'addCategory']);
+Route::get('/admin/age_category/edit', [CategoryController::class, 'editCategory']);
+Route::get('/admin/age_category/delete', [CategoryController::class, 'deleteCategory']);
 //Quản lý khách hàng
 Route::get('/admin/manage_accounts', [CategoryController::class, 'manageCategoryPage']);
-Route::get('/admin/manage_category/add', [CategoryController::class, 'addCategory']);
-Route::get('/admin/manage_category/edit', [CategoryController::class, 'editCategory']);
-Route::get('/admin/manage_category/delete', [CategoryController::class, 'deleteCategory']);
+Route::get('/admin/age_category/add', [CategoryController::class, 'addCategory']);
+Route::get('/admin/age_category/edit', [CategoryController::class, 'editCategory']);
+Route::get('/admin/age_category/delete', [CategoryController::class, 'deleteCategory']);
 //Quản lý thể loại
 Route::get('/admin/manage_category', [CategoryController::class, 'manageCategoryPage']);
 Route::get('/admin/manage_category/add', [CategoryController::class, 'addCategory']);
 Route::get('/admin/manage_category/edit', [CategoryController::class, 'editCategory']);
 Route::get('/admin/manage_category/delete', [CategoryController::class, 'deleteCategory']);
+Route::get('/admin/manage_category/search', [CategoryController::class, 'searchCategory']);
+Route::get('/admin/manage_category/paginate/{current_page}', [CategoryController::class, 'categoryReload']);
 //Quản lý giảm giá
 Route::get('/admin/manage_sales', [CategoryController::class, 'manageCategoryPage']);
-Route::get('/admin/manage_category/add', [CategoryController::class, 'addCategory']);
-Route::get('/admin/manage_category/edit', [CategoryController::class, 'editCategory']);
-Route::get('/admin/manage_category/delete', [CategoryController::class, 'deleteCategory']);
+Route::get('/admin/age_category/add', [CategoryController::class, 'addCategory']);
+Route::get('/admin/age_category/edit', [CategoryController::class, 'editCategory']);
+Route::get('/admin/age_category/delete', [CategoryController::class, 'deleteCategory']);
 //Lấy lại mật khẩu
 Route::post('/reset_password_request', [PasswordResetController::class, 'resetPasswordRequest']);
 Route::get('/create_new_password/{selector}/{token}', [PasswordResetController::class, 'createNewPasswordPage']);

@@ -74,7 +74,7 @@
                     <li class="page-item p-0"><a class="page-link active">{!! $i + 1 !!}</a></li>
                 @else
                     <li class="page-item p-0"><a class="page-link text-dark"
-                            onclick="phantrang({!! $i + 1 !!})">{!! $i + 1 !!}</a></li>
+                            data-page={{ $i + 1 }}>{!! $i + 1 !!}</a></li>
                 @endif
             @endfor
         </ul>

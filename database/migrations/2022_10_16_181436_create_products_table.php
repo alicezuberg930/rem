@@ -20,13 +20,15 @@ return new class extends Migration
             $table->string('name', 255);
             $table->integer('amount');
             $table->bigInteger('price');
-            $table->string('category', 100);
+            $table->unsignedBigInteger('category');
             $table->string('material', 40);
             $table->string('origin', 40);
             $table->text('description');
             $table->unsignedBigInteger('discount')->nullable();
             $table->index('discount');
             $table->foreign('discount')->references('id')->on('sales')->nullOnDelete()->onUpdate('cascade');
+            $table->index('category');
+            $table->foreign('category')->references('id')->on('categories')->restrictOnDelete()->onUpdate('cascade');
         });
     }
 

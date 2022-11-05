@@ -152,8 +152,8 @@
                                     <select name="city" class="form-select mb-2"
                                         aria-label="Default select example" id="city-select">
                                         <option selected class="text-center">------Thành phố------</option>
-                                        <?php $cities = Http::get('https://provinces.open-api.vn/api/p'); ?>
-                                        @foreach ($cities->json() as $city)
+                                        <?php $cities = Http::get('https://api.mysupership.vn/v1/partner/areas/province'); ?>
+                                        @foreach ($cities['results'] as $city)
                                             <option value="{{ $city['name'] }}" data-id="{{ $city['code'] }}">
                                                 {{ $city['name'] }}
                                             </option>
@@ -215,110 +215,104 @@
     </div>
     <x-footer />
     <x-toast />
-    <script>
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+</body>
+<script>
+    $(document).on('change', '#city-select', function() {
+        let id = $(this).find(':selected').attr('data-id')
+        let district = document.getElementById('district-select');
+        let ward = document.getElementById('ward-select');
+        $.ajax({
+            url: "/cart/get_district",
+            method: "GET",
+            dataType: 'json',
+            data: {
+                "id": id
+            },
+            success: function(result) {
+                district.length = 1;
+                ward.length = 1;
+                for (var i = 0; i < result.length; i++) {
+                    district.add(new Option(result[i]['name'], result[i]['name'] + '-' + result[i][
+                        'code'
+                    ]));
+                }
             }
         });
+    })
 
-        $(document).on('change', '#city-select', function() {
-            let id = $(this).find(':selected').attr('data-id')
-            let district = document.getElementById('district-select');
-            let ward = document.getElementById('ward-select');
-            $.ajax({
-                url: "/cart/get_district",
-                method: "GET",
-                dataType: 'json',
-                data: {
-                    "id": id
-                },
-                success: function(result) {
-                    district.length = 1;
-                    ward.length = 1;
-                    for (var i = 0; i < result.length; i++) {
-                        district.add(new Option(result[i]['name'], result[i]['name'] + '-' + result[i][
-                            'code'
-                        ]));
-                    }
+    $(document).on('change', '#district-select', function() {
+        let id = $(this).find(':selected').val().split('-')[1]
+        let ward = document.getElementById('ward-select');
+        $.ajax({
+            url: "/cart/get_ward",
+            method: "GET",
+            dataType: 'json',
+            data: {
+                "id": id
+            },
+            success: function(result) {
+                ward.length = 1;
+                for (var i = 0; i < result.length; i++) {
+                    ward.add(new Option(result[i]['name'], result[i]['code']));
                 }
-            });
-        })
+            }
+        });
+    })
 
-        $(document).on('change', '#district-select', function() {
-            let id = $(this).find(':selected').val().split('-')[1]
-            let ward = document.getElementById('ward-select');
-            $.ajax({
-                url: "/cart/get_ward",
-                method: "GET",
-                dataType: 'json',
-                data: {
-                    "id": id
-                },
-                success: function(result) {
-                    ward.length = 1;
-                    for (var i = 0; i < result.length; i++) {
-                        ward.add(new Option(result[i]['name'], result[i]['code']));
-                    }
-                }
-            });
-        })
-
-        $(document).on('click', '.minus-btn', function(e) {
-            let id = $(this).attr('data-id')
-            $.ajax({
-                url: "decrease_incart",
-                method: "GET",
-                dataType: 'json',
-                data: {
-                    "id": id
-                },
-                success: function(result) {
-                    console.log(result)
-                    if (result.status == 0) {
-                        $('.toast').toast('show')
-                        $('.toast-body').html(result.message)
-                    }
-                }
-            });
-        })
-
-        $(document).on('click', '.plus-btn', function(e) {
-            let id = $(this).attr('data-id')
-            $.ajax({
-                url: "increase_incart",
-                method: "GET",
-                dataType: 'json',
-                data: {
-                    "id": id
-                },
-                success: function(result) {
-                    console.log(result)
-                    if (result.status == 0) {
-                        $('.toast').toast('show')
-                        $('.toast-body').html(result.message)
-                    }
-                }
-            });
-        })
-
-        $(document).on('click', '.remove-cart', function() {
-            let id = $(this).attr('data-id')
-            $.ajax({
-                url: "remove_cart",
-                method: "get",
-                dataType: 'json',
-                data: {
-                    "id": id
-                },
-                success: function(result) {
-                    console.log(result)
+    $(document).on('click', '.minus-btn', function(e) {
+        let id = $(this).attr('data-id')
+        $.ajax({
+            url: "decrease_incart",
+            method: "GET",
+            dataType: 'json',
+            data: {
+                "id": id
+            },
+            success: function(result) {
+                console.log(result)
+                if (result.status == 0) {
                     $('.toast').toast('show')
-                    $('.toast-body').html(result.message + " " + result.id)
+                    $('.toast-body').html(result.message)
                 }
-            });
-        })
-    </script>
-</body>
+            }
+        });
+    })
+
+    $(document).on('click', '.plus-btn', function(e) {
+        let id = $(this).attr('data-id')
+        $.ajax({
+            url: "increase_incart",
+            method: "GET",
+            dataType: 'json',
+            data: {
+                "id": id
+            },
+            success: function(result) {
+                console.log(result)
+                if (result.status == 0) {
+                    $('.toast').toast('show')
+                    $('.toast-body').html(result.message)
+                }
+            }
+        });
+    })
+
+    $(document).on('click', '.remove-cart', function() {
+        let id = $(this).attr('data-id')
+        $.ajax({
+            url: "remove_cart",
+            method: "get",
+            dataType: 'json',
+            data: {
+                "id": id
+            },
+            success: function(result) {
+                console.log(result)
+                $('.toast').toast('show')
+                $('.toast-body').html(result.message + " " + result.id)
+            }
+        });
+    })
+</script>
 
 </html>

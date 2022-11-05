@@ -38,27 +38,27 @@
         </div>
         <div class="table-responsive">
             <div class="form-group">
-                <label class="form-control">Mã đơn hàng: {{ $vnp_TxnRef }}</label>
+                <label class="form-control">Mã đơn hàng: {{ $_GET['vnp_TxnRef'] }}</label>
             </div>
             <div class="form-group">
-                {{-- <label class="form-control">Tổng số tiền: {{ number_format(session('orders')['vnp_Amount']) }} --}}
+                <label class="form-control">Tổng số tiền: {{ number_format($_GET['vnp_Amount'] / 100) }}
                     VNĐ</label>
             </div>
             <div class="form-group">
-                <label class="form-control">Nội dung thanh toán: {{ $vnp_OrderInfo }}</label>
+                <label class="form-control">Nội dung thanh toán: {{ $_GET['vnp_OrderInfo'] }}</label>
             </div>
             <div class="form-group">
-                <label class="form-control">Mã phản hồi: {{ $vnp_ResponseCode }}</label>
+                <label class="form-control">Mã phản hồi: {{ $_GET['vnp_ResponseCode'] }}</label>
             </div>
             <div class="form-group">
-                <label class="form-control">Mã giao dịch của VNPAY: {{ $vnp_TransactionNo }}</label>
+                <label class="form-control">Mã giao dịch của VNPAY: {{ $_GET['vnp_TransactionNo'] }}</label>
             </div>
             <div class="form-group">
-                <label class="form-control">Mã Ngân hàng: {{ $vnp_BankCode }} </label>
+                <label class="form-control">Mã Ngân hàng: {{ $_GET['vnp_BankCode'] }} </label>
             </div>
             <div class="form-group">
                 <label class="form-control">Thời gian thanh toán:
-                    {{ date('d-m-Y h:i:s', strtotime($vnp_PayDate)) }}</label>
+                    {{ date('d-m-Y h:i:s', strtotime($_GET['vnp_PayDate'])) }}</label>
             </div>
             <div class="form-group">
                 <label class="form-control">Người thanh toán: {{ session('orders')['fullname'] }}</label>

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Client\ResponseSequence;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Mail;
@@ -30,15 +31,13 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $token = $request->input('_token');
+        $token = $request->input('token');
         $user = User::where('email', '=', $request->input('email'))->first();
         if ($user) {
             if (($request->input('password') == $user->password)) {
                 session()->put('UserID', $user->id);
                 session()->put('token', $token);
-                $a = new User();
-                $a->setRememberToken($token);
-                $a->save();
+                $user::where("id", "=", session()->get('UserID'))->update(['remember_token' => $token]);
                 return response()->json([
                     'message' => 'Đăng nhập thành công',
                     'status' => 1,
@@ -54,28 +53,22 @@ class AuthController extends Controller
                 'status' => -1
             ]);
         }
-        // $validator = Validator::make($request->all(), [
-        //     'email' => 'required|email',
-        //     'password' => 'required|min:6'
-        // ]);
-        // if (!$token = auth()->attempt($validator->validated()))
-        //     return response()->json(['error' => 'Người dùng không hợp lệ'], 401);
-        // return $this->CreateNewToken($token);
     }
 
-    public function CreateNewToken($token)
-    {
-        return response()->json([
-            'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => JWTAuth::factory()->getTTL() * 60,
-            'user' => auth()->user()
-        ]);
-    }
+    // public function CreateNewToken($token)
+    // {
+    //     return response()->json([
+    //         'access_token' => $token,
+    //         'token_type' => 'bearer',
+    //         'expires_in' => JWTAuth::factory()->getTTL() * 60,
+    //         'user' => auth()->user()
+    //     ]);
+    // }
 
     public function logout()
     {
-        // auth()->logout();
+        $user = new User();
+        $user::where("id", "=", session()->get('UserID'))->update(['remember_token' => '']);
         session()->forget('token');
         session()->forget('UserID');
         return redirect('/');
@@ -93,7 +86,7 @@ class AuthController extends Controller
                 'message' => 'Số điện thoại đã được sử dụng',
                 'status' => -2
             ]);
-        $token = $request->input('_token');
+        $token = $request->input('token');
         $RegisteredEmail = $request->input('email');
         $user = new User();
         $user->email = $RegisteredEmail;
@@ -119,11 +112,5 @@ class AuthController extends Controller
                 'status' => 0
             ], 200);
         }
-    }
-    public function setCookie(Request $request)
-    {
-        Cookie::queue('name', 'valusase', 60);
-        $value = Cookie::get('name');
-        dd($value);
     }
 }

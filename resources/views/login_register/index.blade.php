@@ -5,14 +5,14 @@
     <title>Đăng Nhập</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.2.0/css/all.css">
     <script type="module" src="{{ url('./js/LoginRegister.js') }}"></script>
     <script src="{{ url('./jquery/dist/jquery.min.js') }}"></script>
     <script src="{{ url('./bootstrap/dist/js/bootstrap.min.js') }}"></script>
     <link rel="stylesheet" type="text/css" href="{{ url('./bootstrap/dist/css/bootstrap.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url('./css/Login-Register.css') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-</head> 
+</head>
 
 <body>
     <div class="loginregister-container" style="background-image: url({{ url('login-register-background.jpg') }})">

@@ -14,6 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('orderdetails', function (Blueprint $table) {
+            $table->timestamps();
             $table->unsignedBigInteger('order_id');
             $table->unsignedBigInteger('product_id');
             $table->primary(['order_id', 'product_id']);

@@ -8,6 +8,7 @@ use App\Models\orders;
 use App\Models\product;
 use Illuminate\Database\DeadlockException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 use Psy\TabCompletion\Matcher\FunctionsMatcher;
 
@@ -132,7 +133,7 @@ class CheckoutController extends Controller
                 $orders = new orders();
                 $orders->order_date = $request->input('vnp_PayDate');
                 $orders->fullname = session('orders')['fullname'];
-                $orders->phone_number = session('orders')['phone_number'];
+                $orders->phone_number = session('orders')['phonenumber'];
                 $orders->address = session('orders')['address'];
                 $orders->quantity = session('orders')['quantity'];
                 $orders->total_price = session('orders')['total_price'];
@@ -140,13 +141,19 @@ class CheckoutController extends Controller
                 if ($orders->save()) {
                     foreach (session()->get('cart') as $item) {
                         $orderdetails = new orderdetails();
-                        $orderdetails->order_id = orders::max('id') + 1;
+                        $orderdetails->order_id = orders::max('id');
                         $orderdetails->product_id = $item['id'];
                         $orderdetails->quantity = $item['quantity'];
                         $orderdetails->product_price = $item['price'];
                         $orderdetails->save();
                     }
                     $Result = 'Giao dịch thành công';
+                    // session()->forget('orders');
+                    // Mail::send("vnpay.vnpay_return", ['Result' => $Result], function ($email) {
+                    //     $email->subject('Thông báo đăng ký');
+                    //     $email->to(session()->get('orders')["email"], "Header");
+                    // });
+                    session()->forget('cart');
                 }
             } else {
                 $Result = 'Giao dịch không thành công';
@@ -154,15 +161,8 @@ class CheckoutController extends Controller
         } else {
             $Result = 'Chu kỳ không hợp lệ';
         }
-        echo $Result;
         return view("vnpay.vnpay_return", [
-            'vnp_TxnRef' => $request->input('vnp_TxnRef'),
-            'vnp_OrderInfo' => $request->input('vnp_OrderInfo'),
-            'vnp_ResponseCode' => $request->input('vnp_ResponseCode'),
-            'vnp_TransactionNo' => $request->input('vnp_TransactionNo'),
-            'vnp_BankCode' => $request->input('vnp_BankCode'),
-            'vnp_PayDate' => $request->input('vnp_PayDate'),
-            'Result' => '$Result'
+            'Result' => $Result
         ]);
     }
 }

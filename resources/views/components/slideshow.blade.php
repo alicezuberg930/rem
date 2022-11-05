@@ -29,27 +29,27 @@
                 <span class="border p-1 col-md-2 fs-3 fw-semibold">Thể loại zippo</span>
                 <hr class="col-md-5" />
             </div>
-            <div class="row row-cols-1 row-cols-lg-3 gy-2 align-items-stretch">
+            <div style="min-height: 380px;" class="row row-cols-1 row-cols-lg-3 gy-2 align-items-stretch">
                 <div class="col">
-                    <div class="card card-cover h-100  text-bg-dark rounded-4 shadow-lg"
-                        style="background-image: url('https://www.foodandwine.com/thmb/08KJJcjBuKyllCFFY7hDwvq9Z6w=/2000x1125/filters:fill(auto,1)/red-wine-blends-FT-MAG1116-2000-4f3c3e91bcd646ea8a21f2152746ef53.jpg');background-size: cover; background-position: center; min-height: 234px;">
-                        <div class="d-flex h-100 p-5  text-white text-shadow-1 align-items-center align-self-center">
+                    <div class="card card-cover h-100 text-bg-dark rounded-4 shadow-lg"
+                        style="background-position: center; background-image: url('{{ url('image/image_1666191176_Zippo Stigma Stoned Undeads ZA-1-137A.jpg') }}');background-size: cover; background-position: center; min-height: 234px;">
+                        <div class="d-flex h-100 p-5 text-dark text-shadow-1 align-items-center align-self-center">
                             <h3 class="display-6 lh-1 fw-bold">Cao cấp</h3>
                         </div>
                     </div>
                 </div>
                 <div class="col">
-                    <div class="card card-cover h-100  text-bg-dark rounded-4 shadow-lg"
-                        style="background-image: url('https://i.pinimg.com/736x/99/78/6f/99786f008c01c25bda4b744873fdb456.jpg'); background-size: cover;min-height: 234px;">
-                        <div class="d-flex h-100 p-5  text-white text-shadow-1 align-items-center align-self-center">
+                    <div class="card card-cover h-100 text-bg-dark rounded-4 shadow-lg"
+                        style="background-position: center; background-image: url('{{ url('image/image_1666197739_Zippo Classic High Polish Chrome - 250.jpg') }}'); background-size: cover;min-height: 234px;">
+                        <div class="d-flex h-100 p-5 text-dark text-shadow-1 align-items-center align-self-center">
                             <h3 class="display-6 lh-1 fw-bold">Phổ thông</h3>
                         </div>
                     </div>
                 </div>
                 <div class="col">
-                    <div class="card card-cover h-100  text-bg-dark rounded-4 shadow-lg"
-                        style="background-image: url('https://us.123rf.com/450wm/alfastudio/alfastudio1708/alfastudio170800724/83369587-a-glass-of-red-wine-and-cut-ham-with-basil-and-pepper-on-a-black-background-tasty-healthy-delicious-.jpg?ver=6');background-size: cover;min-height: 234px;">
-                        <div class="d-flex h-100 p-5  text-white text-shadow-1 align-items-center align-self-center">
+                    <div class="card card-cover h-100 text-bg-dark rounded-4 shadow-lg"
+                        style="background-position: center; background-image: url('{{ url('image/image_1666193162_Zippo Eye of Providence.jpg') }}');background-size: cover;min-height: 234px;">
+                        <div class="d-flex h-100 p-5 text-dark text-shadow-1 align-items-center align-self-center">
                             <h3 class="display-6 lh-1 fw-bold">Armor</h3>
                         </div>
                     </div>
@@ -57,7 +57,7 @@
 
             </div>
         </div>
-        <div class="mt-4 mb-4">
+        {{-- <div class="mt-4 mb-4">
             <div class="d-flex align-items-center justify-content-center text-center p-0">
                 <hr class="col-5" />
                 <span class="border p-1 col-md-2 fs-3 fw-semibold">Tìm hiểu</span>
@@ -65,23 +65,6 @@
             </div>
         </div>
         <div class="g-0 row row-cols-md-2 row-cols-sm-1 row-cols-1 gy-2">
-            {{-- @php
-            for ($i = 0; $i < 8; $i++) {
-                echo '<div class="col">
-                <div class="p-2 card m-3 border-0 h-90">
-                    <img class="card-img mx-auto d-block"
-                        src="https://tmwine.vn/wp-content/uploads/2020/10/TMWine-San-pham-34-300x300.jpg"
-                        style="object-fit: cover; width: 12rem; height: 13rem;">
-                    <div class="card-body">
-                        <div class="card-title h6">Wine Quinta das Arcas, Conde Villar Rose, 2019</div>
-                        <small class="mb-2 card-text text-muted">Ý, Vang đỏ, Papale Primitivo di Manduria</small>
-                        <p class="card-text fw-bold">12, 000, 000 đ</p>
-                        <span class="btn btn-outline-primary btn-sm rounded-0 m-0">Thêm vào giỏ</span>                
-                    </div>
-                </div>
-            </div>';
-            }
-        @endphp --}}
             <div class="col col-md-6 bg-dark pt-3 pt-md-5 px-md-5 text-center text-white"
                 style="background-image: url('https://images.fineartamerica.com/images/artworkimages/mediumlarge/2/red-wine-on-a-dark-background-maryana-kankulova.jpg');">
                 <div class="my-3 py-3">
@@ -186,6 +169,6 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
     </div>
 </div>

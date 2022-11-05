@@ -38,7 +38,7 @@
                                 @foreach ($Caterogies as $category)
                                     <div class="form-check">
                                         <input class="input-category form-check-input me-1" type="radio"
-                                            value="{{ $category->name }}" name="category" id="category">
+                                            value="{{ $category->id }}" name="category" id="category">
                                         <label class="form-check-label" for="category">{{ $category->name }}</label>
                                     </div>
                                 @endforeach
@@ -137,7 +137,7 @@
     <x-toast />
 
     <script>
-        $('#filter-btn').click(function() {
+        function filterClick(search) {
             let categories = []
             let countries = []
             let materials = [];
@@ -192,15 +192,21 @@
                     "materials": materials,
                     "firstprice": firstprice,
                     "lastprice": lastprice,
-                    "sort": sort
+                    "sort": sort,
+                    "search": search
                 },
                 success: function(result) {
+                    console.log(result);
                     $("#show-product").html(result)
                 }
             });
-        })
 
-        function phantrang(page) {
+        }
+        $('#filter-btn').click(function() {
+            filterClick("")
+        })
+        $(document).on('click', ".page-item", function() {
+            let page = $(this).text()
             let categories = []
             let countries = []
             let materials = [];
@@ -262,7 +268,15 @@
                     $("#show-product").html(result)
                 }
             });
-        }
+        })
+
+        $('#search_name').keypress(function(e) {
+            var key = e.which
+            if (key == 13) {
+                e.preventDefault();
+                filterClick($(this).val())
+            }
+        });
     </script>
 </body>
 

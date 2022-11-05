@@ -4,7 +4,7 @@
         <?php $a = 0; ?>
         @foreach ($NewProducts as $product)
             <?php $price = $product->price; ?>
-            <div class="disable-select product-item col-md-3 col-lg-3 mb-4">
+            <div class="disable-select product-item col-6 col-md-4 col-lg-2 mb-4">
                 <div class="card card-product h-100" role="button">
                     <div class="card-quick-cart">
                         @csrf
@@ -55,7 +55,7 @@
                 </div>
             </div>
             <?php
-            if ($a != 7) {
+            if ($a != 11) {
                 $a++;
             } else {
                 break;
