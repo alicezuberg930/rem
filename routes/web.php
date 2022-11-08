@@ -4,12 +4,10 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SalesController;
-use Illuminate\Auth\Events\PasswordReset;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -74,7 +72,6 @@ Route::get('/cart/get_ward', [CartController::class, 'getWard'])->name('getWard'
 Route::get('/verification/{token}', [AuthController::class, 'verifyUser']);
 //Lọc sản phẩm
 Route::get('/filter/search', [ProductController::class, 'filterProducts']);
-Route::get('/filter/paginate', [ProductController::class, 'filterProducts']);
 Route::get('/filter', [ProductController::class, 'searchPage']);
 //Quản lý thống kê
 Route::get('/admin/manage_statistic', [CategoryController::class, 'manageCategoryPage']);
@@ -87,10 +84,9 @@ Route::get('/admin/age_category/add', [CategoryController::class, 'addCategory']
 Route::get('/admin/age_category/edit', [CategoryController::class, 'editCategory']);
 Route::get('/admin/age_category/delete', [CategoryController::class, 'deleteCategory']);
 //Quản lý đơn hàng
-Route::get('/admin/manage_orders', [CategoryController::class, 'manageCategoryPage']);
-Route::get('/admin/age_category/add', [CategoryController::class, 'addCategory']);
-Route::get('/admin/age_category/edit', [CategoryController::class, 'editCategory']);
-Route::get('/admin/age_category/delete', [CategoryController::class, 'deleteCategory']);
+Route::get('/admin/manage_orders', [OrdersController::class, 'manageOrderPage']);
+Route::get('/admin/manage_orders/update_order_status', [OrdersController::class, 'updateOrderStatus']);
+Route::get('/admin/manage_orders/order_details', [OrdersController::class, 'getOrderDetails']);
 //Quản lý khách hàng
 Route::get('/admin/manage_accounts', [CategoryController::class, 'manageCategoryPage']);
 Route::get('/admin/age_category/add', [CategoryController::class, 'addCategory']);

@@ -12,7 +12,6 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.2.0/css/all.css">
     <title>Quản lý {{ explode('_', request()->route()->uri)[1] }}</title>
 </head>
-
 <body class="vh-100">
     <div class="container-fluid">
         <div class="row vh-100">

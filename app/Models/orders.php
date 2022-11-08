@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class orders extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        "date_checked",
+        "status"
+    ];
 }

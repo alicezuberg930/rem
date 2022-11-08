@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="{{ url('./css/style.css') }}">
     <link rel="stylesheet" href="{{ url('./bootstrap/dist/css/bootstrap.min.css') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.2.0/css/all.css">
 </head>
 
 <body>
@@ -107,9 +107,9 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="mb-3 col-lg-12 col-md-12 col-sm-12">
+                        <div class="mb-3">
                             <div class="d-flex align-items-center col-lg-12 col-md-12 col-sm-12 ">
-                                <select id="sort" class="form-select text-center col-lg-12 col-md-12 col-sm-12"
+                                <select id="sort" class="form-select text-center w-100"
                                     aria-label="Default select example" style="width: 11rem">
                                     <option selected="" value="">-----Xếp theo giá------</option>
                                     <option value="ASC">Thấp đến cao</option>
@@ -121,8 +121,7 @@
                             <div class="col-lg-12 col-md-12 col-sm-12">
                                 <button name="btn-submit" type="button"
                                     class="btn-submit btn btn-outline-info w-100 rounded-pill" id="filter-btn">Lọc
-                                    sản
-                                    phẩm</button>
+                                    sản phẩm</button>
                             </div>
                         </div>
                     </div>
@@ -135,149 +134,87 @@
     </div>
     <x-footer />
     <x-toast />
-
-    <script>
-        function filterClick(search) {
-            let categories = []
-            let countries = []
-            let materials = [];
-            let category = document.querySelectorAll('.input-category');
-            let country = document.querySelectorAll('.input-country');
-            let material = document.querySelectorAll('.material-input');
-            let firstprice = document.getElementById('first-price').value;
-            let lastprice = document.getElementById('last-price').value;
-            let sort = document.getElementById('sort').value;
-            if (category[0].checked) {
-                for (let i = 1; i < category.length; i++) {
-                    categories.push(category[i].value);
-                }
-            } else {
-                for (let i = 1; i < category.length; i++) {
-                    if (category[i].checked) {
-                        categories.push(category[i].value);
-                        break
-                    }
+</body>
+<script>
+    function filterClick(search, page) {
+        let categories = []
+        let countries = []
+        let materials = [];
+        let category = document.querySelectorAll('.input-category')
+        let country = document.querySelectorAll('.input-country')
+        let material = document.querySelectorAll('.material-input')
+        let firstprice = $("#first-price").val()
+        let lastprice = $("#last-price").val()
+        let sort = $('#sort').val();
+        if (category[0].checked) {
+            for (let i = 1; i < category.length; i++) {
+                categories.push(category[i].value)
+            }
+        } else {
+            for (let i = 1; i < category.length; i++) {
+                if (category[i].checked) {
+                    categories.push(category[i].value)
+                    break
                 }
             }
-            if (country[0].checked) {
-                for (let i = 1; i < country.length; i++) {
-                    countries.push(country[i].value);
-                }
-            } else {
-                for (let i = 1; i < country.length; i++) {
-                    if (country[i].checked) {
-                        countries.push(country[i].value);
-                        break
-                    }
-                }
-            }
-            if (material[0].checked) {
-                for (let i = 1; i < material.length; i++) {
-                    materials.push(material[i].value);
-                }
-            } else {
-                for (let i = 1; i < material.length; i++) {
-                    if (material[i].checked) {
-                        materials.push(material[i].value);
-                        break
-                    }
-                }
-            }
-            $.ajax({
-                url: "/filter/search",
-                method: "GET",
-                data: {
-                    "categories": categories,
-                    "countries": countries,
-                    "materials": materials,
-                    "firstprice": firstprice,
-                    "lastprice": lastprice,
-                    "sort": sort,
-                    "search": search
-                },
-                success: function(result) {
-                    console.log(result);
-                    $("#show-product").html(result)
-                }
-            });
-
         }
-        $('#filter-btn').click(function() {
-            filterClick("")
-        })
-        $(document).on('click', ".page-item", function() {
-            let page = $(this).text()
-            let categories = []
-            let countries = []
-            let materials = [];
-            let category = document.querySelectorAll('.input-category');
-            let country = document.querySelectorAll('.input-country');
-            let material = document.querySelectorAll('.material-input');
-            let firstprice = document.getElementById('first-price').value;
-            let lastprice = document.getElementById('last-price').value;
-            let sort = document.getElementById('sort').value;
-            if (category[0].checked) {
-                for (let i = 1; i < category.length; i++) {
-                    categories.push(category[i].value);
-                }
-            } else {
-                for (let i = 1; i < category.length; i++) {
-                    if (category[i].checked) {
-                        categories.push(category[i].value);
-                        break
-                    }
+        if (country[0].checked) {
+            for (let i = 1; i < country.length; i++) {
+                countries.push(country[i].value)
+            }
+        } else {
+            for (let i = 1; i < country.length; i++) {
+                if (country[i].checked) {
+                    countries.push(country[i].value)
+                    break
                 }
             }
-            if (country[0].checked) {
-                for (let i = 1; i < country.length; i++) {
-                    countries.push(country[i].value);
-                }
-            } else {
-                for (let i = 1; i < country.length; i++) {
-                    if (country[i].checked) {
-                        countries.push(country[i].value);
-                        break
-                    }
+        }
+        if (material[0].checked) {
+            for (let i = 1; i < material.length; i++) {
+                materials.push(material[i].value)
+            }
+        } else {
+            for (let i = 1; i < material.length; i++) {
+                if (material[i].checked) {
+                    materials.push(material[i].value)
+                    break
                 }
             }
-            if (material[0].checked) {
-                for (let i = 1; i < material.length; i++) {
-                    materials.push(material[i].value);
-                }
-            } else {
-                for (let i = 1; i < material.length; i++) {
-                    if (material[i].checked) {
-                        materials.push(material[i].value);
-                        break
-                    }
-                }
-            }
-            $.ajax({
-                url: "/filter/paginate",
-                method: "GET",
-                data: {
-                    "categories": categories,
-                    "countries": countries,
-                    "materials": materials,
-                    "firstprice": firstprice,
-                    "lastprice": lastprice,
-                    "sort": sort,
-                    "page": page
-                },
-                success: function(result) {
-                    $("#show-product").html(result)
-                }
-            });
-        })
-
-        $('#search_name').keypress(function(e) {
-            var key = e.which
-            if (key == 13) {
-                e.preventDefault();
-                filterClick($(this).val())
+        }
+        $.ajax({
+            url: "/filter/search",
+            method: "GET",
+            data: {
+                "categories": categories,
+                "countries": countries,
+                "materials": materials,
+                "firstprice": firstprice,
+                "lastprice": lastprice,
+                "sort": sort,
+                "search": search,
+                "page": page
+            },
+            success: function(result) {
+                $("#show-product").html(result)
             }
         });
-    </script>
-</body>
+    }
+
+    $('#filter-btn').click(function() {
+        filterClick("", 1)
+    })
+
+    $(document).on('click', ".page-item", function() {
+        filterClick($("#search_name").val(), $(this).text())
+    })
+
+    $('#search_name').keypress(function(e) {
+        if (e.which == 13) {
+            e.preventDefault();
+            filterClick($(this).val(), 1)
+        }
+    });
+</script>
 
 </html>

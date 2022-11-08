@@ -132,13 +132,9 @@ class ProductController extends Controller
             ->where('name', 'like', '%' . $search . '%')
             ->orderBy('price', $sort);
         $paginate = $query->count();
-        $products = $query->take(9)
-            ->skip(($current_page - 1) * 9)
-            ->get(['products.id as ProductsID', 'sales.id as SaleID', 'products.created_at', 'products.updated_at', 'products.image', 'products.name', 'products.price', 'products.origin', 'sales.percent']);
+        $products = $query->take(9)->skip(($current_page - 1) * 9)->get(['products.id as ProductsID', 'sales.id as SaleID', 'products.created_at', 'products.updated_at', 'products.image', 'products.name', 'products.price', 'products.origin', 'sales.percent']);
         return view('dynamic_layout.filter_reload', compact('products', 'paginate', 'current_page', 'sort'));
     }
-
-
 
     public function addProduct(Request $request)
     {

@@ -11,7 +11,7 @@
         </tr>
     </thead>
     <tbody id="show-product">
-        <?php $stt = ($currentpage = 2 - 1) * 10; ?>
+        <?php $stt = ($currentpage - 1) * 10; ?>
         {{-- @foreach ($productArray as $value)
             <tr>
                 <th scope="row"><?php echo ++$stt; ?></th>
@@ -178,12 +178,11 @@
 </table>
 <nav aria-label="Page navigation example" class="col-md-12 my-3">
     <ul class="pagination pagination-sm justify-content-end" id="phantrang">
-        @for ($i = 0; $i < ceil($pagin / 10); $i++)
+        @for ($i = 0; $i < ceil($total / 10); $i++)
             @if ($i == $currentpage - 1)
-                <li class="page-item"><a class="page-link active">{!! $i + 1 !!}</a></li>
+                <li class="page-item"><a class="page-link active">{{ $i + 1 }}</a></li>
             @else
-                <li class="page-item"><a class="page-link"
-                        onclick="phantrang({!! $i + 1 !!})">{!! $i + 1 !!}</a></li>
+                <li class="page-item"><a class="page-link">{{ $i + 1 }}</a></li>
             @endif
         @endfor
     </ul>

@@ -7,7 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title> ZippoStore </title>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.2.0/css/all.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
     <link rel="shortcut icon" type="image/png" href="{{ url('./icon.png') }}">
     <link rel="stylesheet" href="{{ url('./css/style.css') }}">
     <link rel="stylesheet" href="{{ url('./bootstrap/dist/css/bootstrap.min.css') }}">

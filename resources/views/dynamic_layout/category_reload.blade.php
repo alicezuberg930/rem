@@ -15,7 +15,7 @@
                 <th scope="col" style="width:70%;">Mô tả</th>
                 <th scope="col">Sửa</th>
                 <th scope="col">Xóa</th>
-            </tr>
+            </tr> 
         </thead>
         <tbody id="show-product">
             @foreach ($Categories as $Category)
