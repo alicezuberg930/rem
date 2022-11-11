@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\category;
 use App\Models\product;
+use App\Models\sales;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -72,10 +73,6 @@ class ProductController extends Controller
             return response()->json(['message' => "Số lượng không được dưới 0", 'status' => 0]);
     }
 
-    public function getCartProducts()
-    {
-    }
-
     public function getNewProducts()
     {
         $NewProducts = product::leftjoin('sales', 'products.discount', '=', 'sales.id')
@@ -115,7 +112,7 @@ class ProductController extends Controller
 
     public function filterProducts(Request $request)
     {
-        $category = $request->input('categories');
+        $category = $request->input('Products');
         $country = $request->input('countries');
         $material = $request->input('materials');
         $firstprice = $request->input('firstprice') == NULL ? 0 : $request->input('firstprice');
@@ -154,19 +151,51 @@ class ProductController extends Controller
     public function editProduct(Request $request, $id)
     {
         $product = product::find($id);
-        $data = $request->all();
-        if ($product->update($data) > 0)
+        if ($product->update($request->all()) > 0)
             return response()->json(['message' => 'Cập nhật dữ liệu thành công', 'state' => 1]);
         else
             return response()->json(['message' => 'Cập nhật dữ liệu thất bại', 'state' => 0]);
     }
 
-    public function deleteProduct($id)
+    public function deleteProduct(Request $request)
     {
-        $delete = product::find($id)->delete();
+        $delete = product::find($request->input('id'))->delete();
         if ($delete > 0)
-            return response()->json(['message' => 'Xóa dữ liệu thành công', 'state' => 1]);
+            return response()->json(['response' => $this->productReload($request->input('id')), 'message' => 'Xóa sản phẩm thành công', 'state' => 1]);
         else
-            return response()->json(['message' => 'Xóa dữ liệu thất bại', 'state' => 0]);
+            return response()->json(['message' => 'Xóa sản phẩm thất bại', 'state' => 0]);
+    }
+
+    public static function getProducts($current_page)
+    {
+        return product::take(5)->skip(($current_page - 1) * 5)->get();
+    }
+
+    public function searchProduct(Request $request)
+    {
+        session()->put('search', $request->input('name'));
+        session()->save();
+        return $this->productReload($request->input('page'));
+    }
+
+    public function productReload($current_page)
+    {
+        $Products = null;
+        $total = 0;
+        if (session()->has('search') && session()->get('search') != '') {
+            $query = product::where('name', 'like', '%' . session()->get('search') . '%');
+            $total = $query->count();
+            $Products = $query->take(5)->skip(($current_page - 1) * 5)->get();
+        } else {
+            $Products = $this->getProducts($current_page);
+            $total = product::all()->count();
+        }
+        return view('dynamic_layout.product_reload', ['Products' => $Products, 'total' => $total, 'currentpage' => $current_page])->render();
+    }
+
+    public function manageProductPage()
+    {
+        if (session()->has('search')) session()->forget("search");
+        return view('admin.products_manager', ['Categories' => category::all(), 'Sales' => sales::all(), 'Products' => $this->getProducts(1), 'total' => product::all()->count(), 'currentpage' => 1]);
     }
 }

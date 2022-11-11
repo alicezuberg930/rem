@@ -65,6 +65,7 @@ Route::get('/delete_sale/{id}', [ProductController::class, 'deleteSale']);
 //Thánh toán
 Route::get('/vnpay/vnpay_return', [CheckoutController::class, 'paymentsResult']);
 Route::post('/vnpay/vnpay_payment', [CheckoutController::class, 'vnpayPayment']);
+Route::post('/direct_payment', [CheckoutController::class, 'directPayment']);
 //Lấy thông tin api
 Route::get('/cart/get_district', [CartController::class, 'getDistrict'])->name('getDistrict');
 Route::get('/cart/get_ward', [CartController::class, 'getWard'])->name('getWard');
@@ -79,13 +80,18 @@ Route::get('/admin/age_category/add', [CategoryController::class, 'addCategory']
 Route::get('/admin/age_category/edit', [CategoryController::class, 'editCategory']);
 Route::get('/admin/age_category/delete', [CategoryController::class, 'deleteCategory']);
 //Quản lý sản phẩm
-Route::get('/admin/manage_products', [CategoryController::class, 'manageCategoryPage']);
-Route::get('/admin/age_category/add', [CategoryController::class, 'addCategory']);
-Route::get('/admin/age_category/edit', [CategoryController::class, 'editCategory']);
-Route::get('/admin/age_category/delete', [CategoryController::class, 'deleteCategory']);
+Route::get('/admin/manage_products', [ProductController::class, 'manageProductPage']);
+Route::get('/admin/manage_products/add', [ProductController::class, 'addProduct']);
+Route::get('/admin/manage_products/edit', [ProductController::class, 'editProduct']);
+Route::get('/admin/manage_products/delete', [ProductController::class, 'deleteProduct']);
+Route::get('/admin/manage_products/search', [ProductController::class, 'searchProduct']);
+Route::get('/admin/manage_products/paginate/{current_page}', [ProductController::class, 'productReload']);
 //Quản lý đơn hàng
 Route::get('/admin/manage_orders', [OrdersController::class, 'manageOrderPage']);
 Route::get('/admin/manage_orders/update_order_status', [OrdersController::class, 'updateOrderStatus']);
+Route::get('/admin/manage_orders/search', [OrdersController::class, 'searchOrder']);
+Route::get('/admin/manage_orders/paginate/{current_page}/{type}', [OrdersController::class, 'orderReload']);
+Route::get('/admin/manage_orders/status/{current_page}/{type}', [OrdersController::class, 'orderReload']);
 Route::get('/admin/manage_orders/order_details', [OrdersController::class, 'getOrderDetails']);
 //Quản lý khách hàng
 Route::get('/admin/manage_accounts', [CategoryController::class, 'manageCategoryPage']);

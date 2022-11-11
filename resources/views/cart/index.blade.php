@@ -122,7 +122,7 @@
                 </div>
                 @if (session()->has('cart') && count(session('cart')) > 0)
                     <div class="col-md-4">
-                        <form method="POST" action="/vnpay/vnpay_payment" class="p-3 mb-3 border">
+                        <form id="payment" method="POST" action="/direct_payment" class="p-3 mb-3 border">
                             @csrf
                             <h4>THÔNG TIN KHÁCH HÀNG</h4>
                             <div class="row mb-3">
@@ -177,7 +177,7 @@
                                 <div class="col-sm-8">
                                     <select class="form-select" id="pay-options" name="pay-options">
                                         <option value="COD" selected>Thanh toán trực tiếp</option>
-                                        <option>Thanh toán qua VNPAY</option>
+                                        <option value="VNPAY">Thanh toán qua VNPAY</option>
                                     </select>
                                 </div>
                             </div>
@@ -206,7 +206,8 @@
                                     <input name="quantity" class="d-none" value="{{ $quantity }}" />
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-primary" name="redirect">Đặt hàng</button>
+                            <button type="submit" class="btn btn-primary" id="submit" name="redirect">Đặt
+                                hàng</button>
                         </form>
                     </div>
                 @endif
@@ -253,7 +254,9 @@
             success: function(result) {
                 ward.length = 1;
                 for (var i = 0; i < result.length; i++) {
-                    ward.add(new Option(result[i]['name'], result[i]['code']));
+                    ward.add(new Option(result[i]['name'], result[i]['name'] + '-' + result[i][
+                        'code'
+                    ]));
                 }
             }
         });
@@ -312,6 +315,13 @@
                 $('.toast-body').html(result.message + " " + result.id)
             }
         });
+    })
+
+    $("#pay-options").on('change', function() {
+        if ($(this).val() == "COD")
+            $("#payment").attr('action', "/direct_payment")
+        if ($(this).val() == "VNPAY")
+            $("#payment").attr('action', "/vnpay/vnpay_payment")
     })
 </script>
 

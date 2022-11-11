@@ -10,6 +10,9 @@
     <link rel="shortcut icon" type="image/png" href="{{ url('./icon.png') }}">
     <link rel="stylesheet" href="{{ url('./css/style.css') }}">
     <link rel="stylesheet" href="{{ url('./bootstrap/dist/css/bootstrap.min.css') }}">
+    <script src="{{ url('./js/api.js') }}"></script>
+    <script src="{{ url('./jquery/dist/jquery.min.js') }}"></script>
+    <script src="{{ url('./bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
     <meta name="csrf-token" content="{{ csrf_token() }}" />
 </head>
 
@@ -29,9 +32,6 @@
         $('.toast-body').html("Vui lòng xác thực")
     </script>
 @endif
-<script src="{{ url('./js/api.js') }}"></script>
-<script src="{{ url('./jquery/dist/jquery.min.js') }}"></script>
-<script src="{{ url('./bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
 <script type="text/javascript">
     $.ajaxSetup({
         headers: {
@@ -49,10 +49,10 @@
             success: function(result) {
                 $('.toast').toast('show')
                 $('.toast-body').html(result.message)
+                $('.toast').css('background-color', 'rgb(71, 201, 71)')
             }
         });
     })
-
 </script>
 
 </html>

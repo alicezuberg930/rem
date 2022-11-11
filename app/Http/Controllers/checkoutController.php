@@ -17,19 +17,24 @@ class CheckoutController extends Controller
     private $vnp_HashSecret = "OUNLJDFELTPRZUKCHFBFBBSMVNROUCGB"; //Secret key
     private $vnp_TmnCode = "HNM3NYHP"; //Website ID in VNPAY System
 
-    public function vnpayPayment(Request $request)
+    public function getOrderInfo(Request $request)
     {
         session()->put('orders', [
             'fullname' => $request->input('fullname'),
             'phonenumber' => $request->input('phonenumber'),
             'email' => $request->input('email'),
-            'address' => $request->input('city') . ' ' . explode('-', $request->input('district'))[0] . ' ' . $request->input('ward'),
+            'address' => $request->input('city') . ' ' . explode('-', $request->input('district'))[0] . ' ' . explode('-', $request->input('ward'))[0],
             'total_price' => $request->input('total_price'),
             'quantity' => $request->input('quantity')
         ]);
         session()->save();
+    }
+
+    public function vnpayPayment(Request $request)
+    {
+        $this->getOrderInfo($request);
         $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-        $vnp_Returnurl = URL::to("/vnpay/vnpay_return");
+        $vnp_Returnurl = URL::to("/payment/vnpay_return");
         $vnp_TxnRef = random_int(PHP_INT_MIN, PHP_INT_MAX);
         // $_POST['order_id']; //Mã đơn hàng. Trong thực tế Merchant cần insert đơn hàng vào DB và gửi mã này sang VNPAY
         $vnp_OrderInfo = "Thanh toan hoa don";
@@ -161,8 +166,35 @@ class CheckoutController extends Controller
         } else {
             $Result = 'Chu kỳ không hợp lệ';
         }
-        return view("vnpay.vnpay_return", [
+        return view("payment.vnpay_return", [
             'Result' => $Result
         ]);
+    }
+
+    public function directPayment(Request $request)
+    {
+        $this->getOrderInfo($request);
+        // date_default_timezone_set("Asia/Ho_Chi_Minh");
+        // $orders = new orders();
+        // $orders->order_date = date('Y-m-d h:i:s');
+        // $orders->fullname = session('orders')['fullname'];
+        // $orders->phone_number = session('orders')['phonenumber'];
+        // $orders->address = session('orders')['address'];
+        // $orders->quantity = session('orders')['quantity'];
+        // $orders->total_price = session('orders')['total_price'];
+        // $orders->user_id = session('UserID');
+        // if ($orders->save()) {
+        //     foreach (session()->get('cart') as $item) {
+        //         $orderdetails = new orderdetails();
+        //         $orderdetails->order_id = orders::max('id');
+        //         $orderdetails->product_id = $item['id'];
+        //         $orderdetails->quantity = $item['quantity'];
+        //         $orderdetails->product_price = $item['price'];
+        //         $orderdetails->save();
+        //     }
+        // } else {
+        //     return view('payment.direct_payment', ['message' => 'Đặt hàng thất bại', 'status' => 0]);
+        // }
+        return view('payment.direct_payment', ['message' => 'Đã đặt hàng thành công', 'status' => 1]);
     }
 }

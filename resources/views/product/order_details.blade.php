@@ -31,12 +31,11 @@
                     </div>
                     <hr>
                     <div class="row mb-3">
-                        <div class="col-sm-1 d-flex align-items-center">
+                        <div class="col-sm-2 d-flex align-items-center">
                             <img src="{{ url('black-fire-logo.png') }}" width="70" height="70" />
                         </div>
-                        <div class="col-sm-6 d-flex flex-column" style="justify-content:center">
+                        <div class="col-sm-5 d-flex flex-column" style="justify-content:center">
                             <h5>Zippo Classic Candy Apple Red - 21063</h5>
-                            <span>Ma san pham: 1</span>
                         </div>
                         <div class="col-sm-1 d-flex justify-content-center align-items-center">
                             <span class="" style="">2 cái</span>
@@ -50,12 +49,11 @@
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <div class="col-sm-1 d-flex align-items-center">
+                        <div class="col-sm-2 d-flex align-items-center">
                             <img src="{{ url('black-fire-logo.png') }}" width="70" height="70" />
                         </div>
-                        <div class="col-sm-6 d-flex flex-column" style="justify-content:center">
+                        <div class="col-sm-5 d-flex flex-column" style="justify-content:center">
                             <h5>Zippo Classic Candy Apple Red - 21063</h5>
-                            <span>Ma san pham: 1</span>
                         </div>
                         <div class="col-sm-1 d-flex justify-content-center align-items-center">
                             <span class="" style="">2 cái</span>
@@ -69,12 +67,11 @@
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <div class="col-sm-1 d-flex align-items-center">
+                        <div class="col-sm-2 d-flex align-items-center">
                             <img src="{{ url('black-fire-logo.png') }}" width="70" height="70" />
                         </div>
-                        <div class="col-sm-6 d-flex flex-column" style="justify-content:center">
+                        <div class="col-sm-5 d-flex flex-column" style="justify-content:center">
                             <h5>Zippo Classic Candy Apple Red - 21063</h5>
-                            <span>Ma san pham: 1</span>
                         </div>
                         <div class="col-sm-1 d-flex justify-content-center align-items-center">
                             <span class="" style="">2 cái</span>
@@ -88,12 +85,11 @@
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <div class="col-sm-1 d-flex align-items-center">
-                            <img src="{{ url('black-fire-logo.png') }}" width="70" height="70" />
+                        <div class="col-sm-2 d-flex align-items-center">
+                            <img src="{{ url('/image/image_1666191176_Zippo Stigma Stoned Undeads ZA-1-137A.jpg') }}" width="70" height="70" />
                         </div>
-                        <div class="col-sm-6 d-flex flex-column" style="justify-content:center">
+                        <div class="col-sm-5 d-flex flex-column" style="justify-content:center">
                             <h5>Zippo Classic Candy Apple Red - 21063</h5>
-                            <span>Ma san pham: 1</span>
                         </div>
                         <div class="col-sm-1 d-flex justify-content-center align-items-center">
                             <span class="" style="">2 cái</span>
@@ -107,12 +103,11 @@
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <div class="col-sm-1 d-flex align-items-center">
+                        <div class="col-sm-2 d-flex align-items-center">
                             <img src="" width="70" height="70" />
                         </div>
-                        <div class="col-sm-6 d-flex flex-column" style="justify-content:center">
+                        <div class="col-sm-5 d-flex flex-column" style="justify-content:center">
                             <h5>Zippo Classic Candy Apple Red - 21063</h5>
-                            <span>Ma san pham: 1</span>
                         </div>
                         <div class="col-sm-1 d-flex justify-content-center align-items-center">
                             <span class="" style="">2 cái</span>
@@ -127,8 +122,8 @@
                     </div>
                     <hr>
                     <div class="row">
-                        <div class="col-sm-8"></div>
-                        <div class="col-sm-4 d-flex justify-content-center flex-column">
+                        <div class="col-sm-7"></div>
+                        <div class="col-sm-5 d-flex justify-content-center flex-column">
                             <div class="row">
                                 <span class="col-sm-6" style="">Subtotal</span>
                                 <h6 class="col-sm-6" style="text-align: end;">2,500,000 VND</h6>
@@ -153,7 +148,7 @@
             <div class="col-md-3">
                 <div class="col-md-12 bg-light rounded shadow p-3">
                     <div>
-                        <h5 class="">Trang thai</h5>
+                        <h5 class="">Trạng thái đơn hàng</h5>
                     </div>
                     <hr>
                     <div class="row d-flex justify-content-start align-items-center">

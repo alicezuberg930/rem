@@ -3,11 +3,10 @@
     <div class="col-md-9 col-lg-10">
         <div class="container-md p-0">
             <div class="p-3 row row-cols-1 row-cols-md-3 sticky-top bg-light justify-content-between">
-                <div class="col-md-auto d-flex">
+                <div class="col-md-auto row">
                     <div class="col-md-auto">
                         <input type="radio" class="btn-check" autocomplete="off" value="Tổng đơn">
-                        <label class="btn btn-outline-primary btn-sm" for="btnradio1">
-                            Tổng thể loại
+                        <label class="btn btn-outline-primary btn-sm" for="btnradio1">Tổng thể loại
                             <span class="badge bg-danger" id="badge_tongdon">{{ $total }}</span>
                         </label>
                     </div>
@@ -20,8 +19,7 @@
                     <div class="input-group">
                         <input type="text" class="form-control form-control-sm" placeholder="Tên thể loại"
                             id="search_id">
-                        <button class="btn btn-sm btn-primary" onclick="searched(this.parentElement)"
-                            type="button">Search</button>
+                        <i class="fa-solid fa-magnifying-glass text-light p-2 bg-primary"></i>
                     </div>
                 </div>
             </div>
@@ -185,19 +183,23 @@
                 }
             })
         })
-        $("#search_id").on('keyup', function() {
-            $.ajax({
-                url: "/admin/manage_category/search",
-                method: "get",
-                data: {
-                    name: $(this).val(),
-                    page: "{{ $currentpage }}"
-                },
-                success: function(result) {
-                    $("#category-table").html(result)
-                }
-            })
-        })
+
+        $('#search_id').keypress(function(e) {
+            if (e.which == 13) {
+                e.preventDefault();
+                $.ajax({
+                    url: "/admin/manage_category/search",
+                    method: "get",
+                    data: {
+                        name: $(this).val(),
+                        page: "{{ $currentpage }}"
+                    },
+                    success: function(result) {
+                        $("#category-table").html(result)
+                    }
+                })
+            }
+        });
 
         $(document).on('click', '.page-item', function() {
             $.ajax({

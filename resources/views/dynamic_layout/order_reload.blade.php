@@ -17,7 +17,7 @@
                 <td>{{ date_format(new DateTime($order->created_at), 'd/m/Y h:i:s') }}</td>
                 <td>{{ $order->date_checked == null ? '00/00/000 00:00:00' : date_format(new DateTime($order->date_checked), 'd/m/Y h:i:s') }}
                 </td>
-                <td>{{ number_format($order->total_price) }}</td>
+                <td>{{ number_format($order->total_price) }} VND</td>
                 <td>
                     <span>
                         @if ($order->status == 0)
@@ -32,15 +32,13 @@
                 <td>
                     @if ($order->status == 0)
                         <button class="btn btn-sm fa-regular fa-circle-check text-success checked-btn"
-                            data-id="{{ $order->id }}" data-status="1">
-                        </button>
-                        <button class="btn btn-sm fa-solid fa-circle-xmark text-danger"
-                            onclick="updateOrder(<?php echo $order['id']; ?>, 2, this.parentElement.parentElement)">
-                        </button>
-                        <a class="btn btn-sm fa-solid fa-circle-exclamation text-primary">
+                            data-id="{{ $order->id }}" data-status="1"></button>
+                        <button class="btn btn-sm fa-solid fa-circle-xmark text-danger checked-btn"
+                            data-id="{{ $order->id }}" data-status="2"></button>
+                        <a class="btn btn-sm fa-solid fa-circle-exclamation text-primary"
                             href="/admin/manage_orders/order_details"></a>
-                    @elseif($order['status'] >= 1)
-                        <a class="btn btn-sm fa-solid fa-circle-exclamation text-primary details-btn"
+                    @elseif($order->status >= 1)
+                        <a class="btn btn-sm fa-solid fa-circle-exclamation text-primary"
                             href="/admin/manage_orders/order_details"></a>
                     @endif
                 </td>
@@ -50,12 +48,21 @@
 </table>
 <nav aria-label="Page navigation example" class="col-md-12 my-3">
     <ul class="pagination pagination-sm justify-content-end" id="phantrang">
+        <?php $total = 0;
+        if (session()->get('type') == -1) {
+            $total = $Quantity['Total'];
+        } elseif (session()->get('type') == 0) {
+            $total = $Quantity['Waiting'];
+        } elseif (session()->get('type') == 1) {
+            $total = $Quantity['Approved'];
+        } else {
+            $total = $Quantity['Canceled'];
+        } ?>
         @for ($i = 0; $i < ceil($total / 5); $i++)
             @if ($i == $currentpage - 1)
-                <li class="page-order"><a class="page-link active">{!! $i + 1 !!}</a></li>
+                <li class="page-item"><a class="page-link active">{{ $i + 1 }}</a></li>
             @else
-                <li class="page-order"><a class="page-link"
-                        onclick="phantrang({!! $i + 1 !!})">{!! $i + 1 !!}</a></li>
+                <li class="page-item"><a class="page-link">{{ $i + 1 }}</a></li>
             @endif
         @endfor
     </ul>

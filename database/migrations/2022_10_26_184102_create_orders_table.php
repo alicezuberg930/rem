@@ -20,7 +20,7 @@ return new class extends Migration
             $table->dateTime('date_checked')->nullable();
             $table->string('fullname', 100);
             $table->string('phone_number', 10);
-            $table->string('address', 200);
+            $table->text('address');
             $table->integer('quantity');
             $table->bigInteger('total_price');
             $table->smallInteger('status')->default(0);
