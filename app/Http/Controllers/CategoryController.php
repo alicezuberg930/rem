@@ -45,7 +45,7 @@ class CategoryController extends Controller
         if (session()->has('search')) session()->forget("search");
         return view('admin.category_manager', ['Categories' => $this->getCategory(1), 'total' => category::all()->count(), 'currentpage' => 1]);
     }
-
+ 
     public function searchCategory(Request $request)
     {
         session()->put('search', $request->input('name'));

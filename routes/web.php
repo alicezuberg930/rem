@@ -8,6 +8,7 @@ use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SalesController;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -27,12 +28,12 @@ Route::get('/loginregister', function () {
 });
 // Giao diện trang giỏ hàng
 Route::get('/cart', function () {
-    return view('cart.index');
+    return view('cart.index', ['cities' => Http::get('https://api.mysupership.vn/v1/partner/areas/province')]);
 });
 //Giao diện trang quản lý
-Route::get('/admin/form_qly_sanpham', function () {
-    return view("admin.form_qly_sanpham");
-});
+// Route::get('/admin', function () {
+//     return view("admin.");
+// });
 // Giao diện trang quên mật khẩu
 Route::get('/reset_password', function () {
     return view("forget_password.reset_password");
@@ -44,10 +45,10 @@ Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/register', [AuthController::class, 'register'])->name('register');
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 //giỏ hàng
-Route::post('/add_cart', [ProductController::class, 'addCart'])->name('add_cart');
-Route::get('/remove_cart', [ProductController::class, 'removeCart'])->name('remove_cart');
-Route::get('/increase_incart', [ProductController::class, 'increaseIncart'])->name('increase_incart');
-Route::get('/decrease_incart', [ProductController::class, 'decreaseIncart'])->name('decrease_incart');
+Route::get('/add_cart', [CartController::class, 'addCart'])->name('add_cart');
+Route::get('/remove_cart', [CartController::class, 'removeCart'])->name('remove_cart');
+Route::get('/increase_incart', [CartController::class, 'increaseIncart'])->name('increase_incart');
+Route::get('/decrease_incart', [CartController::class, 'decreaseIncart'])->name('decrease_incart');
 //chi tiết sản phẩm
 Route::get('/product_detail/{id}', [ProductController::class, 'getProductDetails'])->name('product_details');
 //CRUD sản phẩm
@@ -73,7 +74,7 @@ Route::get('/cart/get_ward', [CartController::class, 'getWard'])->name('getWard'
 Route::get('/verification/{token}', [AuthController::class, 'verifyUser']);
 //Lọc sản phẩm
 Route::get('/filter/search', [ProductController::class, 'filterProducts']);
-Route::get('/filter', [ProductController::class, 'searchPage']);
+Route::get('/filter', [ProductController::class, 'filterPage']);
 //Quản lý thống kê
 Route::get('/admin/manage_statistic', [CategoryController::class, 'manageCategoryPage']);
 Route::get('/admin/age_category/add', [CategoryController::class, 'addCategory']);
@@ -82,6 +83,7 @@ Route::get('/admin/age_category/delete', [CategoryController::class, 'deleteCate
 //Quản lý sản phẩm
 Route::get('/admin/manage_products', [ProductController::class, 'manageProductPage']);
 Route::get('/admin/manage_products/add', [ProductController::class, 'addProduct']);
+Route::post('/admin/manage_products/upload_file', [ProductController::class, 'uploadFile']);
 Route::get('/admin/manage_products/edit', [ProductController::class, 'editProduct']);
 Route::get('/admin/manage_products/delete', [ProductController::class, 'deleteProduct']);
 Route::get('/admin/manage_products/search', [ProductController::class, 'searchProduct']);

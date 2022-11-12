@@ -42,9 +42,6 @@
         </div>
     </div>
     <script>
-        // $('#status-form input').on('change', function() {
-        // console.log($('input[name=btnradio]:checked', '#status-form').val());
-        // });
         $(document).on('click', '.btnradio', function() {
             $.ajax({
                 url: "/admin/manage_orders/status/1/" + $(this).val(),

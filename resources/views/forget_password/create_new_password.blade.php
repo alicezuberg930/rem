@@ -2,17 +2,8 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <x-head_tag />
     <title>Đặt lại mật khẩu</title>
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.2.0/css/all.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
-    <script src="{{ url('./jquery/dist/jquery.min.js') }}"></script>
-    <script src="{{ url('./bootstrap/dist/js/bootstrap.min.js') }}"></script>
-    <link rel="stylesheet" href="{{ url('./css/style.css') }}">
-    <link rel="stylesheet" href="{{ url('./bootstrap/dist/css/bootstrap.min.css') }}">
-    <meta name="csrf-token" content="{{ csrf_token() }}" />
 </head>
 
 <body>

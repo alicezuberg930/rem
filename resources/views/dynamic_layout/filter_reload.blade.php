@@ -66,10 +66,10 @@
         </div>
     @endif
 </div>
-@if (isset($paginate))
+@if (isset($total))
     <nav aria-label="Page navigation example" class="col-md-12 my-3">
         <ul class="pagination pagination-sm justify-content-end" id="phantrang">
-            @for ($i = 0; $i < ceil($paginate / 9); $i++)
+            @for ($i = 0; $i < ceil($total / 9); $i++)
                 @if ($i == $current_page - 1)
                     <li class="page-item p-0"><a class="page-link active">{!! $i + 1 !!}</a></li>
                 @else

@@ -12,7 +12,7 @@
                     </div>
                     <div class="col-md-auto">
                         <button type="submit" href="/admin/manage_category/add" class="btn btn-primary btn-sm"
-                            data-bs-toggle="modal" data-bs-target="#themtheloai">Thêm thể loại</button>
+                            data-bs-toggle="modal" data-bs-target="#add-btn">Thêm thể loại</button>
                     </div>
                 </div>
                 <div class="col-md-auto">
@@ -29,7 +29,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="themtheloai" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal fade" id="add-btn" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -55,7 +55,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Thoát</button>
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="add-btn">Thêm</button>
                 </div>
             </div>
@@ -107,17 +107,14 @@
             </div>
         </div>
     </div>
-    </body>
     <script>
         $("#add-btn").on('click', function() {
-            let name = $('#name-category-add').val();
-            let description = $('#desc-category-add').val();
             $.ajax({
                 url: "/admin/manage_category/add",
                 method: "get",
                 data: {
-                    name: name,
-                    description: description,
+                    name: $('#name-category-add').val(),
+                    description: $('#desc-category-add').val(),
                     page: "{{ $currentpage }}"
                 },
                 success: function(result) {

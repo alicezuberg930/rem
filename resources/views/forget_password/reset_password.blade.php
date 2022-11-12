@@ -2,17 +2,8 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đặt lại mật khẩu</title>
-    <link rel="shortcut icon" type="image/png" href="{{ url('./icon.png') }}">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.2.0/css/all.css">
-    <script src="{{ url('./jquery/dist/jquery.min.js') }}"></script>
-    <link rel="stylesheet" href="{{ url('./css/style.css') }}">
-    <link rel="stylesheet" href="{{ url('./bootstrap/dist/css/bootstrap.min.css') }}">
-    <script src="{{ url('./bootstrap/dist/js/bootstrap.min.js') }}"></script>
-    <meta name="csrf-token" content="{{ csrf_token() }}" />
+    <x-head_tag />
+    <title>Gửi email xác nhận</title>
 </head>
 
 <body>
