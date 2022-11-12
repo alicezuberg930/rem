@@ -189,7 +189,7 @@
                     method: "get",
                     data: {
                         name: $(this).val(),
-                        page: "{{ $currentpage }}"
+                        page: 1
                     },
                     success: function(result) {
                         $("#category-table").html(result)

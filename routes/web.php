@@ -85,6 +85,7 @@ Route::get('/admin/manage_products', [ProductController::class, 'manageProductPa
 Route::get('/admin/manage_products/add', [ProductController::class, 'addProduct']);
 Route::post('/admin/manage_products/upload_file', [ProductController::class, 'uploadFile']);
 Route::get('/admin/manage_products/edit', [ProductController::class, 'editProduct']);
+Route::get('/admin/manage_products/store', [ProductController::class, 'getProductDetails']);
 Route::get('/admin/manage_products/delete', [ProductController::class, 'deleteProduct']);
 Route::get('/admin/manage_products/search', [ProductController::class, 'searchProduct']);
 Route::get('/admin/manage_products/paginate/{current_page}', [ProductController::class, 'productReload']);

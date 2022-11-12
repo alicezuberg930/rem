@@ -48,6 +48,11 @@ class ProductController extends Controller
         return view('dynamic_layout.filter_reload', compact('products', 'total', 'current_page', 'sort'));
     }
 
+    public function getProductDetails(Request $request)
+    {
+        return product::find($request->input('id'));
+    }
+
     public function uploadFile(Request $request)
     {
         $generatedImageName = 'image_' . time() . '.' . $request->image->extension();
@@ -64,11 +69,11 @@ class ProductController extends Controller
             return response()->json(['message' => 'Thêm sản phẩm thành công', 'status' => 1, 'response' => $this->productReload($request->input('page'))]);
     }
 
-    public function editProduct(Request $request, $id)
+    public function editProduct(Request $request)
     {
-        $product = product::find($id);
-        if ($product->update($request->all()) > 0)
-            return response()->json(['message' => 'Cập nhật dữ liệu thành công', 'status' => 1, 'response' => $this->productReload($request->input('id'))]);
+        $product = product::find($request->input('id'))->update($request->all());
+        if ($product > 0)
+            return response()->json(['message' => 'Cập nhật dữ liệu thành công', 'status' => 1, 'response' => $this->productReload($request->input('page'))]);
         else
             return response()->json(['message' => 'Cập nhật dữ liệu thất bại', 'status' => 0]);
     }
@@ -77,7 +82,7 @@ class ProductController extends Controller
     {
         $delete = product::find($request->input('id'))->delete();
         if ($delete > 0)
-            return response()->json(['response' => $this->productReload($request->input('id')), 'message' => 'Xóa sản phẩm thành công', 'status' => 1]);
+            return response()->json(['response' => $this->productReload($request->input('page')), 'message' => 'Xóa sản phẩm thành công', 'status' => 1]);
         else
             return response()->json(['message' => 'Xóa sản phẩm thất bại', 'status' => 0]);
     }
@@ -122,7 +127,7 @@ class ProductController extends Controller
         ]);
     }
 
-    public function getProductDetails($id)
+    public function ProductDetailsPage($id)
     {
         $product = product::where('products.id', '=', $id)
             ->leftjoin('sales', 'products.id', '=', 'sales.id')

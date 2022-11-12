@@ -2,7 +2,7 @@
     <table class="table align-middle table-hover table-sm">
         <thead class="table">
             <tr>
-                <th scope="col" colspan="5" style="text-align: center;">Không có danh mục cần tìm</th>
+                <th scope="col" style="text-align: center;">Không có danh mục cần tìm</th>
             </tr>
         </thead>
     </table>
@@ -15,7 +15,7 @@
                 <th scope="col" style="width:70%;">Mô tả</th>
                 <th scope="col">Sửa</th>
                 <th scope="col">Xóa</th>
-            </tr> 
+            </tr>
         </thead>
         <tbody id="show-product">
             @foreach ($Categories as $Category)
