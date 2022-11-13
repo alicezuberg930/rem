@@ -12,7 +12,7 @@
                     </div>
                     <div class="col-md-auto">
                         <button type="submit" href="/admin/manage_category/add" class="btn btn-primary btn-sm"
-                            data-bs-toggle="modal" data-bs-target="#add-btn">Thêm khuyến mãi</button>
+                            data-bs-toggle="modal" data-bs-target="#add-modal">Thêm khuyến mãi</button>
                     </div>
                 </div>
                 <div class="col-md-auto">
@@ -29,7 +29,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="add-btn" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal fade" id="add-modal" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -44,7 +44,7 @@
                                 <div class="mb-3">
                                     <label for="staticEmail" class="form-label fw-semibold">Tên</label>
                                     <div class="col-md-12">
-                                        <input type="text" class="form-control" id="name-category-add">
+                                        <input type="text" class="form-control" id="sale-name">
                                     </div>
                                 </div>
                             </div>
@@ -53,13 +53,14 @@
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label class="form-label">Phần trăm:</label>
-                                    <input type="text" class="form-control" id="name-category-add">
+                                    <input type="number" min="0" max="100" class="form-control"
+                                        id="sale-percent">
                                 </div>
                             </div>
                             <div class="col-md-8">
                                 <div class="mb-3">
                                     <label class="form-label">Ngày kết thúc:</label>
-                                    <input type="date" class="form-control" id="name-category-add">
+                                    <input type="date" class="form-control" id="sale-end_date">
                                 </div>
                             </div>
                         </div>
@@ -73,7 +74,7 @@
         </div>
     </div>
 
-    <div class="modal fade edit-modal" id="edit-category" tabindex="-1" aria-labelledby="staticBackdropLabel"
+    <div class="modal fade edit-modal" id="edit-sales" tabindex="-1" aria-labelledby="staticBackdropLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-md">
             <div class="modal-content">
@@ -84,28 +85,36 @@
                 </div>
                 <div class="modal-body">
                     <div class="row justify-content-center justify-content-around">
-                        <div class="col-md-12">
-                            <div class="row col-md-auto">
-                                <div class="col-md-3">
-                                    <div class="form-floating mb-3">
-                                        <input type="text" class="form-control" name="name-category-modal" disabled
-                                            id="id-category-modal">
-                                        <label for="floatingInput">Mã</label>
+                        <div class="mb-3 row">
+                            <div class="col-md-2">
+                                <div class="mb-3">
+                                    <label for="staticEmail" class="form-label fw-semibold">Mã</label>
+                                    <div class="col-md-12">
+                                        <input type="text" disabled class="form-control" id="sale-id">
                                     </div>
                                 </div>
-                                <div class="col-md-9">
-                                    <div class="form-floating mb-3">
-                                        <input name="name-category-modal" id="name-category-modal" class="form-control"
-                                            value="">
-                                        <label for="floatingInput">Tên thương hiệu</label>
+                            </div>
+                            <div class="col-md-10">
+                                <div class="mb-3">
+                                    <label for="staticEmail" class="form-label fw-semibold">Tên</label>
+                                    <div class="col-md-12">
+                                        <input type="text" class="form-control" id="edit-sale-name">
                                     </div>
                                 </div>
-                                <div class="col-md-12">
-                                    <div class="form-floating mb-3">
-                                        <textarea class="form-control desc" id="description-category-modal" placeholder="Mô tả gì đó"
-                                            style="height: 12rem"></textarea>
-                                        <label for="floatingInput">Mô tả</label>
-                                    </div>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Phần trăm:</label>
+                                    <input type="number" min="0" max="100" class="form-control"
+                                        id="edit-sale-percent">
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="mb-3">
+                                    <label class="form-label">Ngày kết thúc:</label>
+                                    <input type="date" class="form-control" id="edit-sale-end_date">
                                 </div>
                             </div>
                         </div>
@@ -113,10 +122,11 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Thoát</button>
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="edit-btn">Sửa</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="edit-btn">Sửa</button>
                 </div>
             </div>
         </div>
+    </div>
     </div>
     <script>
         $("#add-btn").on('click', function() {
@@ -124,9 +134,9 @@
                 url: "/admin/manage_sales/add",
                 method: "get",
                 data: {
-                    name: $('#name-category-add').val(),
-                    description: $('#desc-category-add').val(),
-                    page: "{{ $currentpage }}"
+                    salename: $('#sale-name').val(),
+                    percent: $('#sale-percent').val(),
+                    end_date: $('#sale-end_date').val()
                 },
                 success: function(result) {
                     $("#sales-table").html(result.response)
@@ -139,7 +149,7 @@
                 }
             })
         })
-
+        let current_page = 1
         $(document).on('click', '.edit-btn', function() {
             let id = $(this).attr('data-id')
             let name = $(this).parent().parent().children().eq(1).text()
@@ -154,10 +164,10 @@
                 url: "/admin/manage_sales/edit",
                 method: "get",
                 data: {
-                    id: $("#id-category-modal").val(),
-                    name: $("#name-category-modal").val(),
-                    description: $("#description-category-modal").val(),
-                    page: "{{ $currentpage }}"
+                    salename: $('#sale-name').val(),
+                    percent: $('#sale-percent').val(),
+                    end_date: $('#sale-end_date').val()
+                    page: current_page
                 },
                 success: function(result) {
                     $("#sales-table").html(result.response)
@@ -172,13 +182,12 @@
         })
 
         $(document).on('click', '.delete-btn', function() {
-            let id = $(this).attr('data-id')
             $.ajax({
                 url: "/admin/manage_sales/delete",
                 method: "get",
                 data: {
-                    id: id,
-                    page: "{{ $currentpage }}"
+                    id: $(this).attr('data-id'),
+                    page: current_page
                 },
                 success: function(result) {
                     $("#sales-table").html(result.response)

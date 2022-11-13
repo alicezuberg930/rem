@@ -12,6 +12,11 @@ class SalesController extends Controller
         return sales::take(5)->skip(($current_page - 1) * 5)->get();
     }
 
+    public function getSaleDetails(Request $request)
+    {
+        return sales::find($request->input('id'));
+    }
+
     public function addSale(Request $request)
     {
         $response = sales::create($request->all());

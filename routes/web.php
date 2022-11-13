@@ -9,6 +9,7 @@ use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SalesController;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -51,18 +52,6 @@ Route::get('/increase_incart', [CartController::class, 'increaseIncart'])->name(
 Route::get('/decrease_incart', [CartController::class, 'decreaseIncart'])->name('decrease_incart');
 //chi tiết sản phẩm
 Route::get('/product_detail/{id}', [ProductController::class, 'getProductDetails'])->name('product_details');
-//CRUD sản phẩm
-Route::get('/add_product', [ProductController::class, 'addProduct']);
-Route::get('/edit_product/{id}', [ProductController::class, 'editProduct']);
-Route::get('/delete_product/{id}', [ProductController::class, 'deleteProduct']);
-//CRUD danh mục
-Route::get('/add_category', [CategoryController::class, 'addCategory']);
-Route::get('/edit_category/{id}', [CategoryController::class, 'editCategory']);
-Route::get('/delete_category/{id}', [CategoryController::class, 'deleteCategory']);
-//CRUD khuyến mãi
-Route::get('/add_sale', [SalesController::class, 'addSale']);
-Route::get('/edit_sale/{id}', [ProductController::class, 'editSale']);
-Route::get('/delete_sale/{id}', [ProductController::class, 'deleteSale']);
 //Thánh toán
 Route::get('/vnpay/vnpay_return', [CheckoutController::class, 'paymentsResult']);
 Route::post('/vnpay/vnpay_payment', [CheckoutController::class, 'vnpayPayment']);
@@ -75,6 +64,10 @@ Route::get('/verification/{token}', [AuthController::class, 'verifyUser']);
 //Lọc sản phẩm
 Route::get('/filter/search', [ProductController::class, 'filterProducts']);
 Route::get('/filter', [ProductController::class, 'filterPage']);
+//Lấy lại mật khẩu
+Route::post('/reset_password_request', [PasswordResetController::class, 'resetPasswordRequest']);
+Route::get('/create_new_password/{selector}/{token}', [PasswordResetController::class, 'createNewPasswordPage']);
+Route::post('/reset_password_handler', [PasswordResetController::class, 'resetPasswordHandler']);
 //Quản lý thống kê
 Route::get('/admin/manage_statistic', [CategoryController::class, 'manageCategoryPage']);
 Route::get('/admin/age_category/add', [CategoryController::class, 'addCategory']);
@@ -108,12 +101,19 @@ Route::get('/admin/manage_category/edit', [CategoryController::class, 'editCateg
 Route::get('/admin/manage_category/delete', [CategoryController::class, 'deleteCategory']);
 Route::get('/admin/manage_category/search', [CategoryController::class, 'searchCategory']);
 Route::get('/admin/manage_category/paginate/{current_page}', [CategoryController::class, 'categoryReload']);
-//Quản lý giảm giá
+//Quản lý khuyến mãi
 Route::get('/admin/manage_sales', [SalesController::class, 'manageSalePage']);
-Route::get('/admin//add', [CategoryController::class, 'addCategory']);
-Route::get('/admin//edit', [CategoryController::class, 'editCategory']);
-Route::get('/admin//delete', [CategoryController::class, 'deleteCategory']);
-//Lấy lại mật khẩu
-Route::post('/reset_password_request', [PasswordResetController::class, 'resetPasswordRequest']);
-Route::get('/create_new_password/{selector}/{token}', [PasswordResetController::class, 'createNewPasswordPage']);
-Route::post('/reset_password_handler', [PasswordResetController::class, 'resetPasswordHandler']);
+Route::get('/admin/manage_sales/add', [SalesController::class, 'addSale']);
+Route::get('/admin/manage_sales/edit', [SalesController::class, 'editSale']);
+Route::get('/admin/manage_sales/store', [SalesController::class, 'getSaleDetails']);
+Route::get('/admin/manage_sales/delete', [SalesController::class, 'deleteSale']);
+Route::get('/admin/manage_sales/search', [SalesController::class, 'searchSale']);
+Route::get('/admin/manage_sales/paginate/{current_page}', [SalesController::class, 'saleReload']);
+
+// Route::get('/aaaa', function () {
+//     Mail::send("email_templates.order_template", ['a' => 'efhbvwiu'], function ($email) {
+//         $email->subject('Thông báo đăng ký');
+//         $email->to('tien23851@gmail.com', "name");
+//     });
+    // return view("email_templates.order_template");
+// });

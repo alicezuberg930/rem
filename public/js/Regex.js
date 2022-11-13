@@ -4,9 +4,11 @@ function isEmailValid(email) {
     )
     return emailRegexp.test(email)
 }
+
 function isPasswordValid(str) {
     return /(?!^[0-9]*$)(?!^[a-zA-Z]*$)^([a-zA-Z0-9]{8,16})$/.test(str)
 }
+
 function isPhonenumberValid(str) {
     return /^[0][0-9]{9}$/.test(str);
 }
