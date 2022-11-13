@@ -19,6 +19,7 @@ return new class extends Migration
             $table->dateTime('order_date');
             $table->dateTime('date_checked')->nullable();
             $table->string('fullname', 100);
+            $table->string('email', 100);
             $table->string('phone_number', 10);
             $table->text('address');
             $table->integer('quantity');

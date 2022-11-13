@@ -67,9 +67,12 @@ class OrdersController extends Controller
         return view('dynamic_layout.order_reload', ['Orders' => $Orders, 'currentpage' => $current_page, "Quantity" => $this->getOrderQuantity()])->render();
     }
 
-    public function getOrderDetails(Request $request)
+    public function getOrderDetails($order_id)
     {
-        $order_details = orderdetails::where('order_id', '=', $request->input('id'));
-        return view("product.order_details");
+        $Order_details = orderdetails::where('order_id', '=', $order_id)
+            ->join('products', 'orderdetails.product_id', '=', 'products.id')
+            ->leftjoin('sales', 'products.discount', '=', 'sales.id')->get();
+        $Order = orders::where('id', '=', $order_id)->first();
+        return view("order.order_details", ['Order_details' => $Order_details, 'Order' => $Order]);
     }
 }

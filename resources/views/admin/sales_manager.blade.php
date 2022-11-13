@@ -127,7 +127,6 @@
             </div>
         </div>
     </div>
-    </div>
     <script>
         $("#add-btn").on('click', function() {
             $.ajax({
@@ -151,22 +150,30 @@
         })
         let current_page = 1
         $(document).on('click', '.edit-btn', function() {
-            let id = $(this).attr('data-id')
-            let name = $(this).parent().parent().children().eq(1).text()
-            let description = $(this).parent().parent().children().eq(2).text().trim()
-            $("#id-category-modal").val(id)
-            $("#name-category-modal").val(name)
-            $("#description-category-modal").val(description)
+            current_page = $(this).attr('data-page')
+            $.ajax({
+                url: "/admin/manage_sales/store",
+                method: "get",
+                data: {
+                    id: $(this).attr('data-id')
+                },
+                success: function(result) {
+                    $("#sale-id").val(result.id)
+                    $("#edit-sale-name").val(result.salename)
+                    $("#edit-sale-percent").val(result.percent)
+                    $("#edit-sale-end_date").val(result.end_date)
+                }
+            })
         })
-
         $("#edit-btn").on('click', function() {
             $.ajax({
                 url: "/admin/manage_sales/edit",
                 method: "get",
                 data: {
-                    salename: $('#sale-name').val(),
-                    percent: $('#sale-percent').val(),
-                    end_date: $('#sale-end_date').val()
+                    id: $("#sale-id").val(),
+                    salename: $('#edit-sale-name').val(),
+                    percent: $('#edit-sale-percent').val(),
+                    end_date: $('#edit-sale-end_date').val(),
                     page: current_page
                 },
                 success: function(result) {
@@ -180,14 +187,13 @@
                 }
             })
         })
-
         $(document).on('click', '.delete-btn', function() {
             $.ajax({
                 url: "/admin/manage_sales/delete",
                 method: "get",
                 data: {
                     id: $(this).attr('data-id'),
-                    page: current_page
+                    page: $(this).attr('data-page'),
                 },
                 success: function(result) {
                     $("#sales-table").html(result.response)
@@ -200,7 +206,6 @@
                 }
             })
         })
-
         $('#search_name').keypress(function(e) {
             if (e.which == 13) {
                 e.preventDefault();
@@ -217,7 +222,6 @@
                 })
             }
         });
-
         $(document).on('click', '.page-item', function() {
             $.ajax({
                 url: "/admin/manage_sales/paginate/" + $(this).text(),

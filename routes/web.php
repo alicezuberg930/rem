@@ -68,11 +68,15 @@ Route::get('/filter', [ProductController::class, 'filterPage']);
 Route::post('/reset_password_request', [PasswordResetController::class, 'resetPasswordRequest']);
 Route::get('/create_new_password/{selector}/{token}', [PasswordResetController::class, 'createNewPasswordPage']);
 Route::post('/reset_password_handler', [PasswordResetController::class, 'resetPasswordHandler']);
+//Quản lý đơn hàng khách
+Route::get('/user/manage_orders', [OrdersController::class, 'manageOrderPage']);
+Route::get('/user/manage_orders/update_order_status', [OrdersController::class, 'updateOrderStatus']);
+Route::get('/user/manage_orders/search', [OrdersController::class, 'searchOrder']);
+Route::get('/user/manage_orders/paginate/{current_page}/{type}', [OrdersController::class, 'orderReload']);
+Route::get('/user/manage_orders/status/{current_page}/{type}', [OrdersController::class, 'orderReload']);
+Route::get('/user/manage_orders/order_details/{$order_id}', [OrdersController::class, 'getOrderDetails']);
 //Quản lý thống kê
 Route::get('/admin/manage_statistic', [CategoryController::class, 'manageCategoryPage']);
-Route::get('/admin/age_category/add', [CategoryController::class, 'addCategory']);
-Route::get('/admin/age_category/edit', [CategoryController::class, 'editCategory']);
-Route::get('/admin/age_category/delete', [CategoryController::class, 'deleteCategory']);
 //Quản lý sản phẩm
 Route::get('/admin/manage_products', [ProductController::class, 'manageProductPage']);
 Route::get('/admin/manage_products/add', [ProductController::class, 'addProduct']);
@@ -82,13 +86,13 @@ Route::get('/admin/manage_products/store', [ProductController::class, 'getProduc
 Route::get('/admin/manage_products/delete', [ProductController::class, 'deleteProduct']);
 Route::get('/admin/manage_products/search', [ProductController::class, 'searchProduct']);
 Route::get('/admin/manage_products/paginate/{current_page}', [ProductController::class, 'productReload']);
-//Quản lý đơn hàng
+//Quản lý đơn hàng admin
 Route::get('/admin/manage_orders', [OrdersController::class, 'manageOrderPage']);
 Route::get('/admin/manage_orders/update_order_status', [OrdersController::class, 'updateOrderStatus']);
 Route::get('/admin/manage_orders/search', [OrdersController::class, 'searchOrder']);
 Route::get('/admin/manage_orders/paginate/{current_page}/{type}', [OrdersController::class, 'orderReload']);
 Route::get('/admin/manage_orders/status/{current_page}/{type}', [OrdersController::class, 'orderReload']);
-Route::get('/admin/manage_orders/order_details', [OrdersController::class, 'getOrderDetails']);
+Route::get('/admin/manage_orders/order_details/{order_id}', [OrdersController::class, 'getOrderDetails']);
 //Quản lý khách hàng
 Route::get('/admin/manage_accounts', [CategoryController::class, 'manageCategoryPage']);
 Route::get('/admin/age_category/add', [CategoryController::class, 'addCategory']);

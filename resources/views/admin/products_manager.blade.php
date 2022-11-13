@@ -368,13 +368,12 @@
             })
         })
         $(document).on('click', '.delete-btn', function() {
-            current_page = $(this).attr("data-page")
             $.ajax({
                 url: "/admin/manage_products/delete",
                 method: "get",
                 data: {
                     id: $(this).attr('data-id'),
-                    page: current_page
+                    page: $(this).attr('data-page')
                 },
                 success: function(result) {
                     $("#product-table").html(result.response)

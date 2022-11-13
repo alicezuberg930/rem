@@ -142,6 +142,7 @@ class CheckoutController extends Controller
                 $orders->address = session('orders')['address'];
                 $orders->quantity = session('orders')['quantity'];
                 $orders->total_price = session('orders')['total_price'];
+                $orders->email = session('orders')['email'];
                 $orders->user_id = session('UserID');
                 if ($orders->save()) {
                     foreach (session()->get('cart') as $item) {
@@ -174,27 +175,28 @@ class CheckoutController extends Controller
     public function directPayment(Request $request)
     {
         $this->getOrderInfo($request);
-        // date_default_timezone_set("Asia/Ho_Chi_Minh");
-        // $orders = new orders();
-        // $orders->order_date = date('Y-m-d h:i:s');
-        // $orders->fullname = session('orders')['fullname'];
-        // $orders->phone_number = session('orders')['phonenumber'];
-        // $orders->address = session('orders')['address'];
-        // $orders->quantity = session('orders')['quantity'];
-        // $orders->total_price = session('orders')['total_price'];
-        // $orders->user_id = session('UserID');
-        // if ($orders->save()) {
-        //     foreach (session()->get('cart') as $item) {
-        //         $orderdetails = new orderdetails();
-        //         $orderdetails->order_id = orders::max('id');
-        //         $orderdetails->product_id = $item['id'];
-        //         $orderdetails->quantity = $item['quantity'];
-        //         $orderdetails->product_price = $item['price'];
-        //         $orderdetails->save();
-        //     }
-        // } else {
-        //     return view('payment.direct_payment', ['message' => 'Đặt hàng thất bại', 'status' => 0]);
-        // }
+        date_default_timezone_set("Asia/Ho_Chi_Minh");
+        $orders = new orders();
+        $orders->order_date = date('Y-m-d h:i:s');
+        $orders->fullname = session('orders')['fullname'];
+        $orders->phone_number = session('orders')['phonenumber'];
+        $orders->address = session('orders')['address'];
+        $orders->quantity = session('orders')['quantity'];
+        $orders->total_price = session('orders')['total_price'];
+        $orders->email = session('orders')['email'];
+        $orders->user_id = session('UserID');
+        if ($orders->save()) {
+            foreach (session()->get('cart') as $item) {
+                $orderdetails = new orderdetails();
+                $orderdetails->order_id = orders::max('id');
+                $orderdetails->product_id = $item['id'];
+                $orderdetails->quantity = $item['quantity'];
+                $orderdetails->product_price = $item['price'];
+                $orderdetails->save();
+            }
+        } else {
+            return view('payment.direct_payment', ['message' => 'Đặt hàng thất bại', 'status' => 0]);
+        }
         return view('payment.direct_payment', ['message' => 'Đã đặt hàng thành công', 'status' => 1]);
     }
 }

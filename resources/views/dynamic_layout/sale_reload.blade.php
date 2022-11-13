@@ -24,15 +24,17 @@
                     <th scope="row">{{ $Sale->id }}</th>
                     <th scope="row">{{ $Sale->salename }}</th>
                     <td scope="row">{{ $Sale->percent }}</td>
-                    <td scope="row">{{ $Sale->end_date }}</td>
+                    <td scope="row">{{ $Sale->end_date == null ? '' : date('d-m-Y', strtotime($Sale->end_date)) }}
+                    </td>
                     <td>
                         <button type="button" class="btn edit-btn text-warning" data-bs-toggle="modal"
-                            data-bs-target="#edit-sales" data-id="{{ $Sale->id }}">
+                            data-bs-target="#edit-sales" data-id="{{ $Sale->id }}" data-page="{{ $currentpage }}">
                             <i class="fa-solid fa-pen"></i>
                         </button>
                     </td>
                     <td>
-                        <button class="delete-btn btn btn-sm text-danger" type="button" data-id="{{ $Sale->id }}">
+                        <button class="delete-btn btn btn-sm text-danger" type="button" data-id="{{ $Sale->id }}"
+                            data-page="{{ $currentpage }}">
                             <i class="fa-solid fa-trash-can"></i>
                         </button>
                     </td>

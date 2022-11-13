@@ -15,7 +15,7 @@
             <tr>
                 <th>{{ $order->id }}</th>
                 <td>{{ date_format(new DateTime($order->created_at), 'd/m/Y h:i:s') }}</td>
-                <td>{{ $order->date_checked == null ? '00/00/000 00:00:00' : date_format(new DateTime($order->date_checked), 'd/m/Y h:i:s') }}
+                <td>{{ $order->date_checked == null ? '' : date('d/m/Y h:i:s', strtotime($order->date_checked)) }}
                 </td>
                 <td>{{ number_format($order->total_price) }} VND</td>
                 <td>
@@ -36,10 +36,10 @@
                         <button class="btn btn-sm fa-solid fa-circle-xmark text-danger checked-btn"
                             data-id="{{ $order->id }}" data-status="2"></button>
                         <a class="btn btn-sm fa-solid fa-circle-exclamation text-primary"
-                            href="/admin/manage_orders/order_details"></a>
+                            href="/admin/manage_orders/order_details/{{ $order->id }}"></a>
                     @elseif($order->status >= 1)
                         <a class="btn btn-sm fa-solid fa-circle-exclamation text-primary"
-                            href="/admin/manage_orders/order_details"></a>
+                            href="/admin/manage_orders/order_details/{{ $order->id }}"></a>
                     @endif
                 </td>
             </tr>

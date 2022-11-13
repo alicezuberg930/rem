@@ -11,8 +11,7 @@
                             {{ $user[0]->username }}
                         </button>
                         <div class="dropdown-menu animation bg-secondary mt-4" aria-labelledby="dropdownMenuButton">
-                            <a id="user-edit-information" class="dropdown-item text-white">Đổi
-                                thông tin</a>
+                            <a id="user-edit-information" class="dropdown-item text-white">Thông tin cá nhân</a>
                             <a class="text-white dropdown-item" href="/purchase_history">Lịch sử mua hàng</a>
                             <a id="user-edit-password" class="dropdown-item text-white">Đổi mật
                                 khẩu</a>
