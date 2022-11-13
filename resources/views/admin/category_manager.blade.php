@@ -33,7 +33,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel2">Thêm thể loại</h5>
+                    <h5 class="modal-title" id="staticBackdropLabel2">Thêm thể loại</h5>
                     <button type="lbutton" class="btn-close" data-bs-dismiss="modal" aria-labe="Close">
                     </button>
                 </div>
@@ -67,7 +67,7 @@
         <div class="modal-dialog modal-md">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Sửa thương hiệu</h5>
+                    <h5 class="modal-title" id="staticBackdropLabel">Sửa thể loại</h5>
                     <button type="lbutton" class="btn-close" data-bs-dismiss="modal" aria-labe="Close">
                     </button>
                 </div>
@@ -86,7 +86,7 @@
                                     <div class="form-floating mb-3">
                                         <input name="name-category-modal" id="name-category-modal" class="form-control"
                                             value="">
-                                        <label for="floatingInput">Tên thương hiệu</label>
+                                        <label for="floatingInput">Tên</label>
                                     </div>
                                 </div>
                                 <div class="col-md-12">
@@ -101,7 +101,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Thoát</button>
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="edit-btn">Sửa</button>
                 </div>
             </div>

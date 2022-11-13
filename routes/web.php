@@ -109,10 +109,10 @@ Route::get('/admin/manage_category/delete', [CategoryController::class, 'deleteC
 Route::get('/admin/manage_category/search', [CategoryController::class, 'searchCategory']);
 Route::get('/admin/manage_category/paginate/{current_page}', [CategoryController::class, 'categoryReload']);
 //Quản lý giảm giá
-Route::get('/admin/manage_sales', [CategoryController::class, 'manageCategoryPage']);
-Route::get('/admin/age_category/add', [CategoryController::class, 'addCategory']);
-Route::get('/admin/age_category/edit', [CategoryController::class, 'editCategory']);
-Route::get('/admin/age_category/delete', [CategoryController::class, 'deleteCategory']);
+Route::get('/admin/manage_sales', [SalesController::class, 'manageSalePage']);
+Route::get('/admin//add', [CategoryController::class, 'addCategory']);
+Route::get('/admin//edit', [CategoryController::class, 'editCategory']);
+Route::get('/admin//delete', [CategoryController::class, 'deleteCategory']);
 //Lấy lại mật khẩu
 Route::post('/reset_password_request', [PasswordResetController::class, 'resetPasswordRequest']);
 Route::get('/create_new_password/{selector}/{token}', [PasswordResetController::class, 'createNewPasswordPage']);

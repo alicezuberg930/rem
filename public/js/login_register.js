@@ -1,4 +1,4 @@
-import { isEmailValid, isPasswordValid, isPhonenumberValid } from "./Regex.js"
+import { isEmailValid, isPasswordValid, isPhonenumberValid } from "./regex.js"
 const verify = document.querySelector(".verify");
 const login_side = document.getElementById("login-slider");
 const register_side = document.getElementById("register-slider");
