@@ -1,6 +1,7 @@
 <div class="d-flex flex-column mb-3 gx-5 icky-top bg-white border p-3 justify-content-between">
     <div class="row justify-content-between">
-        <span class="col-md-6 fw-semibold text-danger mx-2" id="soluong"> (Có 0 sản phẩm)</span>
+        <span class="col-md-6 fw-semibold text-danger mx-2" id="soluong"> (Có
+            {{ isset($products) ? count($products) : 0 }} sản phẩm)</span>
     </div>
 </div>
 <div class="row row-cols-1 row-cols-md-3">
@@ -10,10 +11,8 @@
                 <?php $price = $product->price; ?>
                 <div class="disable-select product-item card h-100 rounded-pill">
                     <div class="card card-product h-100" role="button">
-                        <div class="card-quick-cart">
-                            @csrf
-                            <svg class="card-quick-add" data-name="{{ $product->ProductsID }}" version="1.0"
-                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200.000000 200.000000"
+                        <div class="card-quick-cart" data-id="{{ $product->ProductsID }}">
+                            <svg version="1.0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200.000000 200.000000"
                                 preserveAspectRatio="xMidYMid meet">
                                 <g transform="translate(0.000000,200.000000) scale(0.100000,-0.100000)" fill="green"
                                     stroke="none">
@@ -80,3 +79,4 @@
         </ul>
     </nav>
 @endif
+<script src="{{ url('./js/add_cart.js') }}"></script>

@@ -11,10 +11,10 @@
                             {{ $user[0]->username }}
                         </button>
                         <div class="dropdown-menu animation bg-secondary mt-4" aria-labelledby="dropdownMenuButton">
-                            <a id="user-edit-information" class="dropdown-item text-white">Thông tin cá nhân</a>
+                            <a class="dropdown-item text-white"
+                                href="/personal_information/{{ session()->get('UserID') }}">Thông tin cá nhân</a>
                             <a class="text-white dropdown-item" href="/purchase_history">Lịch sử mua hàng</a>
-                            <a id="user-edit-password" class="dropdown-item text-white">Đổi mật
-                                khẩu</a>
+                            <a class="dropdown-item text-white">Đổi mật khẩu</a>
                         </div>
                         <div class="mx-2"> | </div>
                         <a id="login-logout" class="d-flex text-decoration-none text-danger font-weight-bold"
@@ -76,15 +76,17 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center" href="/cart">
-                            <i class="m-1 fa-solid fa-cart-shopping"></i>
-                            Giỏ hàng
-                        </a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link d-flex align-items-center" href="/admin/manage_category">
                             <i class="m-1 fa-solid fa-bars-progress"></i>
                             Quản lý
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center position-relative" href="/cart">
+                            <i class="m-1 fa-solid fa-cart-shopping"></i>
+                            Giỏ hàng
+                            <span class="badge bg-info position-absolute"
+                                style="right:-8px; top:-3px">{{ session()->has('cart') ? count(session()->get('cart')) : 0 }}</span>
                         </a>
                     </li>
                 </ul>

@@ -59,7 +59,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="mb-3">
                             <label for="inputEmail3" class="col-sm-12 col-form-label fw-bold">Chất liệu</label>
                             <div class="col-lg-12 col-md-12 col-sm-12">
@@ -122,7 +121,6 @@
     <x-footer />
     <x-toast />
 </body>
-<script src="{{ url('./js/addcart.js') }}"></script>
 <script src="{{ url('./js/filter.js') }}"></script>
 
 </html>

@@ -24,6 +24,6 @@
     </script>
 @endif
 
-<script src="{{ url('./js/addcart.js') }}"></script>
+<script src="{{ url('./js/add_cart.js') }}"></script>
 
 </html>

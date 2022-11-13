@@ -113,4 +113,9 @@ class AuthController extends Controller
             ], 200);
         }
     }
+
+    public function getCurrentUserInfo($user_id)
+    {
+        return view('user.personal_info', ['User' => User::find($user_id)]);
+    }
 }

@@ -6,10 +6,8 @@
             <?php $price = $product->price; ?>
             <div class="disable-select product-item col-6 col-md-4 col-lg-2 mb-4">
                 <div class="card card-product h-100" role="button">
-                    <div class="card-quick-cart">
-                        @csrf
-                        <svg class="card-quick-add" data-name="{{ $product->ProductsID }}" version="1.0"
-                            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200.000000 200.000000"
+                    <div class="card-quick-cart" data-id="{{ $product->ProductsID }}">
+                        <svg version="1.0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200.000000 200.000000"
                             preserveAspectRatio="xMidYMid meet">
                             <g transform="translate(0.000000,200.000000) scale(0.100000,-0.100000)" fill="green"
                                 stroke="none">

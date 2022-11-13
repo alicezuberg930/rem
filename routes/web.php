@@ -61,6 +61,9 @@ Route::get('/cart/get_district', [CartController::class, 'getDistrict'])->name('
 Route::get('/cart/get_ward', [CartController::class, 'getWard'])->name('getWard');
 //Xác thực thông tin đăng ký
 Route::get('/verification/{token}', [AuthController::class, 'verifyUser']);
+//Thông tin cá nhân
+Route::get('/personal_information/{user_id}', [AuthController::class, 'getCurrentUserInfo']);
+Route::get('/purchase_history', []);
 //Lọc sản phẩm
 Route::get('/filter/search', [ProductController::class, 'filterProducts']);
 Route::get('/filter', [ProductController::class, 'filterPage']);

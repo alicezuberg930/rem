@@ -79,7 +79,7 @@ class CartController extends Controller
         $cities = Http::get("https://api.mysupership.vn/v1/partner/areas/province");
         $id = $request->input('id');
         $cart = session('cart');
-        if ($cart[$id]['quantity'] > 0) {
+        if ($cart[$id]['quantity'] > 1) {
             $cart[$id]['quantity'] -= 1;
             session()->put('cart', $cart);
             session()->save();
