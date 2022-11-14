@@ -1,10 +1,5 @@
-$.ajaxSetup({
-    headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    }
-});
 $(".card-quick-cart").click(function (e) {
-    console.log( $(this).attr('data-id'));
+    console.log($(this).attr('data-id'));
     $.ajax({
         url: "/add_cart",
         method: "get",
@@ -16,6 +11,8 @@ $(".card-quick-cart").click(function (e) {
             $('.toast').toast('show')
             $('.toast-body').html(result.message)
             $('.toast').css('background-color', 'rgb(71, 201, 71)')
+            $("#cart-count").html(result.count)
         }
     });
 })
+

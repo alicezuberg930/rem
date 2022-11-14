@@ -49,7 +49,7 @@ class CartController extends Controller
         }
         session()->put('cart', $cart);
         session()->save();
-        return response()->json(['message' => "Đã thêm vào giỏ hàng", 'status' => 1]);
+        return response()->json(['message' => "Đã thêm vào giỏ hàng", 'status' => 1, 'count' => count(session()->get('cart'))]);
     }
 
     public function removeCart(Request $request)

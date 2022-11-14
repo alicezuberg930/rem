@@ -31,16 +31,15 @@
                 </td>
                 <td>
                     @if ($order->status == 0)
+                        
                         <button class="btn btn-sm fa-regular fa-circle-check text-success checked-btn"
                             data-id="{{ $order->id }}" data-status="1"></button>
                         <button class="btn btn-sm fa-solid fa-circle-xmark text-danger checked-btn"
                             data-id="{{ $order->id }}" data-status="2"></button>
-                        <a class="btn btn-sm fa-solid fa-circle-exclamation text-primary"
-                            href="/admin/manage_orders/order_details/{{ $order->id }}"></a>
-                    @elseif($order->status >= 1)
-                        <a class="btn btn-sm fa-solid fa-circle-exclamation text-primary"
-                            href="/admin/manage_orders/order_details/{{ $order->id }}"></a>
                     @endif
+                    <a class="btn btn-sm fa-solid fa-circle-exclamation text-primary"
+                        href="/admin/manage_orders/order_details/{{ $order->id }}"></a>
+
                 </td>
             </tr>
         @endforeach

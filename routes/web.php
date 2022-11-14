@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AddressController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
@@ -8,6 +9,7 @@ use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SalesController;
+use App\Http\Controllers\StatisticController;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
@@ -63,7 +65,9 @@ Route::get('/cart/get_ward', [CartController::class, 'getWard'])->name('getWard'
 Route::get('/verification/{token}', [AuthController::class, 'verifyUser']);
 //Thông tin cá nhân
 Route::get('/personal_information/{user_id}', [AuthController::class, 'getCurrentUserInfo']);
-Route::get('/purchase_history', []);
+Route::post('/edit_personal_info', [AuthController::class, 'editPersonalInfo']);
+Route::get('/purchase_history/{user_id}', [OrdersController::class, 'getUserOrders']);
+Route::get('/user_address', [AddressController::class, 'userAddressPage']);
 //Lọc sản phẩm
 Route::get('/filter/search', [ProductController::class, 'filterProducts']);
 Route::get('/filter', [ProductController::class, 'filterPage']);
@@ -79,7 +83,7 @@ Route::get('/user/manage_orders/paginate/{current_page}/{type}', [OrdersControll
 Route::get('/user/manage_orders/status/{current_page}/{type}', [OrdersController::class, 'orderReload']);
 Route::get('/user/manage_orders/order_details/{$order_id}', [OrdersController::class, 'getOrderDetails']);
 //Quản lý thống kê
-Route::get('/admin/manage_statistic', [CategoryController::class, 'manageCategoryPage']);
+Route::get('/admin/manage_statistic', [StatisticController::class, 'manageStatisticPage']);
 //Quản lý sản phẩm
 Route::get('/admin/manage_products', [ProductController::class, 'manageProductPage']);
 Route::get('/admin/manage_products/add', [ProductController::class, 'addProduct']);
@@ -117,10 +121,10 @@ Route::get('/admin/manage_sales/delete', [SalesController::class, 'deleteSale'])
 Route::get('/admin/manage_sales/search', [SalesController::class, 'searchSale']);
 Route::get('/admin/manage_sales/paginate/{current_page}', [SalesController::class, 'saleReload']);
 
-// Route::get('/aaaa', function () {
-//     Mail::send("email_templates.order_template", ['a' => 'efhbvwiu'], function ($email) {
-//         $email->subject('Thông báo đăng ký');
-//         $email->to('tien23851@gmail.com', "name");
-//     });
-    // return view("email_templates.order_template");
-// });
+Route::get('/aaaa', function () {
+    // Mail::send("email_templates.order_template", ['a' => 'efhbvwiu'], function ($email) {
+    //     $email->subject('Thông báo đăng ký');
+    //     $email->to('tien23851@gmail.com', "name");
+    // });
+    return view("email_templates.order_template");
+});

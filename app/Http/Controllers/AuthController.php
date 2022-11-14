@@ -116,6 +116,15 @@ class AuthController extends Controller
 
     public function getCurrentUserInfo($user_id)
     {
-        return view('user.personal_info', ['User' => User::find($user_id)]);
+        return view('user.personal_information', ['User' => User::find($user_id)]);
+    }
+
+    public function editPersonalInfo(Request $request)
+    {
+        $user = User::find($request->input('id'));
+        if ($user->update($request->all()))
+            return response()->json(['message' => 'Đã thay đổi thông tin', 'status' => 1]);
+        else
+            return response()->json(['message' => 'Đổi thông tin thất bại', 'status' => 0]);
     }
 }

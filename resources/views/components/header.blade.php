@@ -14,9 +14,11 @@
                             <a class="dropdown-item text-white"
                                 href="/personal_information/{{ session()->get('UserID') }}">Thông tin cá nhân</a>
                             <a class="text-white dropdown-item" href="/purchase_history">Lịch sử mua hàng</a>
-                            <a class="dropdown-item text-white">Đổi mật khẩu</a>
+                            <a class="dropdown-item text-white"
+                                href="/purchase_history/{{ session()->get('UserID') }}">Đổi mật khẩu</a>
+                            <a class="dropdown-item text-white" href="/user_address">Địa chỉ</a>
                         </div>
-                        <div class="mx-2"> | </div>
+                        <div class="mx-2 text-white"> | </div>
                         <a id="login-logout" class="d-flex text-decoration-none text-danger font-weight-bold"
                             href="/logout">
                             Đăng xuất
@@ -37,7 +39,7 @@
             @else
                 <div class="d-flex pt-1">
                     <div class="font-weight-bold">
-                        <a class="nav-link p-0 text-white font-weight-bold" href="/loginregister"> Đăng nhập </a>
+                        <a class="nav-link p-0 text-white font-weight-bold" href="/loginregister">Đăng nhập</a>
                     </div>
                     <div class="mx-2 text-light"> | </div>
                     <div class="font-weight-bold">
@@ -85,7 +87,7 @@
                         <a class="nav-link d-flex align-items-center position-relative" href="/cart">
                             <i class="m-1 fa-solid fa-cart-shopping"></i>
                             Giỏ hàng
-                            <span class="badge bg-info position-absolute"
+                            <span id="cart-count" class="badge bg-info position-absolute"
                                 style="right:-8px; top:-3px">{{ session()->has('cart') ? count(session()->get('cart')) : 0 }}</span>
                         </a>
                     </li>

@@ -10,8 +10,36 @@
     <x-header />
     <div class="container">
         <x-slideshow />
-        @include('news')
-        @include('onsale')
+        <div class="news">
+            <h2 class="title">Sản Phẩm Mới</h2>
+            <div class="row">
+                <?php $a = 0; ?>
+                @foreach ($NewProducts as $product)
+                    @include('components.product_body')
+                    <?php if ($a != 11) {
+                        $a++;
+                    } else {
+                        break;
+                    } ?>
+                @endforeach
+            </div>
+        </div>
+        <div class="onsale">
+            <h2 class="title">Đang khuyến mãi</h2>
+            <div class="row">
+                <?php $i = 0; ?>
+                @foreach ($SaleProducts as $product)
+                    @if ($product->percent > 0)
+                        @include('components.product_body')
+                        <?php if ($i != 11) {
+                            $i++;
+                        } else {
+                            break;
+                        } ?>
+                    @endif
+                @endforeach
+            </div>
+        </div>
     </div>
     <x-footer />
     <x-toast />

@@ -75,4 +75,10 @@ class OrdersController extends Controller
         $Order = orders::where('id', '=', $order_id)->first();
         return view("order.order_details", ['Order_details' => $Order_details, 'Order' => $Order]);
     }
+
+    public function getUserOrders($user_id)
+    {
+        return view('');
+        // orders::find($user_id)->get();
+    }
 }
