@@ -30,10 +30,7 @@ class CartController extends Controller
             ->get(['sales.percent', 'products.amount', 'products.image', 'products.name', 'products.price', 'products.origin', 'products.category']);
 
         if (isset($cart[$id])) {
-            if ($cart[$id]['quantity'] < $product[0]->amount)
-                $cart[$id]['quantity'] += 1;
-            else
-                return response()->json(['message' => "Vượt số lượng trong kho", 'status' => 0]);
+            return response()->json(['status' => 0]);
         } else {
             $cart[$id] = [
                 'id' => $id,

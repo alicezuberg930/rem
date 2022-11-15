@@ -309,16 +309,8 @@ label:hover {
 .card-quick-cart {
     display: none;
     position: absolute;
-    padding: 10%;
     top: 5px;
     right: 5px;
-}
-
-.card-quick-cart > svg {
-    position: absolute;
-    height: 100%;
-    left: 0;
-    top: 0;
 }
 
 .card-quick-add:active {

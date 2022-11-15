@@ -2,8 +2,9 @@
     <footer class="p-5 border-top">
         <div class="row">
             <div class="col-4">
-                <h5>ZippoStore</h5><span>Zippo seller, portfolio novelties, bonuses htmlFor inner circle. One click
-                    and all this will land in your Inbox.</span>
+                <h5>ZippoStore</h5>
+                <span>Zippo seller, portfolio novelties, bonuses htmlFor inner circle. One click and all this will land
+                    in your Inbox.</span>
                 <p>© 2021 ZippoStore, Inc. All rights reserved.</p>
             </div>
             <div class="col-2">
