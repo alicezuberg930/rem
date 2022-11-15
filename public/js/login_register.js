@@ -105,18 +105,18 @@ $("#register").on('click', () => {
             method: "POST",
             dataType: 'json',
             data: { username: username, email: email, password: password, phonenumber: phonenumber, gender: gender, token: $('meta[name="csrf-token"]').attr('content') },
-            success: function (data) {
+            success: function (result) {
                 if (result.status == 1)
                     $('.toast').css('background-color', 'rgb(71, 201, 71)')
                 else
                     $('.toast').css('background-color', 'rgb(239, 73, 73)')
-                if (data.status == 1 || data.status == 0) {
+                if (result.status == 1 || result.status == 0) {
                     $('.toast').toast('show')
-                    $('.toast-body').html(data.message)
+                    $('.toast-body').html(result.message)
                 }
-                if (data.status == -1) ErrorNotification($("#r-email-error"), $("#r-email-success"), $(".r-email"), $(".form-box").find("span").eq(5), data.message)
+                if (result.status == -1) ErrorNotification($("#r-email-error"), $("#r-email-success"), $(".r-email"), $(".form-box").find("span").eq(5), result.message)
                 else SuccessNotification($("#r-email-success"), $("#r-email-error"), $(".r-email"), $(".form-box").find("span").eq(5))
-                if (data.status == -2) ErrorNotification($("#r-phone-number-error"), $("#r-phone-number-success"), $(".r-phone-number"), $(".form-box").find("span").eq(8), data.message)
+                if (result.status == -2) ErrorNotification($("#r-phone-number-error"), $("#r-phone-number-success"), $(".r-phone-number"), $(".form-box").find("span").eq(8), result.message)
                 else SuccessNotification($("#r-phone-number-success"), $("#r-phone-number-error"), $(".r-phone-number"), $(".form-box").find("span").eq(8))
             }
         })

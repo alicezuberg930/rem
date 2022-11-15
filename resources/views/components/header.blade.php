@@ -13,7 +13,8 @@
                         <div class="dropdown-menu animation bg-secondary mt-4" aria-labelledby="dropdownMenuButton">
                             <a class="dropdown-item text-white"
                                 href="/personal_information/{{ session()->get('UserID') }}">Thông tin cá nhân</a>
-                            <a class="text-white dropdown-item" href="/purchase_history">Lịch sử mua hàng</a>
+                            <a class="text-white dropdown-item"
+                                href="/purchase_history/{{ session()->get('UserID') }}">Lịch sử mua hàng</a>
                             <a class="dropdown-item text-white"
                                 href="/purchase_history/{{ session()->get('UserID') }}">Đổi mật khẩu</a>
                             <a class="dropdown-item text-white" href="/user_address">Địa chỉ</a>

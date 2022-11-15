@@ -8,22 +8,26 @@ use Illuminate\Http\Request;
 
 class OrdersController extends Controller
 {
-    public static function getOrderQuantity()
+    public static function getOrderQuantity($user_id)
     {
         $CountArray = array();
-        $CountArray["Total"] = orders::all()->count();
-        $CountArray["Waiting"] = orders::where("status", '=', 0)->count();
-        $CountArray["Approved"] = orders::where("status", '=', 1)->count();
-        $CountArray["Canceled"] = orders::where("status", '=', 2)->count();
+        $CountArray["Total"] = $user_id == -1 ? orders::all()->count() : orders::where('user_id', '=', $user_id)->count();
+        $CountArray["Waiting"] = $user_id == -1 ? orders::where("status", '=', 0)->count() : orders::where([['user_id', '=', $user_id], ["status", '=', 0]])->count();
+        $CountArray["Approved"] = $user_id == -1 ? orders::where("status", '=', 1)->count() : orders::where([['user_id', '=', $user_id], ["status", '=', 1]])->count();
+        $CountArray["Canceled"] = $user_id == -1 ? orders::where("status", '=', 2)->count() : orders::where([['user_id', '=', $user_id], ["status", '=', 2]])->count();
         return $CountArray;
     }
 
-    public static function getOrder($current_page, $type)
+    public static function getOrder($current_page, $type, $user_id)
     {
+        $orders = null;
         if ($type != -1)
-            return orders::where('status', '=', $type)->take(5)->skip(($current_page - 1) * 5)->get();
+            $orders = orders::where('status', '=', $type)->take(5)->skip(($current_page - 1) * 5);
         else
-            return orders::take(5)->skip(($current_page - 1) * 5)->get();
+            $orders = orders::take(5)->skip(($current_page - 1) * 5);
+        if ($user_id != -1)
+            $orders = $orders->where('user_id', '=', $user_id);
+        return $orders->get();
     }
 
     public function updateOrderStatus(Request $request)
@@ -33,38 +37,39 @@ class OrdersController extends Controller
         if (!$response || $orders == null)
             return response()->json(['message' => 'Thay đổi trạng thái thất bại', 'status' => 0]);
         else
-            return response()->json(['message' => 'Đã thay đổi trạng thái', 'status' => 1, 'response' => $this->orderReload($request->input('page'), $request->input('type'))]);
+            return response()->json(['message' => 'Đã thay đổi trạng thái', 'status' => 1, 'response' => $this->orderReload($request->input('page'), $request->input('type'), $request->input('user_id'))]);
     }
 
     public function manageOrderPage(Request $request)
     {
         $type = -1;
         if (session()->has('search')) session()->forget("search");
-        if ($request->input("type") != NULL)
-            $type = $request->input("type");
-        $Orders = $this->getOrder(1, $type);
-        session()->put('type', -1);
-        return view('admin.orders_manager', ['Orders' => $Orders, 'currentpage' => 1, "Quantity" => $this->getOrderQuantity()]);
+        // if ($request->input("type") != NULL)
+        // $type = $request->input("type");
+        $Orders = $this->getOrder(1, $type, -1);
+        return view('admin.orders_manager', ['Orders' => $Orders, 'currentpage' => 1, "Quantity" => $this->getOrderQuantity(-1)]);
     }
 
     public function searchOrder(Request $request)
     {
         session()->put('search', $request->input('id'));
         session()->save();
-        return $this->orderReload($request->input('page'), -1);
+        return $this->orderReload($request->input('page'), -1, $request->input('user_id'));
     }
 
-    public function orderReload($current_page, $type)
+    public function orderReload($current_page, $type, $user_id)
     {
         $Orders = null;
         if (session()->has('search') && session()->get('search') != '') {
             $query = orders::where('id', '=', session()->get('search'));
+            if ($user_id != -1)
+                $query = $query->where('user_id', '=', $user_id);
             $Orders = $query->take(5)->skip(($current_page - 1) * 5)->get();
         } else {
-            $Orders = $this->getOrder($current_page, $type);
+            $Orders = $this->getOrder($current_page, $type, $user_id);
             session()->put('type', $type);
         }
-        return view('dynamic_layout.order_reload', ['Orders' => $Orders, 'currentpage' => $current_page, "Quantity" => $this->getOrderQuantity()])->render();
+        return view('dynamic_layout.order_reload', ['Orders' => $Orders, 'currentpage' => $current_page, "Quantity" => $this->getOrderQuantity($user_id)])->render();
     }
 
     public function getOrderDetails($order_id)
@@ -78,7 +83,9 @@ class OrdersController extends Controller
 
     public function getUserOrders($user_id)
     {
-        return view('');
+        if (session()->has('search')) session()->forget("search");
+        $Orders = $this->getOrder(1, -1, $user_id);
+        return view('user.purchase_history', ['user_id' => $user_id, 'Orders' => $Orders, 'currentpage' => 1, "Quantity" => $this->getOrderQuantity($user_id)]);
         // orders::find($user_id)->get();
     }
 }

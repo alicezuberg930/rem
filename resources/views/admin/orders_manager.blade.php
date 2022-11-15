@@ -1,10 +1,12 @@
 @extends('admin.adminpage')
 @section('body_manager')
-    @include('components.order_body')
+    <div class="col-md-9 col-lg-10">
+        @include('components.order_body')
+    </div>
     <script>
         $(document).on('click', '.btnradio', function() {
             $.ajax({
-                url: "/admin/manage_orders/status/1/" + $(this).val(),
+                url: "/admin/manage_orders/status/1/" + $(this).val() + "/-1",
                 method: "get",
                 success: function(result) {
                     $("#order-table").html(result);
@@ -19,7 +21,8 @@
                 data: {
                     id: $(this).attr("data-id"),
                     status: $(this).attr("data-status"),
-                    type: $('input[name=btnradio]:checked', '#status-form').val()
+                    type: $('input[name=btnradio]:checked', '#status-form').val(),
+                    user_id: $(this).attr("data-user_id")
                 },
                 success: function(result) {
                     $("#order-table").html(result.response);
@@ -35,7 +38,8 @@
                     method: "get",
                     data: {
                         id: $(this).val(),
-                        page: "{{ $currentpage }}"
+                        page: "{{ $currentpage }}",
+                        user_id: -1
                     },
                     success: function(result) {
                         $("#order-table").html(result)
@@ -46,8 +50,8 @@
 
         $(document).on('click', '.page-item', function() {
             $.ajax({
-                url: "/admin/manage_orders/paginate/" + {{ $currentpage }} + "/" + $(
-                    'input[name=btnradio]:checked', '#status-form').val(),
+                url: "/admin/manage_orders/paginate/" + $(this).text() + "/" + $(
+                    'input[name=btnradio]:checked', '#status-form').val() + "/-1",
                 method: "get",
                 success: function(result) {
                     $("#order-table").html(result)

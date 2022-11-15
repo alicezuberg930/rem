@@ -24,6 +24,7 @@ class AuthController extends Controller
         if ($user->remember_token === $token) {
             session()->forget('email');
             session()->put('UserID', $user->id);
+            session()->save();
             return redirect('/');
         } else
             return response()->json(['message' => 'Người dùng không hợp lệ']);

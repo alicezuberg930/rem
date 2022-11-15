@@ -79,8 +79,8 @@ Route::post('/reset_password_handler', [PasswordResetController::class, 'resetPa
 Route::get('/user/manage_orders', [OrdersController::class, 'manageOrderPage']);
 Route::get('/user/manage_orders/update_order_status', [OrdersController::class, 'updateOrderStatus']);
 Route::get('/user/manage_orders/search', [OrdersController::class, 'searchOrder']);
-Route::get('/user/manage_orders/paginate/{current_page}/{type}', [OrdersController::class, 'orderReload']);
-Route::get('/user/manage_orders/status/{current_page}/{type}', [OrdersController::class, 'orderReload']);
+Route::get('/user/manage_orders/paginate/{current_page}/{type}/{user_id}', [OrdersController::class, 'orderReload']);
+Route::get('/user/manage_orders/status/{current_page}/{type}/{user_id}', [OrdersController::class, 'orderReload']);
 Route::get('/user/manage_orders/order_details/{$order_id}', [OrdersController::class, 'getOrderDetails']);
 //Quản lý thống kê
 Route::get('/admin/manage_statistic', [StatisticController::class, 'manageStatisticPage']);
@@ -97,8 +97,8 @@ Route::get('/admin/manage_products/paginate/{current_page}', [ProductController:
 Route::get('/admin/manage_orders', [OrdersController::class, 'manageOrderPage']);
 Route::get('/admin/manage_orders/update_order_status', [OrdersController::class, 'updateOrderStatus']);
 Route::get('/admin/manage_orders/search', [OrdersController::class, 'searchOrder']);
-Route::get('/admin/manage_orders/paginate/{current_page}/{type}', [OrdersController::class, 'orderReload']);
-Route::get('/admin/manage_orders/status/{current_page}/{type}', [OrdersController::class, 'orderReload']);
+Route::get('/admin/manage_orders/paginate/{current_page}/{type}/{user_id}', [OrdersController::class, 'orderReload']);
+Route::get('/admin/manage_orders/status/{current_page}/{type}/{user_id}', [OrdersController::class, 'orderReload']);
 Route::get('/admin/manage_orders/order_details/{order_id}', [OrdersController::class, 'getOrderDetails']);
 //Quản lý khách hàng
 Route::get('/admin/manage_accounts', [CategoryController::class, 'manageCategoryPage']);
