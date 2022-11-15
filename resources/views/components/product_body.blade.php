@@ -12,7 +12,7 @@
                 </g>
             </svg>
         </div>
-        <a class="h-100 d-flex flex-column text-decoration-none" href="/product_detail/{{ $product->ProductsID }}">
+        <a class="h-100 d-flex flex-column text-decoration-none" href="/product_details/{{ $product->ProductsID }}">
             <div>
                 <img src="{{ url('image/' . $product->image) }}" class="product-img card-img">
             </div>

@@ -130,9 +130,10 @@ class ProductController extends Controller
     public function ProductDetailsPage($id)
     {
         $product = product::where('products.id', '=', $id)
-            ->leftjoin('sales', 'products.id', '=', 'sales.id')
-            ->get(['products.id as ProductsID', 'sales.id as SaleID', 'products.created_at', 'products.updated_at', 'products.image', 'products.name', 'products.price', 'products.origin', 'sales.percent']);;
-        return view("product.details", ['product' => $product]);
+            ->leftjoin('sales', 'products.discount', '=', 'sales.id')
+            ->join('categories', 'categories.id', '=', 'products.category')
+            ->get(['products.id as ProductsID', 'products.description', 'categories.name', 'sales.id as SaleID', 'products.created_at', 'products.updated_at', 'products.image', 'products.name', 'products.price', 'products.origin', 'sales.percent']);
+        return view("product.product_details", ['product' => $product[0]]);
     }
 
     public function indexPage()

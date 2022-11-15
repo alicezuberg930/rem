@@ -1,5 +1,5 @@
 :root {
-    --main-color: #a4a4a5;
+    --main-color: #e2e2e2;
     --sub-color: #1f2833;
     --sub2-color: #0051a8;
     --sub3-color: rgba(255, 255, 255, 0.5);
@@ -31,11 +31,6 @@ a:hover {
 
 html {
     scroll-behavior: smooth;
-}
-
-body {
-    /* background-color: var(--main-color) !important;
-    color: white !important; */
 }
 
 hr {
@@ -524,7 +519,7 @@ label:hover {
     margin-left: 0.2em;
 }
 
-@keyframes change-image {
+/* @keyframes change-image {
     0% {
         opacity: 1;
     }
@@ -538,9 +533,9 @@ label:hover {
 }
 
 .product-item:hover .product-img {
-    /* animation: change-image 1s forwards; */
+    animation: change-image 1s forwards;
 }
 
 .nav-item:hover {
     color: #fff;
-}
+} */

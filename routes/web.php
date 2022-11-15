@@ -53,7 +53,7 @@ Route::get('/remove_cart', [CartController::class, 'removeCart'])->name('remove_
 Route::get('/increase_incart', [CartController::class, 'increaseIncart'])->name('increase_incart');
 Route::get('/decrease_incart', [CartController::class, 'decreaseIncart'])->name('decrease_incart');
 //chi tiết sản phẩm
-Route::get('/product_detail/{id}', [ProductController::class, 'getProductDetails'])->name('product_details');
+Route::get('/product_details/{id}', [ProductController::class, 'ProductDetailsPage'])->name('product_details');
 //Thánh toán
 Route::get('/vnpay/vnpay_return', [CheckoutController::class, 'paymentsResult']);
 Route::post('/vnpay/vnpay_payment', [CheckoutController::class, 'vnpayPayment']);
