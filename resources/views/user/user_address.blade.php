@@ -9,11 +9,8 @@
 <body>
     <input id="pac-input" class="controls" type="text" placeholder="Search Box">
     <div id="map"></div>
-    <!-- Replace the value of the key parameter with your own API key. -->
 </body>
 <style>
-    /* Always set the map height explicitly to define the size of the div
- * element that contains the map. */
     #map {
         height: 100%;
     }
@@ -76,21 +73,6 @@
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCUBKzJFoOv7caZRASHSeUb1pIKyPgcpAY&libraries=places&language=vi&region=VI&callback=initMap"
     async defer></script>
 <script>
-    // function initMap() {
-    //     const map = new google.maps.Map($("#map"), {
-    //         zoom: 8,
-    //         center: {
-    //             lat: 40.731,
-    //             lng: -73.997
-    //         }
-    //     })
-    // const geocoder = new google.maps.Geocoder()
-    // const infowindow = new google.maps.InfoWindow()
-    // geocodeLatLng(geocoder,  map, infowindow)
-    // $("#submit").on('click', () => {
-    // geocodeLatLng(geocoder, map, infowindow)
-    // })
-    // }
     var map, marker, infowindow;
     var markers = [];
     var address_infos = {};
@@ -110,49 +92,44 @@
             lat: 21.0167904,
             lng: 105.7819856
         });
-        geocodeAddress(marker.position);
+        // geocodeAddress(marker.position);
         map.panTo(marker.position);
         markers.push(marker);
 
         map.addListener("click", function(e) {
             clearMarkers();
             placeMarker(e.latLng);
-            geocodeAddress(e.latLng);
+            fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + e.latLng.lat() + '&lon=' + e
+                    .latLng.lng() + '&zoom=18&addressdetails=1')
+                .then((response) => response.json())
+                .then((data) => console.log(data));
+            // geocodeAddress(e.latLng);
             map.panTo(marker.position);
             markers.push(marker);
         });
-
         createInfoWindow();
-
-        // Create the search box and link it to the UI element.
         var input = document.getElementById('pac-input');
         var searchBox = new google.maps.places.SearchBox(input);
         map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-
         // Bias the SearchBox results towards current map's viewport.
         // map.addListener('bounds_changed', function() {
         // searchBox.setBounds(map.getBounds());
         // });
-
         searchBox.addListener("places_changed", function() {
             searchBox.set("map", null);
             clearMarkers();
-
             var places = searchBox.getPlaces();
             if (places.length == 0) {
                 console.log("Returned no place");
                 return;
             }
-
             var bounds = new google.maps.LatLngBounds();
-
             if (places.length > 1) {
                 places.forEach(function(place) {
                     if (!place.geometry) {
                         console.log("Returned place contains no geometry");
                         return;
                     }
-
                     var icon = {
                         url: place.icon,
                         size: new google.maps.Size(71, 71),
@@ -160,21 +137,18 @@
                         anchor: new google.maps.Point(17, 34),
                         scaledSize: new google.maps.Size(25, 25)
                     };
-
                     marker = new google.maps.Marker({
                         map: map,
                         icon: icon,
                         title: place.name,
                         position: place.geometry.location
                     });
-
                     marker.bindTo("map", searchBox, "map");
                     marker.addListener("map_changed", function() {
                         if (!this.getMap()) {
                             this.unbindAll();
                         }
                     });
-
                     if (place.geometry.viewport) {
                         // Only geocodes have viewport.
                         bounds.union(place.geometry.viewport);
@@ -182,7 +156,6 @@
                         bounds.extend(place.geometry.location);
                     }
                 });
-
                 map.fitBounds(bounds);
                 searchBox.set("map", map);
                 map.setZoom(Math.min(map.getZoom(), 15));
@@ -194,18 +167,14 @@
                     console.log("Returned place contains no geometry");
                     return;
                 }
-
                 placeMarker(place.geometry.location);
-
                 marker.bindTo("map", searchBox, "map");
                 marker.addListener("map_changed", function() {
                     if (!this.getMap()) {
                         this.unbindAll();
                     }
                 });
-
                 create_address_infos(place);
-
                 infowindow.setContent(
                     "<div>" +
                     "<b>Address :</b> " + place.formatted_address + "<br>" +
@@ -213,14 +182,12 @@
                     "<b>Longitude :</b> " + place.geometry.location.lng() +
                     "</div>"
                 );
-
                 if (place.geometry.viewport) {
                     // Only geocodes have viewport.
                     bounds.union(place.geometry.viewport);
                 } else {
                     bounds.extend(place.geometry.location);
                 }
-
                 map.fitBounds(bounds);
                 searchBox.set("map", map);
                 map.setZoom(Math.min(map.getZoom(), 15));
@@ -228,7 +195,6 @@
                 markers.push(marker);
             }
         });
-
     }
 
     function placeMarker(latLng) {
@@ -245,35 +211,35 @@
         infowindow = new google.maps.InfoWindow();
     }
 
-    function geocodeAddress(latLng) {
-        var geocoder = new google.maps.Geocoder;
-        createInfoWindow();
+    // Hàm này cần có thẻ tín dụng mastercard & visa để sử dụng 
+    // function geocodeAddress(latLng) {
+    //     var geocoder = new google.maps.Geocoder;
+    //     createInfoWindow();
+    //     geocoder.geocode({
+    //             "location": latLng
+    //         },
+    //         function(results, status) {
+    //             if (status === google.maps.GeocoderStatus.OK) {
+    //                 if (results[0]) {
+    //                     create_address_infos(results[0]);
 
-        geocoder.geocode({
-                "location": latLng
-            },
-            function(results, status) {
-                if (status === google.maps.GeocoderStatus.OK) {
-                    if (results[0]) {
-                        create_address_infos(results[0]);
-
-                        infowindow.setContent(
-                            "<div>" +
-                            "<b>Address :</b> " + address_infos["name"] + "<br>" +
-                            "<b>Latitude :</b> " + address_infos["latitude"] + "<br>" +
-                            "<b>Longitude :</b> " + address_infos["longitude"] +
-                            "</div>"
-                        );
-                        infowindow.open(map, marker);
-                    } else {
-                        console.log("No results found");
-                    }
-                } else {
-                    console.log("Geocoder failed due to: " + status);
-                }
-            }
-        );
-    }
+    //                     infowindow.setContent(
+    //                         "<div>" +
+    //                         "<b>Address :</b> " + address_infos["name"] + "<br>" +
+    //                         "<b>Latitude :</b> " + address_infos["latitude"] + "<br>" +
+    //                         "<b>Longitude :</b> " + address_infos["longitude"] +
+    //                         "</div>"
+    //                     );
+    //                     infowindow.open(map, marker);
+    //                 } else {
+    //                     console.log("No results found");
+    //                 }
+    //             } else {
+    //                 console.log("Geocoder failed due to: " + status);
+    //             }
+    //         }
+    //     );
+    // }
 
     function clearMarkers() {
         for (var i = 0; i < markers.length; i++) {
@@ -294,28 +260,6 @@
             banchi: "",
             gou: ""
         }
-    }
-
-
-
-    function geocodeLatLng(geocoder, map, infowindow) {
-        const input = $("#latlng").val().split(",");
-        const latlng = {
-            lat: parseFloat(input[0]),
-            lng: parseFloat(input[1])
-        }
-        geocoder.geocode({
-            location: latlng
-        }).then((response) => {
-            if (response.results[0]) {
-                map.setZoom(12)
-                const marker = new google.maps.Marker({
-                    position: latlng,
-                    map: map
-                })
-            }
-            console.log(response);
-        })
     }
 </script>
 

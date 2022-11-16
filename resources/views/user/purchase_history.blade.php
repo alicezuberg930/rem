@@ -8,7 +8,14 @@
 
 <body>
     <x-header />
-    @include('components.order_body')
+    <div class="container-fluid">
+        <div class="d-flex align-items-center justify-content-center text-center mt-3 mb-3">
+            <hr class="col-md-2" />
+            <span class="border p-1 col-md-6 fs-4 fw-semibold">Thông tin các đơn hàng của bạn</span>
+            <hr class="col-md-2" />
+        </div>
+        @include('components.order_body')
+    </div>
     <x-footer />
     <x-toast />
 </body>
