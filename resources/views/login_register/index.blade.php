@@ -36,7 +36,7 @@
                     <i id="l-password-error" class="fas fa-exclamation-circle"></i>
                 </div>
                 <div class="term">
-                    <input type="checkbox" class="check-box">
+                    <input type="checkbox" id="remember_me" class="check-box">
                     <small>Nhớ tôi</small>
                 </div>
                 <p><a href="/reset_password">Quên mật khẩu?</a></p>

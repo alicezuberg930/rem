@@ -48,6 +48,7 @@ $("#login").on('click', (e) => {
         data: {
             email: email,
             password: password,
+            remember_me: $("#remember_me").prop('checked'),
             token: $('meta[name="csrf-token"]').attr('content')
         },
         success: function (data) {

@@ -128,6 +128,7 @@
         </div>
     </div>
     <script>
+        let current_page = 1
         $("#add-btn").on('click', function() {
             $.ajax({
                 url: "/admin/manage_sales/add",
@@ -135,7 +136,8 @@
                 data: {
                     salename: $('#sale-name').val(),
                     percent: $('#sale-percent').val(),
-                    end_date: $('#sale-end_date').val()
+                    end_date: $('#sale-end_date').val(),
+                    page: current_page
                 },
                 success: function(result) {
                     $("#sales-table").html(result.response)
@@ -148,14 +150,14 @@
                 }
             })
         })
-        let current_page = 1
+
         $(document).on('click', '.edit-btn', function() {
             current_page = $(this).attr('data-page')
             $.ajax({
                 url: "/admin/manage_sales/store",
                 method: "get",
                 data: {
-                    id: $(this).attr('data-id')
+                    id: $(this).attr('data-id'),
                 },
                 success: function(result) {
                     $("#sale-id").val(result.id)
@@ -193,7 +195,7 @@
                 method: "get",
                 data: {
                     id: $(this).attr('data-id'),
-                    page: $(this).attr('data-page'),
+                    page: current_page,
                 },
                 success: function(result) {
                     $("#sales-table").html(result.response)
@@ -223,6 +225,7 @@
             }
         });
         $(document).on('click', '.page-item', function() {
+            current_page = $(this).text()
             $.ajax({
                 url: "/admin/manage_sales/paginate/" + $(this).text(),
                 method: "get",

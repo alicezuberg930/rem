@@ -14,7 +14,7 @@
         @foreach ($Orders as $order)
             <tr>
                 <th>{{ $order->id }}</th>
-                <td>{{ date_format(new DateTime($order->created_at), 'd/m/Y h:i:s') }}</td>
+                <td>{{ date_format(new DateTime($order->order_date), 'd/m/Y h:i:s') }}</td>
                 <td>{{ $order->date_checked == null ? '' : date('d/m/Y h:i:s', strtotime($order->date_checked)) }}
                 </td>
                 <td>{{ number_format($order->total_price) }} VND</td>
@@ -33,7 +33,8 @@
                     @if ($order->status == 0)
                         <button
                             class="@if (isset($user_id)) d-none @endif btn btn-sm fa-regular fa-circle-check text-success checked-btn"
-                            data-id="{{ $order->id }}" data-status="1"></button>
+                            data-id="{{ $order->id }}" data-status="1"
+                            data-user_id="{{ isset($user_id) ? $user_id : -1 }}"></button>
                         <button class="btn btn-sm fa-solid fa-circle-xmark text-danger checked-btn"
                             data-id="{{ $order->id }}" data-status="2"
                             data-user_id="{{ isset($user_id) ? $user_id : -1 }}"></button>

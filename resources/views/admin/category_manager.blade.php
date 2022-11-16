@@ -12,7 +12,7 @@
                     </div>
                     <div class="col-md-auto">
                         <button type="submit" href="/admin/manage_category/add" class="btn btn-primary btn-sm"
-                            data-bs-toggle="modal" data-bs-target="#add-btn">Thêm thể loại</button>
+                            data-bs-toggle="modal" data-bs-target="#add-modal">Thêm thể loại</button>
                     </div>
                 </div>
                 <div class="col-md-auto">
@@ -29,7 +29,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="add-btn" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal fade" id="add-modal" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -108,6 +108,7 @@
         </div>
     </div>
     <script>
+        let current_page = 1
         $("#add-btn").on('click', function() {
             $.ajax({
                 url: "/admin/manage_category/add",
@@ -115,7 +116,7 @@
                 data: {
                     name: $('#name-category-add').val(),
                     description: $('#desc-category-add').val(),
-                    page: "{{ $currentpage }}"
+                    page: current_page
                 },
                 success: function(result) {
                     $("#category-table").html(result.response)
@@ -128,7 +129,6 @@
                 }
             })
         })
-
         $(document).on('click', '.edit-btn', function() {
             let id = $(this).attr('data-id')
             let name = $(this).parent().parent().children().eq(1).text()
@@ -137,7 +137,6 @@
             $("#name-category-modal").val(name)
             $("#description-category-modal").val(description)
         })
-
         $("#edit-btn").on('click', function() {
             $.ajax({
                 url: "/admin/manage_category/edit",
@@ -146,7 +145,7 @@
                     id: $("#id-category-modal").val(),
                     name: $("#name-category-modal").val(),
                     description: $("#description-category-modal").val(),
-                    page: "{{ $currentpage }}"
+                    page: current_page
                 },
                 success: function(result) {
                     $("#category-table").html(result.response)
@@ -159,7 +158,6 @@
                 }
             })
         })
-
         $(document).on('click', '.delete-btn', function() {
             let id = $(this).attr('data-id')
             $.ajax({
@@ -167,7 +165,7 @@
                 method: "get",
                 data: {
                     id: id,
-                    page: "{{ $currentpage }}"
+                    page: current_page
                 },
                 success: function(result) {
                     $("#category-table").html(result.response)
@@ -180,7 +178,6 @@
                 }
             })
         })
-
         $('#search_id').keypress(function(e) {
             if (e.which == 13) {
                 e.preventDefault();
@@ -197,8 +194,8 @@
                 })
             }
         });
-
         $(document).on('click', '.page-item', function() {
+            current_page = $(this).text()
             $.ajax({
                 url: "/admin/manage_category/paginate/" + $(this).text(),
                 method: "get",

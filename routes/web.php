@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\GroupController;
 use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ProductController;
@@ -120,6 +121,8 @@ Route::get('/admin/manage_sales/store', [SalesController::class, 'getSaleDetails
 Route::get('/admin/manage_sales/delete', [SalesController::class, 'deleteSale']);
 Route::get('/admin/manage_sales/search', [SalesController::class, 'searchSale']);
 Route::get('/admin/manage_sales/paginate/{current_page}', [SalesController::class, 'saleReload']);
+//Quản lý quyền
+Route::get('/admin/manage_groups/add', [GroupController::class, 'addGroup']);
 
 Route::get('/aaaa', function () {
     // Mail::send("email_templates.order_template", ['a' => 'efhbvwiu'], function ($email) {

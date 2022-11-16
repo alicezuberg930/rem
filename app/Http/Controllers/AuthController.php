@@ -43,7 +43,7 @@ class AuthController extends Controller
                     'message' => 'Đăng nhập thành công',
                     'status' => 1,
                 ]);
-            } else
+            } else      
                 return response()->json([
                     'message' => 'Mật khẩu không hợp lệ',
                     'status' => 0

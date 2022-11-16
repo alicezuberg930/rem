@@ -264,6 +264,7 @@
         </div>
     </div>
     <script>
+        let current_page = 1;
         const uploadImage = (input, display) => {
             $.ajaxSetup({
                 headers: {
@@ -302,7 +303,7 @@
                     origin: $("#product-origin").val(),
                     description: $("#product-description").val(),
                     discount: $("#product-discount").val(),
-                    page: "{{ $currentpage }}"
+                    page: current_page
                 },
                 success: function(result) {
                     $("#product-table").html(result.response)
@@ -315,7 +316,6 @@
                 }
             })
         })
-        let current_page = 1;
         $(document).on('click', '.edit-btn', function() {
             current_page = $(this).attr('data-page')
             $.ajax({
@@ -403,6 +403,7 @@
             }
         });
         $(document).on('click', '.page-item', function() {
+            current_page = $(this).text()
             $.ajax({
                 url: "/admin/manage_products/paginate/" + $(this).text(),
                 method: "get",

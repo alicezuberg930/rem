@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class sales extends Model
 {
     use HasFactory;
-
+    public $timestamps = false;
     protected $fillable = [
         'salename',
         'percent',

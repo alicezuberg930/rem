@@ -4,6 +4,7 @@
         @include('components.order_body')
     </div>
     <script>
+        let current_page = 1
         $(document).on('click', '.btnradio', function() {
             $.ajax({
                 url: "/admin/manage_orders/status/1/" + $(this).val() + "/-1",
@@ -22,14 +23,14 @@
                     id: $(this).attr("data-id"),
                     status: $(this).attr("data-status"),
                     type: $('input[name=btnradio]:checked', '#status-form').val(),
-                    user_id: $(this).attr("data-user_id")
+                    user_id: $(this).attr("data-user_id"),
+                    page: current_page
                 },
                 success: function(result) {
                     $("#order-table").html(result.response);
                 }
             })
         })
-
         $('#search_id').keypress(function(e) {
             if (e.which == 13) {
                 e.preventDefault();
@@ -38,7 +39,7 @@
                     method: "get",
                     data: {
                         id: $(this).val(),
-                        page: "{{ $currentpage }}",
+                        page: 1,
                         user_id: -1
                     },
                     success: function(result) {
@@ -47,8 +48,8 @@
                 })
             }
         });
-
         $(document).on('click', '.page-item', function() {
+            current_page = $(this).text()
             $.ajax({
                 url: "/admin/manage_orders/paginate/" + $(this).text() + "/" + $(
                     'input[name=btnradio]:checked', '#status-form').val() + "/-1",

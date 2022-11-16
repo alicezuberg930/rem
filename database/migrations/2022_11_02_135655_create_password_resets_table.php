@@ -19,7 +19,6 @@ return new class extends Migration
             $table->string('token', 60);
             $table->string('selector', 16);
             $table->bigInteger('expire');
-            $table->timestamps();
         });
     }
 
