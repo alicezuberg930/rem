@@ -25,6 +25,7 @@ class AuthController extends Controller
             session()->forget('email');
             session()->put('UserID', $user->id);
             session()->save();
+            $user->update(['email_verified_at' => date('Y-m-d h:i:s')]);
             return redirect('/');
         } else
             return response()->json(['message' => 'Người dùng không hợp lệ']);
@@ -35,24 +36,17 @@ class AuthController extends Controller
         $token = $request->input('token');
         $user = User::where('email', '=', $request->input('email'))->first();
         if ($user) {
+            if ($user->email_verified_at == null)
+                return response()->json(['message' => 'Hãy xác nhận tài khoản của mình trước khi đăng nhập', 'status' => -2]);
             if (($request->input('password') == $user->password)) {
                 session()->put('UserID', $user->id);
                 session()->put('token', $token);
                 $user::where("id", "=", session()->get('UserID'))->update(['remember_token' => $token]);
-                return response()->json([
-                    'message' => 'Đăng nhập thành công',
-                    'status' => 1,
-                ]);
+                return response()->json(['message' => 'Đăng nhập thành công', 'status' => 1,]);
             } else
-                return response()->json([
-                    'message' => 'Mật khẩu không hợp lệ',
-                    'status' => 0
-                ]);
+                return response()->json(['message' => 'Mật khẩu không hợp lệ', 'status' => 0]);
         } else {
-            return response()->json([
-                'message' => 'Email chưa được sử dụng',
-                'status' => -1
-            ]);
+            return response()->json(['message' => 'Email chưa được sử dụng', 'status' => -1]);
         }
     }
 
@@ -115,11 +109,6 @@ class AuthController extends Controller
         }
     }
 
-    public function getCurrentUserInfo($user_id)
-    {
-        return view('user.personal_information', ['User' => User::find($user_id)]);
-    }
-
     public function editPersonalInfo(Request $request)
     {
         $user = User::find($request->input('id'));
@@ -127,11 +116,6 @@ class AuthController extends Controller
             return response()->json(['message' => 'Đã thay đổi thông tin', 'status' => 1]);
         else
             return response()->json(['message' => 'Đổi thông tin thất bại', 'status' => 0]);
-    }
-
-    public function personalPasswordPage()
-    {
-        return view('user.user_password');
     }
 
     public function changePassword(Request $request)

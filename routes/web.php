@@ -11,6 +11,7 @@ use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SalesController;
 use App\Http\Controllers\StatisticController;
+use App\Models\User;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
@@ -30,44 +31,46 @@ use Illuminate\Support\Facades\Route;
 Route::get('/loginregister', function () {
     return view('login_register.index');
 });
+// Giao diện trang chủ
+Route::get('/', [ProductController::class, 'indexPage'])->middleware('isLoggedIn');
 // Giao diện trang giỏ hàng
 Route::get('/cart', function () {
     return view('cart.index', ['cities' => Http::get('https://api.mysupership.vn/v1/partner/areas/province')]);
 });
-//Giao diện trang quản lý
-// Route::get('/admin', function () {
-//     return view("admin.");
-// });
 // Giao diện trang quên mật khẩu
 Route::get('/reset_password', function () {
     return view("forget_password.reset_password");
 });
-// Giao diện trang chủ
-Route::get('/', [ProductController::class, 'indexPage'])->middleware('isLoggedIn');
-//đăng nhập & đăng ký
-Route::post('/login', [AuthController::class, 'login'])->name('login');
-Route::post('/register', [AuthController::class, 'register'])->name('register');
-Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
-//giỏ hàng
-Route::get('/add_cart', [CartController::class, 'addCart'])->name('add_cart');
-Route::get('/remove_cart', [CartController::class, 'removeCart'])->name('remove_cart');
-Route::get('/increase_incart', [CartController::class, 'increaseIncart'])->name('increase_incart');
-Route::get('/decrease_incart', [CartController::class, 'decreaseIncart'])->name('decrease_incart');
-//chi tiết sản phẩm
-Route::get('/product_details/{id}', [ProductController::class, 'ProductDetailsPage'])->name('product_details');
-//Thánh toán
+// Giao diện trang thông tin cá nhân
+Route::get('/personal_information/{user_id}', function ($user_id) {
+    return view('user.personal_information', ['User' => User::find($user_id)]);
+});
+// Giao diện trang mật khẩu cá nhân
+Route::get('/personal_password', function () {
+    return view('user.user_password');
+});
+
+// Xử lý đăng nhập & đăng ký
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register', [AuthController::class, 'register']);
+Route::get('/logout', [AuthController::class, 'logout']);
+Route::get('/add_cart', [CartController::class, 'addCart']);
+Route::get('/remove_cart', [CartController::class, 'removeCart']);
+Route::get('/increase_incart', [CartController::class, 'increaseIncart']);
+Route::get('/decrease_incart', [CartController::class, 'decreaseIncart']);
+// Giao diện trang chi tiết sản phẩm
+Route::get('/product_details/{id}', [ProductController::class, 'ProductDetailsPage']);
+// Xử lý thánh toán
 Route::get('/vnpay/vnpay_return', [CheckoutController::class, 'paymentsResult']);
 Route::post('/vnpay/vnpay_payment', [CheckoutController::class, 'vnpayPayment']);
 Route::post('/direct_payment', [CheckoutController::class, 'directPayment']);
-//Lấy thông tin api
-Route::get('/cart/get_district', [CartController::class, 'getDistrict'])->name('getDistrict');
-Route::get('/cart/get_ward', [CartController::class, 'getWard'])->name('getWard');
+//Lấy thông tin api thành phố quận huyện
+Route::get('/cart/get_district', [CartController::class, 'getDistrict']);
+Route::get('/cart/get_ward', [CartController::class, 'getWard']);
 //Xác thực thông tin đăng ký
 Route::get('/verification/{token}', [AuthController::class, 'verifyUser']);
 //Thông tin cá nhân
-Route::get('/personal_information/{user_id}', [AuthController::class, 'getCurrentUserInfo']);
 Route::post('/edit_personal_info', [AuthController::class, 'editPersonalInfo']);
-Route::get('/personal_password', [AuthController::class, 'personalPasswordPage']);
 Route::post('/change_password', [AuthController::class, 'changePassword']);
 Route::get('/purchase_history/{user_id}', [OrdersController::class, 'getUserOrders']);
 Route::get('/user_address', [AddressController::class, 'userAddressPage']);

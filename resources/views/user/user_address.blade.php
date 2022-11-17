@@ -102,7 +102,7 @@
             fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + e.latLng.lat() + '&lon=' + e
                     .latLng.lng() + '&zoom=18&addressdetails=1')
                 .then((response) => response.json())
-                .then((data) => console.log(data));
+                .then((data) => alert("địa chỉ đã chọn: " + (data.display_name)));
             // geocodeAddress(e.latLng);
             map.panTo(marker.position);
             markers.push(marker);

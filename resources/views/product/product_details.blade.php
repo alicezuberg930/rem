@@ -10,8 +10,7 @@
 <body>
     <x-header />
     <div id="product">
-        <div id="product-background" style='background-image: url("{{ url("/image/$product->image") }}")'>
-        </div>
+        <img id="product-background" src="{{ url("/image/$product->image") }}">
         <div class="product-description text-light" style="background-color: rgb(118, 118, 118)">
             <div class="container mt-3">
                 <div id="product-description-header">
@@ -34,7 +33,8 @@
                             </span>
                         </div>
                         <div class="product-confirm m-0">
-                            <button data-id="{{ $product->ProductsID }}" class="add-cart btn btn-primary w-100 font-weight-bold">
+                            <button data-id="{{ $product->ProductsID }}"
+                                class="add-cart btn btn-primary w-100 font-weight-bold">
                                 <i class="m-1 fa-solid fa-cart-shopping"></i>
                                 <span>{{ isset(session('cart')[$product->ProductsID]) ? 'Đã thêm vào giỏ' : 'Thêm vô giỏ hèng' }}</span>
                             </button>

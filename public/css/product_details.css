@@ -4,6 +4,7 @@
 
 /*product background*/
 #product-background {
+    object-fit: contain;
     width: 100%;
     height: 56.24vw;
     background-size: 100% 100%;

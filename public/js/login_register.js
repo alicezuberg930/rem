@@ -52,15 +52,18 @@ $("#login").on('click', (e) => {
             token: $('meta[name="csrf-token"]').attr('content')
         },
         success: function (data) {
-            console.log(data)
             if (data.status == 0) ErrorNotification($("#l-password-error"), $("#l-password-success"), $(".l-password"), $(".form-box").find("span").eq(3), data.message)
             else SuccessNotification($("#l-password-success"), $("#l-password-error"), $(".l-password"), $(".form-box").find("span").eq(3))
             if (data.status == -1) ErrorNotification($("#l-email-error"), $("#l-email-success"), $(".l-email"), $(".form-box").find("span").eq(2), data.message)
             else SuccessNotification($("#l-email-success"), $("#l-email-error"), $(".l-email"), $(".form-box").find("span").eq())
-            if (data.status == 1) {
-                $('.toast').css('background-color', 'rgb(71, 201, 71)')
+            if (data.status == -2 || data.status == 1) {
                 $('.toast').toast('show')
                 $('.toast-body').html(data.message)
+            }
+            if (data.status == -2)
+                $('.toast').css('background-color', 'rgb(239, 73, 73)')
+            if (data.status == 1) {
+                $('.toast').css('background-color', 'rgb(71, 201, 71)')
                 setTimeout(() => { window.location.href = "/" }, 2000)
             }
         }
