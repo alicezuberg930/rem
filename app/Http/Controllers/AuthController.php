@@ -43,7 +43,7 @@ class AuthController extends Controller
                     'message' => 'Đăng nhập thành công',
                     'status' => 1,
                 ]);
-            } else      
+            } else
                 return response()->json([
                     'message' => 'Mật khẩu không hợp lệ',
                     'status' => 0
@@ -127,5 +127,26 @@ class AuthController extends Controller
             return response()->json(['message' => 'Đã thay đổi thông tin', 'status' => 1]);
         else
             return response()->json(['message' => 'Đổi thông tin thất bại', 'status' => 0]);
+    }
+
+    public function personalPasswordPage()
+    {
+        return view('user.user_password');
+    }
+
+    public function changePassword(Request $request)
+    {
+        $user = User::find($request->input('id'));
+        if ($request->input('current_password') != $user->password)
+            return response()->json(['status' => 0, 'message' => "Mật khẩu không trùng với hiện tại"]);
+        if ($request->input('current_password') != $request->input('retype_password'))
+            return response()->json(['status' => 0, 'message' => "Mật khẩu không trùng"]);
+        if (!$request->input('checkNewPassword'))
+            return response()->json(['status' => 0, 'message' => "Mật khẩu mới không đúng định dạng"]);
+        if ($user->update(['password' => $request->input("new_password")])) {
+            return response()->json(['status' => 1, 'message' => "Cập nhật mật khẩu thành công"]);
+        } else {
+            return response()->json(['status' => 0, 'message' => "Cập nhật mật khẩu thất bại"]);
+        }
     }
 }

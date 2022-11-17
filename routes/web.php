@@ -67,6 +67,8 @@ Route::get('/verification/{token}', [AuthController::class, 'verifyUser']);
 //Thông tin cá nhân
 Route::get('/personal_information/{user_id}', [AuthController::class, 'getCurrentUserInfo']);
 Route::post('/edit_personal_info', [AuthController::class, 'editPersonalInfo']);
+Route::get('/personal_password', [AuthController::class, 'personalPasswordPage']);
+Route::post('/change_password', [AuthController::class, 'changePassword']);
 Route::get('/purchase_history/{user_id}', [OrdersController::class, 'getUserOrders']);
 Route::get('/user_address', [AddressController::class, 'userAddressPage']);
 //Lọc sản phẩm

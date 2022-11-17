@@ -89,13 +89,12 @@
                         value="Nguyễn Thị Minh Thư">
                 </div>
             </div>
-            <div class="row mb-3"><label for="inputPassword3" class="col-sm-4 col-form-label">Số điện
-                    thoại</label>
+            <div class="row mb-3">
+                <label for="inputPassword3" class="col-sm-4 col-form-label">Số điện thoại</label>
                 <div class="col-sm-8">
                     <input type="phone" class="form-control" id="pay-phone" name="phonenumber" value="0921123435">
                 </div>
             </div>
-
             <div class="row mb-3"><label for="inputPassword3" class="col-sm-4 col-form-label">Email</label>
                 <div class="col-sm-8"><input type="email" class="form-control" id="pay-email" name="email"
                         value="minhthu@gmail.com"></div>
@@ -106,7 +105,7 @@
                 <div class="col-sm-8">
                     <select name="city" class="form-select mb-2" aria-label="Default select example"
                         id="city-select">
-                        <option selected class="text-center">------Thành phố------</option>
+                        <option selected class="text-center" value="">------Thành phố------</option>
                         @foreach ($cities['results'] as $city)
                             <option value="{{ $city['name'] }}" data-id="{{ $city['code'] }}">
                                 {{ $city['name'] }}
@@ -115,14 +114,14 @@
                     </select>
                     <select name="district" class="form-select mb-2" aria-label="Default select example"
                         id="district-select">
-                        <option selected class="text-center">------Quận, huyện------</option>
+                        <option selected class="text-center" value="">------Quận, huyện------</option>
                     </select>
                     <select name="ward" class="form-select mb-2" aria-label="Default select example"
                         id="ward-select">
-                        <option selected class="text-center">------Phường, xã------</option>
+                        <option selected class="text-center" value="">------Phường, xã------</option>
                     </select>
-                    <textarea name="full-address" class="form-control" id="pay-address" id="pay-address" placeholder="Số nhà, tên đường"
-                        style="height: 50px;">99 An Dương Vương</textarea>
+                    <textarea name="full-address" class="form-control" id="pay-address" placeholder="Số nhà, tên đường"
+                        style="height: 50px;"></textarea>
                 </div>
             </div>
             <div class="row mb-3">

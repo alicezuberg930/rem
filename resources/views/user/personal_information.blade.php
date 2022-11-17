@@ -3,15 +3,21 @@
 
 <head>
     <x-head_tag />
+    <title>Trang thông tin cá nhân</title>
 </head>
 
 <body>
     <x-header />
-    <div class="fluid-container-md">
+    <div class="container-fluid">
+        <div class="d-flex align-items-center justify-content-center text-center mt-3 mb-3">
+            <hr class="col-md-2" />
+            <span class="border p-1 col-md-6 fs-4 fw-semibold">Thông tin cá nhân</span>
+            <hr class="col-md-2" />
+        </div>
         <div class="row gy-4">
             <div class="col-md-12 col-12 p-4">
                 <form class="col-md-6 col-sm-12 col-lg-4 m-auto">
-                    <h3>Thông tin cá nhân</h3>
+                    @csrf
                     <div class="form-floating mb-3">
                         <input type="email" class="form-control" id="username" value="{{ $User->username }}">
                         <label for="floatingInput">Họ và tên</label>
