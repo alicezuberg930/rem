@@ -40,7 +40,7 @@
             @else
                 <div class="d-flex pt-1">
                     <div class="font-weight-bold">
-                        <a class="nav-link p-0 text-white font-weight-bold" href="/loginregister">Đăng nhập</a>
+                        <a class="nav-link p-0 text-white font-weight-bold" href="/login_register">Đăng nhập</a>
                     </div>
                     <div class="mx-2 text-light"> | </div>
                     <div class="font-weight-bold">

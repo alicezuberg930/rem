@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-    <x-head_tag />
     <title>Document</title>
 </head>
 
@@ -102,7 +101,10 @@
             fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + e.latLng.lat() + '&lon=' + e
                     .latLng.lng() + '&zoom=18&addressdetails=1')
                 .then((response) => response.json())
-                .then((data) => alert("địa chỉ đã chọn: " + (data.display_name)));
+                .then((data) => console.log('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + e
+                    .latLng.lat() + '&lon=' + e
+                    .latLng.lng() + '&zoom=18&addressdetails=1'));
+            // alert("địa chỉ đã chọn: " + (data.display_name))
             // geocodeAddress(e.latLng);
             map.panTo(marker.position);
             markers.push(marker);

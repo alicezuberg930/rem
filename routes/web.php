@@ -10,6 +10,9 @@ use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SalesController;
+use App\Http\Controllers\Authentication;
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\StatisticController;
 use App\Models\User;
 use Illuminate\Support\Facades\Http;
@@ -27,9 +30,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-//Giao diện trang đăng nhập & đăng ký
-Route::get('/loginregister', function () {
+//Giao diện trang đăng nhập & đăng ký 
+Route::get('/login_register', function () {
     return view('login_register.index');
+})->name('admin_login');
+Route::get('/admin_login', function () {
+    return view('login_register.admin_index');
 });
 // Giao diện trang chủ
 Route::get('/', [ProductController::class, 'indexPage'])->middleware('isLoggedIn');
@@ -44,16 +50,16 @@ Route::get('/reset_password', function () {
 // Giao diện trang thông tin cá nhân
 Route::get('/personal_information/{user_id}', function ($user_id) {
     return view('user.personal_information', ['User' => User::find($user_id)]);
-});
+})->middleware('auth');
 // Giao diện trang mật khẩu cá nhân
 Route::get('/personal_password', function () {
     return view('user.user_password');
 });
-
 // Xử lý đăng nhập & đăng ký
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::get('/logout', [AuthController::class, 'logout']);
+// Xử lý giỏ hàng
 Route::get('/add_cart', [CartController::class, 'addCart']);
 Route::get('/remove_cart', [CartController::class, 'removeCart']);
 Route::get('/increase_incart', [CartController::class, 'increaseIncart']);
@@ -61,8 +67,8 @@ Route::get('/decrease_incart', [CartController::class, 'decreaseIncart']);
 // Giao diện trang chi tiết sản phẩm
 Route::get('/product_details/{id}', [ProductController::class, 'ProductDetailsPage']);
 // Xử lý thánh toán
-Route::get('/vnpay/vnpay_return', [CheckoutController::class, 'paymentsResult']);
-Route::post('/vnpay/vnpay_payment', [CheckoutController::class, 'vnpayPayment']);
+Route::get('/vnpay_return', [CheckoutController::class, 'paymentsResult']);
+Route::post('/vnpay_payment', [CheckoutController::class, 'vnpayPayment']);
 Route::post('/direct_payment', [CheckoutController::class, 'directPayment']);
 //Lấy thông tin api thành phố quận huyện
 Route::get('/cart/get_district', [CartController::class, 'getDistrict']);
@@ -107,10 +113,8 @@ Route::get('/admin/manage_orders/paginate/{current_page}/{type}/{user_id}', [Ord
 Route::get('/admin/manage_orders/status/{current_page}/{type}/{user_id}', [OrdersController::class, 'orderReload']);
 Route::get('/admin/manage_orders/order_details/{order_id}', [OrdersController::class, 'getOrderDetails']);
 //Quản lý khách hàng
-Route::get('/admin/manage_accounts', [CategoryController::class, 'manageCategoryPage']);
-Route::get('/admin/age_category/add', [CategoryController::class, 'addCategory']);
-Route::get('/admin/age_category/edit', [CategoryController::class, 'editCategory']);
-Route::get('/admin/age_category/delete', [CategoryController::class, 'deleteCategory']);
+Route::get('/admin/manage_customers', [CustomerController::class, 'manageCustomerPage']);
+Route::get('/admin/manage_customers/search', [CustomerController::class, 'searchCustomer']);
 //Quản lý thể loại
 Route::get('/admin/manage_category', [CategoryController::class, 'manageCategoryPage']);
 Route::get('/admin/manage_category/add', [CategoryController::class, 'addCategory']);
@@ -126,13 +130,17 @@ Route::get('/admin/manage_sales/store', [SalesController::class, 'getSaleDetails
 Route::get('/admin/manage_sales/delete', [SalesController::class, 'deleteSale']);
 Route::get('/admin/manage_sales/search', [SalesController::class, 'searchSale']);
 Route::get('/admin/manage_sales/paginate/{current_page}', [SalesController::class, 'saleReload']);
-//Quản lý quyền
-Route::get('/admin/manage_groups/add', [GroupController::class, 'addGroup']);
-
-Route::get('/aaaa', function () {
-    // Mail::send("email_templates.order_template", ['a' => 'efhbvwiu'], function ($email) {
-    //     $email->subject('Thông báo đăng ký');
-    //     $email->to('tien23851@gmail.com', "name");
-    // });
-    return view("email_templates.order_template");
-});
+//Quản lý nhân viên
+Route::get('/admin/manage_employees', [EmployeeController::class, 'manageEmployeePage']);
+Route::get('/admin/manage_employees/add', [EmployeeController::class, 'addCategory']);
+Route::get('/admin/manage_employees/edit', [EmployeeController::class, 'editCategory']);
+Route::get('/admin/manage_employees/delete', [EmployeeController::class, 'deleteCategory']);
+Route::get('/admin/manage_employees/search', [EmployeeController::class, 'searchCategory']);
+Route::get('/admin/manage_employees/paginate/{current_page}', [EmployeeController::class, 'categoryReload']);
+//Quản lý nhà cung cấp
+Route::get('/admin/manage_employees', [EmployeeController::class, 'manageEmployeePage']);
+Route::get('/admin/manage_employees/add', [EmployeeController::class, 'addCategory']);
+Route::get('/admin/manage_employees/edit', [EmployeeController::class, 'editCategory']);
+Route::get('/admin/manage_employees/delete', [EmployeeController::class, 'deleteCategory']);
+Route::get('/admin/manage_employees/search', [EmployeeController::class, 'searchCategory']);
+Route::get('/admin/manage_employees/paginate/{current_page}', [EmployeeController::class, 'categoryReload']);

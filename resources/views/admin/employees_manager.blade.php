@@ -6,49 +6,83 @@
                 <div class="col-md-auto row">
                     <div class="col-md-auto">
                         <input type="radio" class="btn-check" autocomplete="off" value="Tổng đơn">
-                        <label class="btn btn-outline-primary btn-sm" for="btnradio1">Tổng danh mục
+                        <label class="btn btn-outline-primary btn-sm" for="btnradio1">Tổng nhân viên
                             <span class="badge bg-danger" id="badge_tongdon">{{ $total }}</span>
                         </label>
                     </div>
                     <div class="col-md-auto">
                         <button type="submit" href="/admin/manage_category/add" class="btn btn-primary btn-sm"
-                            data-bs-toggle="modal" data-bs-target="#add-category">Thêm danh mục</button>
+                            data-bs-toggle="modal" data-bs-target="#add-employee">Thêm nhân viên</button>
                     </div>
                 </div>
                 <div class="col-md-auto">
                     <div class="input-group">
-                        <input type="text" class="form-control form-control-sm" placeholder="Tên thể loại"
+                        <input type="text" class="form-control form-control-sm" placeholder="Tên nhân viên"
                             id="search_id">
                         <i class="fa-solid fa-magnifying-glass text-light p-2 bg-primary"></i>
                     </div>
                 </div>
             </div>
-            <div class="table-responsive" id="category-table">
-                @include('dynamic_layout.category_reload')
+            <div class="table-responsive" id="customer-table">
+                @include('dynamic_layout.employee_reload')
             </div>
         </div>
     </div>
 
-    <div class="modal fade" id="add-category" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal fade" id="add-employee" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel2">Thêm danh mục</h5>
+                    <h5 class="modal-title" id="staticBackdropLabel2">Thêm nhân viên</h5>
                     <button type="lbutton" class="btn-close" data-bs-dismiss="modal" aria-labe="Close">
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="row justify-content-center justify-content-around">
                         <div class="mb-3 row">
-                            <label for="staticEmail" class="col-sm-2 col-form-label fw-semibold">Tên</label>
-                            <div class="col-sm-10">
-                                <input type="text" class="form-control" id="name-category-add" value="Thương hiệu A">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="staticEmail" class="form-label fw-semibold">Tên</label>
+                                    <div class="col-md-12">
+                                        <input type="text" class="form-control" id="sale-name">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Email:</label>
+                                    <input type="number" min="0" max="100" class="form-control"
+                                        id="sale-percent">
+                                </div>
                             </div>
                         </div>
                         <div class="mb-3 row">
-                            <label for="inputPassword" class="col-sm-2 col-form-label fw-semibold">Mô tả</label>
-                            <div class="col-sm-10">
-                                <textarea class="form-control" id="desc-category-add" placeholder="Mô tả gì đó" style="height: 10rem"></textarea>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="staticEmail" class="form-label fw-semibold">Số điện thoại</label>
+                                    <div class="col-md-12">
+                                        <input type="text" class="form-control" id="sale-name">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label class="form-label">Giới tính:</label>
+                                    <select class="form-control" id="sale-end_date">
+                                        <option value="Nam">Nam</option>
+                                        <option value="Nữ">Nữ</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label class="form-label">Quyền:</label>
+                                    <select class="form-control" id="sale-end_date">
+                                        @foreach ($roles as $role)
+                                            <option value="{{ $role->id }}">{{ $role->role_name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -61,39 +95,60 @@
         </div>
     </div>
 
-    <div class="modal fade edit-modal" id="edit-category" tabindex="-1" aria-labelledby="staticBackdropLabel"
+    <div class="modal fade edit-modal" id="edit-employee" tabindex="-1" aria-labelledby="staticBackdropLabel"
         aria-hidden="true">
-        <div class="modal-dialog modal-md">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Sửa danh mục</h5>
+                    <h5 class="modal-title" id="staticBackdropLabel">Sửa nhân viên</h5>
                     <button type="lbutton" class="btn-close" data-bs-dismiss="modal" aria-labe="Close">
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="row justify-content-center justify-content-around">
-                        <div class="col-md-12">
-                            <div class="row col-md-auto">
-                                <div class="col-md-3">
-                                    <div class="form-floating mb-3">
-                                        <input type="text" class="form-control" name="name-category-modal" disabled
-                                            id="id-category-modal">
-                                        <label for="floatingInput">Mã</label>
+                        <div class="mb-3 row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="staticEmail" class="form-label fw-semibold">Tên</label>
+                                    <div class="col-md-12">
+                                        <input type="text" class="form-control" id="sale-name">
                                     </div>
                                 </div>
-                                <div class="col-md-9">
-                                    <div class="form-floating mb-3">
-                                        <input name="name-category-modal" id="name-category-modal" class="form-control"
-                                            value="">
-                                        <label for="floatingInput">Tên</label>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Email:</label>
+                                    <input type="number" min="0" max="100" class="form-control"
+                                        id="sale-percent">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="staticEmail" class="form-label fw-semibold">Số điện thoại</label>
+                                    <div class="col-md-12">
+                                        <input type="text" class="form-control" id="sale-name">
                                     </div>
                                 </div>
-                                <div class="col-md-12">
-                                    <div class="form-floating mb-3">
-                                        <textarea class="form-control desc" id="description-category-modal" placeholder="Mô tả gì đó"
-                                            style="height: 12rem"></textarea>
-                                        <label for="floatingInput">Mô tả</label>
-                                    </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label class="form-label">Giới tính:</label>
+                                    <select class="form-control" id="sale-end_date">
+                                        <option value="Nam">Nam</option>
+                                        <option value="Nữ">Nữ</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label class="form-label">Quyền:</label>
+                                    <select class="form-control" id="sale-end_date">
+                                        @foreach ($roles as $role)
+                                            <option value="{{ $role->id }}">{{ $role->role_name }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -106,6 +161,7 @@
             </div>
         </div>
     </div>
+
     <script>
         let current_page = 1
         $("#add-btn").on('click', function() {

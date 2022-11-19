@@ -3,7 +3,7 @@
 
 <head>
     <x-head_tag />
-    <title></title>
+    <title>Chi tiết sản phẩm</title>
     <link rel="stylesheet" href="{{ url('./css/product_details.css') }}">
 </head>
 
@@ -44,10 +44,10 @@
                 <!-- Nav tabs -->
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
-                        <a class="nav-link active" href="#description">Mô tả</a>
+                        <a class="nav-link active" data-toggle="tab" href="#description">Mô tả</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#gamedetails">Chi tiết</a>
+                        <a class="nav-link" data-toggle="tab" href="#details">Chi tiết</a>
                     </li>
                 </ul>
                 <!-- Tab panes -->
@@ -55,9 +55,9 @@
                     <div id="description" class="container tab-pane active"><br>
                         <h1 class="title">Mô tả</h1>{{ $product->productDescription }}
                     </div>
-                    <div id="gamedetails" class="container tab-pane fade"><br>
+                    <div id="details" class="container tab-pane fade"><br>
                         <div class="content-summary-section">
-                            <h1 class="title">Details</h1>
+                            <h1 class="title">Chi tiết</h1>
                             <div class="container">
                                 <div class="row">
                                     <div class="col-12 col-md-4 pl-0">
@@ -97,11 +97,11 @@
 </body>
 
 <script>
-    $(document).ready(function() {
-        $(".nav-tabs a").click(function() {
-            $(this).tab('show');
-        });
-    });
+    // $(document).ready(function() {
+    //     $(".nav-tabs a").click(function() {
+    //         $(this).tab('show');
+    //     });
+    // });
 </script>
 <script src="{{ url('/js/add_cart.js') }}"></script>
 

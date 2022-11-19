@@ -10,6 +10,7 @@
                 url: "/admin/manage_orders/status/1/" + $(this).val() + "/-1",
                 method: "get",
                 success: function(result) {
+                    console.log(result);
                     $("#order-table").html(result);
                 }
             })

@@ -2,15 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\CheckoutController as ControllersCheckoutController;
 use App\Models\orderdetails;
 use App\Models\orders;
 use App\Models\product;
-use Illuminate\Database\DeadlockException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
-use Psy\TabCompletion\Matcher\FunctionsMatcher;
 
 class CheckoutController extends Controller
 {
@@ -25,7 +22,9 @@ class CheckoutController extends Controller
             'email' => $request->input('email'),
             'address' => $request->input('city') . ' ' . explode('-', $request->input('district'))[0] . ' ' . explode('-', $request->input('ward'))[0],
             'total_price' => $request->input('total_price'),
-            'quantity' => $request->input('quantity')
+            'quantity' => $request->input('quantity'),
+            'order_date' => date('Y-m-d h:i:s'),
+            'order_id' => ''
         ]);
         session()->save();
     }
@@ -34,7 +33,7 @@ class CheckoutController extends Controller
     {
         $this->getOrderInfo($request);
         $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-        $vnp_Returnurl = URL::to("/payment/vnpay_return");
+        $vnp_Returnurl = URL::to("/vnpay_return");
         $vnp_TxnRef = random_int(PHP_INT_MIN, PHP_INT_MAX);
         // $_POST['order_id']; //Mã đơn hàng. Trong thực tế Merchant cần insert đơn hàng vào DB và gửi mã này sang VNPAY
         $vnp_OrderInfo = "Thanh toan hoa don";
@@ -152,14 +151,15 @@ class CheckoutController extends Controller
                         $orderdetails->quantity = $item['quantity'];
                         $orderdetails->product_price = $item['price'];
                         $orderdetails->save();
+
+                        $product = product::find($item['id']);
+                        $product->update(['amount' => $product->amount - $item['quantity']]);
                     }
                     $Result = 'Giao dịch thành công';
-                    // session()->forget('orders');
-                    // Mail::send("vnpay.vnpay_return", ['Result' => $Result], function ($email) {
-                    //     $email->subject('Thông báo đăng ký');
-                    //     $email->to(session()->get('orders')["email"], "Header");
-                    // });
-                    session()->forget('cart');
+                    Mail::send("email_templates.order_template", [], function ($email) {
+                        $email->subject('Thông báo đơn hàng');
+                        $email->to(session()->get('orders')["email"], "Header");
+                    });
                 }
             } else {
                 $Result = 'Giao dịch không thành công';
@@ -177,7 +177,7 @@ class CheckoutController extends Controller
         $this->getOrderInfo($request);
         date_default_timezone_set("Asia/Ho_Chi_Minh");
         $orders = new orders();
-        $orders->order_date = date('Y-m-d h:i:s');
+        $orders->order_date = session('orders')['order_date'];
         $orders->fullname = session('orders')['fullname'];
         $orders->phone_number = session('orders')['phonenumber'];
         $orders->address = session('orders')['address'];
@@ -186,17 +186,25 @@ class CheckoutController extends Controller
         $orders->email = session('orders')['email'];
         $orders->user_id = session('UserID');
         if ($orders->save()) {
+            $order_id = $orders->id;
             foreach (session()->get('cart') as $item) {
                 $orderdetails = new orderdetails();
-                $orderdetails->order_id = orders::max('id');
+                $orderdetails->order_id = $order_id;
                 $orderdetails->product_id = $item['id'];
                 $orderdetails->quantity = $item['quantity'];
                 $orderdetails->product_price = $item['price'];
                 $orderdetails->save();
+
+                $product = product::find($item['id']);
+                $product->update(['amount' => $product->amount - $item['quantity']]);
             }
+            Mail::send("email_templates.order_template", ['order_id' => $order_id], function ($email) {
+                $email->subject('Thông báo đơn hàng');
+                $email->to(session()->get('orders')["email"], "Header");
+            });
+            return view('payment.direct_payment', ['order_id' => $order_id, 'message' => 'Đã đặt hàng thành công', 'status' => 1]);
         } else {
             return view('payment.direct_payment', ['message' => 'Đặt hàng thất bại', 'status' => 0]);
         }
-        return view('payment.direct_payment', ['message' => 'Đã đặt hàng thành công', 'status' => 1]);
     }
 }

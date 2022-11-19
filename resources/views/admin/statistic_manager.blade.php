@@ -1,5 +1,6 @@
 @extends('admin.adminpage')
 @section('body_manager')
+    @dd($Statisic)
     <div class="col-md-9 col-lg-10">
         <div class="row row-cols-2 row-cols-md-4 justify-content-between mt-2">
             <div class="col-md-4 text-white ">

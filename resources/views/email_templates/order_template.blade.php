@@ -10,8 +10,9 @@
                         <img width="200" src="https://i.ibb.co/8bRWbct/grab-express-icon.png" style="max-width:30vw;">
                     </td>
                     <td style="width:75%">
-                        <div style="text-align:right">Thứ sáu, 21 Tháng 10 2022</div>
-                        <div style="text-align:right">Mã đơn hàng: 181</div>
+                        <div style="text-align:right">
+                            {{ date('d-m-Y h:i:s', strtotime(session('orders')['order_date'])) }}</div>
+                        <div style="text-align:right">Mã đơn hàng: {{ $order_id }}</div>
                     </td>
                 </tr>
             </tbody>
@@ -25,26 +26,22 @@
                 </tr>
             </tbody>
         </table>
-        <p id="order-details-header" style="margin-left:1em;font-size:12pt;font-weight:bold">Thông tin
-            đơn hàng</p>
+        <p id="order-details-header" style="margin-left:1em;font-size:12pt;font-weight:bold">Thông tin đơn hàng</p>
         <table id="orders" style="padding:1em;border:1px solid #e8e8e8;width:96%;margin-left:0.8em;margin-right:1em">
             <tbody>
-                <tr>
-                    <td style="">x<b>1</b></td>
-                    <td>Rượu vang Pháp Chateau Plince 2016</td>
-                    <td style="text-align:right;vertical-align:top">
-                        1,500,000
-                    </td>
-                    <td style="text-align:right;vertical-align:top">
-                        <b> 1,500,000</b>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="vertical-align:top">x<b>1</b></td>
-                    <td>Rượu vang Pháp Château Dauzac 2019</td>
-                    <td style="text-align:right;vertical-align:top">6,000,000</td>
-                    <td style="text-align:right;vertical-align:top"><b>6,000,000</b></td>
-                </tr>
+                <?php $total = 0; ?>
+                @foreach (session()->get('cart') as $item)
+                    <?php $total += $item['price'] * $item['quantity']; ?>
+                    <tr>
+                        <td>x<b>{{ $item['quantity'] }}</b></td>
+                        <td>{{ $item['name'] }}</td>
+                        <td style="text-align:right;vertical-align:top">{{ number_format($item['price'], 0, '.') }} đ
+                        </td>
+                        <td style="text-align:right;vertical-align:top">
+                            <b>{{ number_format($item['price'] * $item['quantity'], 0, '.') }} đ</b>
+                        </td>
+                    </tr>
+                @endforeach
                 <tr>
                     <td colspan="4">
                         <hr>
@@ -54,8 +51,8 @@
                     <td colspan="2" style="font-weight:bold">Tổng tiền</td>
                     <td style="text-align:right;vertical-align:top">
                     </td>
-                    <td style="font-weight:bold;text-align:right;vertical-align:top">
-                        7,500,000 VNĐ
+                    <td style="font-weight:bold;text-align:right;vertical-align:top">{{ number_format($total, 0, '.') }}
+                        đ
                     </td>
                 </tr>
             </tbody>
@@ -66,13 +63,13 @@
             style="padding-left:1em;width:96%;margin:auto;padding: 1rem 0.5rem;border:1px solid #e8e8e8;">
             <tbody>
                 <tr>
-                    <td>Họ tên: <span>Nguyễn Vĩnh Tiến</span></td>
+                    <td>Họ tên: <span>{{ session('orders')['fullname'] }}</span></td>
                 </tr>
                 <tr>
-                    <td>Số điện thoại: <span>0925521452</span></td>
+                    <td>Số điện thoại: <span>{{ session('orders')['phonenumber'] }}</span></td>
                 </tr>
                 <tr>
-                    <td>Địa chỉ: <span>Yêu Minh Thư, Thành phố Hồ Chí Minh, Quận 8, Phường 08</span></td>
+                    <td>Địa chỉ: <span>{{ session('orders')['address'] }}</span></td>
                 </tr>
             </tbody>
         </table>
@@ -92,7 +89,8 @@
                     </td>
                     <td style="width:30%;vertical-align:top">
                         <img height="14" width="14" src="https://i.ibb.co/LtWrmxJ/about-icon.png">
-                        <a href="https://gojek.link/gocore/help/articlegroup/56a1541e-2803-4fbd-993c-b37dc484f7e4">Về dịch vụ</a>
+                        <a href="https://gojek.link/gocore/help/articlegroup/56a1541e-2803-4fbd-993c-b37dc484f7e4">Về
+                            dịch vụ</a>
                     </td>
                 </tr>
             </tbody>

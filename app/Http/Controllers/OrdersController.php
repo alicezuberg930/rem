@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\orderdetails;
 use App\Models\orders;
+use App\Models\product;
 use Illuminate\Http\Request;
 
 class OrdersController extends Controller
@@ -36,8 +37,16 @@ class OrdersController extends Controller
         $response = $orders->update(['date_checked' => date('Y-m-d h:i:s'), 'status' => $request->input('status')]);
         if (!$response || $orders == null)
             return response()->json(['message' => 'Thay đổi trạng thái thất bại', 'status' => 0]);
-        else
+        else {
+            if ($request->input('status') == 2) {
+                $order_details = orders::where('id', '=', $request->input('id'))->join('orderdetails', 'orders.id', '=', 'orderdetails.order_id')->get(['product_id', 'orderdetails.quantity as amount']);
+                foreach ($order_details as $order_detail) {
+                    $product = product::find($order_detail->product_id);
+                    $product->update(['amount' => $product->amount + $order_detail->amount]);
+                }
+            }
             return response()->json(['message' => 'Đã thay đổi trạng thái', 'status' => 1, 'response' => $this->orderReload($request->input('page'), $request->input('type'), $request->input('user_id'))]);
+        }
     }
 
     public function manageOrderPage(Request $request)

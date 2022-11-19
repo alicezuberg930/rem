@@ -21,12 +21,6 @@
             </a>
         </li>
         <li>
-            <a class="nav-link @php echo request()->route()->uri=='admin/manage_accounts' ? 'link-light border border-white text-info':'link-light' @endphp"
-                href="/admin/manage_accounts">
-                <i class="fa-regular fa-user"></i> Khách hàng
-            </a>
-        </li>
-        <li>
             <a class="nav-link @php echo request()->route()->uri=='admin/manage_category' || request()->route()->uri=='admin/add-category' ? 'link-light border border-white text-info' : 'link-light' @endphp"
                 href="/admin/manage_category">
                 <i class="fa-solid fa-layer-group"></i> Thể loại
@@ -36,6 +30,30 @@
             <a class="nav-link @php echo request()->route()->uri=='admin/manage_sales' ? 'link-light border border-white text-info':'link-light' @endphp"
                 href="/admin/manage_sales">
                 <i class="fa-solid fa-tags"></i> Giảm giá
+            </a>
+        </li>
+        <li>
+            <a class="nav-link @php echo request()->route()->uri=='admin/manage_customers' ? 'link-light border border-white text-info':'link-light' @endphp"
+                href="/admin/manage_customers">
+                <i class="fa-regular fa-user"></i> Khách hàng
+            </a>
+        </li>
+        <li>
+            <a class="nav-link @php echo request()->route()->uri=='admin/manage_employees' ? 'link-light border border-white text-info':'link-light' @endphp"
+                href="/admin/manage_employees">
+                <i class="fa-regular fa-user-admin"></i> Nhân viên
+            </a>
+        </li>
+        <li>
+            <a class="nav-link @php echo request()->route()->uri=='admin/manage_suppliers' ? 'link-light border border-white text-info':'link-light' @endphp"
+                href="/admin/manage_suppliers">
+                <i class="fa-regular fa-user-admin"></i> Nhà cung cấp
+            </a>
+        </li>
+        <li>
+            <a class="nav-link @php echo request()->route()->uri=='admin/manage_import_slips' ? 'link-light border border-white text-info':'link-light' @endphp"
+                href="/admin/manage_import_slips">
+                <i class="fa-regular fa-user-admin"></i> Phiếu nhập
             </a>
         </li>
         <li>

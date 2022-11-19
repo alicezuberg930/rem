@@ -105,5 +105,5 @@ $("#pay-options").on('change', function () {
     if ($(this).val() == "COD")
         $("#payment").attr('action', "/direct_payment")
     if ($(this).val() == "VNPAY")
-        $("#payment").attr('action', "/vnpay/vnpay_payment")
+        $("#payment").attr('action', "/vnpay_payment")
 })

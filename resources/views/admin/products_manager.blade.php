@@ -108,8 +108,8 @@
                                 <div class="col-md-3">
                                     <div class="mb-3">
                                         <label for="" class="form-label">Kho:</label>
-                                        <input type="number" class="form-control" value="<?php echo rand(1, 99); ?>"
-                                            id="product-amount" name="product-amount" required>
+                                        <input type="number" class="form-control" value="10" id="product-amount"
+                                            name="product-amount" required>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -126,8 +126,8 @@
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label class="form-label">Giá:</label>
-                                        <input type="number" class="form-control" value="<?php echo rand(500000, 36000000); ?>"
-                                            id="product-price" name="product-price" required>
+                                        <input type="number" class="form-control" value="1000000" id="product-price"
+                                            name="product-price" required>
                                     </div>
                                 </div>
                             </div>
@@ -168,7 +168,7 @@
                                 <div class="col-md-3">
                                     <div class="form-floating mb-3">
                                         <input type="text" class="form-control" name="product-id" id="product-id"
-                                            required>
+                                            disabled>
                                         <label for="floatingInput">Mã</label>
                                     </div>
                                 </div>
@@ -229,7 +229,7 @@
                                 <div class="col-md-3">
                                     <div class="mb-3">
                                         <label for="" class="form-label">Kho:</label>
-                                        <input type="number" class="form-control" value="<?php echo rand(1, 99); ?>"
+                                        <input type="number" class="form-control" value="10"
                                             id="edit-product-amount" name="edit-product-amount" required>
                                     </div>
                                 </div>
@@ -248,7 +248,7 @@
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label class="form-label">Giá:</label>
-                                        <input type="number" class="form-control" value="<?php echo rand(500000, 36000000); ?>"
+                                        <input type="number" class="form-control" value="1000000"
                                             id="edit-product-price" name="edit-product-price" required>
                                     </div>
                                 </div>

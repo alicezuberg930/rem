@@ -5,7 +5,6 @@
     <x-head_tag />
     <title>Đăng Nhập & Đăng ký</title>
     <link rel="stylesheet" type="text/css" href="{{ url('./css/login_register.css') }}">
-    <script type="module" src="{{ url('./js/login_register.js') }}"></script>
 </head>
 
 <body>
@@ -21,7 +20,7 @@
                     <span>Đăng Kí</span>
                 </button>
             </div>
-            <form method="POST" id="login_form" class="input-groups" action="./loginregister/login">
+            <form method="POST" id="login_form" class="input-groups" action="">
                 @csrf
                 <div class="form-controls">
                     <input type="text" name="email" class="user-id l-email" placeholder="Nhập email">
@@ -40,7 +39,7 @@
                     <small>Nhớ tôi</small>
                 </div>
                 <p><a href="/reset_password">Quên mật khẩu?</a></p>
-                <button class="submit" id="login">Đăng Nhập</button>
+                <button class="submit" type="submit" id="login">Đăng Nhập</button>
             </form>
             <form method="GET" id="register_form" class="input-groups" action="/register">
                 @csrf
@@ -96,5 +95,6 @@
     <x-footer />
     <x-toast />
 </body>
+<script type="module" src="{{ url('./js/login_register.js') }}"></script>
 
 </html>
