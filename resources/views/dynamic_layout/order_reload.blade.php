@@ -3,7 +3,6 @@
         <tr>
             <th scope="col">Mã đơn</th>
             <th scope="col">Ngày đặt</th>
-            <th scope="col">Ngày xác nhận</th>
             <th scope="col">Tổng tiền</th>
             <th scope="col">Trạng thái</th>
             <th scope="col">Thao tác</th>
@@ -15,8 +14,6 @@
             <tr>
                 <th>{{ $order->id }}</th>
                 <td>{{ date_format(new DateTime($order->order_date), 'd/m/Y h:i:s') }}</td>
-                <td>{{ $order->date_checked == null ? '' : date('d/m/Y h:i:s', strtotime($order->date_checked)) }}
-                </td>
                 <td>{{ number_format($order->total_price) }} VND</td>
                 <td>
                     <span>

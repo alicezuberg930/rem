@@ -131,6 +131,7 @@ class CheckoutController extends Controller
                 $i = 1;
             }
         }
+        $order_id = '';
         $secureHash = hash_hmac('sha512', $hashData, $this->vnp_HashSecret);
         if ($secureHash == $vnp_SecureHash) {
             if ($_GET['vnp_ResponseCode'] == '00') {
@@ -144,9 +145,10 @@ class CheckoutController extends Controller
                 $orders->email = session('orders')['email'];
                 $orders->user_id = session('UserID');
                 if ($orders->save()) {
+                    $order_id = $orders->id;
                     foreach (session()->get('cart') as $item) {
                         $orderdetails = new orderdetails();
-                        $orderdetails->order_id = orders::max('id');
+                        $orderdetails->order_id = $order_id;
                         $orderdetails->product_id = $item['id'];
                         $orderdetails->quantity = $item['quantity'];
                         $orderdetails->product_price = $item['price'];
@@ -156,7 +158,7 @@ class CheckoutController extends Controller
                         $product->update(['amount' => $product->amount - $item['quantity']]);
                     }
                     $Result = 'Giao dịch thành công';
-                    Mail::send("email_templates.order_template", [], function ($email) {
+                    Mail::send("email_templates.order_template", ['order_id' => $orders->id], function ($email) {
                         $email->subject('Thông báo đơn hàng');
                         $email->to(session()->get('orders')["email"], "Header");
                     });
@@ -168,7 +170,7 @@ class CheckoutController extends Controller
             $Result = 'Chu kỳ không hợp lệ';
         }
         return view("payment.vnpay_return", [
-            'Result' => $Result
+            'Result' => $Result, 'order_id' => $order_id
         ]);
     }
 

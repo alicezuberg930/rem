@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('supplier_name', 255);
             $table->string('address', 50);
-            $table->string('phone_number', 255);
+            $table->string('phone_number', 10);
         });
     }
 

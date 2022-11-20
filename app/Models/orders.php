@@ -10,7 +10,7 @@ class orders extends Model
     use HasFactory;
     public $timestamps = false;
     protected $fillable = [
-        "date_checked",
+        "employee_id",
         "status"
     ];
 }

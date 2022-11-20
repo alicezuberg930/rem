@@ -17,20 +17,11 @@ class EmployeeController extends Controller
 
     public function manageEmployeePage()
     {
-        // $Employees = new employee();
-        // return response()->json([$Employees::create([
-        //     'username' => 'Lê Thị Hoa',
-        //     'phonenumber' => '0939711713',
-        //     'email' => 'hoa144@gmail.com',
-        //     'gender' => 'Nữ',
-        //     'password' => 'hoa1234',
-        //     'role_as' => '1'
-        // ])]);
         if (session()->has('search')) session()->forget("search");
         return view('admin.employees_manager', ['Employees' => $this->getEmployee(1), 'roles' => group::all(), 'total' => employee::all()->count(), 'currentpage' => 1]);
     }
 
-    public function searchCustomer(Request $request)
+    public function searchEmployee(Request $request)
     {
         session()->put('search', $request->input('name'));
         session()->save();
@@ -46,7 +37,7 @@ class EmployeeController extends Controller
             $total = $query->count();
             $Employees = $query->take(5)->skip(($current_page - 1) * 5)->get();
         } else {
-            $Employees = $this->getCategory($current_page);
+            $Employees = $this->getEmployee($current_page);
             $total = employee::all()->count();
         }
         return view('dynamic_layout.employee_reload', ['Employees' => $Employees, 'total' => $total, 'currentpage' => $current_page])->render();

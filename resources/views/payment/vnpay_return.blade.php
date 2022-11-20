@@ -36,7 +36,7 @@
             <div class="mb-2 row">
                 <label for="staticEmail" class="col-md-6 col-form-label fw-semibold">Mã đơn hàng:</label>
                 <div class="col-md-6">
-                    <input type="text" readonly class="form-control-plaintext" value="{{ $vnp_TxnRef }}">
+                    <input type="text" readonly class="form-control-plaintext" value="{{ $order_id }}">
                 </div>
             </div>
             <div class="mb-2 row">
@@ -63,13 +63,15 @@
             <div class="mb-2 row">
                 <label for="staticEmail" class="col-md-6 col-form-label fw-semibold">Mã giao dịch VNPAY:</label>
                 <div class="col-md-6">
-                    <input type="text" readonly class="form-control-plaintext" value="{{ $vnp_TransactionNo }}">
+                    <input type="text" readonly class="form-control-plaintext"
+                        value="{{ Request::get('vnp_TransactionNo') }}">
                 </div>
             </div>
             <div class="mb-2 row">
                 <label for="staticEmail" class="col-md-6 col-form-label fw-semibold">Mã Ngân hàng:</label>
                 <div class="col-md-6">
-                    <input type="text" readonly class="form-control-plaintext" value="{{ $vnp_BankCode }}">
+                    <input type="text" readonly class="form-control-plaintext"
+                        value="{{ Request::get('vnp_BankCode') }}">
                 </div>
             </div>
             <div class="mb-2 row">
@@ -77,7 +79,7 @@
                     toán:</label>
                 <div class="col-md-6">
                     <input type="text" readonly class="form-control-plaintext"
-                        value="{{ date('d-m-Y h:i:s', strtotime($vnp_PayDate)) }}">
+                        value="{{ date('d-m-Y h:i:s', strtotime(Request::get('vnp_PayDate'))) }}">
                 </div>
             </div>
             <div class="mb-2 row">
@@ -90,7 +92,7 @@
             <div class="mb-2 row">
                 <label for="staticEmail" class="col-md-6 col-form-label fw-semibold">Kết quả: </label>
                 <div class="col-md-6">
-                    <input type="text" readonly class="form-control-plaintext {!! $vnp_ResponseCode == '00' ? 'text-success fw-bold' : 'text-danger fw-bold' !!}"
+                    <input type="text" readonly class="form-control-plaintext {!! Request::get('vnp_ResponseCode') == '00' ? 'text-success fw-bold' : 'text-danger fw-bold' !!}"
                         value="{{ $Result }}">
                 </div>
             </div>

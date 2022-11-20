@@ -13,7 +13,9 @@ use App\Http\Controllers\SalesController;
 use App\Http\Controllers\Authentication;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\ImportSlipController;
 use App\Http\Controllers\StatisticController;
+use App\Http\Controllers\SupplierController;
 use App\Models\User;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
@@ -138,9 +140,12 @@ Route::get('/admin/manage_employees/delete', [EmployeeController::class, 'delete
 Route::get('/admin/manage_employees/search', [EmployeeController::class, 'searchCategory']);
 Route::get('/admin/manage_employees/paginate/{current_page}', [EmployeeController::class, 'categoryReload']);
 //Quản lý nhà cung cấp
-Route::get('/admin/manage_employees', [EmployeeController::class, 'manageEmployeePage']);
-Route::get('/admin/manage_employees/add', [EmployeeController::class, 'addCategory']);
-Route::get('/admin/manage_employees/edit', [EmployeeController::class, 'editCategory']);
-Route::get('/admin/manage_employees/delete', [EmployeeController::class, 'deleteCategory']);
-Route::get('/admin/manage_employees/search', [EmployeeController::class, 'searchCategory']);
-Route::get('/admin/manage_employees/paginate/{current_page}', [EmployeeController::class, 'categoryReload']);
+Route::get('/admin/manage_suppliers', [SupplierController::class, 'manageSupplierPage']);
+Route::get('/admin/manage_suppliers/add', [SupplierController::class, 'addCategory']);
+Route::get('/admin/manage_suppliers/edit', [SupplierController::class, 'editCategory']);
+Route::get('/admin/manage_suppliers/delete', [SupplierController::class, 'deleteCategory']);
+Route::get('/admin/manage_suppliers/search', [SupplierController::class, 'searchCategory']);
+Route::get('/admin/manage_suppliers/paginate/{current_page}', [SupplierController::class, 'categoryReload']);
+// Quản lý phiếu nhập
+Route::get('/admin/manage_import_slips', [ImportSlipController::class, 'manageImportSlipPage']);
+Route::get('/admin/import_slip_details/{id}', [ImportSlipController::class, 'importSlipDetailPage']);

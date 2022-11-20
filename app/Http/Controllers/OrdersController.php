@@ -34,7 +34,7 @@ class OrdersController extends Controller
     public function updateOrderStatus(Request $request)
     {
         $orders = orders::findOrFail($request->input('id'));
-        $response = $orders->update(['date_checked' => date('Y-m-d h:i:s'), 'status' => $request->input('status')]);
+        $response = $orders->update(['employee_id' => session('EmployeeID'), 'status' => $request->input('status')]);
         if (!$response || $orders == null)
             return response()->json(['message' => 'Thay đổi trạng thái thất bại', 'status' => 0]);
         else {

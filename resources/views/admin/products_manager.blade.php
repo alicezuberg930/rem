@@ -105,14 +105,7 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-3">
-                                    <div class="mb-3">
-                                        <label for="" class="form-label">Kho:</label>
-                                        <input type="number" class="form-control" value="10" id="product-amount"
-                                            name="product-amount" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
+                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="" class="form-label">Chất liệu:</label>
                                         <select class="form-select" id="product-material" name="product-material">
@@ -226,14 +219,7 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-3">
-                                    <div class="mb-3">
-                                        <label for="" class="form-label">Kho:</label>
-                                        <input type="number" class="form-control" value="10"
-                                            id="edit-product-amount" name="edit-product-amount" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
+                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="" class="form-label">Chất liệu:</label>
                                         <select class="form-select" id="edit-product-material"
@@ -296,9 +282,9 @@
                 data: {
                     image: $("#display-product").attr('src').split('/')[4],
                     name: $("#product-name").val(),
-                    amount: $("#product-amount").val(),
                     price: $("#product-price").val(),
                     category: $("#product-category").val(),
+                    amount: 0,
                     material: $("#product-material").val(),
                     origin: $("#product-origin").val(),
                     description: $("#product-description").val(),
@@ -328,7 +314,6 @@
                     let img = "{{ url('/image') }}"
                     $("#product-id").val(result.id)
                     $("#edit-product-name").val(result.name)
-                    $("#edit-product-amount").val(result.amount)
                     $("#edit-product-price").val(result.price)
                     $("#edit-product-category").val(result.category)
                     $("#edit-product-material").val(result.material)
@@ -347,7 +332,6 @@
                     id: $("#product-id").val(),
                     image: $("#edit-display-product").attr('src').split('/')[4],
                     name: $("#edit-product-name").val(),
-                    amount: $("#edit-product-amount").val(),
                     price: $("#edit-product-price").val(),
                     category: $("#edit-product-category").val(),
                     material: $("#edit-product-material").val(),

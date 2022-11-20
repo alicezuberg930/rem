@@ -48,7 +48,7 @@ class ProductController extends Controller
         return view('dynamic_layout.filter_reload', compact('products', 'total', 'current_page', 'sort'));
     }
 
-    public function getProductDetails(Request $request)
+    public static function getProductDetails(Request $request)
     {
         return product::find($request->input('id'));
     }
@@ -132,7 +132,7 @@ class ProductController extends Controller
         $product = product::where('products.id', '=', $id)
             ->leftjoin('sales', 'products.discount', '=', 'sales.id')
             ->join('categories', 'categories.id', '=', 'products.category')
-            ->get(['*', 'products.id as ProductsID', 'categories.name as categoryName','products.description as productDescription', 'sales.id as SaleID', 'products.name', 'products.price', 'products.origin', 'sales.percent']);
+            ->get(['*', 'products.id as ProductsID', 'categories.name as categoryName', 'products.description as productDescription', 'sales.id as SaleID', 'products.name', 'products.price', 'products.origin', 'sales.percent']);
         return view("product.product_details", ['product' => $product[0]]);
     }
 

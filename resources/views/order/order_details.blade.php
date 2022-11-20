@@ -5,7 +5,6 @@
     <x-head_tag />
     <title>Chi tiết đơn hàng</title>
 </head>
-{{-- @dd($Order_details) --}}
 
 <body style="background-color: rgb(223, 223, 223, 0.6)">
     <nav class="d-flex align-items-center justify-content-between bg-light">
@@ -97,7 +96,6 @@
                                 Chờ xác nhận
                                 <i class="fa-solid fa-check bg-success rounded-circle text-light"></i>
                             </h6>
-                            <span>10-11-2011</span>
                         </div>
                     </div>
                     <div class="row">
@@ -115,7 +113,6 @@
                                 Đã xác nhận
                                 <i class="fa-solid fa-check bg-success rounded-circle text-light"></i>
                             </h6>
-                            <span>12-11-2011</span>
                         </div>
                     </div>
                     <div class="row">
@@ -125,29 +122,11 @@
                     </div>
                     <div class="row d-flex justify-content-start align-items-center">
                         <div class="col-md-4 d-flex justify-content-center">
-                            <img class="rounded-circle border border-primary" style="object-fit: contain" width="50"
-                                height="50" src="{{ url('/icons/shipping.png') }}" />
-                        </div>
-                        <div class="col-md-8">
-                            <h6 class="m-0">Đang giao
-                                <i class="fa-solid fa-check bg-success rounded-circle text-light"></i>
-                            </h6>
-                            <span>14-11-2011</span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="d-flex justify-content-center col-md-4">
-                            <span style="height: 2rem; border-left: 2px dotted black"></span>
-                        </div>
-                    </div>
-                    <div class="row d-flex justify-content-start align-items-center">
-                        <div class="col-md-4 d-flex justify-content-center">
                             <img class="rounded-circle border" style="object-fit: contain" width="50" height="50"
                                 src="{{ url('/icons/delivered.png') }}" />
                         </div>
                         <div class="col-md-8">
                             <h6 class="m-0">Đã giao</h6>
-                            <span>16-11-2011</span>
                         </div>
                     </div>
                 </div>

@@ -16,7 +16,9 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->dateTime('order_date');
-            $table->dateTime('date_checked')->nullable();
+            $table->unsignedBigInteger('employee_id')->nullable();
+            $table->index('employee_id');
+            $table->foreign('employee_id')->references('id')->on('employees');
             $table->string('fullname', 100);
             $table->string('email', 100);
             $table->string('phone_number', 10);
