@@ -6,8 +6,8 @@
     <title>Chi tiết đơn hàng</title>
 </head>
 
-<body style="background-color: rgb(223, 223, 223, 0.6)">
-    <nav class="d-flex align-items-center justify-content-between bg-light">
+<body class="bg-light">
+    <nav class="d-flex align-items-center justify-content-between bg-white">
         <div class="" style="margin-left: 1rem">
             <h4 class="m-0 font-weight-bold">Đơn hàng #{{ $Order->id }}</h4>
             <p class="m-0">{{ date('d-m-Y h:i:s', strtotime($Order->order_date)) }}</p>

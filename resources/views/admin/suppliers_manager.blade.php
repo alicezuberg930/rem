@@ -85,11 +85,11 @@
 
     <div class="modal fade edit-modal" id="edit-supplier" tabindex="-1" aria-labelledby="staticBackdropLabel"
         aria-hidden="true">
-        <div class="modal-dialog modal-sm">
+        <div class="modal-dialog modal-md">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Sửa nhà cung cấp>
-                        <button type="lbutton" class="btn-close" data-bs-dismiss="modal" aria-labe="Close"></button>
+                    <h5 class="modal-title" id="staticBackdropLabel">Sửa nhà cung cấp</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-labe="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row justify-content-center justify-content-around">
@@ -98,7 +98,7 @@
                                 <div class="mb-3">
                                     <label for="staticEmail" class="form-label fw-semibold">Tên</label>
                                     <div class="col-md-12">
-                                        <input type="text" class="form-control" id="sale-name">
+                                        <input type="text" class="form-control" id="edit-supplier-name">
                                     </div>
                                 </div>
                             </div>
@@ -108,7 +108,7 @@
                                 <div class="mb-3">
                                     <label class="form-label">Địa chỉ:</label>
                                     <select name="city" class="form-control" aria-label="Default select example"
-                                        id="city-select">
+                                        id="edit-supplier-address">
                                         @foreach ($cities['results'] as $city)
                                             <option value="{{ $city['name'] }}" data-id="{{ $city['code'] }}">
                                                 {{ $city['name'] }}
@@ -119,11 +119,19 @@
                             </div>
                         </div>
                         <div class="mb-3 row">
-                            <div class="col-md-12">
+                            <div class="col-md-2">
+                                <div class="mb-3">
+                                    <label for="staticEmail" class="form-label fw-semibold">Mã</label>
+                                    <div class="col-md-12">
+                                        <input type="text" class="form-control" id="supplier-id">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-10">
                                 <div class="mb-3">
                                     <label for="staticEmail" class="form-label fw-semibold">Số điện thoại</label>
                                     <div class="col-md-12">
-                                        <input type="text" class="form-control" id="sale-name">
+                                        <input type="text" class="form-control" id="edit-supplier-phonenumber">
                                     </div>
                                 </div>
                             </div>
@@ -161,12 +169,20 @@
             })
         })
         $(document).on('click', '.edit-btn', function() {
-            let id = $(this).attr('data-id')
-            let name = $(this).parent().parent().children().eq(1).text()
-            let description = $(this).parent().parent().children().eq(2).text().trim()
-            $("#id-category-modal").val(id)
-            $("#name-category-modal").val(name)
-            $("#description-category-modal").val(description)
+            current_page = $(this).attr('data-page')
+            $.ajax({
+                url: "/admin/manage_suppliers/store",
+                method: "get",
+                data: {
+                    id: $(this).attr('data-id'),
+                },
+                success: function(result) {
+                    $("#supplier-id").val(result.id)
+                    $("#edit-supplier-name").val(result.supplier_name)
+                    $("#edit-supplier-address").val(result.address)
+                    $("#edit-supplier-phonenumber").val(result.phone_number)
+                }
+            })
         })
         $("#edit-btn").on('click', function() {
             $.ajax({

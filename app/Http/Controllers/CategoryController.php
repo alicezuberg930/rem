@@ -48,7 +48,7 @@ class CategoryController extends Controller
  
     public function searchCategory(Request $request)
     {
-        session()->put('search', $request->input('name'));
+        session()->put('search', $request->input('category_name'));
         session()->save();
         return $this->categoryReload($request->input('page'));
     }
@@ -58,7 +58,7 @@ class CategoryController extends Controller
         $Categories = null;
         $total = 0;
         if (session()->has('search') && session()->get('search') != '') {
-            $query = category::where('name', 'like', '%' . session()->get('search') . '%');
+            $query = category::where('category_name', 'like', '%' . session()->get('search') . '%');
             $total = $query->count();
             $Categories = $query->take(5)->skip(($current_page - 1) * 5)->get();
         } else {

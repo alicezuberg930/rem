@@ -113,7 +113,7 @@
                 url: "/admin/manage_category/add",
                 method: "get",
                 data: {
-                    name: $('#name-category-add').val(),
+                    category_name: $('#name-category-add').val(),
                     description: $('#desc-category-add').val(),
                     page: current_page
                 },
@@ -142,7 +142,7 @@
                 method: "get",
                 data: {
                     id: $("#id-category-modal").val(),
-                    name: $("#name-category-modal").val(),
+                    category_name: $("#name-category-modal").val(),
                     description: $("#description-category-modal").val(),
                     page: current_page
                 },
@@ -184,7 +184,7 @@
                     url: "/admin/manage_category/search",
                     method: "get",
                     data: {
-                        name: $(this).val(),
+                        category_name: $(this).val(),
                         page: 1
                     },
                     success: function(result) {

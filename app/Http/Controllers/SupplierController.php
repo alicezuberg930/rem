@@ -14,6 +14,11 @@ class SupplierController extends Controller
         return supplier::take(5)->skip(($current_page - 1) * 5)->get();
     }
 
+    public function getSupplierDetails(Request $request)
+    {
+        return supplier::find($request->input('id'));
+    }
+
     public function manageSupplierPage()
     {
         if (session()->has('search')) session()->forget("search");

@@ -41,19 +41,19 @@
         <li>
             <a class="nav-link @php echo request()->route()->uri=='admin/manage_employees' ? 'link-light border border-white text-info':'link-light' @endphp"
                 href="/admin/manage_employees">
-                <i class="fa-regular fa-user-admin"></i> Nhân viên
+                <i class="fa-solid fa-user-gear"></i> Nhân viên
             </a>
         </li>
         <li>
             <a class="nav-link @php echo request()->route()->uri=='admin/manage_suppliers' ? 'link-light border border-white text-info':'link-light' @endphp"
                 href="/admin/manage_suppliers">
-                <i class="fa-regular fa-user-admin"></i> Nhà cung cấp
+                <i class="fa-solid fa-boxes-packing"></i> Nhà cung cấp
             </a>
         </li>
         <li>
             <a class="nav-link @php echo request()->route()->uri=='admin/manage_import_slips' ? 'link-light border border-white text-info':'link-light' @endphp"
                 href="/admin/manage_import_slips">
-                <i class="fa-regular fa-user-admin"></i> Phiếu nhập
+                <i class="fa-solid fa-file-import"></i> Phiếu nhập
             </a>
         </li>
         <li>

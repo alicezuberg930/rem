@@ -47,8 +47,8 @@
                             <div class="row col-md-auto">
                                 <div class="col-md-12">
                                     <div class="form-floating mb-3">
-                                        <input type="text" class="form-control" name="product-name" id="product-name"
-                                            required>
+                                        <input type="text" class="form-control" name="product-name" disabled
+                                            id="product-name" required>
                                         <label for="floatingInput">Tên sản phẩm</label>
                                     </div>
                                 </div>
@@ -56,7 +56,7 @@
                             <div class="row col-md-auto">
                                 <div class="col-md-12">
                                     <div class="form-floating mb-3">
-                                        <select class="form-select" id="product-category" name="product-category">
+                                        <select class="form-select" id="import-product">
                                             @foreach ($Products as $Product)
                                                 <option checked value="{{ $Product->id }}">{{ $Product->name }}</option>
                                             @endforeach
@@ -70,7 +70,7 @@
                             <div class="col-md-auto">
                                 <div class="mb-3">
                                     <label class="form-label">Giới thiệu:</label>
-                                    <textarea style="height: 10rem" class="form-control" aria-label="With textarea" id="product-description"
+                                    <textarea disabled style="height: 10rem" class="form-control" aria-label="With textarea" id="product-description"
                                         name="product-description" required></textarea>
                                 </div>
                             </div>
@@ -78,33 +78,20 @@
                                 <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="exampleInputPassword1" class="form-label">Thể loại:</label>
-                                        <select class="form-select" id="product-category" name="product-category">
-                                            @foreach ($Categories as $category)
-                                                <option checked value="{{ $category->id }}">{{ $category->name }}</option>
-                                            @endforeach
-                                        </select>
+                                        <input disabled class="form-select" id="product-category" name="product-category">
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="mb-3"><label for="exampleInputPassword1" class="form-label">Giảm
                                             giá:</label>
-                                        <select class="form-select" id="product-discount" name="product-discount">
-                                            @foreach ($Sales as $sale)
-                                                <option selected value="{{ $sale->id }}">
-                                                    {{ $sale->salename }} (-{{ $sale->percent }}%)</option>
-                                            @endforeach
+                                        <input disabled class="form-select" id="product-discount" name="product-discount">
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="exampleInputPassword1" class="form-label">Quốc gia:</label>
-                                        <select class="form-select" id="product-origin" name="product-origin">
-                                            <option checked value="Anh">Anh</option>
-                                            <option checked value="Mỹ">Mỹ</option>
-                                            <option checked value="Hàn">Hàn</option>
-                                            <option checked value="Nhật">Nhật</option>
-                                        </select>
+                                        <input disabled class="form-select" id="product-origin" name="product-origin">
                                     </div>
                                 </div>
                             </div>
@@ -112,18 +99,14 @@
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="" class="form-label">Chất liệu:</label>
-                                        <select class="form-select" id="product-material" name="product-material">
-                                            @foreach ($Materials as $Material)
-                                                <option selected value="{{ $Material->material }}">
-                                                    {{ $Material->material }}</option>
-                                            @endforeach
-                                        </select>
+                                        <input disabled class="form-select" id="product-material"
+                                            name="product-material">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="form-label">Giá:</label>
-                                        <input type="number" class="form-control" value="1000000" id="product-price"
+                                        <label class="form-label">Giá bán:</label>
+                                        <input disabled type="number" class="form-control" id="product-price"
                                             name="product-price" required>
                                     </div>
                                 </div>
@@ -177,13 +160,8 @@
                 }
             })
         })
-        $(document).on('click', '.edit-btn', function() {
-            let id = $(this).attr('data-id')
-            let name = $(this).parent().parent().children().eq(1).text()
-            let description = $(this).parent().parent().children().eq(2).text().trim()
-            $("#id-category-modal").val(id)
-            $("#name-category-modal").val(name)
-            $("#description-category-modal").val(description)
+        $("#import-product").on('change', function() {
+            
         })
         $("#edit-btn").on('click', function() {
             $.ajax({

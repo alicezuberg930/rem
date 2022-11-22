@@ -23,7 +23,7 @@
         <tbody id="show-employee">
             @foreach ($Employees as $Employee)
                 <tr>
-                    <td scope="row">{{ $Employee->id }}</td>
+                    <td scope="row">{{ $Employee->eid }}</td>
                     <td scope="row">{{ $Employee->username }}</td>
                     <td scope="row">{{ $Employee->phonenumber }}</td>
                     <td scope="row">{{ $Employee->email }}</td>
@@ -31,13 +31,13 @@
                     <td scope="row">{{ $Employee->role_name }}</td>
                     <td>
                         <button type="button" class="btn edit-btn text-warning" data-bs-toggle="modal"
-                            data-bs-target="#edit-employee" data-id="{{ $Employee->id }}">
+                            data-bs-target="#edit-employee" data-id="{{ $Employee->eid }}">
                             <i class="fa-solid fa-pen"></i>
                         </button>
                     </td>
                     <td>
-                        <button value="{{ $Employee->id }}" class="delete-btn btn btn-sm text-danger" type="button"
-                            data-id="{{ $Employee->id }}">
+                        <button value="{{ $Employee->eid }}" class="delete-btn btn btn-sm text-danger" type="button"
+                            data-id="{{ $Employee->eid }}">
                             <i class="fa-solid fa-trash-can"></i>
                         </button>
                     </td>

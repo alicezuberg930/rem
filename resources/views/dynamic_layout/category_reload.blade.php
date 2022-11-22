@@ -21,7 +21,7 @@
             @foreach ($Categories as $Category)
                 <tr>
                     <th scope="row">{{ $Category->id }}</th>
-                    <th scope="row">{{ $Category->name }}</th>
+                    <th scope="row">{{ $Category->category_name }}</th>
                     <td>
                         {{ $Category->description }}
                     </td>

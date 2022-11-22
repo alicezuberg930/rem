@@ -21,9 +21,9 @@
         <tbody id="show-product">
             @foreach ($Import_slips as $Import_slip)
                 <tr>
-                    <th scope="row">{{ $Import_slip->id }}</th>
-                    <th scope="row">{{ $Import_slip->supplier_name }}</th>
-                    <th scope="row">{{ $Import_slip->username }}</th>
+                    <td scope="row">{{ $Import_slip->isid }}</td>
+                    <td scope="row">{{ $Import_slip->supplier_name }}</td>
+                    <td scope="row">{{ $Import_slip->username }}</td>
                     <td scope="row">{{ $Import_slip->import_date }}</td>
                     <td scope="row">{{ $Import_slip->total_price }}
                     </td>

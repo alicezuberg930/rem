@@ -51,7 +51,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label">Email:</label>
-                                    <input type="number" min="0" max="100" class="form-control"
+                                    <input type="email" min="0" max="100" class="form-control"
                                         id="sale-percent">
                                 </div>
                             </div>
@@ -111,40 +111,48 @@
                                 <div class="mb-3">
                                     <label for="staticEmail" class="form-label fw-semibold">Tên</label>
                                     <div class="col-md-12">
-                                        <input type="text" class="form-control" id="sale-name">
+                                        <input type="text" class="form-control" id="edit-employee-name">
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label">Email:</label>
-                                    <input type="number" min="0" max="100" class="form-control"
-                                        id="sale-percent">
+                                    <input type="email" min="0" max="100" class="form-control"
+                                        id="edit-employee-email">
                                 </div>
                             </div>
                         </div>
                         <div class="mb-3 row">
-                            <div class="col-md-6">
+                            <div class="col-md-2">
+                                <div class="mb-3">
+                                    <label for="staticEmail" class="form-label fw-semibold">Mã</label>
+                                    <div class="col-md-12">
+                                        <input type="text" class="form-control" id="employee-id">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
                                 <div class="mb-3">
                                     <label for="staticEmail" class="form-label fw-semibold">Số điện thoại</label>
                                     <div class="col-md-12">
-                                        <input type="text" class="form-control" id="sale-name">
+                                        <input type="text" class="form-control" id="edit-employee-phonenumber">
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="mb-3">
                                     <label class="form-label">Giới tính:</label>
-                                    <select class="form-control" id="sale-end_date">
+                                    <select class="form-control" id="edit-employee-gender">
                                         <option value="Nam">Nam</option>
                                         <option value="Nữ">Nữ</option>
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <div class="mb-3">
                                     <label class="form-label">Quyền:</label>
-                                    <select class="form-control" id="sale-end_date">
+                                    <select class="form-control" id="edit-employee-role">
                                         @foreach ($roles as $role)
                                             <option value="{{ $role->id }}">{{ $role->role_name }}</option>
                                         @endforeach
@@ -185,12 +193,22 @@
             })
         })
         $(document).on('click', '.edit-btn', function() {
-            let id = $(this).attr('data-id')
-            let name = $(this).parent().parent().children().eq(1).text()
-            let description = $(this).parent().parent().children().eq(2).text().trim()
-            $("#id-category-modal").val(id)
-            $("#name-category-modal").val(name)
-            $("#description-category-modal").val(description)
+            current_page = $(this).attr('data-page')
+            $.ajax({
+                url: "/admin/manage_employees/store",
+                method: "get",
+                data: {
+                    id: $(this).attr('data-id'),
+                },
+                success: function(result) {
+                    $("#employee-id").val(result.eid)
+                    $("#edit-employee-name").val(result.username)
+                    $("#edit-employee-email").val(result.email)
+                    $("#edit-employee-phonenumber").val(result.phonenumber)
+                    $("#edit-employee-gender").val(result.gender)
+                    $("#edit-employee-role").val(result.role_as)
+                }
+            })
         })
         $("#edit-btn").on('click', function() {
             $.ajax({

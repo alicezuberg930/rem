@@ -21,7 +21,6 @@
         .footer {
             border-top: 1px solid grey;
             text-align: center;
-            margin-top: 7rem;
         }
 
         .form-group {

@@ -15,7 +15,7 @@ class ImportSlipController extends Controller
 
     public static function getImportSlip($current_page)
     {
-        return import_slip::join('employees', 'employee_id', '=', 'employees.id')->join('suppliers', 'supplier_id', '=', 'suppliers.id')->take(5)->skip(($current_page - 1) * 5)->get();
+        return import_slip::join('employees', 'employee_id', '=', 'employees.id')->join('suppliers', 'supplier_id', '=', 'suppliers.id')->take(5)->skip(($current_page - 1) * 5)->get(['*', 'import_slips.id as isid']);
     }
 
     public function manageImportSlipPage()
@@ -34,24 +34,14 @@ class ImportSlipController extends Controller
 
     public function importSlipDetailPage($id)
     {
-        // $e = $id;
-        // $import_slips = new import_slip_details();
-        // return response()->json($import_slips::create([
-        //     'import_slip_id' => 6,
-        //     'product_id' => 6,
-        //     'import_quantity' => 20,
-        //     'import_price' => 340000
-        // ]));
         $ImportSlipDetails = import_slip_details::join('products', 'import_slip_details.product_id', '=', 'products.id')
             ->join('import_slips', 'import_slip_details.product_id', '=', 'import_slips.id')
-            ->where('products.id', '=', $id)->get();
-        return view('admin.import_slip_details', [
-            'ImportSlipDetails' => $ImportSlipDetails[0],
-            'Categories' => category::all(),
-            'Sales' => sales::all(),
-            'Materials' => product::select('material')->distinct()->get(),
-        ]);
+            ->join('categories', 'categories.id', '=', 'products.category')
+            ->where('products.id', '=', $id)->first();
+        return view('admin.import_slip_details', ['ImportSlipDetails' => $ImportSlipDetails]);
     }
+
+    public function 
 
     public function searchImportSlip(Request $request)
     {

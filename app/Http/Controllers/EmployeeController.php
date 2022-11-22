@@ -12,7 +12,12 @@ class EmployeeController extends Controller
 
     public static function getEmployee($current_page)
     {
-        return employee::join('groups', 'employees.role_as', '=', 'groups.id')->take(5)->skip(($current_page - 1) * 5)->get();
+        return employee::join('groups', 'employees.role_as', '=', 'groups.id')->take(5)->skip(($current_page - 1) * 5)->get(['*', 'employees.id as eid']);
+    }
+
+    public function getEmployeeDetails(Request $request)
+    {
+        return employee::join('groups', 'employees.role_as', '=', 'groups.id')->where('employees.id', '=', $request->input('id'))->get(['*', 'employees.id as eid'])[0];
     }
 
     public function manageEmployeePage()

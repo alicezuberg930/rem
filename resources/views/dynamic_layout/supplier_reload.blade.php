@@ -21,8 +21,8 @@
         <tbody id="show-product">
             @foreach ($Suppliers as $Supplier)
                 <tr>
-                    <th scope="row">{{ $Supplier->id }}</th>
-                    <th scope="row">{{ $Supplier->supplier_name }}</th>
+                    <td scope="row">{{ $Supplier->id }}</td>
+                    <td scope="row">{{ $Supplier->supplier_name }}</td>
                     <td scope="row">{{ $Supplier->address }}</td>
                     <td scope="row">{{ $Supplier->phone_number }}
                     </td>
