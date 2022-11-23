@@ -29,7 +29,7 @@
                     </td>
                     <td>
                         <a class="btn btn-sm fa-solid fa-circle-exclamation text-primary"
-                            href="/admin/import_slip_details/{{ $Import_slip->id }}"></a>
+                            href="/admin/import_slip_details/{{ $Import_slip->isid }}"></a>
                     </td>
                 </tr>
             @endforeach

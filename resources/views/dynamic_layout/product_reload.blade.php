@@ -27,7 +27,7 @@
                     <td>
                         <div class="d-flex align-items-center">
                             <img src="{{ url('image/' . $Product->image) }}" height="70">
-                            <span>{{ $Product->name }}</span>
+                            <span>{{ $Product->product_name }}</span>
                         </div>
                     </td>
                     <td>{{ $Product->amount }}</td>

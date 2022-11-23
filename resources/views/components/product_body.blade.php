@@ -10,7 +10,7 @@
                 <img src="{{ url('image/' . $product->image) }}" class="product-img card-img">
             </div>
             <div class="p-1">
-                <div class="card-text text-wrap text-dark font-weight-bold">{{ $product->name }}</div>
+                <div class="card-text text-wrap text-dark font-weight-bold">{{ $product->product_name }}</div>
                 <div class="card-text text-dark">Hàng nhập từ {{ $product->origin }}</div>
                 <div class="card-text mt-2">
                     @if ($product->percent != null && $product->percent > 0)

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AddressController;
+use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
@@ -35,7 +36,7 @@ use Illuminate\Support\Facades\Route;
 //Giao diện trang đăng nhập & đăng ký 
 Route::get('/login_register', function () {
     return view('login_register.index');
-})->name('admin_login');
+});
 Route::get('/admin_login', function () {
     return view('login_register.admin_index');
 });
@@ -65,6 +66,8 @@ Route::get('/admin/manage_statistic', function () {
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::get('/logout', [AuthController::class, 'logout']);
+Route::post('/admin/login', [AdminAuthController::class, 'login']);
+Route::get('/admin/logout', [AdminAuthController::class, 'logout']);
 // Xử lý giỏ hàng
 Route::get('/add_cart', [CartController::class, 'addCart']);
 Route::get('/remove_cart', [CartController::class, 'removeCart']);
@@ -87,6 +90,7 @@ Route::post('/change_password', [AuthController::class, 'changePassword']);
 Route::get('/purchase_history/{user_id}', [OrdersController::class, 'getUserOrders']);
 Route::get('/user_address', [AddressController::class, 'userAddressPage']);
 //Lọc sản phẩm
+Route::get('/search_product', [ProductController::class, 'searchProductHeader']);
 Route::get('/filter/search', [ProductController::class, 'filterProducts']);
 Route::get('/filter', [ProductController::class, 'filterPage']);
 //Lấy lại mật khẩu
@@ -99,7 +103,7 @@ Route::get('/user/manage_orders/update_order_status', [OrdersController::class, 
 Route::get('/user/manage_orders/search', [OrdersController::class, 'searchOrder']);
 Route::get('/user/manage_orders/paginate/{current_page}/{type}/{user_id}', [OrdersController::class, 'orderReload']);
 Route::get('/user/manage_orders/status/{current_page}/{type}/{user_id}', [OrdersController::class, 'orderReload']);
-Route::get('/user/manage_orders/order_details/{$order_id}', [OrdersController::class, 'getOrderDetails']);
+Route::get('/user/manage_orders/order_details/{order_id}', [OrdersController::class, 'getOrderDetails']);
 //Quản lý thống kê
 Route::get('/admin/manage_statistic/annual_income', [StatisticController::class, 'getAnnualIncome']);
 Route::get('/admin/manage_statistic/annual_orders', [StatisticController::class, 'getAnnualOrders']);
@@ -109,7 +113,7 @@ Route::get('/admin/manage_products', [ProductController::class, 'manageProductPa
 Route::get('/admin/manage_products/add', [ProductController::class, 'addProduct']);
 Route::post('/admin/manage_products/upload_file', [ProductController::class, 'uploadFile']);
 Route::get('/admin/manage_products/edit', [ProductController::class, 'editProduct']);
-Route::get('/admin/manage_products/store', [ProductController::class, 'getProductDetails']);
+Route::get('/admin/manage_products/store/{id}', [ProductController::class, 'getProductDetails']);
 Route::get('/admin/manage_products/delete', [ProductController::class, 'deleteProduct']);
 Route::get('/admin/manage_products/search', [ProductController::class, 'searchProduct']);
 Route::get('/admin/manage_products/paginate/{current_page}', [ProductController::class, 'productReload']);
@@ -123,6 +127,7 @@ Route::get('/admin/manage_orders/order_details/{order_id}', [OrdersController::c
 //Quản lý khách hàng
 Route::get('/admin/manage_customers', [CustomerController::class, 'manageCustomerPage']);
 Route::get('/admin/manage_customers/search', [CustomerController::class, 'searchCustomer']);
+Route::get('/admin/manage_customers/paginate/{current_page}', [CustomerController::class, 'customerReload']);
 //Quản lý thể loại
 Route::get('/admin/manage_category', [CategoryController::class, 'manageCategoryPage']);
 Route::get('/admin/manage_category/add', [CategoryController::class, 'addCategory']);
@@ -140,20 +145,24 @@ Route::get('/admin/manage_sales/search', [SalesController::class, 'searchSale'])
 Route::get('/admin/manage_sales/paginate/{current_page}', [SalesController::class, 'saleReload']);
 //Quản lý nhân viên
 Route::get('/admin/manage_employees', [EmployeeController::class, 'manageEmployeePage']);
-Route::get('/admin/manage_employees/add', [EmployeeController::class, 'addCategory']);
-Route::get('/admin/manage_employees/edit', [EmployeeController::class, 'editCategory']);
-Route::get('/admin/manage_employees/delete', [EmployeeController::class, 'deleteCategory']);
+Route::get('/admin/manage_employees/add', [EmployeeController::class, 'addEmployee']);
+Route::get('/admin/manage_employees/edit', [EmployeeController::class, 'editEmployee']);
+Route::get('/admin/manage_employees/delete', [EmployeeController::class, 'deleteEmployee']);
 Route::get('/admin/manage_employees/store', [EmployeeController::class, 'getEmployeeDetails']);
-Route::get('/admin/manage_employees/search', [EmployeeController::class, 'searchCategory']);
-Route::get('/admin/manage_employees/paginate/{current_page}', [EmployeeController::class, 'categoryReload']);
+Route::get('/admin/manage_employees/search', [EmployeeController::class, 'searchEmployee']);
+Route::get('/admin/manage_employees/paginate/{current_page}', [EmployeeController::class, 'EmployeeReload']);
 //Quản lý nhà cung cấp
 Route::get('/admin/manage_suppliers', [SupplierController::class, 'manageSupplierPage']);
-Route::get('/admin/manage_suppliers/add', [SupplierController::class, 'addCategory']);
-Route::get('/admin/manage_suppliers/edit', [SupplierController::class, 'editCategory']);
-Route::get('/admin/manage_suppliers/delete', [SupplierController::class, 'deleteCategory']);
+Route::get('/admin/manage_suppliers/add', [SupplierController::class, 'addSupplier']);
+Route::get('/admin/manage_suppliers/edit', [SupplierController::class, 'editSupplier']);
+Route::get('/admin/manage_suppliers/delete', [SupplierController::class, 'deleteSupplier']);
 Route::get('/admin/manage_suppliers/store', [SupplierController::class, 'getSupplierDetails']);
-Route::get('/admin/manage_suppliers/search', [SupplierController::class, 'searchCategory']);
-Route::get('/admin/manage_suppliers/paginate/{current_page}', [SupplierController::class, 'categoryReload']);
+Route::get('/admin/manage_suppliers/search', [SupplierController::class, 'searchSupplier']);
+Route::get('/admin/manage_suppliers/paginate/{current_page}', [SupplierController::class, 'supplierReload']);
 // Quản lý phiếu nhập
 Route::get('/admin/manage_import_slips', [ImportSlipController::class, 'manageImportSlipPage']);
+Route::get('/admin/manage_import_slips/store/{id}', [ProductController::class, 'getProductDetails']);
+Route::get('/admin/manage_import_slips/add', [ImportSlipController::class, 'addImportSlip']);
+Route::get('/admin/manage_import_slips/search', [ImportSlipController::class, 'searchImportSlip']);
+Route::get('/admin/manage_import_slips/paginate/{current_page}', [ImportSlipController::class, 'importSlipReload']);
 Route::get('/admin/import_slip_details/{id}', [ImportSlipController::class, 'importSlipDetailPage']);

@@ -14,7 +14,7 @@
             <h2 class="title">Sản Phẩm Mới</h2>
             <div class="row">
                 <?php $a = 0; ?>
-                @foreach ($NewProducts as $product)
+                @foreach ($Products as $product)
                     @include('components.product_body')
                     <?php if ($a != 11) {
                         $a++;
@@ -28,8 +28,8 @@
             <h2 class="title">Đang khuyến mãi</h2>
             <div class="row">
                 <?php $i = 0; ?>
-                @foreach ($SaleProducts as $product)
-                    @if ($product->percent > 0)
+                @foreach ($Products as $product)
+                    @if ($product->percent != null || $product->percent > 0)
                         @include('components.product_body')
                         <?php if ($i != 11) {
                             $i++;

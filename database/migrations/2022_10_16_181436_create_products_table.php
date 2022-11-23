@@ -17,13 +17,13 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->string('image', 255);
-            $table->string('name', 255);
+            $table->string('product_name', 255);
             $table->integer('amount');
             $table->bigInteger('price');
             $table->unsignedBigInteger('category');
             $table->string('material', 40);
             $table->string('origin', 40);
-            $table->text('description');
+            $table->text('product_description');
             $table->unsignedBigInteger('discount')->nullable();
             $table->index('discount');
             $table->foreign('discount')->references('id')->on('sales')->nullOnDelete()->onUpdate('cascade');

@@ -26,7 +26,8 @@ class PasswordResetController extends Controller
         $response->token = password_hash($token, PASSWORD_DEFAULT);
         $response->expire = $expire_in;
         if ($response->save()) {
-            Mail::send("email_templates.reset_password_templates", ['token' => bin2hex($token), 'selector' => $selector], function ($email) use ($reset_email) {
+            Mail::send("email_templates.reset_password_templates", ['token' => bin2hex($token), 'selector' => $selector], 
+            function ($email) use ($reset_email) {
                 $email->subject('Thông báo đặt lại mật khẩu');
                 $email->to($reset_email, "Header");
             });

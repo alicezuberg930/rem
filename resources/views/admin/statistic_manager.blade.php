@@ -1,6 +1,7 @@
 @extends('admin.adminpage')
 @section('body_manager')
     <div class="col-md-9 col-lg-10">
+        <x-admin_header />
         <div class="row row-cols-1 row-cols-md-4 justify-content-between mt-2">
             <div class="col-md-4 text-white ">
                 <div class="card h-100 border-0">
@@ -117,7 +118,7 @@
                 },
                 success: function(result) {
                     result.forEach(r => {
-                        product_name.push(r.name)
+                        product_name.push(r.product_name)
                         sales.push(r.total)
                     });
                     createChart(product_name, 'Đã bán', sales)

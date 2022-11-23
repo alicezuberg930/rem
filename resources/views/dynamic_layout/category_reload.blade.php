@@ -23,7 +23,7 @@
                     <th scope="row">{{ $Category->id }}</th>
                     <th scope="row">{{ $Category->category_name }}</th>
                     <td>
-                        {{ $Category->description }}
+                        {{ $Category->category_description }}
                     </td>
                     <td>
                         <button type="button" class="btn edit-btn text-warning" data-bs-toggle="modal"

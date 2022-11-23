@@ -1,6 +1,7 @@
 @extends('admin.adminpage')
 @section('body_manager')
     <div class="col-md-9 col-lg-10">
+        <x-admin_header />
         <div class="container-md p-0">
             <div class="p-3 row row-cols-1 row-cols-md-3 sticky-top bg-light justify-content-between">
                 <div class="col-md-auto row">
@@ -23,7 +24,7 @@
                     </div>
                 </div>
             </div>
-            <div class="table-responsive" id="customer-table">
+            <div class="table-responsive" id="supplier-table">
                 @include('dynamic_layout.supplier_reload')
             </div>
         </div>
@@ -43,7 +44,7 @@
                                 <div class="mb-3">
                                     <label for="staticEmail" class="form-label fw-semibold">Tên</label>
                                     <div class="col-md-12">
-                                        <input type="text" class="form-control" id="sale-name">
+                                        <input type="text" class="form-control" id="supplier-name">
                                     </div>
                                 </div>
                             </div>
@@ -53,7 +54,7 @@
                                 <div class="mb-3">
                                     <label class="form-label">Địa chỉ:</label>
                                     <select name="city" class="form-control" aria-label="Default select example"
-                                        id="city-select">
+                                        id="supplier-address">
                                         @foreach ($cities['results'] as $city)
                                             <option value="{{ $city['name'] }}" data-id="{{ $city['code'] }}">
                                                 {{ $city['name'] }}
@@ -68,7 +69,7 @@
                                 <div class="mb-3">
                                     <label for="staticEmail" class="form-label fw-semibold">Số điện thoại</label>
                                     <div class="col-md-12">
-                                        <input type="text" class="form-control" id="sale-name">
+                                        <input type="text" class="form-control" id="supplier-phone_number">
                                     </div>
                                 </div>
                             </div>
@@ -123,7 +124,7 @@
                                 <div class="mb-3">
                                     <label for="staticEmail" class="form-label fw-semibold">Mã</label>
                                     <div class="col-md-12">
-                                        <input type="text" class="form-control" id="supplier-id">
+                                        <input type="text" disabled class="form-control" id="supplier-id">
                                     </div>
                                 </div>
                             </div>
@@ -131,7 +132,7 @@
                                 <div class="mb-3">
                                     <label for="staticEmail" class="form-label fw-semibold">Số điện thoại</label>
                                     <div class="col-md-12">
-                                        <input type="text" class="form-control" id="edit-supplier-phonenumber">
+                                        <input type="text" class="form-control" id="edit-supplier-phone_number">
                                     </div>
                                 </div>
                             </div>
@@ -150,15 +151,16 @@
         let current_page = 1
         $("#add-btn").on('click', function() {
             $.ajax({
-                url: "/admin/manage_category/add",
+                url: "/admin/manage_suppliers/add",
                 method: "get",
                 data: {
-                    name: $('#name-category-add').val(),
-                    description: $('#desc-category-add').val(),
+                    supplier_name: $('#supplier-name').val(),
+                    address: $('#supplier-address').val(),
+                    phone_number: $("#supplier-phone_number").val(),
                     page: current_page
                 },
                 success: function(result) {
-                    $("#category-table").html(result.response)
+                    $("#supplier-table").html(result.response)
                     $('.toast').toast('show')
                     $('.toast-body').html(result.message)
                     if (result.status == 1)
@@ -180,22 +182,23 @@
                     $("#supplier-id").val(result.id)
                     $("#edit-supplier-name").val(result.supplier_name)
                     $("#edit-supplier-address").val(result.address)
-                    $("#edit-supplier-phonenumber").val(result.phone_number)
+                    $("#edit-supplier-phone_number").val(result.phone_number)
                 }
             })
         })
         $("#edit-btn").on('click', function() {
             $.ajax({
-                url: "/admin/manage_category/edit",
+                url: "/admin/manage_suppliers/edit",
                 method: "get",
                 data: {
-                    id: $("#id-category-modal").val(),
-                    name: $("#name-category-modal").val(),
-                    description: $("#description-category-modal").val(),
+                    id: $("#supplier-id").val(),
+                    supplier_name: $('#edit-supplier-name').val(),
+                    address: $('#edit-supplier-address').val(),
+                    phone_number: $("#edit-supplier-phone_number").val(),
                     page: current_page
                 },
                 success: function(result) {
-                    $("#category-table").html(result.response)
+                    $("#supplier-table").html(result.response)
                     $('.toast').toast('show')
                     $('.toast-body').html(result.message)
                     if (result.status == 1)
@@ -208,14 +211,14 @@
         $(document).on('click', '.delete-btn', function() {
             let id = $(this).attr('data-id')
             $.ajax({
-                url: "/admin/manage_category/delete",
+                url: "/admin/manage_suppliers/delete",
                 method: "get",
                 data: {
                     id: id,
                     page: current_page
                 },
                 success: function(result) {
-                    $("#category-table").html(result.response)
+                    $("#supplier-table").html(result.response)
                     $('.toast').toast('show')
                     $('.toast-body').html(result.message)
                     if (result.status == 1)
@@ -225,30 +228,32 @@
                 }
             })
         })
+        // let pathname = document.URL
         $('#search_id').keypress(function(e) {
             if (e.which == 13) {
                 e.preventDefault();
                 $.ajax({
-                    url: "/admin/manage_category/search",
+                    url: "/admin/manage_suppliers/search",
                     method: "get",
                     data: {
                         name: $(this).val(),
-                        page: 1
+                        page: current_page
                     },
                     success: function(result) {
-                        $("#category-table").html(result)
+                        $("#supplier-table ").html(result)
                     }
                 })
             }
-        });
+        })
+
         $(document).on('click', '.page-item', function() {
-            current_page = $(this).text()
+            let page = $(this).text()
+            // window.history.pushState("Update URL", "New Page", `${pathname}?page=${page}`)
             $.ajax({
-                url: "/admin/manage_category/paginate/" + $(this).text(),
+                url: "/admin/manage_suppliers/paginate/" + page,
                 method: "get",
                 success: function(result) {
-                    console.log(result);
-                    $("#category-table").html(result)
+                    $("#supplier-table").html(result)
                 }
             })
         })

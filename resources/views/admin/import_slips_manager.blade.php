@@ -1,6 +1,7 @@
 @extends('admin.adminpage')
 @section('body_manager')
     <div class="col-md-9 col-lg-10">
+        <x-admin_header />
         <div class="container-md p-0">
             <div class="p-3 row row-cols-1 row-cols-md-3 sticky-top bg-light justify-content-between">
                 <div class="col-md-auto row">
@@ -17,8 +18,7 @@
                 </div>
                 <div class="col-md-auto">
                     <div class="input-group">
-                        <input type="text" class="form-control form-control-sm" placeholder="Tên nhà cung cấp"
-                            id="search_id">
+                        <input type="date" class="form-control form-control-sm" placeholder="Ngày nhập" id="search_date">
                         <i class="fa-solid fa-magnifying-glass text-light p-2 bg-primary"></i>
                     </div>
                 </div>
@@ -47,21 +47,26 @@
                             <div class="row col-md-auto">
                                 <div class="col-md-12">
                                     <div class="form-floating mb-3">
-                                        <input type="text" class="form-control" name="product-name" disabled
-                                            id="product-name" required>
-                                        <label for="floatingInput">Tên sản phẩm</label>
+                                        <select class="form-select" id="import-slips-product_id">
+                                            @foreach ($Products as $Product)
+                                                <option checked value="{{ $Product->id }}">{{ $Product->product_name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <label for="floatingInput">Chọn sản phẩm cần nhập</label>
                                     </div>
                                 </div>
                             </div>
                             <div class="row col-md-auto">
                                 <div class="col-md-12">
                                     <div class="form-floating mb-3">
-                                        <select class="form-select" id="import-product">
-                                            @foreach ($Products as $Product)
-                                                <option checked value="{{ $Product->id }}">{{ $Product->name }}</option>
+                                        <select class="form-select" id="import-slips-supplier_id">
+                                            @foreach ($Suppliers as $Supplier)
+                                                <option checked value="{{ $Supplier->id }}">{{ $Supplier->supplier_name }}
+                                                </option>
                                             @endforeach
                                         </select>
-                                        <label for="floatingInput">Chọn sản phẩm cần nhập</label>
+                                        <label for="floatingInput">Chọn nhà cung cấp</label>
                                     </div>
                                 </div>
                             </div>
@@ -78,20 +83,22 @@
                                 <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="exampleInputPassword1" class="form-label">Thể loại:</label>
-                                        <input disabled class="form-select" id="product-category" name="product-category">
+                                        <input disabled type="text" class="form-select" id="product-category"
+                                            name="product-category">
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="mb-3"><label for="exampleInputPassword1" class="form-label">Giảm
                                             giá:</label>
-                                        <input disabled class="form-select" id="product-discount" name="product-discount">
-                                        </select>
+                                        <input disabled type="text" class="form-select" id="product-discount"
+                                            name="product-discount">
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="exampleInputPassword1" class="form-label">Quốc gia:</label>
-                                        <input disabled class="form-select" id="product-origin" name="product-origin">
+                                        <input disabled type="text" class="form-select" id="product-origin"
+                                            name="product-origin">
                                     </div>
                                 </div>
                             </div>
@@ -99,7 +106,7 @@
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="" class="form-label">Chất liệu:</label>
-                                        <input disabled class="form-select" id="product-material"
+                                        <input disabled type="text" class="form-select" id="product-material"
                                             name="product-material">
                                     </div>
                                 </div>
@@ -112,18 +119,24 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <div class="mb-3">
-                                        <label for="" class="form-label">Số lượng nhập kho:</label>
-                                        <input type="number" class="form-control" value="10" id="product-amount"
-                                            name="product-amount" required>
+                                        <label for="" class="form-label">Số lượng nhập:</label>
+                                        <input type="number" class="form-control" value="10"
+                                            id="import-slips-quantity" required>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <div class="mb-3">
-                                        <label for="" class="form-label">Giá nhập kho:</label>
+                                        <label for="" class="form-label">Giá nhập:</label>
                                         <input type="number" class="form-control" value="1000000"
-                                            id="import-slips-price" name="import-slips-price" required>
+                                            id="import-slips-price" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="" class="form-label">Ngày nhập:</label>
+                                        <input type="date" class="form-control" id="import-slips-date" required>
                                     </div>
                                 </div>
                             </div>
@@ -140,94 +153,70 @@
 
     <script>
         let current_page = 1
-        $("#add-btn").on('click', function() {
+        $("#import-slips-product_id").on('change', function() {
+            current_page = $(this).attr('data-page')
             $.ajax({
-                url: "/admin/manage_category/add",
-                method: "get",
-                data: {
-                    name: $('#name-category-add').val(),
-                    description: $('#desc-category-add').val(),
-                    page: current_page
-                },
-                success: function(result) {
-                    $("#category-table").html(result.response)
-                    $('.toast').toast('show')
-                    $('.toast-body').html(result.message)
-                    if (result.status == 1)
-                        $('.toast').css('background-color', 'rgb(71, 201, 71)')
-                    else
-                        $('.toast').css('background-color', 'rgb(239, 73, 73)')
-                }
-            })
-        })
-        $("#import-product").on('change', function() {
-            
-        })
-        $("#edit-btn").on('click', function() {
-            $.ajax({
-                url: "/admin/manage_category/edit",
-                method: "get",
-                data: {
-                    id: $("#id-category-modal").val(),
-                    name: $("#name-category-modal").val(),
-                    description: $("#description-category-modal").val(),
-                    page: current_page
-                },
-                success: function(result) {
-                    $("#category-table").html(result.response)
-                    $('.toast').toast('show')
-                    $('.toast-body').html(result.message)
-                    if (result.status == 1)
-                        $('.toast').css('background-color', 'rgb(71, 201, 71)')
-                    else
-                        $('.toast').css('background-color', 'rgb(239, 73, 73)')
-                }
-            })
-        })
-        $(document).on('click', '.delete-btn', function() {
-            let id = $(this).attr('data-id')
-            $.ajax({
-                url: "/admin/manage_category/delete",
-                method: "get",
-                data: {
-                    id: id,
-                    page: current_page
-                },
-                success: function(result) {
-                    $("#category-table").html(result.response)
-                    $('.toast').toast('show')
-                    $('.toast-body').html(result.message)
-                    if (result.status == 1)
-                        $('.toast').css('background-color', 'rgb(71, 201, 71)')
-                    else
-                        $('.toast').css('background-color', 'rgb(239, 73, 73)')
-                }
-            })
-        })
-        $('#search_id').keypress(function(e) {
-            if (e.which == 13) {
-                e.preventDefault();
-                $.ajax({
-                    url: "/admin/manage_category/search",
-                    method: "get",
-                    data: {
-                        name: $(this).val(),
-                        page: 1
-                    },
-                    success: function(result) {
-                        $("#category-table").html(result)
-                    }
-                })
-            }
-        });
-        $(document).on('click', '.page-item', function() {
-            current_page = $(this).text()
-            $.ajax({
-                url: "/admin/manage_category/paginate/" + $(this).text(),
+                url: "/admin/manage_import_slips/store/" + $(this).val(),
                 method: "get",
                 success: function(result) {
                     console.log(result);
-                    $("#category-table").html(result)
+                    let img = "{{ url('/image') }}"
+                    $("#product-price").val(result.price)
+                    $("#product-category").val(result.category_name)
+                    $("#product-material").val(result.material)
+                    $("#product-origin").val(result.origin)
+                    $("#product-description").val(result.product_description)
+                    $("#product-discount").val(result.sale_name)
+                    $("#display-product").attr('src', img + '/' + result.image)
+                }
+            })
+        })
+
+        $("#add-btn").on('click', function() {
+            $.ajax({
+                url: "/admin/manage_import_slips/add",
+                method: "get",
+                data: {
+                    product_id: $("#import-slips-product_id").val(),
+                    import_quantity: parseInt($('#import-slips-quantity').val()),
+                    import_price: parseInt($('#import-slips-price').val()),
+                    supplier_id: $('#import-slips-supplier_id').val(),
+                    import_date: $("#import-slips-date").val(),
+                    page: current_page
+                },
+                success: function(result) {
+                    $("#import-slip-table").html(result.response)
+                    $('.toast').toast('show')
+                    $('.toast-body').html(result.message)
+                    if (result.status == 1)
+                        $('.toast').css('background-color', 'rgb(71, 201, 71)')
+                    else
+                        $('.toast').css('background-color', 'rgb(239, 73, 73)')
+                }
+            })
+        })
+
+        $('#search_date').change(function(e) {
+            $.ajax({
+                url: "/admin/manage_import_slips/search",
+                method: "get",
+                data: {
+                    date: $(this).val(),
+                    page: 1
+                },
+                success: function(result) {
+                    $("#import-slip-table").html(result)
+                }
+            })
+        });
+
+        $(document).on('click', '.page-item', function() {
+            current_page = $(this).text()
+            $.ajax({
+                url: "/admin/manage_import_slips/paginate/" + $(this).text(),
+                method: "get",
+                success: function(result) {
+                    $("#import-slip-table").html(result)
                 }
             })
         })

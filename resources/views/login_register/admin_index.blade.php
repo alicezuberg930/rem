@@ -4,7 +4,6 @@
 <head>
     <x-head_tag />
     <title>Đăng nhập quản lý</title>
-    <script src="{{ url('/xregexp/xregexp-all.js') }}"></script>
     <script src="{{ url('/js/api.js') }}"></script>
 </head>
 
@@ -41,6 +40,11 @@
         height: 12px;
     }
 
+    .is-invalid {
+        display: block;
+        color: red;
+    }
+
     #login-confirm {
         font-size: 1rem;
         font-weight: 600;
@@ -71,22 +75,17 @@
         <div id="login-warn-box">
         </div>
         <form id="login-form">
-            <div class="login-header text-light">
-                Đăng nhập chức năng quản lý
+            <div class="login-header text-light text-center">
+                Đăng nhập nhân viên
             </div>
             <div class="form-group mb-3">
-                <input type="text" class="form-control login" id="login-username" placeholder="Email">
-                <div id="login-username-feedback" class="invalid-feedback"></div>
+                <input type="text" class="form-control login" id="login-email" placeholder="Email">
             </div>
             <div class="form-group mb-3">
                 <input type="password" class="form-control login" id="login-password" placeholder="Mật khẩu">
-                <div id="login-password-feedback" class="invalid-feedback"></div>
             </div>
             <div class="form-group mb-3">
-                <div class="float-left text-light">
-                    <input type="checkbox" id="login-remember">
-                    <span for="login-remember color-light"> Nhớ tôi </span>
-                </div>
+                <div id="feedback" class="text-center">a</div>
             </div>
             <div class="form-group">
                 <button type="submit" class="form-control login" id="login-confirm">
@@ -95,87 +94,32 @@
             </div>
         </form>
     </div>
+    <x-toast />
 </div>
 
 <script>
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
     $("#login-confirm").click(function(e) {
         e.preventDefault()
-        if (updateLoginUsername() && updateLoginPassword()) {
-            let username = $("#login-username")[0].value;
-            let password = $("#login-password")[0].value;
-            $.ajax({
-                url: "check_login.php",
-                method: "POST",
-                data: {
-                    "username": username,
-                    "password": password
-                },
-                success: function(response) {
-                    console.log(response);
-                    if (response == 0) {
-                        window.location.href = "/admin/manage_statistic";
-                    } else {
-                        let $loginUsername = $("#login-username");
-                        let $feedback = $("#login-username-feedback");
-
-                        $feedback.html(
-                            "Your account does not have permission to access this site!");
-                        $loginUsername.toggleClass("is-invalid", true);
-                    }
+        $.ajax({
+            url: "/admin/login",
+            method: "post",
+            data: {
+                email: $("#login-email").val(),
+                password: $("#login-password").val()
+            },
+            success: function(result) {
+                if (result.status == -1 || result.status == 0) {
+                    $("#feedback").toggleClass("is-invalid", true)
+                    $("#feedback").html(result.message)
+                } else {
+                    window.location.href = "/admin/manage_statistic"
                 }
-            });
-        }
+            }
+        });
     });
-
-    function checkLoginPasswordRegex(password) {
-        return /^[\S]{5,24}$/g.test(password);
-    }
-
-    function checkLoginUsernameRegex(username) {
-        return /^[\w\d_]{5,16}$/g.test(username);
-    }
-
-    $("#login-password").on('keyup', function(e) {
-        updateLoginPassword();
-    });
-
-    $("#login-username").on('keyup', function(e) {
-        updateLoginUsername();
-    });
-
-    function updateLoginUsername() {
-        let $loginUsername = $("#login-username");
-        let $feedback = $("#login-username-feedback");
-        let username = $loginUsername[0].value;
-        let check = checkLoginUsernameRegex(username);
-        if (username.length == 0) {
-            $feedback.html("Please fill out username field.");
-        } else if (username.length < 5) {
-            $feedback.html("Username has 5-16 characters.");
-        } else if (check) {
-            $feedback.html("");
-        } else {
-            $feedback.html("Accept only characters (a-z A-Z 0-9 _).");
-        }
-        $loginUsername.toggleClass("is-invalid", !check);
-        return check;
-    }
-
-    function updateLoginPassword() {
-        let $loginPassword = $("#login-password");
-        let $feedback = $("#login-password-feedback");
-        let password = $loginPassword[0].value;
-        let check = checkLoginPasswordRegex(password);
-        if (password.length == 0) {
-            $feedback.html("Please fill out password field.");
-        } else if (password.length < 5) {
-            $feedback.html("Password has 5-24 characters.");
-        } else if (check) {
-            $feedback.html("");
-        } else {
-            $feedback.html("Password has no space character.");
-        }
-        $loginPassword.toggleClass("is-invalid", !check);
-        return check;
-    }
 </script>

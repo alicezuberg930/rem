@@ -11,13 +11,13 @@ class product extends Model
     public $timestamps = false;
     protected $fillable = [
         "image",
-        "name",
+        "product_name",
         "amount",
         "price",
         "category",
         "material",
         "origin",
-        "description",
+        "product_description",
         "discount"
     ];
 }

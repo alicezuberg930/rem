@@ -14,7 +14,7 @@
         <div class="product-description text-light" style="background-color: rgb(118, 118, 118)">
             <div class="container mt-3">
                 <div id="product-description-header">
-                    <h1 id="product-description-display">{{ $product->name }}</h1>
+                    <h1 id="product-description-display">{{ $product->product_name }}</h1>
                     <div id="product-cart">
                         <div class="product-cart-price">
                             @if (isset($product->percent) && $product->percent > 0)
@@ -53,7 +53,7 @@
                 <!-- Tab panes -->
                 <div class="tab-content pb-5">
                     <div id="description" class="container tab-pane active"><br>
-                        <h1 class="title">Mô tả</h1>{{ $product->productDescription }}
+                        <h1 class="title">Mô tả</h1>{{ $product->product_description }}
                     </div>
                     <div id="details" class="container tab-pane fade"><br>
                         <div class="content-summary-section">
@@ -74,7 +74,7 @@
                                     </div>
                                     <div class="col-12 col-md-4 pl-0">
                                         <div class="details-category"> Danh Mục: </div>
-                                        <div class="details-content">{{ $product->categoryName }}</div>
+                                        <div class="details-content">{{ $product->category_name }}</div>
                                     </div>
                                     <div class="col-12 col-md-4 pl-0">
                                         <div class="details-category"> Số lượng còn lại: </div>

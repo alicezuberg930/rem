@@ -38,7 +38,7 @@ class StatisticController extends Controller
     if ($request->input('config') == 'top-5-best') {
       $sales = DB::table('orderdetails')
         ->leftJoin('products', 'products.id', '=', 'orderdetails.product_id')
-        ->selectRaw('products.name, sum(orderdetails.quantity) total')
+        ->selectRaw('products.product_name, sum(orderdetails.quantity) total')
         ->orderBy('total', 'asc')
         ->groupBy('orderdetails.product_id')
         ->take(5)
@@ -47,7 +47,7 @@ class StatisticController extends Controller
     if ($request->input('config') == 'top-5-lowest') {
       $sales = DB::table('products')
         ->leftJoin('orderdetails', 'products.id', '=', 'orderdetails.product_id')
-        ->selectRaw('products.name, COALESCE(sum(orderdetails.quantity),0) total')
+        ->selectRaw('products.product_name, COALESCE(sum(orderdetails.quantity),0) total')
         ->groupBy('products.id')
         ->orderBy('total', 'asc')
         ->take(5)
@@ -56,7 +56,7 @@ class StatisticController extends Controller
     if ($request->input('config') == 'top-5-highest-gross') {
       $sales = DB::table('orderdetails')
         ->leftJoin('products', 'products.id', '=', 'orderdetails.product_id')
-        ->selectRaw('products.name, sum(orderdetails.product_price*orderdetails.quantity) total')
+        ->selectRaw('products.product_name, sum(orderdetails.product_price*orderdetails.quantity) total')
         ->groupBy('orderdetails.product_id')
         ->orderBy('total', 'asc')
         ->take(5)

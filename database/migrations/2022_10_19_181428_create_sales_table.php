@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
-            $table->string('salename', 100);
+            $table->string('sale_name', 100);
             $table->integer('percent');
             $table->date('end_date')->nullable();
         });

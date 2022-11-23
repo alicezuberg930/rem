@@ -8,8 +8,6 @@ use Illuminate\Http\Request;
 
 class EmployeeController extends Controller
 {
-
-
     public static function getEmployee($current_page)
     {
         return employee::join('groups', 'employees.role_as', '=', 'groups.id')->take(5)->skip(($current_page - 1) * 5)->get(['*', 'employees.id as eid']);
@@ -18,6 +16,34 @@ class EmployeeController extends Controller
     public function getEmployeeDetails(Request $request)
     {
         return employee::join('groups', 'employees.role_as', '=', 'groups.id')->where('employees.id', '=', $request->input('id'))->get(['*', 'employees.id as eid'])[0];
+    }
+
+    public function addEmployee(Request $request)
+    {
+        $response = employee::create($request->all());
+        if ($response != null)
+            return response()->json(['message' => 'Thêm danh mục thất bại', 'status' => 0]);
+        else
+            return response()->json(['message' => 'Thêm danh mục thành công', 'status' => 1, 'response' => $this->employeeReload($request->input('page'))]);
+    }
+
+    public function editEmployee(Request $request)
+    {
+        $employee = employee::findOrFail($request->input('id'));
+        $response = $employee->update($request->all());
+        if ($response == 0 || $employee == null)
+            return response()->json(['message' => 'Sửa danh mục thất bại', 'status' => 0]);
+        else
+            return response()->json(['message' => 'Sửa danh mục thành công', 'status' => 1, 'response' => $this->employeeReload($request->input('page'))]);
+    }
+
+    public function deleteEmployee(Request $request)
+    {
+        $response = employee::findOrFail($request->input('id'))->delete();
+        if (!$response)
+            return response()->json(['message' => 'Xóa danh mục thất bại', 'status' => 0]);
+        else
+            return response()->json(['message' => 'Xóa danh mục thành công', 'status' => 1, 'response' => $this->employeeReload($request->input('page'))]);
     }
 
     public function manageEmployeePage()
@@ -38,7 +64,7 @@ class EmployeeController extends Controller
         $Employees = null;
         $total = 0;
         if (session()->has('search') && session()->get('search') != '') {
-            $query = employee::where('name', 'like', '%' . session()->get('search') . '%');
+            $query = employee::where('username', 'like', '%' . session()->get('search') . '%');
             $total = $query->count();
             $Employees = $query->take(5)->skip(($current_page - 1) * 5)->get();
         } else {

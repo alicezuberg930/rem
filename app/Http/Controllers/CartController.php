@@ -25,22 +25,19 @@ class CartController extends Controller
     {
         $id = $request->input('id');
         $cart = session('cart');
-        $product = product::where('products.id', '=', $id)
-            ->leftjoin('sales', 'products.discount', '=', 'sales.id')
-            ->get(['sales.percent', 'products.amount', 'products.image', 'products.name', 'products.price', 'products.origin', 'products.category']);
-
+        $product = product::where('products.id', '=', $id)->leftjoin('sales', 'products.discount', '=', 'sales.id')->get()[0];
         if (isset($cart[$id])) {
             return response()->json(['status' => 0]);
         } else {
             $cart[$id] = [
                 'id' => $id,
-                'image' => $product[0]->image,
-                'name' => $product[0]->name,
-                'amount' => $product[0]->amount,
-                'price' => $product[0]->price,
-                'category' => $product[0]->category,
-                'origin' => $product[0]->origin,
-                'percent' => $product[0]->percent,
+                'image' => $product->image,
+                'name' => $product->product_name,
+                'amount' => $product->amount,
+                'price' => $product->price,
+                'category' => $product->category,
+                'origin' => $product->origin,
+                'percent' => $product->percent,
                 'quantity' => 1
             ];
         }

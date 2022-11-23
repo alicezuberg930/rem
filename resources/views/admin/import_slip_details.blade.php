@@ -50,7 +50,7 @@
             <div class="mb-2 row">
                 <label for="staticEmail" class="col-md-6 col-form-label fw-semibold">Tên sản phẩm:</label>
                 <div class="col-md-6">
-                    <span class="form-control-plaintext">{{ $ImportSlipDetails->name }}</span>
+                    <span class="form-control-plaintext">{{ $ImportSlipDetails->product_name }}</span>
                 </div>
             </div>
             <div class="mb-2 row">

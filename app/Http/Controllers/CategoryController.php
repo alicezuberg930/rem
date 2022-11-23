@@ -16,9 +16,9 @@ class CategoryController extends Controller
     {
         $response = category::create($request->all());
         if (!$response)
-            return response()->json(['message' => 'Thêm thất bại', 'status' => 0]);
+            return response()->json(['message' => 'Thêm danh mục thất bại', 'status' => 0]);
         else
-            return response()->json(['message' => 'Thêm thành công', 'status' => 1, 'response' => $this->categoryReload($request->input('page'))]);
+            return response()->json(['message' => 'Thêm danh mục thành công', 'status' => 1, 'response' => $this->categoryReload($request->input('page'))]);
     }
 
     public function editCategory(Request $request)
@@ -26,18 +26,18 @@ class CategoryController extends Controller
         $Category = category::findOrFail($request->input('id'));
         $response = $Category->update($request->all());
         if (!$response || $Category == null)
-            return response()->json(['message' => 'Sửa thất bại', 'status' => 0]);
+            return response()->json(['message' => 'Sửa danh mục thất bại', 'status' => 0]);
         else
-            return response()->json(['message' => 'Sửa thành công', 'status' => 1, 'response' => $this->categoryReload($request->input('page'))]);
+            return response()->json(['message' => 'Sửa danh mục thành công', 'status' => 1, 'response' => $this->categoryReload($request->input('page'))]);
     }
 
     public function deleteCategory(Request $request)
     {
         $response = category::findOrFail($request->input('id'))->delete();
         if (!$response)
-            return response()->json(['message' => 'Xóa thất bại', 'status' => 0]);
+            return response()->json(['message' => 'Xóa danh mục thất bại', 'status' => 0]);
         else
-            return response()->json(['message' => 'Xóa thành công', 'status' => 1, 'response' => $this->categoryReload($request->input('page'))]);
+            return response()->json(['message' => 'Xóa danh mục thành công', 'status' => 1, 'response' => $this->categoryReload($request->input('page'))]);
     }
 
     public function manageCategoryPage()
@@ -45,7 +45,7 @@ class CategoryController extends Controller
         if (session()->has('search')) session()->forget("search");
         return view('admin.category_manager', ['Categories' => $this->getCategory(1), 'total' => category::all()->count(), 'currentpage' => 1]);
     }
- 
+
     public function searchCategory(Request $request)
     {
         session()->put('search', $request->input('category_name'));

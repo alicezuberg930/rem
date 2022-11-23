@@ -94,9 +94,9 @@
                     </li>
                 </ul>
             </div>
-            <form id="search-bar" action="/search" method="GET" class="form-inline my-2 my-md-0">
+            <form id="search-bar" action="/search_product" method="GET" class="form-inline my-2 my-md-0">
                 <div class="input-group rounded-pill bg-light">
-                    <input type="text" class="form-control rounded-pill border-0" placeholder="Nhập tên sản phẩm"
+                    <input type="text" name="search_name" class="form-control rounded-pill border-0" placeholder="Nhập tên sản phẩm"
                         id="search_name">
                     <i class="fa-solid fa-magnifying-glass p-2 d-flex align-self-center"></i>
                 </div>

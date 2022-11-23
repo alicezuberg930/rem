@@ -1,6 +1,7 @@
 @extends('admin.adminpage')
 @section('body_manager')
     <div class="col-md-9 col-lg-10">
+        <x-admin_header />
         <div class="container-md p-0">
             <div class="p-3 row row-cols-1 row-cols-md-3 sticky-top bg-light justify-content-between">
                 <div class="col-md-auto row">

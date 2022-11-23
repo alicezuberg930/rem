@@ -95,6 +95,5 @@ class OrdersController extends Controller
         if (session()->has('search')) session()->forget("search");
         $Orders = $this->getOrder(1, -1, $user_id);
         return view('user.purchase_history', ['user_id' => $user_id, 'Orders' => $Orders, 'currentpage' => 1, "Quantity" => $this->getOrderQuantity($user_id)]);
-        // orders::find($user_id)->get();
     }
 }

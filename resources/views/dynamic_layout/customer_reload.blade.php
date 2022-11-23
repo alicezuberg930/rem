@@ -20,8 +20,8 @@
         <tbody id="show-customer">
             @foreach ($Customers as $Customer)
                 <tr>
-                    <th scope="row">{{ $Customer->id }}</th>
-                    <th scope="row">{{ $Customer->username }}</th>
+                    <td scope="row">{{ $Customer->id }}</td>
+                    <td scope="row">{{ $Customer->username }}</td>
                     <td scope="row">{{ $Customer->phonenumber }}</td>
                     <td scope="row">{{ $Customer->email }}</td>
                     <td scope="row">{{ $Customer->gender }}</td>

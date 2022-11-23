@@ -10,19 +10,22 @@ use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
-    public function getNewProducts()
+    public function searchProductHeader(Request $request)
+    {
+        return view("product.filter", [
+            'Caterogies' => category::all(),
+            'Materials' => product::select('material')->distinct()->get(),
+            'Countries' => product::select('origin')->distinct()->get(),
+            
+        ]);
+    }
+
+    public function getHomePageProducts()
     {
         $NewProducts = product::leftjoin('sales', 'products.discount', '=', 'sales.id')
             ->orderBy('products.created_at', 'desc')
-            ->get(['products.id as ProductsID', 'sales.id as SaleID', 'products.created_at', 'products.updated_at', 'products.image', 'products.name', 'products.price', 'products.origin', 'sales.percent']);
+            ->get(['*', 'products.id as ProductsID', 'sales.id as SaleID']);
         return $NewProducts;
-    }
-
-    public function getSaleProducts()
-    {
-        $SaleProducts = product::join('sales', 'products.discount', '=', 'sales.id')
-            ->get(['products.id as ProductsID', 'sales.id as SaleID', 'products.created_at', 'products.updated_at', 'products.image', 'products.name', 'products.price', 'products.origin', 'sales.percent']);
-        return $SaleProducts;
     }
 
     public function filterProducts(Request $request)
@@ -48,11 +51,6 @@ class ProductController extends Controller
         return view('dynamic_layout.filter_reload', compact('products', 'total', 'current_page', 'sort'));
     }
 
-    public static function getProductDetails(Request $request)
-    {
-        return product::find($request->input('id'));
-    }
-
     public function uploadFile(Request $request)
     {
         $generatedImageName = 'image_' . time() . '.' . $request->image->extension();
@@ -73,9 +71,9 @@ class ProductController extends Controller
     {
         $product = product::find($request->input('id'))->update($request->all());
         if ($product > 0)
-            return response()->json(['message' => 'Cập nhật dữ liệu thành công', 'status' => 1, 'response' => $this->productReload($request->input('page'))]);
+            return response()->json(['message' => 'Cập nhật sản phẩm thành công', 'status' => 1, 'response' => $this->productReload($request->input('page'))]);
         else
-            return response()->json(['message' => 'Cập nhật dữ liệu thất bại', 'status' => 0]);
+            return response()->json(['message' => 'Cập nhật sản phẩm thất bại', 'status' => 0]);
     }
 
     public function deleteProduct(Request $request)
@@ -104,7 +102,7 @@ class ProductController extends Controller
         $Products = null;
         $total = 0;
         if (session()->has('search') && session()->get('search') != '') {
-            $query = product::where('name', 'like', '%' . session()->get('search') . '%');
+            $query = product::where('product_name', 'like', '%' . session()->get('search') . '%');
             $total = $query->count();
             $Products = $query->take(5)->skip(($current_page - 1) * 5)->get();
         } else {
@@ -127,18 +125,22 @@ class ProductController extends Controller
         ]);
     }
 
-    public function ProductDetailsPage($id)
+    public function getProductDetails($id)
     {
-        $product = product::where('products.id', '=', $id)
+        return product::where('products.id', '=', $id)
             ->leftjoin('sales', 'products.discount', '=', 'sales.id')
             ->join('categories', 'categories.id', '=', 'products.category')
-            ->get(['*', 'products.id as ProductsID', 'categories.name as categoryName', 'products.description as productDescription', 'sales.id as SaleID', 'products.name', 'products.price', 'products.origin', 'sales.percent']);
-        return view("product.product_details", ['product' => $product[0]]);
+            ->get(['*', 'products.id as ProductsID', 'categories.id as categoryID', 'sales.id as salesID'])[0];
+    }
+
+    public function ProductDetailsPage($id)
+    {
+        return view("product.product_details", ['product' => $this->getProductDetails($id)]);
     }
 
     public function indexPage()
     {
-        return view("index", ['NewProducts' => $this->getNewProducts(), 'SaleProducts' => $this->getSaleProducts()]);
+        return view("index", ['Products' => $this->getHomePageProducts()]);
     }
 
     public function filterPage()

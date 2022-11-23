@@ -5,10 +5,9 @@
     <x-head_tag />
     <title>Chi tiết đơn hàng</title>
 </head>
-
 <body class="bg-light">
     <nav class="d-flex align-items-center justify-content-between bg-white">
-        <div class="" style="margin-left: 1rem">
+        <div style="margin-left: 1rem">
             <h4 class="m-0 font-weight-bold">Đơn hàng #{{ $Order->id }}</h4>
             <p class="m-0">{{ date('d-m-Y h:i:s', strtotime($Order->order_date)) }}</p>
         </div>
@@ -31,7 +30,7 @@
                                 <img src="{{ url('/image/' . $detail->image) }}" width="70" height="70" />
                             </div>
                             <div class="col-sm-5 d-flex flex-column" style="justify-content:center">
-                                <h5>{{ $detail->name }}</h5>
+                                <h5>{{ $detail->product_name }}</h5>
                             </div>
                             <div class="col-sm-1 d-flex justify-content-center align-items-center">
                                 <span class="" style="">x{{ $detail->quantity }}</span>

@@ -1,6 +1,7 @@
 @extends('admin.adminpage')
 @section('body_manager')
     <div class="col-md-9 col-lg-10">
+        <x-admin_header />
         @include('components.order_body')
     </div>
     <script>

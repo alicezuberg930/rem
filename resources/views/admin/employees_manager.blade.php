@@ -1,6 +1,7 @@
 @extends('admin.adminpage')
 @section('body_manager')
     <div class="col-md-9 col-lg-10">
+        <x-admin_header />
         <div class="container-md p-0">
             <div class="p-3 row row-cols-1 row-cols-md-3 sticky-top bg-light justify-content-between">
                 <div class="col-md-auto row">
@@ -23,7 +24,7 @@
                     </div>
                 </div>
             </div>
-            <div class="table-responsive" id="customer-table">
+            <div class="table-responsive" id="employee-table">
                 @include('dynamic_layout.employee_reload')
             </div>
         </div>
@@ -44,7 +45,7 @@
                                 <div class="mb-3">
                                     <label for="staticEmail" class="form-label fw-semibold">Tên</label>
                                     <div class="col-md-12">
-                                        <input type="text" class="form-control" id="sale-name">
+                                        <input type="text" class="form-control" id="employee-name">
                                     </div>
                                 </div>
                             </div>
@@ -52,32 +53,40 @@
                                 <div class="mb-3">
                                     <label class="form-label">Email:</label>
                                     <input type="email" min="0" max="100" class="form-control"
-                                        id="sale-percent">
+                                        id="employee-email">
                                 </div>
                             </div>
                         </div>
                         <div class="mb-3 row">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="staticEmail" class="form-label fw-semibold">Số điện thoại</label>
                                     <div class="col-md-12">
-                                        <input type="text" class="form-control" id="sale-name">
+                                        <input type="text" class="form-control" id="employee-phonenumber">
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="staticEmail" class="form-label fw-semibold">Mật khẩu</label>
+                                    <div class="col-md-12">
+                                        <input type="password" class="form-control" id="employee-password">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
                                 <div class="mb-3">
                                     <label class="form-label">Giới tính:</label>
-                                    <select class="form-control" id="sale-end_date">
+                                    <select class="form-control" id="employee-gender">
                                         <option value="Nam">Nam</option>
                                         <option value="Nữ">Nữ</option>
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <div class="mb-3">
                                     <label class="form-label">Quyền:</label>
-                                    <select class="form-control" id="sale-end_date">
+                                    <select class="form-control" id="employee-role">
                                         @foreach ($roles as $role)
                                             <option value="{{ $role->id }}">{{ $role->role_name }}</option>
                                         @endforeach
@@ -124,7 +133,7 @@
                             </div>
                         </div>
                         <div class="mb-3 row">
-                            <div class="col-md-2">
+                            <div class="col-md-3">
                                 <div class="mb-3">
                                     <label for="staticEmail" class="form-label fw-semibold">Mã</label>
                                     <div class="col-md-12">
@@ -149,7 +158,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="mb-3">
                                     <label class="form-label">Quyền:</label>
                                     <select class="form-control" id="edit-employee-role">
@@ -174,15 +183,19 @@
         let current_page = 1
         $("#add-btn").on('click', function() {
             $.ajax({
-                url: "/admin/manage_category/add",
+                url: "/admin/manage_employees/add",
                 method: "get",
                 data: {
-                    name: $('#name-category-add').val(),
-                    description: $('#desc-category-add').val(),
+                    username: $("#employee-name").val(),
+                    phonenumber: $("#employee-phonenumber").val(),
+                    email: $("#employee-email").val(),
+                    gender: $("#employee-gender").val(),
+                    password: $("#employee-password").val(),
+                    role_as: $("#employee-role").val(),
                     page: current_page
                 },
                 success: function(result) {
-                    $("#category-table").html(result.response)
+                    $("#employee-table").html(result.response)
                     $('.toast').toast('show')
                     $('.toast-body').html(result.message)
                     if (result.status == 1)
@@ -212,16 +225,19 @@
         })
         $("#edit-btn").on('click', function() {
             $.ajax({
-                url: "/admin/manage_category/edit",
+                url: "/admin/manage_employees/edit",
                 method: "get",
                 data: {
-                    id: $("#id-category-modal").val(),
-                    name: $("#name-category-modal").val(),
-                    description: $("#description-category-modal").val(),
+                    id: $("#employee-id").val(),
+                    username: $("#edit-employee-name").val(),
+                    phonenumber: $("#edit-employee-phonenumber").val(),
+                    email: $("#edit-employee-email").val(),
+                    gender: $("#edit-employee-gender").val(),
+                    role_as: $("#edit-employee-role").val(),
                     page: current_page
                 },
                 success: function(result) {
-                    $("#category-table").html(result.response)
+                    $("#employee-table").html(result.response)
                     $('.toast').toast('show')
                     $('.toast-body').html(result.message)
                     if (result.status == 1)
@@ -234,14 +250,14 @@
         $(document).on('click', '.delete-btn', function() {
             let id = $(this).attr('data-id')
             $.ajax({
-                url: "/admin/manage_category/delete",
+                url: "/admin/manage_employees/delete",
                 method: "get",
                 data: {
                     id: id,
                     page: current_page
                 },
                 success: function(result) {
-                    $("#category-table").html(result.response)
+                    $("#employee-table").html(result.response)
                     $('.toast').toast('show')
                     $('.toast-body').html(result.message)
                     if (result.status == 1)
@@ -255,14 +271,14 @@
             if (e.which == 13) {
                 e.preventDefault();
                 $.ajax({
-                    url: "/admin/manage_category/search",
+                    url: "/admin/manage_employees/search",
                     method: "get",
                     data: {
                         name: $(this).val(),
                         page: 1
                     },
                     success: function(result) {
-                        $("#category-table").html(result)
+                        $("#employee-table").html(result)
                     }
                 })
             }
@@ -270,11 +286,11 @@
         $(document).on('click', '.page-item', function() {
             current_page = $(this).text()
             $.ajax({
-                url: "/admin/manage_category/paginate/" + $(this).text(),
+                url: "/admin/manage_employees/paginate/" + $(this).text(),
                 method: "get",
                 success: function(result) {
                     console.log(result);
-                    $("#category-table").html(result)
+                    $("#employee-table").html(result)
                 }
             })
         })

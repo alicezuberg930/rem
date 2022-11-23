@@ -1,6 +1,7 @@
 @extends('admin.adminpage')
 @section('body_manager')
     <div class="col-md-9 col-lg-10">
+        <x-admin_header />
         <div class="container-md p-0">
             <div class="p-3 row row-cols-1 row-cols-md-3 sticky-top bg-light justify-content-between">
                 <div class="row col-md-auto">
@@ -76,7 +77,8 @@
                                         <label for="exampleInputPassword1" class="form-label">Thể loại:</label>
                                         <select class="form-select" id="product-category" name="product-category">
                                             @foreach ($Categories as $category)
-                                                <option checked value="{{ $category->id }}">{{ $category->name }}</option>
+                                                <option checked value="{{ $category->id }}">{{ $category->category_name }}
+                                                </option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -87,7 +89,7 @@
                                         <select class="form-select" id="product-discount" name="product-discount">
                                             @foreach ($Sales as $sale)
                                                 <option selected value="{{ $sale->id }}">
-                                                    {{ $sale->salename }} (-{{ $sale->percent }}%)</option>
+                                                    {{ $sale->sale_name }} (-{{ $sale->percent }}%)</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -189,7 +191,8 @@
                                         <select class="form-select" id="edit-product-category"
                                             name="edit-product-category">
                                             @foreach ($Categories as $category)
-                                                <option checked value="{{ $category->id }}">{{ $category->name }}</option>
+                                                <option checked value="{{ $category->id }}">{{ $category->category_name }}
+                                                </option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -201,7 +204,7 @@
                                             name="edit-product-discount">
                                             @foreach ($Sales as $sale)
                                                 <option selected value="{{ $sale->id }}">
-                                                    {{ $sale->salename }} (-{{ $sale->percent }}%)</option>
+                                                    {{ $sale->sale_name }} (-{{ $sale->percent }}%)</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -287,7 +290,7 @@
                     amount: 0,
                     material: $("#product-material").val(),
                     origin: $("#product-origin").val(),
-                    description: $("#product-description").val(),
+                    product_description: $("#product-description").val(),
                     discount: $("#product-discount").val(),
                     page: current_page
                 },
@@ -305,21 +308,18 @@
         $(document).on('click', '.edit-btn', function() {
             current_page = $(this).attr('data-page')
             $.ajax({
-                url: "/admin/manage_products/store",
+                url: "/admin/manage_products/store/" + $(this).attr('data-id'),
                 method: "get",
-                data: {
-                    id: $(this).attr('data-id')
-                },
                 success: function(result) {
                     let img = "{{ url('/image') }}"
                     $("#product-id").val(result.id)
-                    $("#edit-product-name").val(result.name)
+                    $("#edit-product-name").val(result.product_name)
                     $("#edit-product-price").val(result.price)
-                    $("#edit-product-category").val(result.category)
+                    $("#edit-product-category").val(result.categoryID)
                     $("#edit-product-material").val(result.material)
                     $("#edit-product-origin").val(result.origin)
-                    $("#edit-product-description").val(result.description)
-                    $("#edit-product-discount").val(result.discount)
+                    $("#edit-product-description").val(result.product_description)
+                    $("#edit-product-discount").val(result.salesID)
                     $("#edit-display-product").attr('src', img + '/' + result.image)
                 }
             })
@@ -336,7 +336,7 @@
                     category: $("#edit-product-category").val(),
                     material: $("#edit-product-material").val(),
                     origin: $("#edit-product-origin").val(),
-                    description: $("#edit-product-description").val(),
+                    product_description: $("#edit-product-description").val(),
                     discount: $("#edit-product-discount").val(),
                     page: current_page
                 },
