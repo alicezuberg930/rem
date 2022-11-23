@@ -2,32 +2,36 @@
 @section('body_manager')
     <div class="col-md-9 col-lg-10">
         <x-admin_header />
-        <div class="container-md p-0">
-            <div class="p-3 row row-cols-1 row-cols-md-3 sticky-top bg-light justify-content-between">
-                <div class="col-md-auto row">
-                    <div class="col-md-auto">
-                        <input type="radio" class="btn-check" autocomplete="off" value="Tổng đơn">
-                        <label class="btn btn-outline-primary btn-sm" for="btnradio1">Tổng danh mục
-                            <span class="badge bg-danger" id="badge_tongdon">{{ $total }}</span>
-                        </label>
+        @if (!$authorize)
+            <h3>Bạn không có quyền quản lý danh mục</h3>
+        @else
+            <div class="container-md p-0">
+                <div class="p-3 row row-cols-1 row-cols-md-3 sticky-top bg-light justify-content-between">
+                    <div class="col-md-auto row">
+                        <div class="col-md-auto">
+                            <input type="radio" class="btn-check" autocomplete="off" value="Tổng đơn">
+                            <label class="btn btn-outline-primary btn-sm" for="btnradio1">Tổng danh mục
+                                <span class="badge bg-danger" id="badge_tongdon">{{ $total }}</span>
+                            </label>
+                        </div>
+                        <div class="col-md-auto">
+                            <button type="submit" href="/admin/manage_category/add" class="btn btn-primary btn-sm"
+                                data-bs-toggle="modal" data-bs-target="#add-category">Thêm danh mục</button>
+                        </div>
                     </div>
                     <div class="col-md-auto">
-                        <button type="submit" href="/admin/manage_category/add" class="btn btn-primary btn-sm"
-                            data-bs-toggle="modal" data-bs-target="#add-category">Thêm danh mục</button>
+                        <div class="input-group">
+                            <input type="text" class="form-control form-control-sm" placeholder="Tên thể loại"
+                                id="search_id">
+                            <i class="fa-solid fa-magnifying-glass text-light p-2 bg-primary"></i>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-auto">
-                    <div class="input-group">
-                        <input type="text" class="form-control form-control-sm" placeholder="Tên thể loại"
-                            id="search_id">
-                        <i class="fa-solid fa-magnifying-glass text-light p-2 bg-primary"></i>
-                    </div>
+                <div class="table-responsive" id="category-table">
+                    @include('dynamic_layout.category_reload')
                 </div>
             </div>
-            <div class="table-responsive" id="category-table">
-                @include('dynamic_layout.category_reload')
-            </div>
-        </div>
+        @endif
     </div>
 
     <div class="modal fade" id="add-category" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">

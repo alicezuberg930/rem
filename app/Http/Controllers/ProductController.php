@@ -3,22 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\category;
+use App\Models\employee;
 use App\Models\product;
 use App\Models\sales;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
-    public function searchProductHeader(Request $request)
-    {
-        return view("product.filter", [
-            'Caterogies' => category::all(),
-            'Materials' => product::select('material')->distinct()->get(),
-            'Countries' => product::select('origin')->distinct()->get(),
-            
-        ]);
-    }
 
     public function getHomePageProducts()
     {
@@ -44,10 +37,10 @@ class ProductController extends Controller
             ->whereIn('origin', $country)
             ->whereIn('material', $material)
             ->whereBetween('price', [$firstprice, $lastprice])
-            ->where('name', 'like', '%' . $search . '%')
+            ->where('product_name', 'like', '%' . $search . '%')
             ->orderBy('price', $sort);
         $total = $query->count();
-        $products = $query->take(9)->skip(($current_page - 1) * 9)->get(['products.id as ProductsID', 'sales.id as SaleID', 'products.created_at', 'products.updated_at', 'products.image', 'products.name', 'products.price', 'products.origin', 'sales.percent']);
+        $products = $query->take(9)->skip(($current_page - 1) * 9)->get(['*', 'products.id as ProductsID', 'sales.id as SaleID']);
         return view('dynamic_layout.filter_reload', compact('products', 'total', 'current_page', 'sort'));
     }
 
@@ -69,7 +62,7 @@ class ProductController extends Controller
 
     public function editProduct(Request $request)
     {
-        $product = product::find($request->input('id'))->update($request->all());
+        $product = product::findOrfail($request->input('id'))->update($request->all());
         if ($product > 0)
             return response()->json(['message' => 'Cập nhật sản phẩm thành công', 'status' => 1, 'response' => $this->productReload($request->input('page'))]);
         else
@@ -114,6 +107,7 @@ class ProductController extends Controller
 
     public function manageProductPage()
     {
+        $authorize = AuthController::tokenCan("products:manage");
         if (session()->has('search')) session()->forget("search");
         return view('admin.products_manager', [
             'Categories' => category::all(),
@@ -121,7 +115,8 @@ class ProductController extends Controller
             'Products' => $this->getProducts(1),
             'Materials' => product::select('material')->distinct()->get(),
             'total' => product::all()->count(),
-            'currentpage' => 1
+            'currentpage' => 1,
+            'authorize' => $authorize
         ]);
     }
 
@@ -143,12 +138,20 @@ class ProductController extends Controller
         return view("index", ['Products' => $this->getHomePageProducts()]);
     }
 
-    public function filterPage()
+    public function filterPage(Request $request)
     {
-        return view("product.filter", [
+        $Array = [
             'Caterogies' => category::all(),
             'Materials' => product::select('material')->distinct()->get(),
-            'Countries' => product::select('origin')->distinct()->get(),
-        ]);
+            'Countries' => product::select('origin')->distinct()->get()
+        ];
+        $query = '';
+        if ($request->input('search_name') != null) {
+            $query = product::where('product_name', 'like', '%' . $request->input('search_name') . '%');
+            $Array['total'] = $query->count();
+            $Array['products'] = $query->get(['*', 'id as ProductsID']);
+            $Array['current_page'] = 1;
+        }
+        return view("product.filter", $Array);
     }
 }

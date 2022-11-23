@@ -10,7 +10,7 @@ class sales extends Model
     use HasFactory;
     public $timestamps = false;
     protected $fillable = [
-        'salename',
+        'sale_name',
         'percent',
         'end_date'
     ];

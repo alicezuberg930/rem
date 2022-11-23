@@ -47,8 +47,9 @@ class SalesController extends Controller
 
     public function manageSalePage()
     {
+        $authorize = AuthController::tokenCan("sales:manage");
         if (session()->has('search')) session()->forget("search");
-        return view('admin.sales_manager', ['Sales' => $this->getSales(1), 'total' => sales::all()->count(), 'currentpage' => 1]);
+        return view('admin.sales_manager', ['authorize' => $authorize, 'Sales' => $this->getSales(1), 'total' => sales::all()->count(), 'currentpage' => 1]);
     }
 
     public function searchSale(Request $request)

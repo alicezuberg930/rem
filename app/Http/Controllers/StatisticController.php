@@ -63,5 +63,5 @@ class StatisticController extends Controller
         ->get();
     }
     return $sales;
-  }
+  } 
 }

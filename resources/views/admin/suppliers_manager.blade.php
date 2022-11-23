@@ -2,32 +2,36 @@
 @section('body_manager')
     <div class="col-md-9 col-lg-10">
         <x-admin_header />
-        <div class="container-md p-0">
-            <div class="p-3 row row-cols-1 row-cols-md-3 sticky-top bg-light justify-content-between">
-                <div class="col-md-auto row">
-                    <div class="col-md-auto">
-                        <input type="radio" class="btn-check" autocomplete="off" value="Tổng đơn">
-                        <label class="btn btn-outline-primary btn-sm" for="btnradio1">Tổng nhà cung cấp
-                            <span class="badge bg-danger" id="badge_tongdon">{{ $total }}</span>
-                        </label>
+        @if (!$authorize)
+            <h3>Bạn không có quyền quản lý nhà cung cấp</h3>
+        @else
+            <div class="container-md p-0">
+                <div class="p-3 row row-cols-1 row-cols-md-3 sticky-top bg-light justify-content-between">
+                    <div class="col-md-auto row">
+                        <div class="col-md-auto">
+                            <input type="radio" class="btn-check" autocomplete="off" value="Tổng đơn">
+                            <label class="btn btn-outline-primary btn-sm" for="btnradio1">Tổng nhà cung cấp
+                                <span class="badge bg-danger" id="badge_tongdon">{{ $total }}</span>
+                            </label>
+                        </div>
+                        <div class="col-md-auto">
+                            <button type="submit" href="/admin/manage_category/add" class="btn btn-primary btn-sm"
+                                data-bs-toggle="modal" data-bs-target="#add-supplier">Thêm nhà cung cấp</button>
+                        </div>
                     </div>
                     <div class="col-md-auto">
-                        <button type="submit" href="/admin/manage_category/add" class="btn btn-primary btn-sm"
-                            data-bs-toggle="modal" data-bs-target="#add-supplier">Thêm nhà cung cấp</button>
+                        <div class="input-group">
+                            <input type="text" class="form-control form-control-sm" placeholder="Tên nhà cung cấp"
+                                id="search_id">
+                            <i class="fa-solid fa-magnifying-glass text-light p-2 bg-primary"></i>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-auto">
-                    <div class="input-group">
-                        <input type="text" class="form-control form-control-sm" placeholder="Tên nhà cung cấp"
-                            id="search_id">
-                        <i class="fa-solid fa-magnifying-glass text-light p-2 bg-primary"></i>
-                    </div>
+                <div class="table-responsive" id="supplier-table">
+                    @include('dynamic_layout.supplier_reload')
                 </div>
             </div>
-            <div class="table-responsive" id="supplier-table">
-                @include('dynamic_layout.supplier_reload')
-            </div>
-        </div>
+        @endif
     </div>
 
     <div class="modal fade" id="add-supplier" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">

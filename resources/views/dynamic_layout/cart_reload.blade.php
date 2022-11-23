@@ -79,7 +79,7 @@
 </div>
 @if (session()->has('cart') && count(session('cart')) > 0)
     <div class="col-md-4 col-sm-auto">
-        <form id="payment" method="POST" action="/direct_payment" class="p-3 mb-3 border">
+        <form id="payment" method="POST" action='/direct_payment' class="p-3 mb-3 border">
             @csrf
             <h4>THÔNG TIN KHÁCH HÀNG</h4>
             <div class="row mb-3">
@@ -159,8 +159,11 @@
                     <input name="quantity" class="d-none" value="{{ $quantity }}" />
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary" id="submit" name="redirect">Đặt
-                hàng</button>
+            @if (session()->has('UserID'))
+                <button type="submit" class="btn btn-primary" id="submit" name="redirect">Đặt hàng</button>
+            @else
+                <a href="/login_register" class="btn btn-warning">Đăng nhập</a>
+            @endif
         </form>
     </div>
 @endif

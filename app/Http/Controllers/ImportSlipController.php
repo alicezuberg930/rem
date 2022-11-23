@@ -45,13 +45,15 @@ class ImportSlipController extends Controller
 
     public function manageImportSlipPage()
     {
+        $authorize = AuthController::tokenCan("import_slips:manage");
         if (session()->has('search')) session()->forget("search");
         return view('admin.import_slips_manager', [
             'Products' => product::all(['id', 'product_name']),
             'Suppliers' => supplier::all(),
             'Import_slips' => $this->getImportSlip(1),
             'total' => import_slip::all()->count(),
-            'currentpage' => 1
+            'currentpage' => 1,
+            'authorize' => $authorize
         ]);
     }
 

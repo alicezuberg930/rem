@@ -24,12 +24,12 @@
                             </svg>
                         </div>
                         <a class="h-100 d-flex flex-column text-decoration-none"
-                            href="/product_detail/{{ $product->ProductsID }}">
+                            href="/product_details/{{ $product->ProductsID }}">
                             <div>
                                 <img src="{{ url('image/' . $product->image) }}" class="product-img card-img">
                             </div>
                             <div class="p-1">
-                                <div class="card-text text-wrap text-dark font-weight-bold">{{ $product->name }}</div>
+                                <div class="card-text text-wrap text-dark font-weight-bold">{{ $product->product_name }}</div>
                                 <div class="card-text text-dark">Hàng nhập từ {{ $product->origin }}</div>
                                 <div class="card-text mt-2">
                                     @if ($product->percent > 0)

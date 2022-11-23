@@ -22,7 +22,7 @@
             @foreach ($Sales as $Sale)
                 <tr>
                     <th scope="row">{{ $Sale->id }}</th>
-                    <th scope="row">{{ $Sale->salename }}</th>
+                    <th scope="row">{{ $Sale->sale_name }}</th>
                     <td scope="row">{{ $Sale->percent }}</td>
                     <td scope="row">{{ $Sale->end_date == null ? '' : date('d-m-Y', strtotime($Sale->end_date)) }}
                     </td>

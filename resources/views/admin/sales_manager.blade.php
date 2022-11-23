@@ -2,32 +2,36 @@
 @section('body_manager')
     <div class="col-md-9 col-lg-10">
         <x-admin_header />
-        <div class="container-md p-0">
-            <div class="p-3 row row-cols-1 row-cols-md-3 sticky-top bg-light justify-content-between">
-                <div class="col-md-auto row">
-                    <div class="col-md-auto">
-                        <input type="radio" class="btn-check" autocomplete="off" value="Tổng đơn">
-                        <label class="btn btn-outline-primary btn-sm" for="btnradio1">Tổng khuyến mãi
-                            <span class="badge bg-danger" id="badge_tongdon">{{ $total }}</span>
-                        </label>
+        @if (!$authorize)
+            <h3>Bạn không có quyền quản lý khuyến mãi</h3>
+        @else
+            <div class="container-md p-0">
+                <div class="p-3 row row-cols-1 row-cols-md-3 sticky-top bg-light justify-content-between">
+                    <div class="col-md-auto row">
+                        <div class="col-md-auto">
+                            <input type="radio" class="btn-check" autocomplete="off" value="Tổng đơn">
+                            <label class="btn btn-outline-primary btn-sm" for="btnradio1">Tổng khuyến mãi
+                                <span class="badge bg-danger" id="badge_tongdon">{{ $total }}</span>
+                            </label>
+                        </div>
+                        <div class="col-md-auto">
+                            <button type="submit" href="/admin/manage_category/add" class="btn btn-primary btn-sm"
+                                data-bs-toggle="modal" data-bs-target="#add-modal">Thêm khuyến mãi</button>
+                        </div>
                     </div>
                     <div class="col-md-auto">
-                        <button type="submit" href="/admin/manage_category/add" class="btn btn-primary btn-sm"
-                            data-bs-toggle="modal" data-bs-target="#add-modal">Thêm khuyến mãi</button>
+                        <div class="input-group">
+                            <input type="text" class="form-control form-control-sm" placeholder="Tên khuyến mãi"
+                                id="search_name">
+                            <i class="fa-solid fa-magnifying-glass text-light p-2 bg-primary"></i>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-auto">
-                    <div class="input-group">
-                        <input type="text" class="form-control form-control-sm" placeholder="Tên khuyến mãi"
-                            id="search_name">
-                        <i class="fa-solid fa-magnifying-glass text-light p-2 bg-primary"></i>
-                    </div>
+                <div class="table-responsive" id="sales-table">
+                    @include('dynamic_layout.sale_reload')
                 </div>
             </div>
-            <div class="table-responsive" id="sales-table">
-                @include('dynamic_layout.sale_reload')
-            </div>
-        </div>
+        @endif
     </div>
 
     <div class="modal fade" id="add-modal" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -135,7 +139,7 @@
                 url: "/admin/manage_sales/add",
                 method: "get",
                 data: {
-                    salename: $('#sale-name').val(),
+                    sale_name: $('#sale-name').val(),
                     percent: $('#sale-percent').val(),
                     end_date: $('#sale-end_date').val(),
                     page: current_page
@@ -174,7 +178,7 @@
                 method: "get",
                 data: {
                     id: $("#sale-id").val(),
-                    salename: $('#edit-sale-name').val(),
+                    sale_name: $('#edit-sale-name').val(),
                     percent: $('#edit-sale-percent').val(),
                     end_date: $('#edit-sale-end_date').val(),
                     page: current_page

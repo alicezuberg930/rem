@@ -48,8 +48,9 @@ class EmployeeController extends Controller
 
     public function manageEmployeePage()
     {
+        $authorize = AuthController::tokenCan("employees:manage");
         if (session()->has('search')) session()->forget("search");
-        return view('admin.employees_manager', ['Employees' => $this->getEmployee(1), 'roles' => group::all(), 'total' => employee::all()->count(), 'currentpage' => 1]);
+        return view('admin.employees_manager', ['authorize' => $authorize, 'Employees' => $this->getEmployee(1), 'roles' => group::all(), 'total' => employee::all()->count(), 'currentpage' => 1]);
     }
 
     public function searchEmployee(Request $request)

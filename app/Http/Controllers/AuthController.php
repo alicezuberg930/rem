@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Http\Controllers\Controller;
+use App\Models\employee;
 use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
@@ -128,5 +129,15 @@ class AuthController extends Controller
         } else {
             return response()->json(['status' => 0, 'message' => "Cập nhật mật khẩu thất bại"]);
         }
+    }
+
+    public static function tokenCan($needle)
+    {
+        $abilitiesStr = '';
+        if (session()->has("Employee")) {
+            $abilitiesStr = employee::join('personal_access_tokens', 'employees.id', '=', 'tokenable_id')
+                ->where('employees.id', '=', session('Employee')['EmployeeID'])->first(['abilities'])->abilities;
+        }
+        return str_contains($abilitiesStr, $needle);
     }
 }

@@ -49,8 +49,9 @@ class SupplierController extends Controller
 
     public function manageSupplierPage()
     {
+        $authorize = AuthController::tokenCan("suppliers:manage");
         if (session()->has('search')) session()->forget("search");
-        return view('admin.suppliers_manager', ['Suppliers' => $this->getSupplier(1), 'cities' => Http::get('https://api.mysupership.vn/v1/partner/areas/province'), 'total' => supplier::all()->count(), 'currentpage' => 1]);
+        return view('admin.suppliers_manager', ['authorize' => $authorize, 'Suppliers' => $this->getSupplier(1), 'cities' => Http::get('https://api.mysupership.vn/v1/partner/areas/province'), 'total' => supplier::all()->count(), 'currentpage' => 1]);
     }
 
     public function searchSupplier(Request $request)

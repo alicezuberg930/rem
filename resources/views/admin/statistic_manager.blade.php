@@ -2,60 +2,64 @@
 @section('body_manager')
     <div class="col-md-9 col-lg-10">
         <x-admin_header />
-        <div class="row row-cols-1 row-cols-md-4 justify-content-between mt-2">
-            <div class="col-md-4 text-white ">
-                <div class="card h-100 border-0">
-                    <div class="card-body bg-primary">
-                        <h2 class="card-title">Thống kê theo sản phẩm</h2>
+        @if (!$authorize)
+            <h3>Bạn không có quyền thống kê</h3>
+        @else
+            <div class="row row-cols-1 row-cols-md-4 justify-content-between mt-2">
+                <div class="col-md-4 text-white ">
+                    <div class="card h-100 border-0">
+                        <div class="card-body bg-primary">
+                            <h2 class="card-title">Thống kê theo sản phẩm</h2>
+                        </div>
+                        <div class="card-footer rounded-0 bg-primary">
+                            <select class="form-control product-stats">
+                                <option selected hidden>Lựa chọn</option>
+                                <option value="top-5-best">Top 5 sản phẩm bán nhiều nhất</option>
+                                <option value="top-5-lowest">Top 5 sản phẩm tồn kho</option>
+                                <option value="top-5-highest-gross">Top 5 sản phẩm bán lời nhất</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="card-footer rounded-0 bg-primary">
-                        <select class="form-control product-stats">
-                            <option selected hidden>Lựa chọn</option>
-                            <option value="top-5-best">Top 5 sản phẩm bán nhiều nhất</option>
-                            <option value="top-5-lowest">Top 5 sản phẩm tồn kho</option>
-                            <option value="top-5-highest-gross">Top 5 sản phẩm bán lời nhất</option>
-                        </select>
+                </div>
+                <div class="col-md-4 text-white">
+                    <div class="card h-100 border-0">
+                        <div class="card-body bg-warning">
+                            <h2 class="card-title">Thống kê theo danh thu</h2>
+                        </div>
+                        <div class="card-footer bg-warning rounded-0">
+                            <select class="form-control annual-stats">
+                                <option selected hidden>Chọn năm</option>
+                                <option value="2022">2022</option>
+                                <option value="2021">2021</option>
+                                <option value="2020">2020</option>
+                                <option value="2019">2019</option>
+                                <option value="2018">2018</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 text-white">
+                    <div class="card h-100 border-0">
+                        <div class="card-body bg-danger">
+                            <h2 class="card-title">Thống kê theo đơn hàng</h2>
+                        </div>
+                        <div class="card-footer bg-danger rounded-0">
+                            <select class="form-control orders-stats">
+                                <option selected hidden>Chọn năm</option>
+                                <option value="2022">2022</option>
+                                <option value="2021">2021</option>
+                                <option value="2020">2020</option>
+                                <option value="2019">2019</option>
+                                <option value="2018">2018</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4 text-white">
-                <div class="card h-100 border-0">
-                    <div class="card-body bg-warning">
-                        <h2 class="card-title">Thống kê theo danh thu</h2>
-                    </div>
-                    <div class="card-footer bg-warning rounded-0">
-                        <select class="form-control annual-stats">
-                            <option selected hidden>Chọn năm</option>
-                            <option value="2022">2022</option>
-                            <option value="2021">2021</option>
-                            <option value="2020">2020</option>
-                            <option value="2019">2019</option>
-                            <option value="2018">2018</option>
-                        </select>
-                    </div>
-                </div>
+            <div class="row row-md-12">
+                <canvas id="myChart"></canvas>
             </div>
-            <div class="col-md-4 text-white">
-                <div class="card h-100 border-0">
-                    <div class="card-body bg-danger">
-                        <h2 class="card-title">Thống kê theo đơn hàng</h2>
-                    </div>
-                    <div class="card-footer bg-danger rounded-0">
-                        <select class="form-control orders-stats">
-                            <option selected hidden>Chọn năm</option>
-                            <option value="2022">2022</option>
-                            <option value="2021">2021</option>
-                            <option value="2020">2020</option>
-                            <option value="2019">2019</option>
-                            <option value="2018">2018</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row row-md-12">
-            <canvas id="myChart"></canvas>
-        </div>
+        @endif
     </div>
     <script src="{{ url('/chart.js/dist/chart.min.js') }}"></script>
     <script>

@@ -14,8 +14,9 @@ class CustomerController extends Controller
 
     public function manageCustomerPage()
     {
+        $authorize = AuthController::tokenCan("customers:manage");
         if (session()->has('search')) session()->forget("search");
-        return view('admin.customers_manager', ['Customers' => $this->getCustomer(1), 'total' => User::all()->count(), 'currentpage' => 1]);
+        return view('admin.customers_manager', ['authorize' => $authorize, 'Customers' => $this->getCustomer(1), 'total' => User::all()->count(), 'currentpage' => 1]);
     }
 
     public function searchCustomer(Request $request)

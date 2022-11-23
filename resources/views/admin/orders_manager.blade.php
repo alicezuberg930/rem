@@ -2,7 +2,11 @@
 @section('body_manager')
     <div class="col-md-9 col-lg-10">
         <x-admin_header />
-        @include('components.order_body')
+        @if (!$authorize)
+            <h3>Bạn không có quyền quản lý đơn hàng</h3>
+        @else
+            @include('components.order_body')
+        @endif
     </div>
     <script>
         let current_page = 1

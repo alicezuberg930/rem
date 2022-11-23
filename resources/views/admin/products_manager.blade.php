@@ -2,34 +2,37 @@
 @section('body_manager')
     <div class="col-md-9 col-lg-10">
         <x-admin_header />
-        <div class="container-md p-0">
-            <div class="p-3 row row-cols-1 row-cols-md-3 sticky-top bg-light justify-content-between">
-                <div class="row col-md-auto">
-                    <div class="col-md-auto">
-                        <input type="radio" class="btn-check" autocomplete="off" value="Tổng đơn">
-                        <label class="btn btn-outline-primary btn-sm" for="btnradio1">Tổng sản phẩm
-                            <span class="badge bg-danger" id="total-count">{{ $total }}</span>
-                        </label>
+        @if (!$authorize)
+            <h3>Bạn không có quyền quản lý sản phẩm</h3>
+        @else
+            <div class="container-md p-0">
+                <div class="p-3 row row-cols-1 row-cols-md-3 sticky-top bg-light justify-content-between">
+                    <div class="row col-md-auto">
+                        <div class="col-md-auto">
+                            <input type="radio" class="btn-check" autocomplete="off" value="Tổng đơn">
+                            <label class="btn btn-outline-primary btn-sm" for="btnradio1">Tổng sản phẩm
+                                <span class="badge bg-danger" id="total-count">{{ $total }}</span>
+                            </label>
+                        </div>
+                        <div class="col-md-auto">
+                            <button data-page="{{ $currentpage }}" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                data-bs-target="#add-product">Thêm sản phẩm </button>
+                        </div>
                     </div>
                     <div class="col-md-auto">
-                        <button data-page="{{ $currentpage }}" class="btn btn-primary btn-sm" data-bs-toggle="modal"
-                            data-bs-target="#add-product">Thêm sản phẩm </button>
+                        <div class="input-group">
+                            <input type="text" class="form-control form-control-sm" value=""
+                                placeholder="Nhập tên cần tìm" id="search_name">
+                            <i class="fa-solid fa-magnifying-glass text-light p-2 bg-primary"></i>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-auto">
-                    <div class="input-group">
-                        <input type="text" class="form-control form-control-sm" value=""
-                            placeholder="Nhập tên cần tìm" id="search_name">
-                        <i class="fa-solid fa-magnifying-glass text-light p-2 bg-primary"></i>
-                    </div>
+                <div class="table-responsive" id="product-table">
+                    @include('dynamic_layout.product_reload')
                 </div>
             </div>
-            <div class="table-responsive" id="product-table">
-                @include('dynamic_layout.product_reload')
-            </div>
-        </div>
+        @endif
     </div>
-
     <div class="modal fade bd-example-modal-lg" id="add-product" tabindex="-1" role="dialog"
         aria-labelledby="myLargeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -136,7 +139,6 @@
             </div>
         </div>
     </div>
-
     <div class="modal fade bd-example-modal-lg" id="edit-product" tabindex="-1" role="dialog"
         aria-labelledby="myLargeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -284,7 +286,7 @@
                 method: "get",
                 data: {
                     image: $("#display-product").attr('src').split('/')[4],
-                    name: $("#product-name").val(),
+                    product_name: $("#product-name").val(),
                     price: $("#product-price").val(),
                     category: $("#product-category").val(),
                     amount: 0,
@@ -331,7 +333,7 @@
                 data: {
                     id: $("#product-id").val(),
                     image: $("#edit-display-product").attr('src').split('/')[4],
-                    name: $("#edit-product-name").val(),
+                    product_name: $("#edit-product-name").val(),
                     price: $("#edit-product-price").val(),
                     category: $("#edit-product-category").val(),
                     material: $("#edit-product-material").val(),
@@ -341,6 +343,7 @@
                     page: current_page
                 },
                 success: function(result) {
+                    console.log(result);
                     $("#product-table").html(result.response)
                     $('.toast').toast('show')
                     $('.toast-body').html(result.message)

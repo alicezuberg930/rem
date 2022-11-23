@@ -60,7 +60,8 @@ Route::get('/personal_password', function () {
 });
 // Trang quản lý thống kê
 Route::get('/admin/manage_statistic', function () {
-    return view('admin.statistic_manager');
+    $authorize = AuthController::tokenCan("statistic:manage");
+    return view('admin.statistic_manager', ['authorize' => $authorize]);
 });
 // Xử lý đăng nhập & đăng ký
 Route::post('/login', [AuthController::class, 'login']);
@@ -90,7 +91,7 @@ Route::post('/change_password', [AuthController::class, 'changePassword']);
 Route::get('/purchase_history/{user_id}', [OrdersController::class, 'getUserOrders']);
 Route::get('/user_address', [AddressController::class, 'userAddressPage']);
 //Lọc sản phẩm
-Route::get('/search_product', [ProductController::class, 'searchProductHeader']);
+Route::get('/search_product', [ProductController::class, 'filterPage']);
 Route::get('/filter/search', [ProductController::class, 'filterProducts']);
 Route::get('/filter', [ProductController::class, 'filterPage']);
 //Lấy lại mật khẩu

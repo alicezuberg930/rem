@@ -6,7 +6,7 @@
     <title>Lọc sản phẩm</title>
 </head>
 
-<body>
+<body> 
     <x-header />
     <div class="container-md shadow my-4">
         <div class='products my-3 row'>
@@ -29,7 +29,8 @@
                                     <div class="form-check">
                                         <input class="input-category form-check-input me-1" type="radio"
                                             value="{{ $category->id }}" name="category" id="category">
-                                        <label class="form-check-label" for="category">{{ $category->name }}</label>
+                                        <label class="form-check-label"
+                                            for="category">{{ $category->category_name }}</label>
                                     </div>
                                 @endforeach
                             </div>

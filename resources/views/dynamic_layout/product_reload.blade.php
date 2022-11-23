@@ -31,7 +31,7 @@
                         </div>
                     </td>
                     <td>{{ $Product->amount }}</td>
-                    <td>{{ number_format($Product->price) }}</td>
+                    <td>{{ number_format($Product->price) }} đ</td>
                     <td>{{ $Product->material }}</td>
                     <td>{{ $Product->origin }}</td>
                     <td>

@@ -15,8 +15,7 @@
                                 href="/personal_information/{{ session()->get('UserID') }}">Thông tin cá nhân</a>
                             <a class="text-white dropdown-item"
                                 href="/purchase_history/{{ session()->get('UserID') }}">Lịch sử mua hàng</a>
-                            <a class="dropdown-item text-white"
-                                href="/personal_password">Đổi mật khẩu</a>
+                            <a class="dropdown-item text-white" href="/personal_password">Đổi mật khẩu</a>
                             <a class="dropdown-item text-white" href="/user_address">Địa chỉ</a>
                         </div>
                         <div class="mx-2 text-white"> | </div>
@@ -44,7 +43,11 @@
                     </div>
                     <div class="mx-2 text-light"> | </div>
                     <div class="font-weight-bold">
-                        <a id="login-logout" class="nav-link text-white font-weight-bold" href="/loginregister">Đăng
+                        <a class="nav-link p-0 text-white font-weight-bold" href="/admin_login">Đăng nhập quản lý</a>
+                    </div>
+                    <div class="mx-2 text-light"> | </div>
+                    <div class="font-weight-bold">
+                        <a id="login-logout" class="nav-link text-white font-weight-bold" href="/login_register">Đăng
                             ký</a>
                     </div>
                 </div>
@@ -96,8 +99,8 @@
             </div>
             <form id="search-bar" action="/search_product" method="GET" class="form-inline my-2 my-md-0">
                 <div class="input-group rounded-pill bg-light">
-                    <input type="text" name="search_name" class="form-control rounded-pill border-0" placeholder="Nhập tên sản phẩm"
-                        id="search_name">
+                    <input type="text" name="search_name" class="form-control rounded-pill border-0"
+                        placeholder="Nhập tên sản phẩm" id="search_name">
                     <i class="fa-solid fa-magnifying-glass p-2 d-flex align-self-center"></i>
                 </div>
             </form>

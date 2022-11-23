@@ -42,8 +42,9 @@ class CategoryController extends Controller
 
     public function manageCategoryPage()
     {
+        $authorize = AuthController::tokenCan("categories:manage");
         if (session()->has('search')) session()->forget("search");
-        return view('admin.category_manager', ['Categories' => $this->getCategory(1), 'total' => category::all()->count(), 'currentpage' => 1]);
+        return view('admin.category_manager', ['authorize' => $authorize, 'Categories' => $this->getCategory(1), 'total' => category::all()->count(), 'currentpage' => 1]);
     }
 
     public function searchCategory(Request $request)
