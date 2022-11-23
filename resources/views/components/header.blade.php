@@ -16,7 +16,6 @@
                             <a class="text-white dropdown-item"
                                 href="/purchase_history/{{ session()->get('UserID') }}">Lịch sử mua hàng</a>
                             <a class="dropdown-item text-white" href="/personal_password">Đổi mật khẩu</a>
-                            <a class="dropdown-item text-white" href="/user_address">Địa chỉ</a>
                         </div>
                         <div class="mx-2 text-white"> | </div>
                         <a id="login-logout" class="d-flex text-decoration-none text-danger font-weight-bold"

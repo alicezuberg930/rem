@@ -53,7 +53,7 @@ Route::get('/reset_password', function () {
 // Giao diện trang thông tin cá nhân
 Route::get('/personal_information/{user_id}', function ($user_id) {
     return view('user.personal_information', ['User' => User::find($user_id)]);
-})->middleware('auth');
+});
 // Giao diện trang mật khẩu cá nhân
 Route::get('/personal_password', function () {
     return view('user.user_password');
@@ -89,7 +89,6 @@ Route::get('/verification/{token}', [AuthController::class, 'verifyUser']);
 Route::post('/edit_personal_info', [AuthController::class, 'editPersonalInfo']);
 Route::post('/change_password', [AuthController::class, 'changePassword']);
 Route::get('/purchase_history/{user_id}', [OrdersController::class, 'getUserOrders']);
-Route::get('/user_address', [AddressController::class, 'userAddressPage']);
 //Lọc sản phẩm
 Route::get('/search_product', [ProductController::class, 'filterPage']);
 Route::get('/filter/search', [ProductController::class, 'filterProducts']);
