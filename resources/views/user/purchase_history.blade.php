@@ -73,7 +73,7 @@
 
     $(document).on('click', '.page-item', function() {
         $.ajax({
-            url: "/user/manage_orders/paginate/" + {{ $currentpage }} + "/" + $(
+            url: "/user/manage_orders/paginate/" + $(this).text() + "/" + $(
                     'input[name=btnradio]:checked', '#status-form').val() + "/" +
                 "{{ session()->get('UserID') }}",
             method: "get",

@@ -49,13 +49,11 @@ class OrdersController extends Controller
         }
     }
 
-    public function manageOrderPage(Request $request)
+    public function manageOrderPage()
     {
         $authorize = AuthController::tokenCan("customers:manage");
         $type = -1;
         if (session()->has('search')) session()->forget("search");
-        // if ($request->input("type") != NULL)
-        // $type = $request->input("type");
         $Orders = $this->getOrder(1, $type, -1);
         return view('admin.orders_manager', ['authorize' => $authorize, 'Orders' => $Orders, 'currentpage' => 1, "Quantity" => $this->getOrderQuantity(-1)]);
     }

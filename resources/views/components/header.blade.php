@@ -81,12 +81,6 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center" href="/admin/manage_category">
-                            <i class="m-1 fa-solid fa-bars-progress"></i>
-                            Quản lý
-                        </a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link d-flex align-items-center position-relative" href="/cart">
                             <i class="m-1 fa-solid fa-cart-shopping"></i>
                             Giỏ hàng
