@@ -18,7 +18,7 @@ class AuthController extends Controller
     public function verifyUser($token)
     {
         $user = User::where('email', '=', session()->get('email'))->first();
-        if ($user->remember_token === $token) {
+        if ($user->remember_token == $token) {
             session()->forget('email');
             session()->put('UserID', $user->id);
             session()->save();
@@ -89,11 +89,12 @@ class AuthController extends Controller
         $user->remember_token = $token;
         $res = $user->save();
         if ($res) {
+            session()->put('email', $RegisteredEmail);
+            session()->save();
             Mail::send("email_templates.register", ['token' => $token, 'username' => $request->input('username')], function ($email) use ($RegisteredEmail) {
                 $email->subject('Thông báo đăng ký');
                 $email->to($RegisteredEmail, "Header");
             });
-            session()->put('email', $RegisteredEmail);
             return response()->json([
                 'message' => '1 email đã được gửi đến hòm thư của bạn, hãy kiểm tra nó',
                 'status' => 1

@@ -41,7 +41,7 @@ Route::get('/admin_login', function () {
     return view('login_register.admin_index');
 });
 // Giao diện trang chủ
-Route::get('/', [ProductController::class, 'indexPage'])->middleware('isLoggedIn');
+Route::get('/', [ProductController::class, 'indexPage']);
 // Giao diện trang giỏ hàng
 Route::get('/cart', function () {
     return view('cart.index', ['cities' => Http::get('https://api.mysupership.vn/v1/partner/areas/province')]);

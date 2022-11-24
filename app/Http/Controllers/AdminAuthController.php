@@ -38,7 +38,7 @@ class AdminAuthController extends Controller
     public function logout()
     {
         employee::find(session('Employee')['EmployeeID'])->tokens()->delete();
-        session()->flash('Employee');
+        session()->forget('Employee');
         return redirect('/');
     }
 }

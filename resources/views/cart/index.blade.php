@@ -19,5 +19,12 @@
     <x-toast />
 </body>
 <script src="{{ url('./js/cart.js') }}"></script>
+<script>
+    function error(e) {
+        e.preventDefault()
+        $(".toast").show()
+        $('.toast').css('background-color', 'rgb(239, 73, 73)')
+    }
+</script>
 
 </html>

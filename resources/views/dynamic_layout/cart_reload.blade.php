@@ -159,11 +159,9 @@
                     <input name="quantity" class="d-none" value="{{ $quantity }}" />
                 </div>
             </div>
-            @if (session()->has('UserID'))
-                <button type="submit" class="btn btn-primary" id="submit" name="redirect">Đặt hàng</button>
-            @else
-                <a href="/login_register" class="btn btn-warning">Đăng nhập</a>
-            @endif
+            <button type="submit" class="btn btn-primary"
+                {{ session()->has('UserID') ? '' : "onclick='return false;'" }} id="submit" name="redirect">Đặt
+                hàng</button>
         </form>
     </div>
 @endif

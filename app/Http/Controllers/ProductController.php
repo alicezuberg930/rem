@@ -135,6 +135,10 @@ class ProductController extends Controller
 
     public function indexPage()
     {
+        if (session()->has('orders') && session()->has('cart')) {
+            session()->forget('orders');
+            session()->forget('cart');
+        }
         return view("index", ['Products' => $this->getHomePageProducts()]);
     }
 
