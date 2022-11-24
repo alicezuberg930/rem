@@ -56,10 +56,5 @@
                 <i class="fa-solid fa-file-import"></i> Phiếu nhập
             </a>
         </li>
-        <li>
-            <a class="nav-link text-danger fs-semibold" href="/">
-                <i class="fa-solid fa-circle-left"></i> Quay lại trang chủ
-            </a>
-        </li>
     </ul>
 </div>

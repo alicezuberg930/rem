@@ -47,7 +47,7 @@
     </table>
     <nav aria-label="Page navigation example" class="col-md-12 my-3">
         <ul class="pagination pagination-sm justify-content-end" id="phantrang">
-            @for ($i = 0; $i < ceil($total / 5); $i++)
+            @for ($i = 0; $i < ceil($total / 10); $i++)
                 @if ($i == $currentpage - 1)
                     <li class="page-item"><a class="page-link active">{!! $i + 1 !!}</a></li>
                 @else

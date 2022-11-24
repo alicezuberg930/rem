@@ -9,7 +9,7 @@ class CategoryController extends Controller
 {
     public static function getCategory($current_page)
     {
-        return category::take(5)->skip(($current_page - 1) * 5)->get();
+        return category::take(10)->skip(($current_page - 1) * 10)->get();
     }
 
     public function addCategory(Request $request)
@@ -61,7 +61,7 @@ class CategoryController extends Controller
         if (session()->has('search') && session()->get('search') != '') {
             $query = category::where('category_name', 'like', '%' . session()->get('search') . '%');
             $total = $query->count();
-            $Categories = $query->take(5)->skip(($current_page - 1) * 5)->get();
+            $Categories = $query->take(10)->skip(($current_page - 1) * 10)->get();
         } else {
             $Categories = $this->getCategory($current_page);
             $total = category::all()->count();

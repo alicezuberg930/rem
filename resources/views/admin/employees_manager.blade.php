@@ -141,7 +141,7 @@
                                 <div class="mb-3">
                                     <label for="staticEmail" class="form-label fw-semibold">Mã</label>
                                     <div class="col-md-12">
-                                        <input type="text" class="form-control" id="employee-id">
+                                        <input disabled type="text" class="form-control" id="employee-id">
                                     </div>
                                 </div>
                             </div>

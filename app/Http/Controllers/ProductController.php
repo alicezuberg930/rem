@@ -80,7 +80,7 @@ class ProductController extends Controller
 
     public static function getProducts($current_page)
     {
-        return product::take(5)->skip(($current_page - 1) * 5)->get();
+        return product::take(6)->skip(($current_page - 1) * 6)->get();
     }
 
     public function searchProduct(Request $request)

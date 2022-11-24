@@ -40,7 +40,7 @@ class ImportSlipController extends Controller
 
     public static function getImportSlip($current_page)
     {
-        return import_slip::join('employees', 'employee_id', '=', 'employees.id')->join('suppliers', 'supplier_id', '=', 'suppliers.id')->take(5)->skip(($current_page - 1) * 5)->get(['*', 'import_slips.id as isid']);
+        return import_slip::join('employees', 'employee_id', '=', 'employees.id')->join('suppliers', 'supplier_id', '=', 'suppliers.id')->take(10)->skip(($current_page - 1) * 10)->get(['*', 'import_slips.id as isid']);
     }
 
     public function manageImportSlipPage()
@@ -83,10 +83,10 @@ class ImportSlipController extends Controller
                 ->whereDay('import_date', date('d', strtotime(session()->get('search'))))
                 ->join('employees', 'employee_id', '=', 'employees.id')->join('suppliers', 'supplier_id', '=', 'suppliers.id');
             $total = $query->count();
-            $import_slips = $query->take(5)->skip(($current_page - 1) * 5)->get(['*', 'import_slips.id as isid']);
+            $import_slips = $query->take(10)->skip(($current_page - 1) * 10)->get(['*', 'import_slips.id as isid']);
         } else {
             $import_slips = $this->getImportSlip($current_page);
-            $total = import_slip::all()->count();
+            $total = import_slip::count();
         }
         return view('dynamic_layout.import_slip_reload', ['Import_slips' => $import_slips, 'total' => $total, 'currentpage' => $current_page])->render();
     }

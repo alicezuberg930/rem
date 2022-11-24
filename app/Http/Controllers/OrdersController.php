@@ -23,9 +23,9 @@ class OrdersController extends Controller
     {
         $orders = null;
         if ($type != -1)
-            $orders = orders::where('status', '=', $type)->take(5)->skip(($current_page - 1) * 5);
+            $orders = orders::where('status', '=', $type)->take(10)->skip(($current_page - 1) * 5);
         else
-            $orders = orders::take(5)->skip(($current_page - 1) * 5);
+            $orders = orders::take(10)->skip(($current_page - 1) * 10 );
         if ($user_id != -1)
             $orders = $orders->where('user_id', '=', $user_id);
         return $orders->get();

@@ -172,7 +172,7 @@
                     $("#product-origin").val(result.origin)
                     $("#product-description").val(result.product_description)
                     $("#product-discount").val(result.sale_name)
-                    $("#display-product").attr('src', img + '/' + result.image)
+                    $("#display-product").attr('src', img + '/ '+ result.image)
                 }
             })
         })

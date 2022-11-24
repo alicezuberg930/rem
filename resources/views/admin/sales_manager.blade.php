@@ -166,7 +166,7 @@
                 },
                 success: function(result) {
                     $("#sale-id").val(result.id)
-                    $("#edit-sale-name").val(result.salename)
+                    $("#edit-sale-name").val(result.sale_name)
                     $("#edit-sale-percent").val(result.percent)
                     $("#edit-sale-end_date").val(result.end_date)
                 }

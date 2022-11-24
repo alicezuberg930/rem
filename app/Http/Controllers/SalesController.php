@@ -9,7 +9,7 @@ class SalesController extends Controller
 {
     public static function getSales($current_page)
     {
-        return sales::take(5)->skip(($current_page - 1) * 5)->get();
+        return sales::take(10)->skip(($current_page - 1) * 10)->get();
     }
 
     public function getSaleDetails(Request $request)
@@ -66,7 +66,7 @@ class SalesController extends Controller
         if (session()->has('search') && session()->get('search') != '') {
             $query = sales::where('salename', 'like', '%' . session()->get('search') . '%');
             $total = $query->count();
-            $Categories = $query->take(5)->skip(($current_page - 1) * 5)->get();
+            $Categories = $query->take(10)->skip(($current_page - 1) * 10)->get();
         } else {
             $Categories = $this->getSales($current_page);
             $total = sales::all()->count();

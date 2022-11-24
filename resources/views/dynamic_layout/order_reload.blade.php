@@ -56,7 +56,7 @@
         } else {
             $total = $Quantity['Canceled'];
         } ?>
-        @for ($i = 0; $i < ceil($total / 5); $i++)
+        @for ($i = 0; $i < ceil($total / 10); $i++)
             @if ($i == $currentpage - 1)
                 <li class="page-item"><a class="page-link active">{{ $i + 1 }}</a></li>
             @else

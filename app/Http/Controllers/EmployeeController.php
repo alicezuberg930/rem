@@ -10,7 +10,7 @@ class EmployeeController extends Controller
 {
     public static function getEmployee($current_page)
     {
-        return employee::join('groups', 'employees.role_as', '=', 'groups.id')->take(5)->skip(($current_page - 1) * 5)->get(['*', 'employees.id as eid']);
+        return employee::join('groups', 'employees.role_as', '=', 'groups.id')->take(10)->skip(($current_page - 1) * 10)->orderBy('employees.id', 'asc')->get(['*', 'employees.id as eid']);
     }
 
     public function getEmployeeDetails(Request $request)
@@ -21,10 +21,10 @@ class EmployeeController extends Controller
     public function addEmployee(Request $request)
     {
         $response = employee::create($request->all());
-        if ($response != null)
-            return response()->json(['message' => 'Thêm danh mục thất bại', 'status' => 0]);
+        if (!$response)
+            return response()->json(['message' => 'Thêm nhân viên thất bại', 'status' => 0]);
         else
-            return response()->json(['message' => 'Thêm danh mục thành công', 'status' => 1, 'response' => $this->employeeReload($request->input('page'))]);
+            return response()->json(['message' => 'Thêm nhân viên thành công', 'status' => 1, 'response' => $this->employeeReload($request->input('page'))]);
     }
 
     public function editEmployee(Request $request)
@@ -32,18 +32,18 @@ class EmployeeController extends Controller
         $employee = employee::findOrFail($request->input('id'));
         $response = $employee->update($request->all());
         if ($response == 0 || $employee == null)
-            return response()->json(['message' => 'Sửa danh mục thất bại', 'status' => 0]);
+            return response()->json(['message' => 'Sửa nhân viên thất bại', 'status' => 0]);
         else
-            return response()->json(['message' => 'Sửa danh mục thành công', 'status' => 1, 'response' => $this->employeeReload($request->input('page'))]);
+            return response()->json(['message' => 'Sửa nhân viên thành công', 'status' => 1, 'response' => $this->employeeReload($request->input('page'))]);
     }
 
     public function deleteEmployee(Request $request)
     {
         $response = employee::findOrFail($request->input('id'))->delete();
         if (!$response)
-            return response()->json(['message' => 'Xóa danh mục thất bại', 'status' => 0]);
+            return response()->json(['message' => 'Xóa nhân viên thất bại', 'status' => 0]);
         else
-            return response()->json(['message' => 'Xóa danh mục thành công', 'status' => 1, 'response' => $this->employeeReload($request->input('page'))]);
+            return response()->json(['message' => 'Xóa nhân viên thành công', 'status' => 1, 'response' => $this->employeeReload($request->input('page'))]);
     }
 
     public function manageEmployeePage()
@@ -67,7 +67,7 @@ class EmployeeController extends Controller
         if (session()->has('search') && session()->get('search') != '') {
             $query = employee::where('username', 'like', '%' . session()->get('search') . '%');
             $total = $query->count();
-            $Employees = $query->take(5)->skip(($current_page - 1) * 5)->get();
+            $Employees = $query->take(10)->skip(($current_page - 1) * 10)->get();
         } else {
             $Employees = $this->getEmployee($current_page);
             $total = employee::all()->count();

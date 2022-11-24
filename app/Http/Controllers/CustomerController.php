@@ -35,7 +35,7 @@ class CustomerController extends Controller
             $total = $query->count();
             $Customers = $query->take(5)->skip(($current_page - 1) * 5)->get();
         } else {
-            $Customers = $this->getCategory($current_page);
+            $Customers = $this->getCustomer($current_page);
             $total = User::all()->count();
         }
         return view('dynamic_layout.customer_reload', ['Customers' => $Customers, 'total' => $total, 'currentpage' => $current_page])->render();

@@ -119,7 +119,7 @@
                 method: "get",
                 data: {
                     category_name: $('#name-category-add').val(),
-                    description: $('#desc-category-add').val(),
+                    category_description: $('#desc-category-add').val(),
                     page: current_page
                 },
                 success: function(result) {
@@ -148,7 +148,7 @@
                 data: {
                     id: $("#id-category-modal").val(),
                     category_name: $("#name-category-modal").val(),
-                    description: $("#description-category-modal").val(),
+                    category_description: $("#description-category-modal").val(),
                     page: current_page
                 },
                 success: function(result) {

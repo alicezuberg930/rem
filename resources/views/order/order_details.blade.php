@@ -5,6 +5,7 @@
     <x-head_tag />
     <title>Chi tiết đơn hàng</title>
 </head>
+
 <body class="bg-light">
     <nav class="d-flex align-items-center justify-content-between bg-white">
         <div style="margin-left: 1rem">
@@ -99,24 +100,26 @@
                     </div>
                     <div class="row">
                         <div class="d-flex justify-content-center col-md-4">
-                            <span style="height: 2rem; border-left: 2px dotted rgb(55, 148, 228)"></span>
+                            <span style="height: 2rem; border-left: 2px dotted {!! $Order->status == 1 ? 'rgb(55, 148, 228)' : 'black' !!}"></span>
                         </div>
                     </div>
                     <div class="row d-flex justify-content-start align-items-center">
                         <div class="col-md-4 d-flex justify-content-center">
-                            <img class="rounded-circle border border-primary" style="object-fit: contain" width="50"
-                                height="50" src="{{ url('/icons/order-approved.png') }}" />
+                            <img class="rounded-circle border {!! $Order->status == 1 ? 'border-primary' : 'border-secondary' !!}" style="object-fit: contain"
+                                width="50" height="50" src="{{ url('/icons/order-approved.png') }}" />
                         </div>
                         <div class="col-md-8">
                             <h6 class="m-0">
                                 Đã xác nhận
-                                <i class="fa-solid fa-check bg-success rounded-circle text-light"></i>
+                                @if ($Order->status == 1)
+                                    <i class="fa-solid fa-check bg-success rounded-circle text-light"></i>
+                                @endif
                             </h6>
                         </div>
                     </div>
                     <div class="row">
                         <div class="d-flex justify-content-center col-md-4">
-                            <span style="height: 2rem; border-left: 2px dotted rgb(55, 148, 228)"></span>
+                            <span style="height: 2rem; border-left: 2px dotted black"></span>
                         </div>
                     </div>
                     <div class="row d-flex justify-content-start align-items-center">

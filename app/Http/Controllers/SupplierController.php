@@ -39,7 +39,7 @@ class SupplierController extends Controller
 
     public static function getSupplier($current_page)
     {
-        return supplier::take(5)->skip(($current_page - 1) * 5)->get();
+        return supplier::take(10)->skip(($current_page - 1) * 10)->get();
     }
 
     public function getSupplierDetails(Request $request)
@@ -68,7 +68,7 @@ class SupplierController extends Controller
         if (session()->has('search') && session()->get('search') != '') {
             $query = supplier::where('name', 'like', '%' . session()->get('search') . '%');
             $total = $query->count();
-            $Suppliers = $query->take(5)->skip(($current_page - 1) * 5)->get();
+            $Suppliers = $query->take(10)->skip(($current_page - 1) * 10)->get();
         } else {
             $Suppliers = $this->getSupplier($current_page);
             $total = supplier::all()->count();
