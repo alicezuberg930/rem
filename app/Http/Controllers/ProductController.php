@@ -3,11 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\category;
-use App\Models\employee;
 use App\Models\product;
 use App\Models\sales;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
@@ -15,10 +13,11 @@ class ProductController extends Controller
 
     public function getHomePageProducts()
     {
-        $NewProducts = product::leftjoin('sales', 'products.discount', '=', 'sales.id')
+        $Products = product::leftjoin('sales', 'products.discount', '=', 'sales.id')
+            ->join('categories', 'products.category', '=', 'categories.id')
             ->orderBy('products.created_at', 'desc')
             ->get(['*', 'products.id as ProductsID', 'sales.id as SaleID']);
-        return $NewProducts;
+        return $Products;
     }
 
     public function filterProducts(Request $request)

@@ -8,6 +8,11 @@ use Illuminate\Http\Request;
 
 class EmployeeController extends Controller
 {
+    public function getAllEmployees()
+    {
+        return employee::join('groups', 'employees.role_as', '=', 'groups.id')->get();
+    }
+
     public static function getEmployee($current_page)
     {
         return employee::join('groups', 'employees.role_as', '=', 'groups.id')->take(10)->skip(($current_page - 1) * 10)->orderBy('employees.id', 'asc')->get(['*', 'employees.id as eid']);

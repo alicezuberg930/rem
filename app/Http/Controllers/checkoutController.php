@@ -16,6 +16,7 @@ class CheckoutController extends Controller
 
     public function getOrderInfo(Request $request)
     {
+
         session()->put('orders', [
             'fullname' => $request->input('fullname'),
             'phonenumber' => $request->input('phonenumber'),
@@ -176,6 +177,8 @@ class CheckoutController extends Controller
 
     public function directPayment(Request $request)
     {
+        if (!session()->get('UserID'))
+            return redirect("/cart")->with('message', 'Cần phải đăng nhập để đặt hàng');
         $this->getOrderInfo($request);
         date_default_timezone_set("Asia/Ho_Chi_Minh");
         $orders = new orders();

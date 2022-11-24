@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\Http;
 class SupplierController extends Controller
 {
 
+    public function getAllSuppliers()
+    {
+        return supplier::all();
+    }
+
     public function addSupplier(Request $request)
     {
         $response = supplier::create($request->all());

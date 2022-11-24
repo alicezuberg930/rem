@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
+    public function getAllCategory()
+    {
+        return category::all();
+    }
+
     public static function getCategory($current_page)
     {
         return category::take(10)->skip(($current_page - 1) * 10)->get();

@@ -23,7 +23,7 @@
         <li>
             <a class="nav-link @php echo request()->route()->uri=='admin/manage_category' || request()->route()->uri=='admin/add-category' ? 'link-light border border-white text-info' : 'link-light' @endphp"
                 href="/admin/manage_category">
-                <i class="fa-solid fa-layer-group"></i> Thể loại
+                <i class="fa-solid fa-layer-group"></i> Danh mục
             </a>
         </li>
         <li>

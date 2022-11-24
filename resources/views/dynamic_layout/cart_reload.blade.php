@@ -1,3 +1,6 @@
+@if (session()->has('UserID') && session()->has('message'))
+    {{ session()->forget('message') }}
+@endif
 <div class="{!! session()->has('cart') && sizeof(session()->get('cart')) > 0 ? 'col-md-8 col-sm-auto' : 'col-md-12' !!}">
     <div class="">
         <table class="table table-sm align-middle">
@@ -134,34 +137,32 @@
                     </select>
                 </div>
             </div>
-            <div class="row mb-3">
+            {{-- <div class="row mb-3">
                 <label for="inputPassword3" class="col-sm-4 col-form-label fw-bold">Tổng tiền</label>
                 <div class="col-sm-8">
                     <span class="form-control fw-semibold bg-white" id="pay-sum">{{ number_format($total_price) }}
                         VND</span>
                 </div>
-            </div>
-            <div class="row mb-3">
+            </div> --}}
+            {{-- <div class="row mb-3">
                 <label for="inputPassword3" class="col-sm-4 col-form-label fw-bold">Tiền giảm
                     giá</label>
                 <div class="col-sm-8">
                     <span class="form-control fw-semibold bg-white"
                         id="pay-sum">{{ number_format($total_discount) }} VND</span>
                 </div>
-            </div>
+            </div> --}}
             <div class="row mb-3">
-                <label for="inputPassword3" class="col-sm-4 col-form-label fw-bold">Giá cuối
-                    cùng</label>
+                <label for="inputPassword3" class="col-sm-4 col-form-label fw-bold">Tổng tiền</label>
                 <div class="col-sm-8">
                     <span class="form-control fw-semibold bg-white" id="pay-sum">{{ number_format($total_final) }}
-                        VND</span>
-                    <input name="total_price" class="d-none" value="{{ $total_final }}" />
-                    <input name="quantity" class="d-none" value="{{ $quantity }}" />
+                        đ</span>
+                    <input name="total_price" hidden value="{{ $total_final }}" />
+                    <input name="quantity" hidden value="{{ $quantity }}" />
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary"
-                {{ session()->has('UserID') ? '' : "onclick='return false;'" }} id="submit" name="redirect">Đặt
-                hàng</button>
+            <button type="submit" class="btn btn-primary" id="submit"
+                name="redirect">{{ session()->has('message') ? session('message') : 'Mua hàng' }}</button>
         </form>
     </div>
 @endif

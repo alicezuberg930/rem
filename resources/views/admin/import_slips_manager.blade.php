@@ -18,6 +18,9 @@
                             <button type="submit" href="/admin/manage_category/add" class="btn btn-primary btn-sm"
                                 data-bs-toggle="modal" data-bs-target="#add-supplier">Thêm phiếu nhập</button>
                         </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-info btn-sm" id="export">Xuất Excel</button>
+                        </div>
                     </div>
                     <div class="col-md-auto">
                         <div class="input-group">
@@ -172,7 +175,7 @@
                     $("#product-origin").val(result.origin)
                     $("#product-description").val(result.product_description)
                     $("#product-discount").val(result.sale_name)
-                    $("#display-product").attr('src', img + '/ '+ result.image)
+                    $("#display-product").attr('src', img + '/ ' + result.image)
                 }
             })
         })
@@ -222,6 +225,15 @@
                 method: "get",
                 success: function(result) {
                     $("#import-slip-table").html(result)
+                }
+            })
+        })
+        $("#export").on('click', () => {
+            $.ajax({
+                url: "/admin/manage_import_slips/export",
+                method: 'get',
+                success: function(result) {
+                    JSONToCSVConvertor(result, "import_slips_sheet", true)
                 }
             })
         })

@@ -1,6 +1,6 @@
 <div class="container-md p-0">
     <div class="p-3 row row-cols-1 row-cols-md-4 sticky-top bg-light justify-content-between">
-        <form id="status-form" class="col-md-auto row">
+        <div id="status-form" class="col-md-auto row">
             <div class="col-md-auto">
                 <input checked type="radio" class="btnradio btn-check" name="btnradio" id="btnradio1" value="-1">
                 <label class="btn btn-outline-primary btn-sm" for="btnradio1">Tổng
@@ -25,7 +25,12 @@
                     <span class="badge bg-danger type" data-status="2">{{ $Quantity['Canceled'] }}</span>
                 </label>
             </div>
-        </form>
+            @if (session()->has('Employee'))
+                <div class="col-md-auto">
+                    <button class="btn btn-info btn-sm" id="export">Xuất Excel</button>
+                </div>
+            @endif
+        </div>
         <div class="col-md-auto">
             <div class="input-group">
                 <input type="text" class="form-control form-control-sm" placeholder="Mã đơn" id="search_id">

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 23, 2022 at 05:21 PM
+-- Generation Time: Nov 24, 2022 at 09:23 PM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 7.3.16
 
@@ -38,12 +38,18 @@ CREATE TABLE `categories` (
 --
 
 INSERT INTO `categories` (`id`, `category_name`, `category_description`) VALUES
-(1, 'BẬT LỬA ZIPPO CAO CẤP', 'Bật lửa zippo cao cấp rất mắc tiền và sang trọng swdefw'),
-(2, 'BẬT LỬA ZIPPO ARMOR', 'rf24f4dfgrfe'),
-(3, 'BẬT LỬA ZIPPO PHỔ THÔNG', 'f4rfwfwgff'),
-(7, 'Thương hiệu A', 'Rượu vang đỏ hay còn gọi là vang đỏ hay rượu nho đỏ là một dạng phổ biến của rượu vang được làm từ những loại nho đậm màu.'),
-(8, 'Thương hiệu B', 'Rượu vang đỏ hay còn gọi là vang đỏ hay rượu nho đỏ là một dạng phổ biến của rượu vang được làm từ những loại nho đậm màu.'),
-(9, 'Thương hiệu C', 'Rượu vang đỏ hay còn gọi là vang đỏ hay rượu nho đỏ là một dạng phổ biến của rượu vang được làm từ những loại nho đậm màu.');
+(1, 'BẬT LỬA ZIPPO CAO CẤP', 'Bật lửa zippo cao cấp rất mắc tiền và sang trọng'),
+(2, 'BẬT LỬA ZIPPO ARMOR', 'bật lửa armor có vỏ rất dày'),
+(3, 'BẬT LỬA ZIPPO PHỔ THÔNG', 'zippo phỗ thông thường dành cho tầng lớp trung lưu'),
+(7, 'Danh mục A', 'danh mục a rất là A'),
+(8, 'Danh mục B', 'danh mục B rất là b'),
+(9, 'Danh mục C', 'danh mục C rất là C'),
+(35, 'Danh mục D', 'Danh mục D rất là D'),
+(36, 'Danh mục E', 'Danh mục E rất là E'),
+(37, 'Danh mục F', 'Danh mục F rất là F'),
+(38, 'Danh mục G', 'Danh mục G rất là G'),
+(39, 'Danh mục I', 'Danh mục I rất là I'),
+(40, 'Danh mục J', 'Danh mục J rất là J');
 
 -- --------------------------------------------------------
 
@@ -66,11 +72,18 @@ CREATE TABLE `employees` (
 --
 
 INSERT INTO `employees` (`id`, `username`, `phonenumber`, `email`, `gender`, `password`, `role_as`) VALUES
-(1, 'Nguyễn Vĩnh Tiến', '0932430072', 'tien23851@gmail.com', 'Nam', 'tien1234', 1),
+(1, 'Lê Văn Tiến', '0932430072', 'tien51@gmail.com', 'Nam', 'tien1234', 3),
 (2, 'Nguyễn Văn Tình', '0932430071', 'tinh235@gmail.com', 'Nam', 'tinh1234', 1),
 (3, 'Lê Thị Hoa', '0939711713', 'hoa144@gmail.com', 'Nữ', 'hoa1234', 1),
 (4, 'Lê Ngọc Toàn', '0932451234', 'toanktvn@gmail.com', 'Nam', 'toan1234', 2),
-(5, 'Nguyễn Văn Tiến', '0932433244', 'tien432@gmail.com', 'Nam', 'tien1234', 3);
+(5, 'Nguyễn Văn Tiến', '0932433244', 'tien432@gmail.com', 'Nam', 'tien1234', 3),
+(6, 'Nguyễn Giáp Tài', '0932248511', 'taiktvn2@gmail.com', 'Nam', 'tai1234', 2),
+(8, 'Bùi Minh Trí', '0923455532', 'minhtri423@gmail.com', 'Nam', 'tai1234', 1),
+(9, 'Nguyễn Đình Trí', '0923434212', 'dinhtri382@gmail.com', 'Nam', 'dinhtri123', 2),
+(10, 'Lâm Doanh Sâm', '0923453321', 'doanhsam432@gmail.com', 'Nữ', 'sam1234', 2),
+(11, 'Huỳnh Ái Vy', '0932849343', 'aivy347@gmail.com', 'Nữ', 'sam1234', 1),
+(12, 'Nguyễn Minh Thư', '0234839281', 'minhthu942@gmail.com', 'Nữ', 'sam1234', 3),
+(13, 'Tiến Giao Hàng', '0983839321', 'tien1234@gmail.com', 'Nam', 'tiengiaohang', 4);
 
 -- --------------------------------------------------------
 
@@ -90,7 +103,8 @@ CREATE TABLE `groups` (
 INSERT INTO `groups` (`id`, `role_name`) VALUES
 (1, 'Quản lý bán hàng'),
 (2, 'Quản lý kho'),
-(3, 'Quản lý');
+(3, 'Quản lý'),
+(4, 'Nhân viên giao hàng');
 
 -- --------------------------------------------------------
 
@@ -118,7 +132,10 @@ INSERT INTO `import_slips` (`id`, `supplier_id`, `employee_id`, `import_date`, `
 (5, 2, 1, '2022-11-20 11:23:07', 19000000),
 (6, 3, 1, '2022-11-22 09:38:48', 21000000),
 (7, 2, 1, '2022-11-30 12:00:00', 5550000),
-(8, 4, 1, '2022-11-28 12:00:00', 5250000);
+(8, 4, 1, '2022-11-28 12:00:00', 5250000),
+(9, 1, 1, '2022-11-30 12:00:00', 2750000),
+(10, 4, 1, '2022-11-29 12:00:00', 1150000),
+(11, 4, 1, '2022-11-20 12:00:00', 23100000);
 
 -- --------------------------------------------------------
 
@@ -145,7 +162,10 @@ INSERT INTO `import_slip_details` (`import_slip_id`, `product_id`, `import_quant
 (5, 5, 20, 340000),
 (6, 1, 15, 1400000),
 (7, 13, 15, 370000),
-(8, 1, 14, 375000);
+(8, 1, 14, 375000),
+(9, 4, 11, 250000),
+(10, 18, 5, 230000),
+(11, 8, 21, 1100000);
 
 -- --------------------------------------------------------
 
@@ -299,7 +319,29 @@ INSERT INTO `orderdetails` (`order_id`, `product_id`, `quantity`, `product_price
 (45, 15, 1, 750000),
 (45, 16, 1, 700000),
 (46, 15, 1, 750000),
-(46, 16, 1, 700000);
+(46, 16, 1, 700000),
+(47, 16, 1, 700000),
+(48, 16, 2, 700000),
+(49, 16, 2, 700000),
+(50, 16, 2, 700000),
+(51, 16, 2, 700000),
+(52, 16, 2, 700000),
+(53, 18, 1, 850000),
+(53, 37, 1, 1700000),
+(54, 18, 1, 850000),
+(54, 37, 1, 1700000),
+(55, 1, 1, 3800000),
+(56, 1, 1, 3800000),
+(57, 16, 1, 700000),
+(57, 17, 1, 850000),
+(57, 37, 1, 1700000),
+(58, 15, 1, 750000),
+(58, 16, 1, 700000),
+(58, 17, 1, 850000),
+(59, 17, 1, 850000),
+(59, 37, 1, 1700000),
+(60, 16, 2, 700000),
+(60, 17, 1, 850000);
 
 -- --------------------------------------------------------
 
@@ -326,23 +368,23 @@ CREATE TABLE `orders` (
 --
 
 INSERT INTO `orders` (`id`, `order_date`, `fullname`, `phone_number`, `address`, `quantity`, `total_price`, `status`, `user_id`, `email`, `employee_id`) VALUES
-(3, '2022-11-04 20:15:31', 'Lê Ngọc Toàn', '0921123435', 'Thành phố Hồ Chí Minh Quận 10 Phường 05', 3, 2100000, 1, 37, 'tien23851@gmail.com', NULL),
-(4, '2022-11-10 04:27:19', 'Nguyễn Thị Minh Thư', '0921123435', 'Thành phố Hồ Chí Minh Quận Phú Nhuận Phường 11', 5, 3510000, 1, 37, 'hentaiktvn123@gmail.com', NULL),
-(5, '2022-11-10 04:29:05', 'Nguyễn Vĩnh Tiến', '0921123435', 'Thành phố Đà Nẵng Quận Cẩm Lệ Phường Hòa Phát', 5, 3510000, 1, 39, 'nguyenvinhtien431@gmail.com', NULL),
-(6, '2022-11-11 05:12:29', 'Nguyễn Thị Minh Thư', '0921123435', 'Thành phố Đà Nẵng Huyện Hòa Vang Xã Hòa Liên', 3, 2030000, 1, 37, 'tienn3605@gmail.com', NULL),
-(7, '2022-11-14 05:12:24', 'Nguyễn Thị Minh Thư', '0921123435', '------Thành phố------  ', 1, 700000, 2, 37, 'minhthu@gmail.com', NULL),
-(8, '2022-11-21 17:07:29', 'Nguyễn Thị Minh Thư', '0921123435', 'Tỉnh An Giang Huyện An Phú Xã Đa Phước', 3, 1910000, 1, 39, 'minhthu@gmail.com', NULL),
-(9, '2022-11-21 17:07:29', 'Nguyễn Thị Minh Thư', '0921123435', 'Tỉnh Bình Dương Huyện Bắc Tân Uyên Xã Bình Mỹ', 1, 850000, 1, 37, 'minhthu@gmail.com', NULL),
-(10, '2022-11-21 17:07:30', 'Nguyễn Thị Minh Thư', '0921123435', 'Tỉnh Bình Dương  ', 1, 850000, 1, 37, 'minhthu@gmail.com', NULL),
-(11, '2022-11-21 17:07:30', 'Nguyễn Thị Minh Thư', '0921123435', '  ', 1, 850000, 1, 37, 'minhthu@gmail.com', NULL),
-(16, '2022-11-21 17:07:31', 'Nguyễn Thị Minh Thư', '0921123435', '  ', 1, 850000, 1, 37, 'minhthu@gmail.com', NULL),
-(18, '2022-11-18 20:29:45', 'Lê Ngọc Toàn', '0921123435', 'Thành phố Đà Nẵng Huyện Hòa Vang Xã Hòa Bắc', 4, 2730000, 0, 37, 'toanktvn@gmail.com', NULL),
-(19, '2022-11-18 20:31:46', 'Lê Ngọc Toàn', '0921123435', 'Thành phố Đà Nẵng Huyện Hòa Vang Xã Hòa Bắc', 4, 2730000, 0, 37, 'toanktvn@gmail.com', NULL),
-(20, '2022-11-18 20:33:32', 'Lê Ngọc Toàn', '0921123435', 'Thành phố Đà Nẵng Huyện Hòa Vang Xã Hòa Bắc', 4, 2730000, 0, 37, 'toanktvn@gmail.com', NULL),
-(21, '2022-11-18 20:36:57', 'Lê Ngọc Toàn', '0921123435', 'Thành phố Đà Nẵng Huyện Hòa Vang Xã Hòa Bắc', 4, 2730000, 0, 37, 'toanktvn@gmail.com', NULL),
-(22, '2022-11-18 20:37:41', 'Lê Ngọc Toàn', '0921123435', 'Thành phố Đà Nẵng Huyện Hòa Vang Xã Hòa Bắc', 4, 2730000, 1, 37, 'toanktvn@gmail.com', NULL),
+(3, '2022-10-04 20:15:31', 'Lê Ngọc Toàn', '0921123435', 'Thành phố Hồ Chí Minh Quận 10 Phường 05', 3, 2100000, 1, 37, 'tien23851@gmail.com', NULL),
+(4, '2022-09-10 04:27:19', 'Nguyễn Thị Minh Thư', '0921123435', 'Thành phố Hồ Chí Minh Quận Phú Nhuận Phường 11', 5, 3510000, 1, 37, 'hentaiktvn123@gmail.com', NULL),
+(5, '2022-08-10 04:29:05', 'Nguyễn Vĩnh Tiến', '0921123435', 'Thành phố Đà Nẵng Quận Cẩm Lệ Phường Hòa Phát', 5, 3510000, 1, 39, 'nguyenvinhtien431@gmail.com', NULL),
+(6, '2022-07-11 05:12:29', 'Nguyễn Thị Minh Thư', '0921123435', 'Thành phố Đà Nẵng Huyện Hòa Vang Xã Hòa Liên', 3, 2030000, 1, 37, 'tienn3605@gmail.com', NULL),
+(7, '2022-06-14 05:12:24', 'Nguyễn Thị Minh Thư', '0921123435', '------Thành phố------  ', 1, 700000, 2, 37, 'minhthu@gmail.com', NULL),
+(8, '2022-05-21 17:07:29', 'Nguyễn Thị Minh Thư', '0921123435', 'Tỉnh An Giang Huyện An Phú Xã Đa Phước', 3, 1910000, 1, 39, 'minhthu@gmail.com', NULL),
+(9, '2022-04-21 17:07:29', 'Nguyễn Thị Minh Thư', '0921123435', 'Tỉnh Bình Dương Huyện Bắc Tân Uyên Xã Bình Mỹ', 1, 850000, 1, 37, 'minhthu@gmail.com', NULL),
+(10, '2022-03-21 17:07:30', 'Nguyễn Thị Minh Thư', '0921123435', 'Tỉnh Bình Dương  ', 1, 850000, 1, 37, 'minhthu@gmail.com', NULL),
+(11, '2022-02-21 17:07:30', 'Nguyễn Thị Minh Thư', '0921123435', '  ', 1, 850000, 1, 37, 'minhthu@gmail.com', NULL),
+(16, '2022-01-21 17:07:31', 'Nguyễn Thị Minh Thư', '0921123435', '  ', 1, 850000, 1, 37, 'minhthu@gmail.com', NULL),
+(18, '2022-02-18 20:29:45', 'Lê Ngọc Toàn', '0921123435', 'Thành phố Đà Nẵng Huyện Hòa Vang Xã Hòa Bắc', 4, 2730000, 0, 37, 'toanktvn@gmail.com', NULL),
+(19, '2022-03-18 20:31:46', 'Lê Ngọc Toàn', '0921123435', 'Thành phố Đà Nẵng Huyện Hòa Vang Xã Hòa Bắc', 4, 2730000, 0, 37, 'toanktvn@gmail.com', NULL),
+(20, '2022-04-18 20:33:32', 'Lê Ngọc Toàn', '0921123435', 'Thành phố Đà Nẵng Huyện Hòa Vang Xã Hòa Bắc', 4, 2730000, 0, 37, 'toanktvn@gmail.com', NULL),
+(21, '2022-05-18 20:36:57', 'Lê Ngọc Toàn', '0921123435', 'Thành phố Đà Nẵng Huyện Hòa Vang Xã Hòa Bắc', 4, 2730000, 0, 37, 'toanktvn@gmail.com', NULL),
+(22, '2022-06-18 20:37:41', 'Lê Ngọc Toàn', '0921123435', 'Thành phố Đà Nẵng Huyện Hòa Vang Xã Hòa Bắc', 4, 2730000, 1, 37, 'toanktvn@gmail.com', NULL),
 (23, '2022-11-18 20:38:05', 'Lê Ngọc Toàn', '0921123435', 'Thành phố Đà Nẵng Huyện Hòa Vang Xã Hòa Bắc', 4, 2730000, 0, 37, 'toanktvn@gmail.com', NULL),
-(24, '2022-11-18 20:38:17', 'Lê Ngọc Toàn', '0921123435', 'Thành phố Đà Nẵng Huyện Hòa Vang Xã Hòa Bắc', 4, 2730000, 0, 37, 'toanktvn@gmail.com', NULL),
+(24, '2022-10-18 20:38:17', 'Lê Ngọc Toàn', '0921123435', 'Thành phố Đà Nẵng Huyện Hòa Vang Xã Hòa Bắc', 4, 2730000, 0, 37, 'toanktvn@gmail.com', NULL),
 (25, '2022-11-18 20:38:30', 'Lê Ngọc Toàn', '0921123435', 'Thành phố Đà Nẵng Huyện Hòa Vang Xã Hòa Bắc', 4, 2730000, 0, 37, 'toanktvn@gmail.com', NULL),
 (26, '2022-11-18 20:39:03', 'Lê Ngọc Toàn', '0921123435', 'Thành phố Đà Nẵng Huyện Hòa Vang Xã Hòa Bắc', 4, 2730000, 0, 37, 'toanktvn@gmail.com', NULL),
 (27, '2022-11-18 20:40:22', 'Lê Ngọc Toàn', '0921123435', 'Thành phố Đà Nẵng Huyện Hòa Vang Xã Hòa Bắc', 4, 2730000, 0, 37, 'toanktvn@gmail.com', NULL),
@@ -364,7 +406,21 @@ INSERT INTO `orders` (`id`, `order_date`, `fullname`, `phone_number`, `address`,
 (43, '2022-11-20 17:39:24', 'Nguyễn Giáp Tài', '0932134435', 'Tỉnh Điện Biên Huyện Điện Biên Xã Pom Lót', 2, 1450000, 0, 37, 'minhthu@gmail.com', NULL),
 (44, '2022-11-20 17:39:24', 'Nguyễn Giáp Tài', '0932134435', 'Tỉnh Điện Biên Huyện Điện Biên Xã Pom Lót', 2, 1450000, 0, 37, 'minhthu@gmail.com', NULL),
 (45, '2022-11-20 17:39:24', 'Nguyễn Giáp Tài', '0932134435', 'Tỉnh Điện Biên Huyện Điện Biên Xã Pom Lót', 2, 1450000, 0, 37, 'minhthu@gmail.com', NULL),
-(46, '2022-11-20 17:39:24', 'Nguyễn Giáp Tài', '0932134435', 'Tỉnh Điện Biên Huyện Điện Biên Xã Pom Lót', 2, 1450000, 0, 37, 'minhthu@gmail.com', NULL);
+(46, '2022-11-20 17:39:24', 'Nguyễn Giáp Tài', '0932134435', 'Tỉnh Điện Biên Huyện Điện Biên Xã Pom Lót', 2, 1450000, 0, 37, 'minhthu@gmail.com', NULL),
+(47, '2022-11-23 18:33:35', 'Nguyễn Thị Minh Thư', '0921123435', '  ', 1, 700000, 0, 37, 'minhthu@gmail.com', NULL),
+(48, '2022-11-23 00:47:19', 'Nguyễn Thị Minh Thư', '0921134223', 'Thành phố Cần Thơ Quận Ninh Kiều Phường An Cư', 2, 1400000, 0, 37, 'tien23851@gmail.com', NULL),
+(49, '2022-11-23 19:49:34', 'Nguyễn Thị Minh Thư', '0921123435', 'Tỉnh Cà Mau Huyện Cái Nước Xã Thạnh Phú', 2, 1400000, 0, 37, 'tien23851@gmail.com', NULL),
+(50, '2022-11-23 02:16:13', 'Lê Ngọc Toàn', '0921123322', 'Thành phố Hà Nội Huyện Quốc Oai Xã Sài Sơn', 2, 1400000, 0, 37, 'toanktvn@gmail.com', NULL),
+(51, '2022-11-23 02:16:17', 'Lê Ngọc Toàn', '0921123322', 'Thành phố Hà Nội Huyện Quốc Oai Xã Sài Sơn', 2, 1400000, 0, 37, 'toanktvn@gmail.com', NULL),
+(52, '2022-11-23 21:19:25', 'Lê Ngọc Toàn', '0921123322', 'Tỉnh Bình Thuận Huyện Bắc Bình Xã Phan Thanh', 2, 1400000, 0, 37, 'toanktvn@gmail.com', NULL),
+(53, '2022-11-24 00:46:22', 'Nguyễn Thị Minh Thư', '0921123435', '  ', 2, 2550000, 0, 45, 'minhthu@gmail.com', NULL),
+(54, '2022-11-24 07:48:41', 'Nguyễn Thị Minh Thư', '0921123435', '  ', 2, 2550000, 0, 45, 'minhthu@gmail.com', NULL),
+(55, '2022-11-24 01:19:17', 'Nguyễn Thị Minh Thư', '0921123435', 'Thành phố Cần Thơ Huyện Cờ Đỏ Thị trấn Cờ Đỏ', 1, 2470000, 0, 37, 'minhthu@gmail.com', NULL),
+(56, '2022-11-24 01:21:17', 'Nguyễn Thị Minh Thư', '0921123435', 'Thành phố Hà Nội Huyện Thường Tín Xã Quất Động', 1, 2470000, 0, 37, 'minhthu@gmail.com', NULL),
+(57, '2022-04-24 08:24:47', 'Nguyễn Thị Minh Thư', '0921123435', 'Thành phố Đà Nẵng Quận Cẩm Lệ Phường Hòa An', 3, 3250000, 0, 37, 'minhthu@gmail.com', NULL),
+(58, '2022-04-24 02:12:06', 'Nguyễn Thị Minh Thư', '0921123435', 'Tỉnh Bình Dương Huyện Phú Giáo Xã An Thái', 3, 2300000, 0, 37, 'minhthu@gmail.com', NULL),
+(59, '2022-02-24 02:21:18', 'Nguyễn Thị Minh Thư', '0921123435', 'Thành phố Đà Nẵng Quận Cẩm Lệ Phường Hòa Phát', 2, 2550000, 0, 37, 'minhthu@gmail.com', NULL),
+(60, '2022-11-24 01:03:23', 'Nguyen Vinh Tien', '0932430072', 'Thành phố Hồ Chí Minh Quận Bình Tân Phường Bình Hưng Hòa', 3, 2250000, 0, 37, 'tien23851@gmail.com', NULL);
 
 -- --------------------------------------------------------
 
@@ -386,7 +442,8 @@ CREATE TABLE `password_resets` (
 
 INSERT INTO `password_resets` (`id`, `email`, `token`, `selector`, `expire`) VALUES
 (11, 'starbutterfly652@gmail.com', '$2y$10$ourc0Jl3oC63N0YWsGwKZe6LtPWchd3ous6175TCgTSUR0OLkNcvu', '3fa457c47019d47f', 1667780793),
-(14, 'tien23851@gmail.com', '$2y$10$5i9ppycwa8iKUHsmOgfqMuHE8kUMxF90U9uqNkkteE3CgNuNjhq9O', 'ff207e36369c7c43', 1668765725);
+(17, 'tienn3605@gmail.com', '$2y$10$XTWqQMRAOjKPi76i4xAgqedHLoZ7HTRWL0KffnhGnzy3d9aE6Sxd.', '2936c9495560ce11', 1669276778),
+(20, 'tien23851@gmail.com', '$2y$10$X5jeGU92XHZcG54CdsTVOO.71ENg0wRdkRpLAderV2fV1OpONR98i', '5f9758eaf3e291ef', 1669278432);
 
 -- --------------------------------------------------------
 
@@ -412,11 +469,8 @@ CREATE TABLE `personal_access_tokens` (
 --
 
 INSERT INTO `personal_access_tokens` (`id`, `tokenable_type`, `tokenable_id`, `name`, `token`, `abilities`, `last_used_at`, `expires_at`, `created_at`, `updated_at`) VALUES
-(66, 'App\\Models\\employee', 1, 'access-token', 'c4c71bc01cee49b8f2a8475494dae770439f8b044bce4b3adf282182dfbd3dcd', '[\"products:manage\",\"categories:manage\",\"statistic:manage\",\"orders:manage\",\"sales:manage\",\"customers:manage\"]', NULL, NULL, '2022-11-23 07:05:01', '2022-11-23 07:05:01'),
-(67, 'App\\Models\\employee', 1, 'access-token', '7b121f27e399b5b242ae1c50f19f1fcfb2a36deb71ae39511fe710683b5310ea', '[\"products:manage\",\"categories:manage\",\"statistic:manage\",\"orders:manage\",\"sales:manage\",\"customers:manage\"]', NULL, NULL, '2022-11-23 07:05:24', '2022-11-23 07:05:24'),
-(68, 'App\\Models\\employee', 1, 'access-token', '9b47461af069c8280062758a747bd3ed06cdfc112b99130c7bb6f1399f87bd97', '[\"products:manage\",\"categories:manage\",\"statistic:manage\",\"orders:manage\",\"sales:manage\",\"customers:manage\"]', NULL, NULL, '2022-11-23 07:31:04', '2022-11-23 07:31:04'),
-(69, 'App\\Models\\employee', 1, 'access-token', 'e2959253dcf2723acae06b2442eaa67527e37f2b6ca900ffb890c40c21884808', '[\"products:manage\",\"categories:manage\",\"statistic:manage\",\"orders:manage\",\"sales:manage\",\"customers:manage\"]', NULL, NULL, '2022-11-23 07:38:02', '2022-11-23 07:38:02'),
-(70, 'App\\Models\\employee', 1, 'access-token', 'c6cfd5f134273b0065fb44aa75e4ed9cb52b634a7113afbef4a9910bcb054786', '[\"products:manage\",\"categories:manage\",\"statistic:manage\",\"orders:manage\",\"sales:manage\",\"customers:manage\"]', NULL, NULL, '2022-11-23 07:47:39', '2022-11-23 07:47:39');
+(89, 'App\\Models\\employee', 1, 'access-token', '3725325b798e9132d3b94f2a7ab474dc9e6205413c79f2c29623036d1ad111fe', '[\"products:manage\",\"categories:manage\",\"statistic:manage\",\"orders:manage\",\"sales:manage\",\"customers:manage\",\"suppliers:manage\",\"import_slips:manage\",\"employees:manage\"]', NULL, NULL, '2022-11-24 13:04:19', '2022-11-24 13:04:19'),
+(90, 'App\\Models\\employee', 1, 'access-token', '5f0777a776caf066d2235fb99227022928141e1199261238e167c54079a586b5', '[\"products:manage\",\"categories:manage\",\"statistic:manage\",\"orders:manage\",\"sales:manage\",\"customers:manage\",\"suppliers:manage\",\"import_slips:manage\",\"employees:manage\"]', NULL, NULL, '2022-11-24 13:04:20', '2022-11-24 13:04:20');
 
 -- --------------------------------------------------------
 
@@ -444,24 +498,25 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`id`, `created_at`, `updated_at`, `image`, `product_name`, `amount`, `price`, `category`, `material`, `origin`, `product_description`, `discount`) VALUES
-(1, '2022-10-19 07:52:56', '2022-11-20 11:18:56', 'image_1666191176_Zippo Stigma Stoned Undeads ZA-1-137A.jpg', 'Zippo Stigma Stoned Undeads ZA-1-137A', 37, 3800000, 1, 'Đồng thau nguyên khối', 'Hàn Quốc', 'Bật lửa Zippo ASIA là một sản phẩm được hình thành và chế tác trên phôi Zippo được nhập khẩu chính hãng từ Mỹ với chất liệu vỏ đồng thau, ruột thép. Sau đó được thiết kế và trang trí theo nhiều công nghệ khác nhau bởi các nhà chế tác tại các nước Asia như Nhật Bản, Hàn Quốc… Phiên bản với các thiết kế đặc biệt được giới thiệu và chỉ phát hành tại các nước Châu Á. Được đóng gói trong một hộp quà tặng. Để có hiệu suất tối ưu, hãy đổ đầy nhiên liệu bật lửa Zippo.kynb', 6),
-(2, '2022-10-19 08:12:55', '2022-10-19 08:12:55', 'image_1666193162_Zippo Eye of Providence.jpg', 'Zippo Armor High Polish Brass 169', 10, 1700000, 2, 'Vỏ đồng thau, nền mạ vàng', 'Mỹ', 'Zippo 169 mang trên mình vẻ ngoài với sắc vàng bóng loáng một cách đầy sa hoa và sang trọng. Nhưng đừng bị vẻ bóng bẩy bề ngoài của 169 đánh lừa rằng chúng mỏng manh dễ vỡ nhé, đây là một tỏng những dòng Armor cứng cáp nhất trong các dòng vỏ dày bình dân với lớp vỏ đồng nguyên khối được nhà sản xuất đúc cho mang độ dày lên tới 16mm, ấn tượng gấp 1,5 lần các dòng bình thường khác. Đây thực sự là một chiếc áo giáp giá trị mà 169 được khoác lên mình, vừa bóng bẩy điệu đà, vừa dày dặn với khả năng chịu lực tuyệt đối', 2),
+(1, '2022-10-19 07:52:56', '2022-11-24 08:21:17', 'image_1666191176_Zippo Stigma Stoned Undeads ZA-1-137A.jpg', 'Zippo Stigma Stoned Undeads ZA-1-137A', 35, 3800000, 1, 'Đồng thau nguyên khối', 'Hàn Quốc', 'Bật lửa Zippo ASIA là một sản phẩm được hình thành và chế tác trên phôi Zippo được nhập khẩu chính hãng từ Mỹ với chất liệu vỏ đồng thau, ruột thép. Sau đó được thiết kế và trang trí theo nhiều công nghệ khác nhau bởi các nhà chế tác tại các nước Asia như Nhật Bản, Hàn Quốc… Phiên bản với các thiết kế đặc biệt được giới thiệu và chỉ phát hành tại các nước Châu Á. Được đóng gói trong một hộp quà tặng. Để có hiệu suất tối ưu, hãy đổ đầy nhiên liệu bật lửa Zippo.', 6),
+(2, '2022-10-19 08:12:55', '2022-11-23 13:19:57', 'image_1669234796.jpg', 'Zippo Armor Freedom Skull Antique Brass – 49035', 10, 1700000, 2, 'Đồng thau nguyên khối', 'Mỹ', 'Zippo Armor Flag Armor 28974 – giáp bằng bạc giáp cổ này được khắc sâu bằng cờ Mỹ. Mô hình độc đáo này có thiết kế đẹp với kết cấu khổng lồ.', 11),
 (3, '2022-10-19 08:16:38', '2022-10-19 08:16:38', 'image_1666192598_Zippo Armor Classic Chrome 167.jpg', 'Zippo Armor Classic Chrome 167', 13, 750000, 2, 'Vỏ đồng thau, nền mạ chrome bóng', 'Mỹ', 'Zippo là hãng bật lửa có tiếng nhất trên thế giới chính bởi chất lượng cũng như sự đa dạng của sản phẩm. Zippo Armor 167 Classic Chrome là một sản phẩm rất được các đấng anh hào ưa dùng. Sau đây chúng ta cùng đi tìm hiểu về loại bật lửa này. Sử dụng mẫu bật lửa zippo Armor 167 Classic Chrome bạn có thể tự khắc hình trên bật lửa thỏa sức sáng tạo', NULL),
-(4, '2022-10-19 08:21:55', '2022-10-19 08:21:55', 'image_1666192915_Zippo Tumbled Brass Armor 28496.jpg', 'Zippo Tumbled Brass Armor 28496', 9, 850000, 2, 'Đồng thau nguyên khối', 'Mỹ', 'Là dòng sản phẩm bật lửa vỏ dày hơn tiêu chuẩn 1,5 lần nên sản phẩm năng và cầm rất chắc tay. Hàng mới, chính hãng Mỹ 100%, Hộp dạng quà tặng thân thiện môi trường đầy đủ (01 Bật lửa; 01 HDSD) Dùng phụ kiện chính hãng Zippo tumbled brass có trữ xăng hiệu quả, đánh lửa và chống gió tốt nhất.', NULL),
+(4, '2022-10-19 08:21:55', '2022-11-23 21:40:15', 'image_1666192915_Zippo Tumbled Brass Armor 28496.jpg', 'Zippo Tumbled Brass Armor 28496', 20, 850000, 2, 'Đồng thau nguyên khối', 'Mỹ', 'Là dòng sản phẩm bật lửa vỏ dày hơn tiêu chuẩn 1,5 lần nên sản phẩm năng và cầm rất chắc tay. Hàng mới, chính hãng Mỹ 100%, Hộp dạng quà tặng thân thiện môi trường đầy đủ (01 Bật lửa; 01 HDSD) Dùng phụ kiện chính hãng Zippo tumbled brass có trữ xăng hiệu quả, đánh lửa và chống gió tốt nhất.', NULL),
 (5, '2022-10-19 08:26:02', '2022-10-19 08:26:02', 'image_1666193162_Zippo Eye of Providence.jpg', 'Zippo Eye of Providence', 18, 1700000, 2, 'Vỏ đồng thau, nền mạ vàng', 'Mỹ', 'Zippo eye of providence lại là một sản phẩm siêu cấp cho các tín đồ zippo yêu thích sự thiêng liêng ma mị thuộc dòng sản phẩm zippo cao cấp làm chất liệu đồng thau nguyên khối thuộc dòng armor vỏ dày cấu tạo của zippo Zippo eye of providence dày hơn 1,5 lần so với các loại bật nửa thông thường. Điểm đặc biệt của Zippo eye of providence là nằm ở con mắt của Providence hay tất cả những con mắt nhìn thấy đại diện cho sự quan phòng thiêng liêng, hoặc ý tưởng rằng ai đó luôn dõi theo bạn. Thiết kế này đưa ánh mắt thần thánh từ một viên pha lê Swarovski màu xanh lá cây vào một kim tự tháp được chạm khắc sâu trên chiếc bật lửa Brass High ®, và cũng có một miếng chèn vàng lóe lên.', 2),
 (6, '2022-10-19 08:30:28', '2022-10-19 08:30:28', 'image_1666193428_Zippo Luxury Diamond Design 29671.jpg', 'Zippo Luxury Diamond Design 29671', 16, 3700000, 2, 'Đồng thau nguyên khối', 'Mỹ', 'Zippo Luxury Diamond Design là dòng vỏ dày mạ vàng, được hãng Zippo dùng công nghệ khắc cao cấp 360 độ xung quanh chiếc Zippo để tạo ra một chiếc Zippo cực kỳ độc đáo, bên cạnh đó là một viên đá hình thoi màu đỏ nổi bật trên tone vàng. Hộp giấy Zippo cao cấp đi kèm có thể sử dụng như hộp quà tặng. Điểm đặc biệt của chiếc bật lửa Zippo Luxury Diamond Design là trông giống như một hình dạng kim cương đỏ mờ được đặt vào trong chiếc bật lửa Một miếng chèn mạ vàng khen ngợi và hoàn thiện vẻ ngoài cao cấp và bao bì sang trọng làm nổi bật thiết kế bao bọc. Bật lửa Zippo Luxury Diamond Design dày khoảng 1,5 lần so với các dòng bật lửa zippo thông thường và có đá lửa và bấc cao cấp Zippo chính hãng.', NULL),
 (7, '2022-10-19 08:33:38', '2022-10-19 08:33:38', 'image_1666193618_Zippo Hexagon Design 49021.jpg', 'Zippo Hexagon Design 49021', 16, 1700000, 2, 'Đồng thau nguyên khối', 'Mỹ', 'Zippo Hexagon Design 49021 siêu phẩm của thương hiệu mang đến cho các tín đồ yêu thích bật lửa. Sử dụng chất liệu đồng thau nền mạ Black Ice®. Chắc hẳn bạn sẽ bị lạc trong thiết kế Black Ice® đầy mê hoặc này! Sử dụng quy trình Deep Carve đặc trưng, các nghệ sĩ Zippo đã có thể tạo ra một thiết kế hình lục giác bên trong một thiết kế hình lục giác khác. Đối với dòng sản phẩm Zippo Hexagon Design 49021 làm đốn tim các tín đồ bằng sự tinh tế màu sắc thì đặc biệt Zippo Hexagon Design 49021 có khả năng kháng gió và hoạt động tốt trên mọi điều kiện thời tiết. Với thiết kế vỏ hộp giấy dạng quà tặng sẽ mang đến cho bạn sự lựa chọn tuyệt vời khi sở hữu Zippo Hexagon Design 49021', NULL),
-(8, '2022-10-19 08:37:19', '2022-10-19 08:37:19', 'image_1666193839_Zippo ốp hình ngựa mạ vàng, nền men đỏ ZBT-5-3A.jpg', 'Zippo ốp hình ngựa mạ vàng, nền men đỏ ZBT-5-3A', 16, 2600000, 1, 'Đồng thau nguyên khối', 'Nhật bản', 'Một siêu phẩn thực sự với nghệ thuật đỉnh cao của nghệ nhân làng nghề và ý tưởng chế tác độc đáo từ văn hóa phương Đông bật lửa Zippo xuất Nhật supper cao cấp ZBT-5-3A sẽ là một món đồ mà gã đàn ông nào cũng mong muốn sở hữu. Vẻ quý phái của ZBT-5-3A được hiện hữu ngay từ lớp vỏ ngoài với hình ảnh ngựa lồng cực kỳ mạnh mẽ được ốp trên nền cẩm men đá đỏ rất rất sang trọng, không chỉ đơn thuần thế ngựa ốp và các cạnh của sản phẩm còn được các nghệ nhân Nhật Bản mạ lên một lớp vàng sáng bóng để tăng giá trị đẳng cấp của ZBT-5-3A', NULL),
+(8, '2022-10-19 08:37:19', '2022-11-23 21:47:19', 'image_1666193839_Zippo ốp hình ngựa mạ vàng, nền men đỏ ZBT-5-3A.jpg', 'Zippo ốp hình ngựa mạ vàng, nền men đỏ ZBT-5-3A', 37, 2600000, 1, 'Đồng thau nguyên khối', 'Nhật bản', 'Một siêu phẩn thực sự với nghệ thuật đỉnh cao của nghệ nhân làng nghề và ý tưởng chế tác độc đáo từ văn hóa phương Đông bật lửa Zippo xuất Nhật supper cao cấp ZBT-5-3A sẽ là một món đồ mà gã đàn ông nào cũng mong muốn sở hữu. Vẻ quý phái của ZBT-5-3A được hiện hữu ngay từ lớp vỏ ngoài với hình ảnh ngựa lồng cực kỳ mạnh mẽ được ốp trên nền cẩm men đá đỏ rất rất sang trọng, không chỉ đơn thuần thế ngựa ốp và các cạnh của sản phẩm còn được các nghệ nhân Nhật Bản mạ lên một lớp vàng sáng bóng để tăng giá trị đẳng cấp của ZBT-5-3A', NULL),
 (9, '2022-10-19 08:41:13', '2022-10-19 08:41:13', 'image_1666194073_Zippo Luxury Diamond Design 29671.jpg', 'Zippo Luxury Diamond Design 29671', 16, 3700000, 1, 'Đồng thau nguyên khối', 'Mỹ', 'Zippo Luxury Diamond Design là dòng vỏ dày mạ vàng, được hãng Zippo dùng công nghệ khắc cao cấp 360 độ xung quanh chiếc Zippo để tạo ra một chiếc Zippo cực kỳ độc đáo, bên cạnh đó là một viên đá hình thoi màu đỏ nổi bật trên tone vàng. Hộp giấy Zippo cao cấp đi kèm có thể sử dụng như hộp quà tặng. Điểm đặc biệt của chiếc bật lửa Zippo Luxury Diamond Design là trông giống như một hình dạng kim cương đỏ mờ được đặt vào trong chiếc bật lửa Một miếng chèn mạ vàng khen ngợi và hoàn thiện vẻ ngoài cao cấp và bao bì sang trọng làm nổi bật thiết kế bao bọc. Bật lửa  Zippo Luxury Diamond Design dày khoảng 1,5 lần so với các dòng bật lửa zippo thông thường và có đá lửa và bấc cao cấp Zippo chính hãng.', NULL),
 (10, '2022-10-19 08:44:51', '2022-10-19 08:44:51', 'image_1666194291_Zippo Katamen Ryu Red - ZA-3-35A.jpg', 'Zippo Katamen Ryu Red - ZA-3-35A', 16, 2000000, 1, 'Đồng thau nguyên khối', 'Nhật bản', 'Bật lửa Zippo ASIA là một sản phẩm được hình thành và chế tác trên phôi Zippo được nhập khẩu chính hãng từ Mỹ với chất liệu vỏ đồng thau, ruột thép. Sau đó được thiết kế và trang trí theo nhiều công nghệ khác nhau bởi các nhà chế tác tại các nước Asia như Nhật Bản, Hàn Quốc… Phiên bản với các thiết kế đặc biệt được giới thiệu và chỉ phát hành tại các nước Châu Á. Được đóng gói trong một hộp quà tặng. Để có hiệu suất tối ưu, hãy đổ đầy nhiên liệu bật lửa Zippo. Bật lửa chống gió Zippo chính hãng với tiếng “click” đặc trưng của Zippo. Tất cả các cấu trúc bằng kim loại; thiết kế chống gió hoạt động hầu như ở mọi nơi. Có thể nạp lại cho suốt đời sử dụng; để có hiệu suất tối ưu, chúng tôi khuyên bạn nên sử dụng nhiên liệu, đá lửa và bấc Zippo chính hãng.', NULL),
 (11, '2022-10-19 08:49:55', '2022-10-19 08:49:55', 'image_1666194595_Zippo Bolts Design 29672.jpg', 'Zippo Bolts Design 29672', 16, 2800000, 1, 'Đồng thau nguyên khối', 'Mỹ', 'Bật lửa Zippo Bolts có thiết kế vô cùng đặc biệt thuộc dòng zippo vỏ dày cao cấp dòng tiêu chuẩn 1.5 lần Zippo Bolts Design là dòng  mạ Chrome sáng bóng được hãng Zippo sử dụng công nghệ khắc cao cấp 360 độ xung quanh chiếc Zippo để tạo lên những đường khắc và logo Zippo đầy độc đáo ở 2 mặt, bên cạnh đó là ngọn lửa màu đỏ ở cạnh Zippo. Hộp giấy Zippo cao cấp đi kèm có thể sử dụng như hộp quà tặng. Zippo Zippo Bolts có âm thanh đặc trưng trầm ấm, tiếng đóng nắp mạnh mẽ. Chống gió tốt trong nhiều môi trường. Vỏ Zippo: Dòng vỏ đồng thau dày hơn 1.5 dòng tiêu chuẩn, đầu tròn, mộc đáy lồi. Bản lề 5 chấu. Ruột Zippo: Ruột thép không gỉ tiêu chuẩn với buồng đốt 16 lỗ (8 lỗ mỗi bên). Mộc Đáy Zippo: Mộc đáy có Logo Zippo, kí hiệu và tháng năm được sản xuất. Hộp Đựng Zippo: Hộp đựng cao cấp, hợp đựng màu đỏ, nắp hộp màu đen được trang trí logo Zippo và chữ “z”, trong hộp có 1 giấy hướng dẫn sử dụng, có ghi chính sách bảo hành của Zippo. Sau hộp có dán tem bảo hành của nhà phân phối.', NULL),
 (12, '2022-10-19 09:29:39', '2022-10-19 09:29:39', 'image_1666196979_Zippo High Polish Green Elegant Dragon 49054.jpg', 'Zippo High Polish Green Elegant Dragon 49054', 16, 2800000, 1, 'Đồng thau nguyên khối', 'Mỹ', 'Bật lửa Zippo Bolts có thiết kế vô cùng đặc biệt thuộc dòng zippo vỏ dày cao cấp dòng tiêu chuẩn 1.5 lần Zippo Bolts Design là dòng  mạ Chrome sáng bóng được hãng Zippo sử dụng công nghệ khắc cao cấp 360 độ xung quanh chiếc Zippo để tạo lên những đường khắc và logo Zippo đầy độc đáo ở 2 mặt, bên cạnh đó là ngọn lửa màu đỏ ở cạnh Zippo. Hộp giấy Zippo cao cấp đi kèm có thể sử dụng như hộp quà tặng. Zippo Zippo Bolts có âm thanh đặc trưng trầm ấm, tiếng đóng nắp mạnh mẽ. Chống gió tốt trong nhiều môi trường. Vỏ Zippo: Dòng vỏ đồng thau dày hơn 1.5 dòng tiêu chuẩn, đầu tròn, mộc đáy lồi. Bản lề 5 chấu. Ruột Zippo: Ruột thép không gỉ tiêu chuẩn với buồng đốt 16 lỗ (8 lỗ mỗi bên). Mộc Đáy Zippo: Mộc đáy có Logo Zippo, kí hiệu và tháng năm được sản xuất. Hộp Đựng Zippo: Hộp đựng cao cấp, hợp đựng màu đỏ, nắp hộp màu đen được trang trí logo Zippo và chữ “z”, trong hộp có 1 giấy hướng dẫn sử dụng, có ghi chính sách bảo hành của Zippo. Sau hộp có dán tem bảo hành của nhà phân phối.', NULL),
 (13, '2022-10-19 09:42:19', '2022-11-19 15:44:50', 'image_1666197739_Zippo Classic High Polish Chrome - 250.jpg', 'Zippo Classic High Polish Chrome - 250', 5550008, 650000, 3, 'Đồng thau nguyên khối', 'Mỹ', 'Bật lửa Zippo Classic High Polish Chrome - 250, sử dụng nguyên liệu đồng thau nguyên khối mạ chrome cao cấp, tạo cảm giác sang trọng, khả năng cằm nắm chắc tay. Sản phẩm nhập khẩu từ Mỹ đảm bảo chất lượng. Được thiết kế với nét đặc trưng chính là một sự hoàn thiện hoàn hảo và rực rỡ. Phiên bản High Polish Chrome là một trong những mẫu phổ biến nhất và dần trở thành một dòng sản phẩm chính của Zippo kể từ năm 1938.', NULL),
 (14, '2022-10-19 09:56:47', '2022-11-19 15:44:50', 'image_1666198607_Zippo Brass Venetian Design - 352B.jpg', 'Zippo Brass Venetian Design - 352B', 12, 900000, 3, 'Đồng thau nguyên khối', 'Mỹ', 'Zippo Brass Venetian Design - 352B thuộc dòng bật lửa Zippo đồng vàng hoa văn phong cách Ý, hàng chính hãng Zippo Mỹ, bảo hành trọn đời, bán lẻ giá sỉ. Mẫu sản phẩm được giới thiệu vào năm 1974, mẫu họa tiết hoa văn ngược và vượt thời gian của mẫu bật lửa Venetian tiếp tục trở thành mẫu thiết kế bật lửa thu hút nhất toàn cầu mà Zippo từng ra mắt. Bật lửa Venetian High Polish Brass có bảng tùy chỉnh được đánh bóng cao có thể được khắc chữ cái đầu, một tin nhắn ngắn hoặc một ngày quan trọng làm món quà cho một người nào đó.', 2),
-(15, '2022-10-19 10:03:28', '2022-11-20 10:47:28', 'image_1666199008_Zippo High Polish Solid Brass 254.jpg', 'Zippo High Polish Solid Brass 254', 19, 750000, 3, 'Đồng thau nguyên khối', 'Mỹ', 'Mẫu bật lửa Zippo High Polish Solid Brass 254 với chữ khắc solid brass tuy đơn giản nhưng rất tinh tế  và thu hút được nhiều khách hàng. Tuy là mẫu bật lửa phổ thông nhưng sản phẩm này vẫn được đánh giá rất cao về chất lượng cũng như kiểu dáng sản phẩm.', NULL),
-(16, '2022-10-19 10:12:21', '2022-11-20 10:47:28', 'image_1666199541_Zippo Brushed Brass Vintage with Slashes - 240.jpg', 'Zippo Brushed Brass Vintage with Slashes - 240', 19, 700000, 3, 'Đồng thau nguyên khối', 'Mỹ', 'Zippo Brushed Brass Vintage with Slashes 240 với chất liệu vỏ đồng thau,nền mạ đồng xước ngang với thiết kế tái bản lại những mẫu Zippo sản xuất vào năm 1937. Thiết kế vuông độc đáo là một trong những mẫu được ưa chuộng nhất. Là dòng zippo phổ thông và được nhiều người mua nhất trong năm vừa qua tại zippovn.com. Tuy sản phẩm có giá rẻ nhưng chất liệu và thiết kế của sản phẩm thì cực tốt và chất lượng.', NULL),
-(17, '2022-10-19 10:21:22', '2022-11-19 08:05:48', 'image_1666200082_Zippo Clover High Polish Chrome Design - 24699.jpg', 'Zippo Clover High Polish Chrome Design - 24699', 10, 850000, 3, 'Đồng thau nguyên khối', 'Mỹ', 'Zippo Clover High Polish Chrome Design - 24699 với chất liệu vỏ đồng thau ,nền mạ chrome bóng với thiết kế khắc trang trí, in cỏ 4 lá tượng trưng cho sự may mắn. Thiết kế cỏ bốn lá này được tạo ra bằng cách sử dụng cả hình ảnh màu và phương pháp khắc dấu khắc tự động..', NULL),
-(18, '2022-10-19 10:30:09', '2022-11-19 07:58:36', 'image_1666200609_Zippo Classic Candy Apple Red - 21063.jpg', 'Zippo Classic Candy Apple Red - 21063', 20, 850000, 3, 'Đồng thau nguyên khối', 'Mỹ', 'Zippo Candy Apple Red - 21063 dòng bật lửa zippo classics, với màu sắc nổi bật lớp sơn mờ màu đỏ đậm trên thiết kế Zippo thu hút sự chú ý của người sử dụng. Sử dụng chất liệu đồng thau để làm vỏ cho chiếc bật lửa Zippo, nhằm đem đến sử trải nghiệm vô cùng đặt biệt Zippo đã mang đến công nghệ sơ tĩnh điện độc đáo và phủ bóng làm cho chiếc Zippo thêm phầm sang trọng và độc đáo.', NULL);
+(15, '2022-10-19 10:03:28', '2022-11-24 09:12:06', 'image_1666199008_Zippo High Polish Solid Brass 254.jpg', 'Zippo High Polish Solid Brass 254', 18, 750000, 3, 'Đồng thau nguyên khối', 'Mỹ', 'Mẫu bật lửa Zippo High Polish Solid Brass 254 với chữ khắc solid brass tuy đơn giản nhưng rất tinh tế  và thu hút được nhiều khách hàng. Tuy là mẫu bật lửa phổ thông nhưng sản phẩm này vẫn được đánh giá rất cao về chất lượng cũng như kiểu dáng sản phẩm.', NULL),
+(16, '2022-10-19 10:12:21', '2022-11-24 20:03:23', 'image_1666199541_Zippo Brushed Brass Vintage with Slashes - 240.jpg', 'Zippo Brushed Brass Vintage with Slashes - 240', 4, 700000, 3, 'Đồng thau nguyên khối', 'Mỹ', 'Zippo Brushed Brass Vintage with Slashes 240 với chất liệu vỏ đồng thau,nền mạ đồng xước ngang với thiết kế tái bản lại những mẫu Zippo sản xuất vào năm 1937. Thiết kế vuông độc đáo là một trong những mẫu được ưa chuộng nhất. Là dòng zippo phổ thông và được nhiều người mua nhất trong năm vừa qua tại zippovn.com. Tuy sản phẩm có giá rẻ nhưng chất liệu và thiết kế của sản phẩm thì cực tốt và chất lượng.', NULL),
+(17, '2022-10-19 10:21:22', '2022-11-24 20:03:23', 'image_1666200082_Zippo Clover High Polish Chrome Design - 24699.jpg', 'Zippo Clover High Polish Chrome Design - 24699', 6, 850000, 3, 'Đồng thau nguyên khối', 'Mỹ', 'Zippo Clover High Polish Chrome Design - 24699 với chất liệu vỏ đồng thau ,nền mạ chrome bóng với thiết kế khắc trang trí, in cỏ 4 lá tượng trưng cho sự may mắn. Thiết kế cỏ bốn lá này được tạo ra bằng cách sử dụng cả hình ảnh màu và phương pháp khắc dấu khắc tự động..', NULL),
+(18, '2022-10-19 10:30:09', '2022-11-24 00:48:48', 'image_1666200609_Zippo Classic Candy Apple Red - 21063.jpg', 'Zippo Classic Candy Apple Red - 21063', 23, 850000, 3, 'Đồng thau nguyên khối', 'Mỹ', 'Zippo Candy Apple Red - 21063 dòng bật lửa zippo classics, với màu sắc nổi bật lớp sơn mờ màu đỏ đậm trên thiết kế Zippo thu hút sự chú ý của người sử dụng. Sử dụng chất liệu đồng thau để làm vỏ cho chiếc bật lửa Zippo, nhằm đem đến sử trải nghiệm vô cùng đặt biệt Zippo đã mang đến công nghệ sơ tĩnh điện độc đáo và phủ bóng làm cho chiếc Zippo thêm phầm sang trọng và độc đáo.', NULL),
+(37, '2022-10-19 10:30:09', '2022-11-24 09:21:18', 'image_1669229571.jpg', 'Zippo Armor Flag Armor 28974', -4, 1700000, 2, 'Đồng thau nguyên khối', 'Mỹ', 'Zippo Armor Flag Armor 28974 – giáp bằng bạc giáp cổ này được khắc sâu bằng cờ Mỹ. Mô hình độc đáo này có thiết kế đẹp với kết cấu khổng lồ.', 11);
 
 -- --------------------------------------------------------
 
@@ -482,10 +537,16 @@ CREATE TABLE `sales` (
 
 INSERT INTO `sales` (`id`, `sale_name`, `percent`, `end_date`) VALUES
 (2, 'summer_discount', 30, NULL),
-(3, 'dfgrthre', 43, NULL),
-(4, 'dfgrthre', 43, NULL),
-(5, '2wed2we', 341, NULL),
-(6, 'winter_discount', 35, '2022-11-30');
+(3, 'spring_discount', 40, NULL),
+(4, 'fall_discount', 33, NULL),
+(5, 'valentine_discount', 15, NULL),
+(6, 'winter_discount', 35, '2022-11-30'),
+(11, 'no_discount', 0, NULL),
+(12, 'independence_day_discount', 25, NULL),
+(13, 'chirstmas_discount', 35, NULL),
+(14, 'special_discount', 45, NULL),
+(15, 'thanksgiving_discount', 34, NULL),
+(16, 'easter_discount', 40, NULL);
 
 -- --------------------------------------------------------
 
@@ -510,11 +571,12 @@ INSERT INTO `suppliers` (`id`, `supplier_name`, `address`, `phone_number`) VALUE
 (3, 'Công ty TNHH Trấu việt ', 'Thành phố Hồ Chí Minh', '0934553821'),
 (4, 'Công ty cổ phần Ngọc Diệp ', 'Hưng Yên', '0901929344'),
 (6, 'Công Ty TNHH Vĩnh Tiến', 'Tỉnh Điện Biên', '0932134435'),
-(7, 'Công Ty TNHH Bệnh', 'Tỉnh Bình Dương', '0348223383'),
-(8, 'Công Ty TNHH Bệnh', 'Tỉnh Bình Dương', '0348223383'),
-(9, 'Công Ty TNHH Bệnh', 'Tỉnh Bình Dương', '0348223383'),
-(10, 'Công Ty TNHH Bệnh', 'Tỉnh Bình Dương', '0348223383'),
-(11, 'Công Ty TNHH Bệnh', 'Tỉnh Bình Dương', '0348223383');
+(7, 'Công Ty TNHH A', 'Tỉnh Bình Dương', '0348249283'),
+(8, 'Công Ty TNHH B', 'Tỉnh Bình Dương', '0344567383'),
+(9, 'Công Ty TNHH C', 'Tỉnh Bình Dương', '0348223759'),
+(10, 'Công Ty TNHH D', 'Tỉnh Bình Dương', '0348222134'),
+(11, 'Công Ty TNHH E', 'Tỉnh Bình Dương', '0348245890'),
+(12, 'Công Ty TNHH Thiên Long', 'Thành phố Hồ Chí Minh', '0224367909');
 
 -- --------------------------------------------------------
 
@@ -540,9 +602,11 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `gender`, `phonenumber`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-(37, 'Nguyễn Vĩnh Tiến', 'Nam', '0932430071', 'tien23851@gmail.com', '2022-11-17 08:27:02', 'tien1234', 'cCOjX6SRPiURdXBrkuVZY9TIlrSgw93ZRP1sV3f7', '2022-10-29 12:39:07', '2022-11-23 09:17:24'),
+(37, 'Nguyễn Vĩnh Tiến', 'Nam', '0932430071', 'tien23851@gmail.com', '2022-11-17 08:27:02', 'vinhtien1234', '', '2022-10-29 12:39:07', '2022-11-24 13:04:14'),
 (39, 'Lê Ngọc Toàn', 'Nam', '0544668876', 'nguyenvinhtien431@gmail.com', NULL, 'toan1234', 'SB6M9CK73d8vO9AFPvbU3y9rEJ3S243M67sEuRF6', '2022-11-14 10:59:01', '2022-11-14 10:59:01'),
-(40, 'Nguyễn Văn Tiến', 'Nam', '0937443382', 'tienn3605@gmail.com', NULL, 'tien1234', 'cCOjX6SRPiURdXBrkuVZY9TIlrSgw93ZRP1sV3f7', '2022-11-23 09:18:48', '2022-11-23 09:18:48');
+(44, 'Nguyen VInh TIen', 'Nam', '0432567896', 'tienn3605@gmail.com', '2022-11-24 00:42:06', 'tien1234', '', '2022-11-24 00:37:53', '2022-11-24 00:42:23'),
+(45, 'Lê Văn Tiến', 'Nam', '0942738492', 'starbutterfly652@gmail.com', '2022-11-24 00:43:48', 'tien1234', '', '2022-11-24 00:43:27', '2022-11-24 00:49:04'),
+(46, 'tien23851@gmail.com', 'Nam', '0224223435', 'tienn3405@gmail.com', NULL, 'aaaaaa11', 'PDwaAyFqg1SwzIJrBeUy2d4hFu7d7wq1JveWNyv1', '2022-11-24 01:22:54', '2022-11-24 01:22:54');
 
 --
 -- Indexes for dumped tables
@@ -655,25 +719,25 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 
 --
 -- AUTO_INCREMENT for table `employees`
 --
 ALTER TABLE `employees`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `groups`
 --
 ALTER TABLE `groups`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `import_slips`
 --
 ALTER TABLE `import_slips`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `migrations`
@@ -685,43 +749,43 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
 
 --
 -- AUTO_INCREMENT for table `password_resets`
 --
 ALTER TABLE `password_resets`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `personal_access_tokens`
 --
 ALTER TABLE `personal_access_tokens`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=91;
 
 --
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT for table `sales`
 --
 ALTER TABLE `sales`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `suppliers`
 --
 ALTER TABLE `suppliers`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
 
 --
 -- Constraints for dumped tables

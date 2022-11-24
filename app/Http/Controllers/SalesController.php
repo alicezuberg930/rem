@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 
 class SalesController extends Controller
 {
+    public function getAllSales()
+    {
+        return sales::all();
+    }
+
     public static function getSales($current_page)
     {
         return sales::take(10)->skip(($current_page - 1) * 10)->get();

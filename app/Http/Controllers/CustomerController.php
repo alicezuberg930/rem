@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 
 class CustomerController extends Controller
 {
+    public function getAllCustomers()
+    {
+        return User::all();
+    }
+
     public static function getCustomer($current_page)
     {
         return User::take(5)->skip(($current_page - 1) * 5)->get();

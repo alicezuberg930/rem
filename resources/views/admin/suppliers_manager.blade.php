@@ -18,6 +18,9 @@
                             <button type="submit" href="/admin/manage_category/add" class="btn btn-primary btn-sm"
                                 data-bs-toggle="modal" data-bs-target="#add-supplier">Thêm nhà cung cấp</button>
                         </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-info btn-sm" id="export">Xuất Excel</button>
+                        </div>
                     </div>
                     <div class="col-md-auto">
                         <div class="input-group">
@@ -249,7 +252,6 @@
                 })
             }
         })
-
         $(document).on('click', '.page-item', function() {
             let page = $(this).text()
             // window.history.pushState("Update URL", "New Page", `${pathname}?page=${page}`)
@@ -258,6 +260,15 @@
                 method: "get",
                 success: function(result) {
                     $("#supplier-table").html(result)
+                }
+            })
+        })
+        $("#export").on('click', () => {
+            $.ajax({
+                url: "/admin/manage_suppliers/export",
+                method: 'get',
+                success: function(result) {
+                    JSONToCSVConvertor(result, "suppliers_sheet", true)
                 }
             })
         })

@@ -18,6 +18,9 @@
                             <button type="submit" href="/admin/manage_category/add" class="btn btn-primary btn-sm"
                                 data-bs-toggle="modal" data-bs-target="#add-employee">Thêm nhân viên</button>
                         </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-info btn-sm" id="export">Xuất Excel</button>
+                        </div>
                     </div>
                     <div class="col-md-auto">
                         <div class="input-group">
@@ -295,6 +298,15 @@
                 success: function(result) {
                     console.log(result);
                     $("#employee-table").html(result)
+                }
+            })
+        })
+        $("#export").on('click', () => {
+            $.ajax({
+                url: "/admin/manage_employees/export",
+                method: 'get',
+                success: function(result) {
+                    JSONToCSVConvertor(result, "employees_sheet", true)
                 }
             })
         })

@@ -10,6 +10,11 @@ use Illuminate\Http\Request;
 
 class ImportSlipController extends Controller
 {
+    public function getAllImportSlips()
+    {
+        return import_slip::join('employees', 'employee_id', '=', 'employees.id')->join('suppliers', 'supplier_id', '=', 'suppliers.id')->get();
+    }
+
     public function addImportSlip(Request $request)
     {
         $check = 1;

@@ -11,12 +11,15 @@
                         <div class="col-md-auto">
                             <input type="radio" class="btn-check" autocomplete="off" value="Tổng đơn">
                             <label class="btn btn-outline-primary btn-sm" for="btnradio1">Tổng danh mục
-                                <span class="badge bg-danger" id="badge_tongdon">{{ $total }}</span>
+                                <span class="badge bg-danger">{{ $total }}</span>
                             </label>
                         </div>
                         <div class="col-md-auto">
-                            <button type="submit" href="/admin/manage_category/add" class="btn btn-primary btn-sm"
-                                data-bs-toggle="modal" data-bs-target="#add-category">Thêm danh mục</button>
+                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                data-bs-target="#add-category">Thêm danh mục</button>
+                        </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-info btn-sm" id="export">Xuất Excel</button>
                         </div>
                     </div>
                     <div class="col-md-auto">
@@ -208,6 +211,16 @@
                     $("#category-table").html(result)
                 }
             })
+        })
+        $("#export").on('click', () => {
+            $.ajax({
+                url: "/admin/manage_category/export",
+                method: 'get',
+                success: function(result) {
+                    JSONToCSVConvertor(result, "category_sheet", true)
+                }
+            })
+
         })
     </script>
 @endsection

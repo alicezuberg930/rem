@@ -14,6 +14,9 @@
                                 <span class="badge bg-danger" id="badge_tongdon">{{ $total }}</span>
                             </label>
                         </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-info btn-sm" id="export">Xuất Excel</button>
+                        </div>
                     </div>
                     <div class="col-md-auto">
                         <div class="input-group">
@@ -55,6 +58,15 @@
                 success: function(result) {
                     console.log(result);
                     $("#category-table").html(result)
+                }
+            })
+        })
+        $("#export").on('click', () => {
+            $.ajax({
+                url: "/admin/manage_customers/export",
+                method: 'get',
+                success: function(result) {
+                    JSONToCSVConvertor(result, "customers_sheet", true)
                 }
             })
         })

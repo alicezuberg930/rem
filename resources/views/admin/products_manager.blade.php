@@ -18,6 +18,9 @@
                             <button data-page="{{ $currentpage }}" class="btn btn-primary btn-sm" data-bs-toggle="modal"
                                 data-bs-target="#add-product">Thêm sản phẩm </button>
                         </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-info btn-sm" id="export">Xuất Excel</button>
+                        </div>
                     </div>
                     <div class="col-md-auto">
                         <div class="input-group">
@@ -398,6 +401,16 @@
                     $("#product-table").html(result)
                 }
             })
+        })
+        $("#export").on('click', () => {
+            $.ajax({
+                url: "/admin/manage_products/export",
+                method: 'get',
+                success: function(result) {
+                    JSONToCSVConvertor(result, "products_sheet", true)
+                }
+            })
+
         })
     </script>
 @endsection

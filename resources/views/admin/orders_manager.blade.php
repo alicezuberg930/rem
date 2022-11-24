@@ -20,7 +20,6 @@
                 }
             })
         })
-
         $(document).on('click', '.checked-btn', function() {
             $.ajax({
                 url: "/admin/manage_orders/update_order_status",
@@ -62,6 +61,15 @@
                 method: "get",
                 success: function(result) {
                     $("#order-table").html(result)
+                }
+            })
+        })
+        $("#export").on('click', () => {
+            $.ajax({
+                url: "/admin/manage_orders/export",
+                method: 'get',
+                success: function(result) {
+                    JSONToCSVConvertor(result, "orders_sheet", true)
                 }
             })
         })

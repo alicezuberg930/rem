@@ -7,7 +7,7 @@
 </head>
 
 <body class="bg-light">
-    <div class="container m-auto mt-2">
+    <div class="container m-auto">
         <div class="card p-4 shadow container">
             <div class="header clearfix">
                 <h2 class="text-muted">Chi tiết phiếu nhập</h2>
@@ -36,9 +36,6 @@
                 <div class="col-md-6">
                     <div class="text-wrap form-control-plaintext">{{ $ImportSlipDetails->import_quantity }}</div>
                 </div>
-            </div>
-            <div class="header clearfix">
-                <h2 class="text-muted">Thông tin sản phẩm</h2>
             </div>
             <div class="mb-2 row">
                 <label for="staticEmail" class="col-md-6 col-form-label fw-semibold">Ảnh sản phẩm:</label>
