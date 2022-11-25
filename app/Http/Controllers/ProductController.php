@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
-
     public function getHomePageProducts()
     {
         $Products = product::leftjoin('sales', 'products.discount', '=', 'sales.id')
@@ -121,9 +120,9 @@ class ProductController extends Controller
 
     public function getProductDetails($id)
     {
-        return product::where('products.id', '=', $id)
-            ->leftjoin('sales', 'products.discount', '=', 'sales.id')
-            ->join('categories', 'categories.id', '=', 'products.category')
+        return product::leftjoin('sales', 'products.discount', '=', 'sales.id')
+            ->join('categories', 'products.category', '=', 'categories.id')
+            ->where('products.id', '=', $id)
             ->get(['*', 'products.id as ProductsID', 'categories.id as categoryID', 'sales.id as salesID'])[0];
     }
 

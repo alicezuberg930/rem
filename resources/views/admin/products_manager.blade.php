@@ -317,7 +317,7 @@
                 method: "get",
                 success: function(result) {
                     let img = "{{ url('/image') }}"
-                    $("#product-id").val(result.id)
+                    $("#product-id").val(result.ProductsID)
                     $("#edit-product-name").val(result.product_name)
                     $("#edit-product-price").val(result.price)
                     $("#edit-product-category").val(result.categoryID)
@@ -346,7 +346,6 @@
                     page: current_page
                 },
                 success: function(result) {
-                    console.log(result);
                     $("#product-table").html(result.response)
                     $('.toast').toast('show')
                     $('.toast-body').html(result.message)
