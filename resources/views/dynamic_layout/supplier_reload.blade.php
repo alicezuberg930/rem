@@ -27,8 +27,8 @@
                     <td scope="row">{{ $Supplier->phone_number }}
                     </td>
                     <td>
-                        <button type="button" class="btn edit-btn text-warning" data-bs-toggle="modal"
-                            data-bs-target="#edit-supplier" data-id="{{ $Supplier->id }}" data-page="{{ $currentpage }}">
+                        <button type="button" class="btn edit-btn text-warning" data-toggle="modal"
+                            data-target="#edit-supplier" data-id="{{ $Supplier->id }}" data-page="{{ $currentpage }}">
                             <i class="fa-solid fa-pen"></i>
                         </button>
                     </td>

@@ -32,7 +32,9 @@
                             <td>
                                 <div class="d-flex justify-content-center align-items-center">
                                     <i class="fa-solid fa-circle-minus minus-btn" data-id="{{ $cart['id'] }}"></i>
-                                    <span class="p-2">{{ $cart['quantity'] }}</span>
+                                    <input type="number" class="cart-quantity" data-id="{{ $cart['id'] }}"
+                                        style="text-align: center; width: 2rem; border: none; outline: none;"
+                                        value="{{ $cart['quantity'] }}">
                                     <i class="fa-solid fa-circle-plus plus-btn" data-id="{{ $cart['id'] }}"></i>
                                 </div>
                             </td>

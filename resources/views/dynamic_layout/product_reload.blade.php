@@ -35,8 +35,8 @@
                     <td>{{ $Product->material }}</td>
                     <td>{{ $Product->origin }}</td>
                     <td>
-                        <button type="button" class="btn edit-btn text-warning" data-bs-toggle="modal"
-                            data-bs-target="#edit-product" data-page="{{ $currentpage }}"
+                        <button type="button" class="btn edit-btn text-warning" data-toggle="modal"
+                            data-target="#edit-product" data-page="{{ $currentpage }}"
                             data-id="{{ $Product->id }}">
                             <i class="fa-solid fa-pen"></i>
                         </button>

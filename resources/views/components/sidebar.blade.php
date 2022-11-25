@@ -1,5 +1,8 @@
 <div class="col-md-3 col-lg-2 d-flex flex-column p-4 rounded-0" style="background-color: #251e3e;">
-    <span class="fs-4 fw-bold text-white text-align-center">Trang quản lý</span>
+    <div class="col-md-12 d-flex align-items-center">
+        <img src="{{ url('black-fire-logo.png') }}" width="50" height="50" class="d-inline-block">
+        <span class="fs-5 fw-bold text-white text-align-center">Trang quản lý</span>
+    </div>
     <hr class="bg-danger border-top border-3 border-white">
     <ul class="nav nav-pills flex-column">
         <li class="nav-item">
@@ -56,5 +59,11 @@
                 <i class="fa-solid fa-file-import"></i> Phiếu nhập
             </a>
         </li>
+        {{-- <li>
+            <a class="nav-link @php echo request()->route()->uri=='admin/manage_shippings' ? 'link-light border border-white text-info':'link-light' @endphp"
+                href="/admin/manage_shippings">
+                <i class="fa-solid fa-dolly"></i> Giao hàng
+            </a>
+        </li> --}}
     </ul>
 </div>

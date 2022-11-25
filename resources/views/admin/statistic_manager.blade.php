@@ -15,7 +15,7 @@
                             <select class="form-control product-stats">
                                 <option selected hidden>Lựa chọn</option>
                                 <option value="top-5-best">Top 5 sản phẩm bán nhiều nhất</option>
-                                <option value="top-5-lowest">Top 5 sản phẩm tồn kho</option>
+                                <option value="top-5-lowest">Các sản phẩm chưa bán được</option>
                                 <option value="top-5-highest-gross">Top 5 sản phẩm bán lời nhất</option>
                             </select>
                         </div>
@@ -64,7 +64,9 @@
     <script src="{{ url('/chart.js/dist/chart.min.js') }}"></script>
     <script>
         let myChart
-        let months = []
+        let months = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6',
+            'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'
+        ]
         let income = []
         let order = []
         let product_name = []
@@ -78,13 +80,11 @@
                 data: {
                     year: $(this).val()
                 },
-                success: function(result) {
-                    for (var i in result) {
-                        months.push(i)
+                success: function(result) { console.log(result);
+                    for (let i = 0; i < result.length; i++) {
                         income.push(result[i].total)
                     }
                     createChart(months, 'Doanh Thu', income)
-                    months = []
                     income = []
                 }
             })
@@ -100,12 +100,10 @@
                     year: $(this).val()
                 },
                 success: function(result) {
-                    for (var i in result) {
-                        months.push(i)
-                        order.push(result[i].count)
+                    for (let i = 0; i < result.length; i++) {
+                        order.push(result[i].receipts)
                     }
                     createChart(months, 'Số đơn', order)
-                    months = []
                     order = []
                 }
             })

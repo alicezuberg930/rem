@@ -26,8 +26,8 @@
                         {{ $Category->category_description }}
                     </td>
                     <td>
-                        <button type="button" class="btn edit-btn text-warning" data-bs-toggle="modal"
-                            data-bs-target="#edit-category" data-id="{{ $Category->id }}">
+                        <button type="button" class="btn edit-btn text-warning" data-toggle="modal"
+                            data-target="#edit-category" data-id="{{ $Category->id }}">
                             <i class="fa-solid fa-pen"></i>
                         </button>
                     </td>

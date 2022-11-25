@@ -15,6 +15,7 @@ use App\Http\Controllers\Authentication;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\ImportSlipController;
+use App\Http\Controllers\ShippingController;
 use App\Http\Controllers\StatisticController;
 use App\Http\Controllers\SupplierController;
 use App\Models\User;
@@ -77,6 +78,7 @@ Route::get('/add_cart', [CartController::class, 'addCart']);
 Route::get('/remove_cart', [CartController::class, 'removeCart']);
 Route::get('/increase_incart', [CartController::class, 'increaseIncart']);
 Route::get('/decrease_incart', [CartController::class, 'decreaseIncart']);
+Route::get('/set_quantity', [CartController::class, 'setQuantity']);
 
 // Giao diện trang chi tiết sản phẩm
 Route::get('/product_details/{id}', [ProductController::class, 'ProductDetailsPage']);
@@ -117,8 +119,8 @@ Route::get('/user/manage_orders/status/{current_page}/{type}/{user_id}', [Orders
 Route::get('/user/manage_orders/order_details/{order_id}', [OrdersController::class, 'getOrderDetails']);
 
 //Quản lý thống kê
-Route::get('/admin/manage_statistic/annual_income', [StatisticController::class, 'getAnnualIncome']);
-Route::get('/admin/manage_statistic/annual_orders', [StatisticController::class, 'getAnnualOrders']);
+Route::get('/admin/manage_statistic/annual_income', [StatisticController::class, 'getAnnualStats']);
+Route::get('/admin/manage_statistic/annual_orders', [StatisticController::class, 'getAnnualStats']);
 Route::get('/admin/manage_statistic/product_statistic', [StatisticController::class, 'getHighestSoldProduct']);
 
 //Quản lý sản phẩm
@@ -194,3 +196,6 @@ Route::get('/admin/manage_import_slips/search', [ImportSlipController::class, 's
 Route::get('/admin/manage_import_slips/paginate/{current_page}', [ImportSlipController::class, 'importSlipReload']);
 Route::get('/admin/import_slip_details/{id}', [ImportSlipController::class, 'importSlipDetailPage']);
 Route::get('/admin/manage_import_slips/export', [ImportSlipController::class, 'getAllImportSlips']);
+
+// Quản lý giao hàng
+Route::get('/admin/manage_shippings', [ShippingController::class, 'manageOrderPage']);

@@ -8,28 +8,22 @@ use Illuminate\Support\Facades\DB;
 
 class StatisticController extends Controller
 {
-  public function getAnnualIncome(Request $request)
+  public function getAnnualStats(Request $request)
   {
-    $data = [];
-    if ($request->input('year') != '') {
+    $data = array();
+    if ($request->query('year')) {
       for ($i = 1; $i <= 12; $i++) {
-        $orders = orders::whereYear('order_date', $request->input('year'))->where('status', 1)->whereMonth('order_date', $i);
-        $data['Tháng ' . $i]['total'] = $orders->sum('total_price');
+        $order = orders::whereYear('order_date', $request->year)->where('status', 1)->whereMonth('order_date', $i);
+        array_push(
+          $data,
+          [
+            "receipts" => $order->count(),
+            "total" => $order->sum('total_price')
+          ]
+        );
       }
-      return ($data);
     }
-  }
-
-  public function getAnnualOrders(Request $request)
-  {
-    $data = [];
-    if ($request->input('year') != '') {
-      for ($i = 1; $i <= 12; $i++) {
-        $orders = orders::whereYear('order_date', $request->input('year'))->where('status', 1)->whereMonth('order_date', $i);
-        $data['Tháng ' . $i]['count'] = $orders->count();
-      }
-      return ($data);
-    }
+    return response()->json($data, 200);
   }
 
   public function getHighestSoldProduct(Request $request)
@@ -63,5 +57,5 @@ class StatisticController extends Controller
         ->get();
     }
     return $sales;
-  } 
+  }
 }

@@ -47,15 +47,8 @@
 <nav aria-label="Page navigation example" class="col-md-12 my-3">
     <ul class="pagination pagination-sm justify-content-end" id="phantrang">
         <?php $total = 0;
-        if (session()->get('type') == -1) {
-            $total = $Quantity['Total'];
-        } elseif (session()->get('type') == 0) {
-            $total = $Quantity['Waiting'];
-        } elseif (session()->get('type') == 1) {
-            $total = $Quantity['Approved'];
-        } else {
-            $total = $Quantity['Canceled'];
-        } ?>
+        $total = $Quantity['Approved'];
+        ?>
         @for ($i = 0; $i < ceil($total / 10); $i++)
             @if ($i == $currentpage - 1)
                 <li class="page-item"><a class="page-link active">{{ $i + 1 }}</a></li>

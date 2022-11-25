@@ -46,6 +46,20 @@ class CartController extends Controller
         return response()->json(['message' => "Đã thêm vào giỏ hàng", 'status' => 1, 'count' => count(session()->get('cart'))]);
     }
 
+    public function setQuantity(Request $request)
+    {
+        $cities = Http::get("https://api.mysupership.vn/v1/partner/areas/province");
+        $id = $request->input('id');
+        $cart = session('cart');
+        if ($request->input('quantity') < product::where('id', $id)->first()->amount) {
+            $cart[$id]['quantity'] = $request->input('quantity');
+            session()->put('cart', $cart);
+            session()->save();
+            return response()->json(['status' => 1, 'response' => view('dynamic_layout.cart_reload', ['cities' => $cities])->render()]);
+        } else
+            return response()->json(['message' => "Vượt số lượng trong kho", 'status' => 0]);
+    }
+
     public function removeCart(Request $request)
     {
         $cities = Http::get("https://api.mysupership.vn/v1/partner/areas/province");

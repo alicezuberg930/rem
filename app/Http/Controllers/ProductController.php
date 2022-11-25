@@ -53,7 +53,7 @@ class ProductController extends Controller
     public function addProduct(Request $request)
     {
         $response = product::create($request->all());
-        if (!$response)
+        if ($response)
             return response()->json(['message' => 'Thêm sản phẩm thất bại', 'status' => 0]);
         else
             return response()->json(['message' => 'Thêm sản phẩm thành công', 'status' => 1, 'response' => $this->productReload($request->input('page'))]);
@@ -62,7 +62,7 @@ class ProductController extends Controller
     public function editProduct(Request $request)
     {
         $product = product::findOrfail($request->input('id'))->update($request->all());
-        if ($product > 0)
+        if ($product)
             return response()->json(['message' => 'Cập nhật sản phẩm thành công', 'status' => 1, 'response' => $this->productReload($request->input('page'))]);
         else
             return response()->json(['message' => 'Cập nhật sản phẩm thất bại', 'status' => 0]);
@@ -71,7 +71,7 @@ class ProductController extends Controller
     public function deleteProduct(Request $request)
     {
         $delete = product::find($request->input('id'))->delete();
-        if ($delete > 0)
+        if ($delete)
             return response()->json(['response' => $this->productReload($request->input('page')), 'message' => 'Xóa sản phẩm thành công', 'status' => 1]);
         else
             return response()->json(['message' => 'Xóa sản phẩm thất bại', 'status' => 0]);

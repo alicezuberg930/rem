@@ -16,7 +16,7 @@
                         </div>
                         <div class="col-md-auto">
                             <button type="submit" href="/admin/manage_category/add" class="btn btn-primary btn-sm"
-                                data-bs-toggle="modal" data-bs-target="#add-modal">Thêm khuyến mãi</button>
+                                data-toggle="modal" data-target="#add-modal">Thêm khuyến mãi</button>
                         </div>
                         <div class="col-md-auto">
                             <button class="btn btn-info btn-sm" id="export">Xuất Excel</button>
@@ -42,7 +42,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="staticBackdropLabel2">Thêm khuyến mãi</h5>
-                    <button type="lbutton" class="btn-close" data-bs-dismiss="modal" aria-labe="Close">
+                    <button type="lbutton" class="btn-close" data-dismiss="modal" aria-labe="Close">
                     </button>
                 </div>
                 <div class="modal-body">
@@ -75,8 +75,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Thoát</button>
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="add-btn">Thêm</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Thoát</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="add-btn">Thêm</button>
                 </div>
             </div>
         </div>
@@ -88,7 +88,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="staticBackdropLabel">Sửa khuyến mãi</h5>
-                    <button type="lbutton" class="btn-close" data-bs-dismiss="modal" aria-labe="Close">
+                    <button type="lbutton" class="btn-close" data-dismiss="modal" aria-labe="Close">
                     </button>
                 </div>
                 <div class="modal-body">
@@ -129,8 +129,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Thoát</button>
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="edit-btn">Sửa</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Thoát</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="edit-btn">Sửa</button>
                 </div>
             </div>
         </div>

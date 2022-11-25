@@ -30,8 +30,8 @@
                     <td scope="row">{{ $Employee->gender }}</td>
                     <td scope="row">{{ $Employee->role_name }}</td>
                     <td>
-                        <button type="button" class="btn edit-btn text-warning" data-bs-toggle="modal"
-                            data-bs-target="#edit-employee" data-id="{{ $Employee->eid }}">
+                        <button type="button" class="btn edit-btn text-warning" data-toggle="modal"
+                            data-target="#edit-employee" data-id="{{ $Employee->eid }}">
                             <i class="fa-solid fa-pen"></i>
                         </button>
                     </td>
