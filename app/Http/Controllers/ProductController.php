@@ -10,6 +10,36 @@ use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
+    public function addProduct(Request $request)
+    {
+        try {
+            product::create($request->all());
+            return response()->json(['message' => 'Thêm sản phẩm thành công', 'status' => 1, 'response' => $this->productReload($request->input('page'))]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Thêm sản phẩm thất bại', 'status' => 0]);
+        }
+    }
+
+    public function editProduct(Request $request)
+    {
+        try {
+            product::findOrfail($request->input('id'))->update($request->all());
+            return response()->json(['message' => 'Cập nhật sản phẩm thành công', 'status' => 1, 'response' => $this->productReload($request->input('page'))]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Cập nhật sản phẩm thất bại', 'status' => 0]);
+        }
+    }
+
+    public function deleteProduct(Request $request)
+    {
+        try {
+            product::find($request->input('id'))->delete();
+            return response()->json(['response' => $this->productReload($request->input('page')), 'message' => 'Xóa sản phẩm thành công', 'status' => 1]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Xóa sản phẩm thất bại', 'status' => 0]);
+        }
+    }
+
     public function getHomePageProducts()
     {
         $Products = product::leftjoin('sales', 'products.discount', '=', 'sales.id')
@@ -47,33 +77,6 @@ class ProductController extends Controller
         $generatedImageName = 'image_' . time() . '.' . $request->image->extension();
         $request->image->move(public_path('/image'), $generatedImageName);
         return url('/image') . '/' . $generatedImageName;
-    }
-
-    public function addProduct(Request $request)
-    {
-        $response = product::create($request->all());
-        if ($response)
-            return response()->json(['message' => 'Thêm sản phẩm thất bại', 'status' => 0]);
-        else
-            return response()->json(['message' => 'Thêm sản phẩm thành công', 'status' => 1, 'response' => $this->productReload($request->input('page'))]);
-    }
-
-    public function editProduct(Request $request)
-    {
-        $product = product::findOrfail($request->input('id'))->update($request->all());
-        if ($product)
-            return response()->json(['message' => 'Cập nhật sản phẩm thành công', 'status' => 1, 'response' => $this->productReload($request->input('page'))]);
-        else
-            return response()->json(['message' => 'Cập nhật sản phẩm thất bại', 'status' => 0]);
-    }
-
-    public function deleteProduct(Request $request)
-    {
-        $delete = product::find($request->input('id'))->delete();
-        if ($delete)
-            return response()->json(['response' => $this->productReload($request->input('page')), 'message' => 'Xóa sản phẩm thành công', 'status' => 1]);
-        else
-            return response()->json(['message' => 'Xóa sản phẩm thất bại', 'status' => 0]);
     }
 
     public static function getProducts($current_page)

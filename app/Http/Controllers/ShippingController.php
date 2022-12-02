@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\orders;
+use Illuminate\Http\Request;
 
 class ShippingController extends Controller
 {
-    public static function getOrderQuantity()
+    public static function getShipperOrderQuantity()
     {
         $CountArray = array();
         $CountArray["Approved"] = orders::where('status', '=', 1)->count();
@@ -14,24 +15,39 @@ class ShippingController extends Controller
         $CountArray["Delivered"] = orders::where("status", '=', 4)->count();
         return $CountArray;
     }
-    public function manageOrderPage()
+
+    public function manageShippingPage()
     {
-        $authorize = AuthController::tokenCan("orders:manage");
-        $type = -1;
-        if (session()->has('search')) session()->forget("search");
-        $Orders = $this->getOrder(1, $type, -1);
-        return view('admin.shippings_manager', ['authorize' => $authorize, 'Orders' => $Orders, 'currentpage' => 1, "Quantity" => $this->getOrderQuantity(-1)]);
+        $authorize = AuthController::tokenCan("shippings:manage");
+        session()->put('type', 1);
+        $Orders = $this->getShipperOrder(1, 1);
+        return view('admin.shippings_manager', ['authorize' => $authorize, 'Orders' => $Orders, 'currentpage' => 1, "Quantity" => $this->getShipperOrderQuantity()]);
     }
-    public static function getOrder($current_page, $type, $user_id)
+
+    public static function getShipperOrder($current_page, $type)
     {
-        $orders = null;
-        if ($type != -1)
-            $orders = orders::where('status', '=', $type)->take(10)->skip(($current_page - 1) * 5);
-        else
-            $orders = orders::take(10)->skip(($current_page - 1) * 10);
-        if ($user_id != -1)
-            $orders = $orders->where('user_id', '=', $user_id);
-        return $orders->get();
+        return orders::where('status', '=', $type)->take(10)->skip(($current_page - 1) * 10)->get();
     }
-   
+
+    public function updateShippingStatus(Request $request)
+    {
+        try {
+            orders::findOrFail($request->input('id'))->update(['status' => $request->input('status')]);
+            return response()->json(['message' => 'Thay đổi trạng thái thành công', 'status' => 1, 'response' => $this->shippingReload($request->input('page'), $request->input('type'))]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Thay đổi trạng thái thất bại', 'status' => 0]);
+        }
+    }
+
+    public function shippingStatusAndPaginate(Request $request)
+    {
+        return $this->shippingReload($request->input('page'), $request->input('type'));
+    }
+
+    public function shippingReload($current_page, $type)
+    {
+        $Orders = $this->getShipperOrder($current_page, $type);
+        session()->put('type', $type);
+        return view('dynamic_layout.shipping_reload', ['Orders' => $Orders, 'currentpage' => $current_page, "Quantity" => $this->getShipperOrderQuantity()])->render();
+    }
 }

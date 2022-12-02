@@ -175,11 +175,10 @@
                     $("#product-origin").val(result.origin)
                     $("#product-description").val(result.product_description)
                     $("#product-discount").val(result.sale_name)
-                    $("#display-product").attr('src', img + '/ ' + result.image)
+                    $("#display-product").attr('src', img + '/' + result.image)
                 }
             })
         })
-
         $("#add-btn").on('click', function() {
             $.ajax({
                 url: "/admin/manage_import_slips/add",
@@ -198,12 +197,11 @@
                     $('.toast-body').html(result.message)
                     if (result.status == 1)
                         $('.toast').css('background-color', 'rgb(71, 201, 71)')
-                    else
+                    else 
                         $('.toast').css('background-color', 'rgb(239, 73, 73)')
                 }
             })
         })
-
         $('#search_date').change(function(e) {
             $.ajax({
                 url: "/admin/manage_import_slips/search",
@@ -217,7 +215,6 @@
                 }
             })
         });
-
         $(document).on('click', '.page-item', function() {
             current_page = $(this).text()
             $.ajax({

@@ -7,42 +7,39 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    public function getAllCategory()
+    public function addCategory(Request $request)
     {
-        return category::all();
+        try {
+            category::create($request->all());
+            return response()->json(['message' => 'Thêm danh mục thành công', 'status' => 1, 'response' => $this->categoryReload($request->input('page'))]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Thêm danh mục thất bại', 'status' => 0]);
+        }
+    }
+
+    public function editCategory(Request $request)
+    {
+        try {
+            category::findOrFail($request->input('id'))->update($request->all());
+            return response()->json(['message' => 'Sửa danh mục thành công', 'status' => 1, 'response' => $this->categoryReload($request->input('page'))]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Sửa danh mục thất bại', 'status' => 0]);
+        }
+    }
+
+    public function deleteCategory(Request $request)
+    {
+        try {
+            category::findOrFail($request->input('id'))->delete();
+            return response()->json(['message' => 'Xóa danh mục thành công', 'status' => 1, 'response' => $this->categoryReload($request->input('page'))]);
+        } catch (\Exception) {
+            return response()->json(['message' => 'Danh mục còn trong sản phẩm', 'status' => 0]);
+        }
     }
 
     public static function getCategory($current_page)
     {
         return category::take(10)->skip(($current_page - 1) * 10)->get();
-    }
-
-    public function addCategory(Request $request)
-    {
-        $response = category::create($request->all());
-        if (!$response)
-            return response()->json(['message' => 'Thêm danh mục thất bại', 'status' => 0]);
-        else
-            return response()->json(['message' => 'Thêm danh mục thành công', 'status' => 1, 'response' => $this->categoryReload($request->input('page'))]);
-    }
-
-    public function editCategory(Request $request)
-    {
-        $Category = category::findOrFail($request->input('id'));
-        $response = $Category->update($request->all());
-        if (!$response || $Category == null)
-            return response()->json(['message' => 'Sửa danh mục thất bại', 'status' => 0]);
-        else
-            return response()->json(['message' => 'Sửa danh mục thành công', 'status' => 1, 'response' => $this->categoryReload($request->input('page'))]);
-    }
-
-    public function deleteCategory(Request $request)
-    {
-        $response = category::findOrFail($request->input('id'))->delete();
-        if (!$response)
-            return response()->json(['message' => 'Xóa danh mục thất bại', 'status' => 0]);
-        else
-            return response()->json(['message' => 'Xóa danh mục thành công', 'status' => 1, 'response' => $this->categoryReload($request->input('page'))]);
     }
 
     public function manageCategoryPage()
@@ -72,5 +69,10 @@ class CategoryController extends Controller
             $total = category::all()->count();
         }
         return view('dynamic_layout.category_reload', ['Categories' => $Categories, 'total' => $total, 'currentpage' => $current_page])->render();
+    }
+
+    public function getAllCategory()
+    {
+        return category::all();
     }
 }

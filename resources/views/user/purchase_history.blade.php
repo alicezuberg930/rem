@@ -20,17 +20,20 @@
     <x-toast />
 </body>
 <script>
+    let current_page = 1
     $(document).on('click', '.btnradio', function() {
         $.ajax({
-            url: "/user/manage_orders/status/1/" + $(this).val() + "/" +
-                "{{ session()->get('UserID') }}",
+            url: "/user/manage_orders/status",
             method: "get",
+            data: {
+                page: 1,
+                type: $(this).val(),
+            },
             success: function(result) {
                 $("#order-table").html(result);
             }
         })
     })
-
     $(document).on('click', '.checked-btn', function() {
         $.ajax({
             url: "/user/manage_orders/update_order_status",
@@ -39,7 +42,7 @@
                 id: $(this).attr("data-id"),
                 status: $(this).attr("data-status"),
                 type: $('input[name=btnradio]:checked', '#status-form').val(),
-                user_id: $(this).attr("data-user_id")
+                page: current_page
             },
             success: function(result) {
                 $("#order-table").html(result.response);
@@ -52,7 +55,6 @@
             }
         })
     })
-
     $('#search_id').keypress(function(e) {
         if (e.which == 13) {
             e.preventDefault();
@@ -61,8 +63,7 @@
                 method: "get",
                 data: {
                     id: $(this).val(),
-                    page: "{{ $currentpage }}",
-                    user_id: "{{ session()->get('UserID') }}"
+                    page: current_page,
                 },
                 success: function(result) {
                     $("#order-table").html(result)
@@ -70,13 +71,16 @@
             })
         }
     });
-
     $(document).on('click', '.page-item', function() {
+        current_page = $(this).text()
         $.ajax({
-            url: "/user/manage_orders/paginate/" + $(this).text() + "/" + $(
-                    'input[name=btnradio]:checked', '#status-form').val() + "/" +
-                "{{ session()->get('UserID') }}",
+            url: "/user/manage_orders/paginate",
             method: "get",
+            data: {
+                page: current_page,
+                status: $(this).attr("data-status"),
+                type: $('input[name=btnradio]:checked', '#status-form').val(),
+            },
             success: function(result) {
                 $("#order-table").html(result)
             }

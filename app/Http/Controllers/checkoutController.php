@@ -8,7 +8,7 @@ use App\Models\product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
-
+date_default_timezone_set('Asia/Ho_Chi_Minh');
 class CheckoutController extends Controller
 {
     private $vnp_HashSecret = "OUNLJDFELTPRZUKCHFBFBBSMVNROUCGB"; //Secret key
@@ -16,7 +16,6 @@ class CheckoutController extends Controller
 
     public function getOrderInfo(Request $request)
     {
-
         session()->put('orders', [
             'fullname' => $request->input('fullname'),
             'phonenumber' => $request->input('phonenumber'),
@@ -159,10 +158,14 @@ class CheckoutController extends Controller
                         $product->update(['amount' => $product->amount - $item['quantity']]);
                     }
                     $Result = 'Giao dịch thành công';
-                    Mail::send("email_templates.order_template", ['order_id' => $orders->id], function ($email) {
-                        $email->subject('Thông báo đơn hàng');
-                        $email->to(session()->get('orders')["email"], "Header");
-                    });
+                    try {
+                        Mail::send("email_templates.order_template", ['order_id' => $orders->id], function ($email) {
+                            $email->subject('Thông báo đơn hàng');
+                            $email->to(session()->get('orders')["email"], "Header");
+                        });
+                    } catch (\Exception $e) {
+                        var_dump($e->errorInfo);
+                    }
                 }
             } else {
                 $Result = 'Giao dịch không thành công';
@@ -203,10 +206,14 @@ class CheckoutController extends Controller
                 $product = product::find($item['id']);
                 $product->update(['amount' => $product->amount - $item['quantity']]);
             }
-            Mail::send("email_templates.order_template", ['order_id' => $order_id], function ($email) {
-                $email->subject('Thông báo đơn hàng');
-                $email->to(session()->get('orders')["email"], "Header");
-            });
+            try {
+                Mail::send("email_templates.order_template", ['order_id' => $order_id], function ($email) {
+                    $email->subject('Thông báo đơn hàng');
+                    $email->to(session()->get('orders')["email"], "Header");
+                });
+            } catch (\Exception $e) {
+                var_dump($e->errorInfo);
+            }
             return view('payment.direct_payment', ['order_id' => $order_id, 'message' => 'Đã đặt hàng thành công', 'status' => 1]);
         } else {
             return view('payment.direct_payment', ['message' => 'Đặt hàng thất bại', 'status' => 0]);

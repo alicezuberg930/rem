@@ -224,7 +224,7 @@
                     id: id,
                     page: current_page
                 },
-                success: function(result) {
+                success: function(result) { 
                     $("#supplier-table").html(result.response)
                     $('.toast').toast('show')
                     $('.toast-body').html(result.message)

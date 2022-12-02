@@ -21,6 +21,10 @@
                             Chờ xác nhận
                         @elseif($order->status == 1)
                             Đã xác nhận
+                        @elseif($order->status == 3)
+                            Đang giao
+                        @elseif($order->status == 4)
+                            Đã giao
                         @else
                             Đã hủy
                         @endif
@@ -29,12 +33,10 @@
                 <td>
                     @if ($order->status == 0)
                         <button
-                            class="@if (isset($user_id)) d-none @endif btn btn-sm fa-regular fa-circle-check text-success checked-btn"
-                            data-id="{{ $order->id }}" data-status="1"
-                            data-user_id="{{ isset($user_id) ? $user_id : -1 }}"></button>
+                            class="@if (session()->has('UserID')) d-none @endif btn btn-sm fa-regular fa-circle-check text-success checked-btn"
+                            data-id="{{ $order->id }}" data-status="1"></button>
                         <button class="btn btn-sm fa-solid fa-circle-xmark text-danger checked-btn"
-                            data-id="{{ $order->id }}" data-status="2"
-                            data-user_id="{{ isset($user_id) ? $user_id : -1 }}"></button>
+                            data-id="{{ $order->id }}" data-status="2"></button>
                     @endif
                     <a class="btn btn-sm fa-solid fa-circle-exclamation text-primary"
                         href="/admin/manage_orders/order_details/{{ $order->id }}"></a>
@@ -53,6 +55,10 @@
             $total = $Quantity['Waiting'];
         } elseif (session()->get('type') == 1) {
             $total = $Quantity['Approved'];
+        } elseif (session()->get('type') == 3) {
+            $total = $Quantity['Delivering'];
+        } elseif (session()->get('type') == 4) {
+            $total = $Quantity['Delivered'];
         } else {
             $total = $Quantity['Canceled'];
         } ?>

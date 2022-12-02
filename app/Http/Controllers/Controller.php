@@ -14,4 +14,5 @@ class Controller extends BaseController
     // Card #: 4162 9601 5493 7537
     // Exp date : 11/27
     // Cvv: 381
+    // var_dump($e->errorInfo);
 }

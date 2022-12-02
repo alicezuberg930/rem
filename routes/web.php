@@ -98,7 +98,7 @@ Route::get('/verification/{token}', [AuthController::class, 'verifyUser']);
 //Thông tin cá nhân
 Route::post('/edit_personal_info', [AuthController::class, 'editPersonalInfo']);
 Route::post('/change_password', [AuthController::class, 'changePassword']);
-Route::get('/purchase_history/{user_id}', [OrdersController::class, 'getUserOrders']);
+Route::get('/purchase_history/{user_id}', [OrdersController::class, 'manageUserOrderPage']);
 
 //Lọc sản phẩm
 Route::get('/search_product', [ProductController::class, 'filterPage']);
@@ -109,14 +109,6 @@ Route::get('/filter', [ProductController::class, 'filterPage']);
 Route::post('/reset_password_request', [PasswordResetController::class, 'resetPasswordRequest']);
 Route::get('/create_new_password/{selector}/{token}', [PasswordResetController::class, 'createNewPasswordPage']);
 Route::post('/reset_password_handler', [PasswordResetController::class, 'resetPasswordHandler']);
-
-//Quản lý đơn hàng khách
-Route::get('/user/manage_orders', [OrdersController::class, 'manageOrderPage']);
-Route::get('/user/manage_orders/update_order_status', [OrdersController::class, 'updateOrderStatus']);
-Route::get('/user/manage_orders/search', [OrdersController::class, 'searchOrder']);
-Route::get('/user/manage_orders/paginate/{current_page}/{type}/{user_id}', [OrdersController::class, 'orderReload']);
-Route::get('/user/manage_orders/status/{current_page}/{type}/{user_id}', [OrdersController::class, 'orderReload']);
-Route::get('/user/manage_orders/order_details/{order_id}', [OrdersController::class, 'getOrderDetails']);
 
 //Quản lý thống kê
 Route::get('/admin/manage_statistic/annual_income', [StatisticController::class, 'getAnnualStats']);
@@ -133,15 +125,6 @@ Route::get('/admin/manage_products/delete', [ProductController::class, 'deletePr
 Route::get('/admin/manage_products/search', [ProductController::class, 'searchProduct']);
 Route::get('/admin/manage_products/paginate/{current_page}', [ProductController::class, 'productReload']);
 Route::get('/admin/manage_products/export', [ProductController::class, 'getHomePageProducts']);
-
-//Quản lý đơn hàng admin
-Route::get('/admin/manage_orders', [OrdersController::class, 'manageOrderPage']);
-Route::get('/admin/manage_orders/update_order_status', [OrdersController::class, 'updateOrderStatus']);
-Route::get('/admin/manage_orders/search', [OrdersController::class, 'searchOrder']);
-Route::get('/admin/manage_orders/paginate/{current_page}/{type}/{user_id}', [OrdersController::class, 'orderReload']);
-Route::get('/admin/manage_orders/status/{current_page}/{type}/{user_id}', [OrdersController::class, 'orderReload']);
-Route::get('/admin/manage_orders/order_details/{order_id}', [OrdersController::class, 'getOrderDetails']);
-Route::get('/admin/manage_orders/export', [OrdersController::class, 'getAllOrders']);
 
 //Quản lý khách hàng
 Route::get('/admin/manage_customers', [CustomerController::class, 'manageCustomerPage']);
@@ -198,4 +181,23 @@ Route::get('/admin/import_slip_details/{id}', [ImportSlipController::class, 'imp
 Route::get('/admin/manage_import_slips/export', [ImportSlipController::class, 'getAllImportSlips']);
 
 // Quản lý giao hàng
-Route::get('/admin/manage_shippings', [ShippingController::class, 'manageOrderPage']);
+Route::get('/admin/manage_shippings', [ShippingController::class, 'manageShippingPage']);
+Route::get('/admin/manage_shippings/update_shipping_status', [ShippingController::class, 'updateShippingStatus']);
+Route::get('/admin/manage_shippings/status', [ShippingController::class, 'shippingStatusAndPaginate']);
+Route::get('/admin/manage_shippings/paginate', [ShippingController::class, 'shippingStatusAndPaginate']);
+
+//Quản lý đơn hàng khách
+Route::get('/user/manage_orders/update_order_status', [OrdersController::class, 'updateUserOrderStatus']);
+Route::get('/user/manage_orders/search', [OrdersController::class, 'searchOrder']);
+Route::get('/user/manage_orders/paginate/', [OrdersController::class, 'userOrderStatusAndPaginate']);
+Route::get('/user/manage_orders/status/', [OrdersController::class, 'userOrderStatusAndPaginate']);
+Route::get('/user/manage_orders/order_details/{order_id}', [OrdersController::class, 'getOrderDetails']);
+
+//Quản lý đơn hàng admin
+Route::get('/admin/manage_orders', [OrdersController::class, 'manageAdminOrderPage']);
+Route::get('/admin/manage_orders/update_order_status', [OrdersController::class, 'updateAdminOrderStatus']);
+Route::get('/admin/manage_orders/search', [OrdersController::class, 'searchOrder']);
+Route::get('/admin/manage_orders/paginate/', [OrdersController::class, 'adminOrderStatusAndPaginate']);
+Route::get('/admin/manage_orders/status/', [OrdersController::class, 'adminOrderStatusAndPaginate']);
+Route::get('/admin/manage_orders/order_details/{order_id}', [OrdersController::class, 'getOrderDetails']);
+Route::get('/admin/manage_orders/export', [OrdersController::class, 'getAllOrders']);

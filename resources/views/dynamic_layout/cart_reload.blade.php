@@ -91,18 +91,18 @@
                 <label for="inputEmail3" class="col-sm-4 col-form-label fs-6">Họ và tên</label>
                 <div class="col-sm-8">
                     <input type="text" class="form-control" id="pay-name" name="fullname"
-                        value="Nguyễn Thị Minh Thư">
+                        value="Nguyễn Vĩnh Tiến">
                 </div>
             </div>
             <div class="row mb-3">
                 <label for="inputPassword3" class="col-sm-4 col-form-label">Số điện thoại</label>
                 <div class="col-sm-8">
-                    <input type="phone" class="form-control" id="pay-phone" name="phonenumber" value="0921123435">
+                    <input type="phone" class="form-control" id="pay-phone" name="phonenumber" value="0932430072">
                 </div>
             </div>
             <div class="row mb-3"><label for="inputPassword3" class="col-sm-4 col-form-label">Email</label>
                 <div class="col-sm-8"><input type="email" class="form-control" id="pay-email" name="email"
-                        value="minhthu@gmail.com"></div>
+                        value="tien23851@gmail.com"></div>
             </div>
             <hr>
             <div class="row mb-3">

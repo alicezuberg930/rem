@@ -59,11 +59,11 @@
                 <i class="fa-solid fa-file-import"></i> Phiếu nhập
             </a>
         </li>
-        {{-- <li>
+        <li>
             <a class="nav-link @php echo request()->route()->uri=='admin/manage_shippings' ? 'link-light border border-white text-info':'link-light' @endphp"
                 href="/admin/manage_shippings">
                 <i class="fa-solid fa-dolly"></i> Giao hàng
             </a>
-        </li> --}}
+        </li>
     </ul>
 </div>

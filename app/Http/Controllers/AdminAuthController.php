@@ -13,6 +13,7 @@ class AdminAuthController extends Controller
     private $sale_abilities = ['products:manage', 'categories:manage', 'statistic:manage', 'orders:manage', 'sales:manage', 'customers:manage',];
     private $storage_abilities = ['suppliers:manage', 'import_slips:manage'];
     private $admin_abilities = ['employees:manage'];
+    private $shipper_abilities = ['shippings:manage'];
 
     public function login(Request $request)
     {
@@ -26,6 +27,8 @@ class AdminAuthController extends Controller
                     $token = $employee->createToken('access-token', $this->storage_abilities)->plainTextToken;
                 if ($employee->role_as == 3)
                     $token = $employee->createToken('access-token', array_merge($this->sale_abilities, $this->storage_abilities, $this->admin_abilities))->plainTextToken;
+                if ($employee->role_as == 4)
+                    $token = $employee->createToken('access-token', $this->shipper_abilities)->plainTextToken;
                 session()->put('Employee', ['EmployeeID' => $employee->id, 'Token' => $token]);
                 return response()->json(['message' => 'Đăng nhập thành công', 'status' => 1,]);
             } else

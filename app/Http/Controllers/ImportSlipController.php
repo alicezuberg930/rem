@@ -17,30 +17,36 @@ class ImportSlipController extends Controller
 
     public function addImportSlip(Request $request)
     {
-        $check = 1;
-        $quantity = $request->input('import_quantity');
-        $price = $request->input('import_price');
-
-        $is = new import_slip();
-        $is->supplier_id = $request->input('supplier_id');
-        $is->employee_id = 1;
-        $is->import_date = date('Y-m-d h:i:s', strtotime($request->input('import_date')));
-        $is->total_price = $quantity * $price;
-        if (!$is->save())
-            $check = 0;
-        $isd = new import_slip_details();
-        $isd->import_slip_id = $is->id;
-        $isd->product_id = $request->input('product_id');
-        $isd->import_quantity = $request->input('import_quantity');
-        $isd->import_price = $request->input('import_price');
-        if (!$isd->save())
-            $check = 0;
-        $product = product::find($request->input('product_id'));
-        $product->update(['amount' => $product->amount + $quantity]);
-        if ($check == 0)
-            return response()->json(['message' => 'Thêm phiếu nhập thất bại', 'status' => 0]);
-        else
+        $is = null;
+        try {
+            try {
+                $quantity = $request->input('import_quantity');
+                $price = $request->input('import_price');
+                $is = import_slip::create([
+                    'supplier_id' => $request->input('supplier_id'),
+                    'employee_id' => session('Employee')['EmployeeID'],
+                    'import_date' => date('Y-m-d h:i:s', strtotime($request->input('import_date'))),
+                    'total_price' => $quantity * $price
+                ]);
+            } catch (\Exception $e) {
+                return response()->json(['message' => 'Thêm phiếu nhập thất bại', 'status' => 0]);
+            }
+            try {
+                import_slip_details::create([
+                    'import_slip_id' => $is->id,
+                    'product_id' => $request->input('product_id'),
+                    'import_quantity' => $request->input('import_quantity'),
+                    'import_price' => $request->input('import_price')
+                ]);
+            } catch (\Exception $e) {
+                return response()->json(['message' => 'Thêm phiếu nhập thất bại', 'status' => 0]);
+            }
+            $product = product::find($request->input('product_id'));
+            $product->update(['amount' => $product->amount + $quantity]);
             return response()->json(['message' => 'Thêm phiếu nhập thành công', 'status' => 1, 'response' => $this->importSlipReload($request->input('page'))]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Thêm phiếu nhập thất bại', 'status' => 0]);
+        }
     }
 
     public static function getImportSlip($current_page)

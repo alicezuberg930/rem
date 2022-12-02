@@ -20,8 +20,20 @@
                 </label>
             </div>
             <div class="col-md-auto">
-                <input type="radio" class="btnradio btn-check" name="btnradio" id="btnradio4" value="2">
-                <label class="btn btn-outline-primary btn-sm" for="btnradio4">Đã hủy
+                <input type="radio" class="btnradio btn-check" name="btnradio" id="btnradio4" value="3">
+                <label class="btn btn-outline-primary btn-sm" for="btnradio4">Đang giao
+                    <span class="badge bg-danger type" data-status="3">{{ $Quantity['Delivering'] }}</span>
+                </label>
+            </div>
+            <div class="col-md-auto">
+                <input type="radio" class="btnradio btn-check" name="btnradio" id="btnradio5" value="4">
+                <label class="btn btn-outline-primary btn-sm" for="btnradio5">Đã giao
+                    <span class="badge bg-danger type" data-status="4">{{ $Quantity['Delivered'] }}</span>
+                </label>
+            </div>
+            <div class="col-md-auto">
+                <input type="radio" class="btnradio btn-check" name="btnradio" id="btnradio6" value="2">
+                <label class="btn btn-outline-primary btn-sm" for="btnradio6">Đã hủy
                     <span class="badge bg-danger type" data-status="2">{{ $Quantity['Canceled'] }}</span>
                 </label>
             </div>

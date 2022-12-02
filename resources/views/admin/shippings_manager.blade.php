@@ -9,40 +9,23 @@
                 <div class="p-3 row row-cols-1 row-cols-md-4 sticky-top bg-light justify-content-between">
                     <div id="status-form" class="col-md-auto row">
                         <div class="col-md-auto">
-                            <input checked type="radio" class="btnradio btn-check" name="btnradio" id="btnradio1"
-                                value="-1">
-                            <label class="btn btn-outline-primary btn-sm" for="btnradio1">Tổng
-                                <span class="badge bg-danger type" data-status="-1">{{ $Quantity['Total'] }}</span>
-                            </label>
-                        </div>
-                        <div class="col-md-auto">
-                            <input type="radio" class="btnradio btn-check" name="btnradio" id="btnradio2"value="0">
-                            <label class="btn btn-outline-primary btn-sm" for="btnradio2">Chờ xác nhận
-                                <span class="badge bg-danger type" data-status="0">{{ $Quantity['Waiting'] }}</span>
-                            </label>
-                        </div>
-                        <div class="col-md-auto">
-                            <input type="radio" class="btnradio btn-check" name="btnradio" id="btnradio3" value="1">
+                            <input checked type="radio" class="btnradio btn-check" name="btnradio" id="btnradio3"
+                                value="1">
                             <label class="btn btn-outline-primary btn-sm" for="btnradio3">Đã xác nhận
                                 <span class="badge bg-danger type" data-status="1">{{ $Quantity['Approved'] }}</span>
                             </label>
                         </div>
                         <div class="col-md-auto">
-                            <input type="radio" class="btnradio btn-check" name="btnradio" id="btnradio4" value="2">
-                            <label class="btn btn-outline-primary btn-sm" for="btnradio4">Đã hủy
-                                <span class="badge bg-danger type" data-status="2">{{ $Quantity['Canceled'] }}</span>
+                            <input type="radio" class="btnradio btn-check" name="btnradio" id="btnradio4" value="3">
+                            <label class="btn btn-outline-primary btn-sm" for="btnradio4">Đang giao
+                                <span class="badge bg-danger type" data-status="3">{{ $Quantity['Delivering'] }}</span>
                             </label>
                         </div>
-                        @if (session()->has('Employee'))
-                            <div class="col-md-auto">
-                                <button class="btn btn-info btn-sm" id="export">Xuất Excel</button>
-                            </div>
-                        @endif
-                    </div>
-                    <div class="col-md-auto">
-                        <div class="input-group">
-                            <input type="text" class="form-control form-control-sm" placeholder="Mã đơn" id="search_id">
-                            <i class="fa-solid fa-magnifying-glass text-light p-2 bg-primary"></i>
+                        <div class="col-md-auto">
+                            <input type="radio" class="btnradio btn-check" name="btnradio" id="btnradio5" value="4">
+                            <label class="btn btn-outline-primary btn-sm" for="btnradio5">Đã giao
+                                <span class="badge bg-danger type" data-status="4">{{ $Quantity['Delivered'] }}</span>
+                            </label>
                         </div>
                     </div>
                 </div>
@@ -56,8 +39,12 @@
         let current_page = 1
         $(document).on('click', '.btnradio', function() {
             $.ajax({
-                url: "/admin/manage_orders/status/1/" + $(this).val() + "/-1",
+                url: "/admin/manage_shippings/status",
                 method: "get",
+                data: {
+                    page: 1,
+                    type: $('input[name=btnradio]:checked', '#status-form').val()
+                },
                 success: function(result) {
                     console.log(result);
                     $("#order-table").html(result);
@@ -66,54 +53,35 @@
         })
         $(document).on('click', '.checked-btn', function() {
             $.ajax({
-                url: "/admin/manage_orders/update_order_status",
+                url: "/admin/manage_shippings/update_shipping_status",
                 method: "get",
                 data: {
                     id: $(this).attr("data-id"),
                     status: $(this).attr("data-status"),
                     type: $('input[name=btnradio]:checked', '#status-form').val(),
-                    user_id: $(this).attr("data-user_id"),
                     page: current_page
                 },
                 success: function(result) {
                     $("#order-table").html(result.response);
+                    $('.toast').toast('show')
+                    $('.toast-body').html(result.message)
+                    if (result.status == 1)
+                        $('.toast').css('background-color', 'rgb(71, 201, 71)')
+                    else
+                        $('.toast').css('background-color', 'rgb(239, 73, 73)')
                 }
             })
         })
-        $('#search_id').keypress(function(e) {
-            if (e.which == 13) {
-                e.preventDefault();
-                $.ajax({
-                    url: "/admin/manage_orders/search",
-                    method: "get",
-                    data: {
-                        id: $(this).val(),
-                        page: 1,
-                        user_id: -1
-                    },
-                    success: function(result) {
-                        $("#order-table").html(result)
-                    }
-                })
-            }
-        });
         $(document).on('click', '.page-item', function() {
-            current_page = $(this).text()
             $.ajax({
-                url: "/admin/manage_orders/paginate/" + $(this).text() + "/" + $(
-                    'input[name=btnradio]:checked', '#status-form').val() + "/-1",
+                url: "/admin/manage_shippings/paginate",
                 method: "get",
+                data: {
+                    page: $(this).text(),
+                    type: $('input[name=btnradio]:checked', '#status-form').val()
+                },
                 success: function(result) {
                     $("#order-table").html(result)
-                }
-            })
-        })
-        $("#export").on('click', () => {
-            $.ajax({
-                url: "/admin/manage_orders/export",
-                method: 'get',
-                success: function(result) {
-                    JSONToCSVConvertor(result, "orders_sheet", true)
                 }
             })
         })

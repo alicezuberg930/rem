@@ -8,38 +8,34 @@ use Illuminate\Support\Facades\Http;
 
 class SupplierController extends Controller
 {
-
-    public function getAllSuppliers()
-    {
-        return supplier::all();
-    }
-
     public function addSupplier(Request $request)
     {
-        $response = supplier::create($request->all());
-        if (!$response)
-            return response()->json(['message' => 'Thêm nhà cung cấp thất bại', 'status' => 0]);
-        else
+        try {
+            supplier::create($request->all());
             return response()->json(['message' => 'Thêm nhà cung cấp thành công', 'status' => 1, 'response' => $this->supplierReload($request->input('page'))]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Thêm nhà cung cấp thất bại', 'status' => 0]);
+        }
     }
 
     public function editSupplier(Request $request)
     {
-        $Supplier = supplier::findOrFail($request->input('id'));
-        $response = $Supplier->update($request->all());
-        if (!$response || $Supplier == null)
-            return response()->json(['message' => 'Sửa nhà cung cấp thất bại', 'status' => 0]);
-        else
+        try {
+            supplier::findOrFail($request->input('id'))->update($request->all());
             return response()->json(['message' => 'Sửa nhà cung cấp thành công', 'status' => 1, 'response' => $this->supplierReload($request->input('page'))]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Sửa nhà cung cấp thất bại', 'status' => 0]);
+        }
     }
 
     public function deleteSupplier(Request $request)
     {
-        $response = supplier::findOrFail($request->input('id'))->delete();
-        if (!$response)
-            return response()->json(['message' => 'Xóa nhà cung cấp thất bại', 'status' => 0]);
-        else
+        try {
+            supplier::findOrFail($request->input('id'))->delete();
             return response()->json(['message' => 'Xóa nhà cung cấp thành công', 'status' => 1, 'response' => $this->SupplierReload($request->input('page'))]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Nhà cung cấp còn trong phiếu nhập', 'status' => 0]);
+        }
     }
 
     public static function getSupplier($current_page)
@@ -79,5 +75,10 @@ class SupplierController extends Controller
             $total = supplier::all()->count();
         }
         return view('dynamic_layout.supplier_reload', ['Suppliers' => $Suppliers, 'total' => $total, 'currentpage' => $current_page])->render();
+    }
+
+    public function getAllSuppliers()
+    {
+        return supplier::all();
     }
 }

@@ -17,28 +17,25 @@
                 <td>{{ number_format($order->total_price) }} đ</td>
                 <td>
                     <span>
-                        @if ($order->status == 0)
-                            Chờ xác nhận
-                        @elseif($order->status == 1)
-                            Đã xác nhận
-                        @else
-                            Đã hủy
+                        @if ($order->status == 1)
+                            Đã xác nhận
+                        @elseif($order->status == 3)
+                            Đang giao
+                        @elseif($order->status == 4)
+                            Đã giao
                         @endif
                     </span>
                 </td>
                 <td>
-                    @if ($order->status == 0)
-                        <button
-                            class="@if (isset($user_id)) d-none @endif btn btn-sm fa-regular fa-circle-check text-success checked-btn"
-                            data-id="{{ $order->id }}" data-status="1"
-                            data-user_id="{{ isset($user_id) ? $user_id : -1 }}"></button>
-                        <button class="btn btn-sm fa-solid fa-circle-xmark text-danger checked-btn"
-                            data-id="{{ $order->id }}" data-status="2"
-                            data-user_id="{{ isset($user_id) ? $user_id : -1 }}"></button>
+                    @if ($order->status == 1)
+                        <button class="btn btn-sm btn-outline-success checked-btn" data-id="{{ $order->id }}"
+                            data-status="3">Bắt đầu giao</button>
+                    @elseif($order->status == 3)
+                        <button class="btn btn-sm btn-outline-success checked-btn" data-id="{{ $order->id }}"
+                            data-status="4">Hoàn thành</button>
                     @endif
                     <a class="btn btn-sm fa-solid fa-circle-exclamation text-primary"
                         href="/admin/manage_orders/order_details/{{ $order->id }}"></a>
-
                 </td>
             </tr>
         @endforeach
@@ -47,8 +44,13 @@
 <nav aria-label="Page navigation example" class="col-md-12 my-3">
     <ul class="pagination pagination-sm justify-content-end" id="phantrang">
         <?php $total = 0;
-        $total = $Quantity['Approved'];
-        ?>
+        if (session()->get('type') == 1) {
+            $total = $Quantity['Approved'];
+        } elseif (session()->get('type') == 3) {
+            $total = $Quantity['Delivering'];
+        } elseif (session()->get('type') == 4) {
+            $total = $Quantity['Delivered'];
+        } ?>
         @for ($i = 0; $i < ceil($total / 10); $i++)
             @if ($i == $currentpage - 1)
                 <li class="page-item"><a class="page-link active">{{ $i + 1 }}</a></li>

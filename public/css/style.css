@@ -475,7 +475,7 @@ label:hover {
 }
 
 /* Page */
-.page {
+/* .page {
     padding-left: 0;
     list-style: none;
     cursor: pointer;
@@ -509,25 +509,4 @@ label:hover {
     padding: 0em 0.4em;
     margin-right: 0.2em;
     margin-left: 0.2em;
-}
-
-/* @keyframes change-image {
-    0% {
-        opacity: 1;
-    }
-    40% {
-        opacity: 0;
-    }
-    100% {
-        opacity: 1;
-        content: url("https://www.zippovn.com/wp-content/uploads/2022/01/gp9zob4n5cius8i8n3hy_1024x1024.jpg");
-    }
-}
-
-.product-item:hover .product-img {
-    animation: change-image 1s forwards;
-}
-
-.nav-item:hover {
-    color: #fff;
 } */

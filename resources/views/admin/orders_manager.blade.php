@@ -12,10 +12,13 @@
         let current_page = 1
         $(document).on('click', '.btnradio', function() {
             $.ajax({
-                url: "/admin/manage_orders/status/1/" + $(this).val() + "/-1",
+                url: "/admin/manage_orders/status",
                 method: "get",
+                data: {
+                    page: 1,
+                    type: $('input[name=btnradio]:checked', '#status-form').val()
+                },
                 success: function(result) {
-                    console.log(result);
                     $("#order-table").html(result);
                 }
             })
@@ -28,11 +31,17 @@
                     id: $(this).attr("data-id"),
                     status: $(this).attr("data-status"),
                     type: $('input[name=btnradio]:checked', '#status-form').val(),
-                    user_id: $(this).attr("data-user_id"),
                     page: current_page
                 },
                 success: function(result) {
                     $("#order-table").html(result.response);
+                    $('.toast').toast('show')
+                    $('.toast-body').html(result.message)
+                    if (result.status == 1)
+                        $('.toast').css('background-color', 'rgb(71, 201, 71)')
+                    else
+                        $('.toast').css('background-color', 'rgb(239, 73, 73)')
+
                 }
             })
         })
@@ -45,9 +54,10 @@
                     data: {
                         id: $(this).val(),
                         page: 1,
-                        user_id: -1
+                        type: -1
                     },
                     success: function(result) {
+                        console.log(result);
                         $("#order-table").html(result)
                     }
                 })
@@ -56,9 +66,12 @@
         $(document).on('click', '.page-item', function() {
             current_page = $(this).text()
             $.ajax({
-                url: "/admin/manage_orders/paginate/" + $(this).text() + "/" + $(
-                    'input[name=btnradio]:checked', '#status-form').val() + "/-1",
+                url: "/admin/manage_orders/paginate/",
                 method: "get",
+                data: {
+                    page: $(this).text(),
+                    type: $('input[name=btnradio]:checked', '#status-form').val()
+                },
                 success: function(result) {
                     $("#order-table").html(result)
                 }
