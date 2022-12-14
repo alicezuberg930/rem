@@ -88,47 +88,115 @@
                     <hr>
                     <div class="row d-flex justify-content-start align-items-center">
                         <div class="col-md-4 d-flex justify-content-center">
-                            <img class="rounded-circle border border-primary" style="object-fit: contain" width="50"
-                                height="50" src="{{ url('/icons/order-pending.png') }}" />
+                            <img <?php if ($Order->status == 0 || $Order->status == 1 || $Order->status == 3 || $Order->status == 4) {
+                                echo 'class="border-primary rounded-circle border"';
+                            } else {
+                                echo 'class="border-secondary rounded-circle border"';
+                            } ?> style="object-fit: contain" width="50" height="50"
+                                src="{{ url('/icons/order-pending.png') }}" />
                         </div>
                         <div class="col-md-8">
                             <h6 class="m-0">
                                 Chờ xác nhận
-                                <i class="fa-solid fa-check bg-success rounded-circle text-light"></i>
-                            </h6>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="d-flex justify-content-center col-md-4">
-                            <span style="height: 2rem; border-left: 2px dotted {!! $Order->status == 1 ? 'rgb(55, 148, 228)' : 'black' !!}"></span>
-                        </div>
-                    </div>
-                    <div class="row d-flex justify-content-start align-items-center">
-                        <div class="col-md-4 d-flex justify-content-center">
-                            <img class="rounded-circle border {!! $Order->status == 1 ? 'border-primary' : 'border-secondary' !!}" style="object-fit: contain"
-                                width="50" height="50" src="{{ url('/icons/order-approved.png') }}" />
-                        </div>
-                        <div class="col-md-8">
-                            <h6 class="m-0">
-                                Đã xác nhận
-                                @if ($Order->status == 1)
-                                    <i class="fa-solid fa-check bg-success rounded-circle text-light"></i>
+                                @if ($Order->status == 0 || $Order->status == 1 || $Order->status == 3 || $Order->status == 4)
+                                    <i class="fa-solid fa-check text-success"></i>
                                 @endif
                             </h6>
                         </div>
                     </div>
                     <div class="row">
                         <div class="d-flex justify-content-center col-md-4">
-                            <span style="height: 2rem; border-left: 2px dotted black"></span>
+                            <span style="height: 2rem; border-left: 2px dotted" <?php if ($Order->status == 0 || $Order->status == 1 || $Order->status == 3 || $Order->status == 4) {
+                                echo 'class="border-primary"';
+                            } else {
+                                echo 'class="border-secondary"';
+                            } ?>></span>
                         </div>
                     </div>
+
                     <div class="row d-flex justify-content-start align-items-center">
                         <div class="col-md-4 d-flex justify-content-center">
-                            <img class="rounded-circle border" style="object-fit: contain" width="50" height="50"
-                                src="{{ url('/icons/delivered.png') }}" />
+                            <img <?php if ($Order->status == 1 || $Order->status == 3 || $Order->status == 4) {
+                                echo 'class="border-primary rounded-circle border"';
+                            } else {
+                                echo 'class="border-secondary rounded-circle border"';
+                            } ?> style="object-fit: contain" width="50" height="50"
+                                src="{{ url('/icons/order-approved.png') }}" />
                         </div>
                         <div class="col-md-8">
-                            <h6 class="m-0">Đã giao</h6>
+                            <h6 class="m-0">
+                                Đã xác nhận
+                                @if ($Order->status == 1 || $Order->status == 3 || $Order->status == 4)
+                                    <i class="fa-solid fa-check text-success"></i>
+                                @endif
+                            </h6>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="d-flex justify-content-center col-md-4">
+                            <span style="height: 2rem; border-left: 2px dotted" <?php if ($Order->status == 1 || $Order->status == 3 || $Order->status == 4) {
+                                echo 'class="border-primary"';
+                            } else {
+                                echo 'class="border-secondary"';
+                            } ?>></span>
+                        </div>
+                    </div>
+
+                    <div class="row d-flex justify-content-start align-items-center">
+                        <div class="col-md-4 d-flex justify-content-center">
+                            <img <?php if ($Order->status == 3 || $Order->status == 4) {
+                                echo 'class="border-primary rounded-circle border"';
+                            } else {
+                                echo 'class="border-secondary rounded-circle border"';
+                            } ?> style="object-fit: contain" width="50" height="50"
+                                src="{{ url('/icons/shipping.png') }}" />
+                        </div>
+                        <div class="col-md-8">
+                            <h6 class="m-0">
+                                Đang giao
+                                @if ($Order->status == 3 || $Order->status == 4)
+                                    <i class="fa-solid fa-check text-success"></i>
+                                @endif
+                            </h6>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="d-flex justify-content-center col-md-4">
+                            <span style="height: 2rem; border-left: 2px dotted" <?php if ($Order->status == 3 || $Order->status == 4) {
+                                echo 'class="border-primary"';
+                            } else {
+                                echo 'class="border-secondary"';
+                            } ?>></span>
+                        </div>
+                    </div>
+
+                    <div class="row d-flex justify-content-start align-items-center">
+                        <div class="col-md-4 d-flex justify-content-center">
+                            <img class="rounded-circle border {!! $Order->status == 4 ? 'border-primary' : 'border-secondary' !!}" style="object-fit: contain"
+                                width="50" height="50" src="{{ url('/icons/delivered.png') }}" />
+                        </div>
+                        <div class="col-md-8">
+                            <h6 class="m-0">
+                                Đã giao
+                                @if ($Order->status == 4)
+                                    <i class="fa-solid fa-check text-success"></i>
+                                @endif
+                            </h6>
+                        </div>
+                    </div>
+
+                    <div class="row d-flex justify-content-start align-items-center mt-4">
+                        <div class="col-md-4 d-flex justify-content-center">
+                            <img class="rounded-circle border {!! $Order->status == 2 ? 'border-danger' : 'border-secondary' !!}" style="object-fit: contain"
+                                width="50" height="50" src="{{ url('/icons/order-canceled.png') }}" />
+                        </div>
+                        <div class="col-md-8">
+                            <h6 class="m-0">
+                                Đã hủy
+                                @if ($Order->status == 2)
+                                    <i class="fa-solid fa-xmark text-danger rounded-circle"></i>
+                                @endif
+                            </h6>
                         </div>
                     </div>
                 </div>

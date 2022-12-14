@@ -11,8 +11,5 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
     // php artisan migrate --path=/database/migrations/full_migration_file_name_migration.php
-    // Card #: 4162 9601 5493 7537
-    // Exp date : 11/27
-    // Cvv: 381
     // var_dump($e->errorInfo);
 }

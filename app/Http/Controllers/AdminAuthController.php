@@ -26,7 +26,7 @@ class AdminAuthController extends Controller
                 if ($employee->role_as == 2)
                     $token = $employee->createToken('access-token', $this->storage_abilities)->plainTextToken;
                 if ($employee->role_as == 3)
-                    $token = $employee->createToken('access-token', array_merge($this->sale_abilities, $this->storage_abilities, $this->admin_abilities))->plainTextToken;
+                    $token = $employee->createToken('access-token', array_merge($this->sale_abilities, $this->storage_abilities, $this->admin_abilities, $this->shipper_abilities))->plainTextToken;
                 if ($employee->role_as == 4)
                     $token = $employee->createToken('access-token', $this->shipper_abilities)->plainTextToken;
                 session()->put('Employee', ['EmployeeID' => $employee->id, 'Token' => $token]);
