@@ -2,7 +2,8 @@
 <html lang="en">
 
 <head>
-    <x-head_tag />
+    @include('components.head_tag')
+    {{-- <x-head_tag /> --}}
     <title>Trang chủ</title>
 </head>
 

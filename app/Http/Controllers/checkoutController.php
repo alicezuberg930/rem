@@ -8,11 +8,12 @@ use App\Models\product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
+
 date_default_timezone_set('Asia/Ho_Chi_Minh');
 class CheckoutController extends Controller
 {
-    private $vnp_HashSecret = "OUNLJDFELTPRZUKCHFBFBBSMVNROUCGB"; //Secret key
-    private $vnp_TmnCode = "HNM3NYHP"; //Website ID in VNPAY System
+    private $vnp_HashSecret = "ZYUAA5YD6YMHAHPS0EZSVWNZ830H0PEM"; //Secret key
+    private $vnp_TmnCode = "QB38NYN8"; //Website ID in VNPAY System
 
     public function getOrderInfo(Request $request)
     {
@@ -101,10 +102,8 @@ class CheckoutController extends Controller
             $query .= urlencode($key) . "=" . urlencode($value) . '&';
         }
         $vnp_Url = $vnp_Url . "?" . $query;
-        if (isset($this->vnp_HashSecret)) {
-            $vnpSecureHash = hash_hmac('sha512', $hashdata, $this->vnp_HashSecret);
-            $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
-        }
+        $vnpSecureHash = hash_hmac('sha512', $hashdata, $this->vnp_HashSecret);
+        $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
         if (isset($_POST['redirect'])) return redirect($vnp_Url);
         else return response()->json(['code' => '00', 'message' => 'success', 'data' => $vnp_Url]);
     }
@@ -164,7 +163,7 @@ class CheckoutController extends Controller
                             $email->to(session()->get('orders')["email"], "Header");
                         });
                     } catch (\Exception $e) {
-                        var_dump($e->errorInfo);
+                        return view('payment.payment_error', ['message' => $e->getMessage(), 'status' => 0]);
                     }
                 }
             } else {
@@ -212,7 +211,7 @@ class CheckoutController extends Controller
                     $email->to(session()->get('orders')["email"], "Header");
                 });
             } catch (\Exception $e) {
-                var_dump($e->errorInfo);
+                return view('payment.payment_error', ['message' => $e->getMessage(), 'status' => 0]);
             }
             return view('payment.direct_payment', ['order_id' => $order_id, 'message' => 'Đã đặt hàng thành công', 'status' => 1]);
         } else {
