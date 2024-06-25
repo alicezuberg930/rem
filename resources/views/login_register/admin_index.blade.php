@@ -74,15 +74,17 @@
         </div>
         <div id="login-warn-box">
         </div>
-        <form id="login-form">
+        <form id="login-form" method="POST">
+            @csrf
             <div class="login-header text-light text-center">
                 Đăng nhập nhân viên
             </div>
             <div class="form-group mb-3">
-                <input type="text" class="form-control login" id="login-email" placeholder="Email">
+                <input type="text" class="form-control login" id="login-email" placeholder="Email" name="email">
             </div>
             <div class="form-group mb-3">
-                <input type="password" class="form-control login" id="login-password" placeholder="Mật khẩu">
+                <input type="password" class="form-control login" id="login-password" placeholder="Mật khẩu"
+                    name="password">
             </div>
             <div class="form-group mb-3">
                 <div id="feedback" class="text-center">a</div>
@@ -107,7 +109,7 @@
         e.preventDefault()
         $.ajax({
             url: "/admin/login",
-            method: "post",
+            method: "POST",
             data: {
                 email: $("#login-email").val(),
                 password: $("#login-password").val()

@@ -80,7 +80,8 @@
                 data: {
                     year: $(this).val()
                 },
-                success: function(result) { console.log(result);
+                success: function(result) {
+                    console.log(result);
                     for (let i = 0; i < result.length; i++) {
                         income.push(result[i].total)
                     }

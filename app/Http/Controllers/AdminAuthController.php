@@ -18,7 +18,7 @@ class AdminAuthController extends Controller
     public function login(Request $request)
     {
         $token = '';
-        $employee = employee::where('email', '=', $request->input('email'))->first();
+        $employee = employee::where('email', $request->input('email'))->first();
         if ($employee) {
             if (($request->input('password') == $employee->password)) {
                 if ($employee->role_as == 1)
@@ -31,8 +31,9 @@ class AdminAuthController extends Controller
                     $token = $employee->createToken('access-token', $this->shipper_abilities)->plainTextToken;
                 session()->put('Employee', ['EmployeeID' => $employee->id, 'Token' => $token]);
                 return response()->json(['message' => 'Đăng nhập thành công', 'status' => 1,]);
-            } else
+            } else {
                 return response()->json(['message' => 'Mật khẩu không hợp lệ', 'status' => 0]);
+            }
         } else {
             return response()->json(['message' => 'Email không tồn tại', 'status' => -1]);
         }
