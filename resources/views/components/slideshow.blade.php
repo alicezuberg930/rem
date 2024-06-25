@@ -1,25 +1,23 @@
-<div class="CarouselFade mt-5">
-    <div class="carousel slide carousel-fade carousel-dark">
-        <div class="carousel-indicators">
-            <button type="button" data-bs-target="" aria-label="Slide 1" aria-current="true" class="active"></button>
-            <button type="button" data-bs-target="" aria-label="Slide 2" aria-current="false"></button>
+<div id="carouselExampleControls" class="carousel slide mt-5" data-bs-ride="carousel">
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <img src="{{ url('/zippo_banner_1.jpg') }}" class="d-block w-100" alt="...">
         </div>
-        <div class="carousel-inner">
-            <div class="h-90 active carousel-item"><img class="d-block w-100" src="{{ url('/zippo_banner_2.jpg') }}"
-                    alt="Second slide"></div>
-            <div class="carousel-item"><img class="d-block w-100" src="{{ url('/zippo_banner_2.jpg') }}"
-                    alt="Third slide">
-            </div>
+        <div class="carousel-item">
+            <img src="{{ url('/zippo_banner_2.jpg') }}" class="d-block w-100" alt="...">
         </div>
-        <a class="carousel-control-prev" role="button" tabindex="0" href="#">
-            <span aria-hidden="true" class="carousel-control-prev-icon"></span>
-            <span class="visually-hidden">Previous</span>
-        </a>
-        <a class="carousel-control-next" role="button" tabindex="0" href="#">
-            <span aria-hidden="true" class="carousel-control-next-icon"></span>
-            <span class="visually-hidden">Next</span>
-        </a>
+        <div class="carousel-item">
+            <img src="{{ url('/zippo_banner_3.jpg') }}" class="d-block w-100" alt="...">
+        </div>
     </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
 </div>
 <div class="container-lg mb-5">
     <div class="suggetsforu border-top">
@@ -67,7 +65,8 @@
             </div>
             <div class="introducesText col-md-7 mb-2">
                 <span class="lh-lg lead">Thương hiệu ZippoStore được thành lập vào năm 2015 với mục tiêu đem lại cho
-                    người tiêu dùng những dịch vụ và sản phẩm tốt nhất. ZippoStore chuyên cung cấp các loại bật lửa kim
+                    người tiêu dùng những dịch vụ và sản phẩm tốt nhất. ZippoStore chuyên cung cấp các loại bật lửa
+                    kim
                     loại từ các nhãn hiệu cao cấp, thiết kế riêng phục vụ từng đối tượng khách hàng.
                 </span>
             </div>
@@ -82,7 +81,8 @@
                         <h1 class="card-title">
                             <i class="fa-regular fa-thumbs-up" style="font-size: 80px"></i>
                         </h1>
-                        <p class="card-text text-dark">Nhiều năm kinh nghiệm trong lĩnh vực nhập khẩu, phân phối bật lửa
+                        <p class="card-text text-dark">Nhiều năm kinh nghiệm trong lĩnh vực nhập khẩu, phân phối bật
+                            lửa
                             cùng kiến thức sản phẩm chuyên sâu, cam kết mang đến Quý Khách hàng sự hài lòng.</p>
                     </div>
                 </div>
@@ -93,7 +93,8 @@
                         <h1 class="card-title">
                             <i class="fa-solid fa-coins" style="font-size: 80px"></i>
                         </h1>
-                        <p class="card-text text-dark">Giá thành sản phẩm được tính toán, so sánh với thị trường để đảm
+                        <p class="card-text text-dark">Giá thành sản phẩm được tính toán, so sánh với thị trường để
+                            đảm
                             bảo lợi ích của Quý Khách hàng.</p>
                     </div>
 
@@ -117,7 +118,8 @@
                             <i class="fa-solid fa-phone-volume" style="font-size: 80px"></i>
                         </h1>
                         <p class="card-text text-dark">Quý Khách hàng có thể liên hệ qua tất cả các kênh: Website,
-                            Facebook, Zalo, Hotline,… ZippoStore sẵn sàng phục vụ bạn bất kể khi nào bạn có nhu cầu.</p>
+                            Facebook, Zalo, Hotline,… ZippoStore sẵn sàng phục vụ bạn bất kể khi nào bạn có nhu cầu.
+                        </p>
                     </div>
                 </div>
             </div>
