@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\category;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
@@ -10,7 +10,7 @@ class CategoryController extends Controller
     public function addCategory(Request $request)
     {
         try {
-            category::create($request->all());
+            Category::create($request->all());
             return response()->json(['message' => 'Thêm danh mục thành công', 'status' => 1, 'response' => $this->categoryReload($request->input('page'))]);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Thêm danh mục thất bại', 'status' => 0]);
@@ -20,7 +20,7 @@ class CategoryController extends Controller
     public function editCategory(Request $request)
     {
         try {
-            category::findOrFail($request->input('id'))->update($request->all());
+            Category::findOrFail($request->input('id'))->update($request->all());
             return response()->json(['message' => 'Sửa danh mục thành công', 'status' => 1, 'response' => $this->categoryReload($request->input('page'))]);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Sửa danh mục thất bại', 'status' => 0]);
@@ -30,16 +30,16 @@ class CategoryController extends Controller
     public function deleteCategory(Request $request)
     {
         try {
-            category::findOrFail($request->input('id'))->delete();
+            Category::findOrFail($request->input('id'))->delete();
             return response()->json(['message' => 'Xóa danh mục thành công', 'status' => 1, 'response' => $this->categoryReload($request->input('page'))]);
         } catch (\Exception) {
             return response()->json(['message' => 'Danh mục còn trong sản phẩm', 'status' => 0]);
         }
     }
 
-    public static function getCategory($current_page)
+    public static function getCategory($current_page = 1)
     {
-        return category::take(10)->skip(($current_page - 1) * 10)->get();
+        return Category::take(10)->skip(($current_page - 1) * 10)->get();
     }
 
     public function manageCategoryPage()
@@ -56,23 +56,23 @@ class CategoryController extends Controller
         return $this->categoryReload($request->input('page'));
     }
 
-    public function categoryReload($current_page)
+    public function categoryReload($current_page = 1)
     {
         $Categories = null;
         $total = 0;
         if (session()->has('search') && session()->get('search') != '') {
-            $query = category::where('category_name', 'like', '%' . session()->get('search') . '%');
+            $query = Category::where('category_name', 'like', '%' . session()->get('search') . '%');
             $total = $query->count();
             $Categories = $query->take(10)->skip(($current_page - 1) * 10)->get();
         } else {
             $Categories = $this->getCategory($current_page);
-            $total = category::all()->count();
+            $total = Category::all()->count();
         }
         return view('dynamic_layout.category_reload', ['Categories' => $Categories, 'total' => $total, 'currentpage' => $current_page])->render();
     }
 
     public function getAllCategory()
     {
-        return category::all();
+        return Category::all();
     }
 }

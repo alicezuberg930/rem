@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\password_reset;
+use App\Models\PasswordReset;
 use App\Models\User;
 use Dotenv\Repository\RepositoryInterface;
 use Illuminate\Http\Request;
@@ -18,19 +18,22 @@ class PasswordResetController extends Controller
         $reset_email = $request->input("email");
         if ($reset_email == '')
             return response()->json(['message' => 'Email không được rỗng', 'status' => 0]);
-        if (password_reset::where("email", "=", $reset_email)->first() != null)
-            password_reset::where("email", "=", $reset_email)->first()->delete();
-        $response = new password_reset();
+        if (PasswordReset::where("email", "=", $reset_email)->first() != null)
+            PasswordReset::where("email", "=", $reset_email)->first()->delete();
+        $response = new PasswordReset();
         $response->email = $reset_email;
         $response->selector = $selector;
         $response->token = password_hash($token, PASSWORD_DEFAULT);
         $response->expire = $expire_in;
         if ($response->save()) {
-            Mail::send("email_templates.reset_password_templates", ['token' => bin2hex($token), 'selector' => $selector], 
-            function ($email) use ($reset_email) {
-                $email->subject('Thông báo đặt lại mật khẩu');
-                $email->to($reset_email, "Header");
-            });
+            Mail::send(
+                "email_templates.reset_password_templates",
+                ['token' => bin2hex($token), 'selector' => $selector],
+                function ($email) use ($reset_email) {
+                    $email->subject('Thông báo đặt lại mật khẩu');
+                    $email->to($reset_email, "Header");
+                }
+            );
             return response()->json(['message' => 'Yêu cầu đổi mật khẩu đã được gửi đến email của bạn', 'status' => 1]);
         } else
             return response()->json(['message' => 'Yêu cầu thất bại', 'status' => 0]);
@@ -58,7 +61,7 @@ class PasswordResetController extends Controller
             return response()->json(["status" => 0, "message" => "Mật khẩu không trùng"]);
         } else {
             $currentDate = date("U");
-            $result = password_reset::where("selector", "=", $selector)->first();
+            $result = PasswordReset::where("selector", "=", $selector)->first();
             if ($result->expire < $currentDate) {
                 return response()->json(["status" => 0, "message" => "Hết hạn sử dụng"]);
             } else {
@@ -66,7 +69,7 @@ class PasswordResetController extends Controller
                     $email = $result->email;
                     $user = new User();
                     $user::where("email", "=", $email)->update(['password' => $password]);
-                    password_reset::where("email", "=", $email)->first()->delete();
+                    PasswordReset::where("email", "=", $email)->first()->delete();
                     return response()->json(["status" => 1, "message" => "Đặt lại mật khẩu thành công"]);
                 } else {
                     return response()->json(["status" => 0, "message" => "Token không trùng"]);

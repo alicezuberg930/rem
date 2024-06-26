@@ -4,9 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\employee;
-use App\Models\User;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Employee;
 
 class AdminAuthController extends Controller
 {
@@ -18,7 +16,7 @@ class AdminAuthController extends Controller
     public function login(Request $request)
     {
         $token = '';
-        $employee = employee::where('email', $request->input('email'))->first();
+        $employee = Employee::where('email', $request->input('email'))->first();
         if ($employee) {
             if (($request->input('password') == $employee->password)) {
                 if ($employee->role_as == 1)
@@ -41,7 +39,7 @@ class AdminAuthController extends Controller
 
     public function logout()
     {
-        employee::find(session('Employee')['EmployeeID'])->tokens()->delete();
+        Employee::find(session('Employee')['EmployeeID'])->tokens()->delete();
         session()->forget('Employee');
         return redirect('/');
     }

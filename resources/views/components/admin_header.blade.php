@@ -1,10 +1,10 @@
-<?php $employee = App\Models\employee::where('id', '=', session('Employee')['EmployeeID'])->get(); ?>
+<?php $employee = App\Models\Employee::where('id', '=', session('Employee')['EmployeeID'])->first(); ?>
 <div class="row row-cols-1 row-cols-md-4 justify-content-end bg-secondary">
     <div class="">
         <div class="d-flex align-items-center p-1">
             <button class="btn bg-sub p-0 text-white font-weight-bold" type="button">
                 <i class="fa-solid fa-user"></i>
-                {{ $employee[0]->username }}
+                {{ $employee->username }}
             </button>
             <div class="mx-2 text-white"> | </div>
             <a id="login-logout" class="d-flex text-decoration-none text-danger font-weight-bold" href="/admin/logout">

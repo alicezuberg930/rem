@@ -2,29 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\sales;
+use App\Models\Sale;
 use Illuminate\Http\Request;
 
 class SalesController extends Controller
 {
     public function getAllSales()
     {
-        return sales::all();
+        return Sale::all();
     }
 
     public static function getSales($current_page)
     {
-        return sales::take(10)->skip(($current_page - 1) * 10)->get();
+        return Sale::take(10)->skip(($current_page - 1) * 10)->get();
     }
 
     public function getSaleDetails(Request $request)
     {
-        return sales::find($request->input('id'));
+        return Sale::find($request->input('id'));
     }
 
     public function addSale(Request $request)
     {
-        $response = sales::create($request->all());
+        $response = Sale::create($request->all());
         if (!$response)
             return response()->json(['message' => 'Thêm khuyến mãi thất bại', 'status' => 0]);
         else
@@ -33,7 +33,7 @@ class SalesController extends Controller
 
     public function editSale(Request $request)
     {
-        $Sale = sales::findOrFail($request->input('id'));
+        $Sale = Sale::findOrFail($request->input('id'));
         $response = $Sale->update($request->all());
         if (!$response || $Sale == null)
             return response()->json(['message' => 'Sửa khuyến mãi thất bại', 'status' => 0]);
@@ -43,7 +43,7 @@ class SalesController extends Controller
 
     public function deleteSale(Request $request)
     {
-        $response = sales::findOrFail($request->input('id'))->delete();
+        $response = Sale::findOrFail($request->input('id'))->delete();
         if (!$response)
             return response()->json(['message' => 'Xóa khuyến mãi thất bại', 'status' => 0]);
         else
@@ -54,7 +54,7 @@ class SalesController extends Controller
     {
         $authorize = AuthController::tokenCan("sales:manage");
         if (session()->has('search')) session()->forget("search");
-        return view('admin.sales_manager', ['authorize' => $authorize, 'Sales' => $this->getSales(1), 'total' => sales::all()->count(), 'currentpage' => 1]);
+        return view('admin.sales_manager', ['authorize' => $authorize, 'Sales' => $this->getSales(1), 'total' => Sale::all()->count(), 'currentpage' => 1]);
     }
 
     public function searchSale(Request $request)
@@ -69,12 +69,12 @@ class SalesController extends Controller
         $Categories = null;
         $total = 0;
         if (session()->has('search') && session()->get('search') != '') {
-            $query = sales::where('salename', 'like', '%' . session()->get('search') . '%');
+            $query = Sale::where('salename', 'like', '%' . session()->get('search') . '%');
             $total = $query->count();
             $Categories = $query->take(10)->skip(($current_page - 1) * 10)->get();
         } else {
             $Categories = $this->getSales($current_page);
-            $total = sales::all()->count();
+            $total = Sale::all()->count();
         }
         return view('dynamic_layout.sale_reload', ['Sales' => $Categories, 'total' => $total, 'currentpage' => $current_page])->render();
     }

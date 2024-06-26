@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Http\Controllers\Controller;
-use App\Models\employee;
+use App\Models\Employee;
 use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
@@ -46,16 +46,6 @@ class AuthController extends Controller
             return response()->json(['message' => 'Email chưa được sử dụng', 'status' => -1]);
         }
     }
-
-    // public function CreateNewToken($token)
-    // {
-    //     return response()->json([
-    //         'access_token' => $token,
-    //         'token_type' => 'bearer',
-    //         'expires_in' => JWTAuth::factory()->getTTL() * 60,
-    //         'user' => auth()->user()
-    //     ]);
-    // }
 
     public function logout()
     {
@@ -136,7 +126,7 @@ class AuthController extends Controller
     {
         $abilitiesStr = '';
         if (session()->has("Employee")) {
-            $abilitiesStr = employee::join('personal_access_tokens', 'employees.id', '=', 'tokenable_id')
+            $abilitiesStr = Employee::join('personal_access_tokens', 'employees.id', '=', 'tokenable_id')
                 ->where('employees.id', '=', session('Employee')['EmployeeID'])->first(['abilities'])->abilities;
         }
         return str_contains($abilitiesStr, $needle);

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\orders;
+use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -13,7 +13,7 @@ class StatisticController extends Controller
     $data = array();
     if ($request->query('year')) {
       for ($i = 1; $i <= 12; $i++) {
-        $order = orders::whereYear('order_date', $request->year)->where('status', 1)->whereMonth('order_date', $i);
+        $order = Order::whereYear('order_date', $request->year)->where('status', 1)->whereMonth('order_date', $i);
         array_push(
           $data,
           [

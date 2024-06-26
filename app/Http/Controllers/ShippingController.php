@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\orders;
+use App\Models\Order;
 use Illuminate\Http\Request;
 
 class ShippingController extends Controller
@@ -10,9 +10,9 @@ class ShippingController extends Controller
     public static function getShipperOrderQuantity()
     {
         $CountArray = array();
-        $CountArray["Approved"] = orders::where('status', '=', 1)->count();
-        $CountArray["Delivering"] = orders::where("status", '=', 3)->count();
-        $CountArray["Delivered"] = orders::where("status", '=', 4)->count();
+        $CountArray["Approved"] = Order::where('status', '=', 1)->count();
+        $CountArray["Delivering"] = Order::where("status", '=', 3)->count();
+        $CountArray["Delivered"] = Order::where("status", '=', 4)->count();
         return $CountArray;
     }
 
@@ -26,13 +26,13 @@ class ShippingController extends Controller
 
     public static function getShipperOrder($current_page, $type)
     {
-        return orders::where('status', '=', $type)->take(10)->skip(($current_page - 1) * 10)->get();
+        return Order::where('status', '=', $type)->take(10)->skip(($current_page - 1) * 10)->get();
     }
 
     public function updateShippingStatus(Request $request)
     {
         try {
-            orders::findOrFail($request->input('id'))->update(['status' => $request->input('status')]);
+            Order::findOrFail($request->input('id'))->update(['status' => $request->input('status')]);
             return response()->json(['message' => 'Thay đổi trạng thái thành công', 'status' => 1, 'response' => $this->shippingReload($request->input('page'), $request->input('type'))]);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Thay đổi trạng thái thất bại', 'status' => 0]);

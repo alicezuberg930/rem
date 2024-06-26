@@ -6,6 +6,7 @@
 <script src="{{ url('jquery/dist/jquery.min.js') }}"></script>
 <script src="{{ url('popper/dist/umd/popper.min.js') }}"></script>
 <script src="{{ url('bootstrap/dist/js/bootstrap.min.js') }}"></script>
+<script src="{{ url('bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
 
 <link rel="shortcut icon" type="image/png" href="{{ url('./icon.png') }}">
 <link rel="stylesheet" href="{{ url('bootstrap/dist/css/bootstrap.min.css') }}">

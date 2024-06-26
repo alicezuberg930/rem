@@ -5,8 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class password_reset extends Model
+class ImportSlip extends Model
 {
     use HasFactory;
     public $timestamps = false;
+    protected $fillable = [
+        'supplier_id',
+        'employee_id',
+        'import_date',
+        'total_price'
+    ];
 }

@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\orderdetails;
-use App\Models\orders;
-use App\Models\product;
+use App\Models\OrderDetails;
+use App\Models\Order;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
@@ -134,7 +134,7 @@ class CheckoutController extends Controller
         $secureHash = hash_hmac('sha512', $hashData, $this->vnp_HashSecret);
         if ($secureHash == $vnp_SecureHash) {
             if ($_GET['vnp_ResponseCode'] == '00') {
-                $orders = new orders();
+                $orders = new Order();
                 $orders->order_date = $request->input('vnp_PayDate');
                 $orders->fullname = session('orders')['fullname'];
                 $orders->phone_number = session('orders')['phonenumber'];
@@ -146,14 +146,14 @@ class CheckoutController extends Controller
                 if ($orders->save()) {
                     $order_id = $orders->id;
                     foreach (session()->get('cart') as $item) {
-                        $orderdetails = new orderdetails();
+                        $orderdetails = new OrderDetails();
                         $orderdetails->order_id = $order_id;
                         $orderdetails->product_id = $item['id'];
                         $orderdetails->quantity = $item['quantity'];
                         $orderdetails->product_price = $item['price'];
                         $orderdetails->save();
 
-                        $product = product::find($item['id']);
+                        $product = Product::find($item['id']);
                         $product->update(['amount' => $product->amount - $item['quantity']]);
                     }
                     $Result = 'Giao dịch thành công';
@@ -183,7 +183,7 @@ class CheckoutController extends Controller
             return redirect("/cart")->with('message', 'Cần phải đăng nhập để đặt hàng');
         $this->getOrderInfo($request);
         date_default_timezone_set("Asia/Ho_Chi_Minh");
-        $orders = new orders();
+        $orders = new Order();
         $orders->order_date = session('orders')['order_date'];
         $orders->fullname = session('orders')['fullname'];
         $orders->phone_number = session('orders')['phonenumber'];
@@ -195,14 +195,14 @@ class CheckoutController extends Controller
         if ($orders->save()) {
             $order_id = $orders->id;
             foreach (session()->get('cart') as $item) {
-                $orderdetails = new orderdetails();
+                $orderdetails = new OrderDetails();
                 $orderdetails->order_id = $order_id;
                 $orderdetails->product_id = $item['id'];
                 $orderdetails->quantity = $item['quantity'];
                 $orderdetails->product_price = $item['price'];
                 $orderdetails->save();
 
-                $product = product::find($item['id']);
+                $product = Product::find($item['id']);
                 $product->update(['amount' => $product->amount - $item['quantity']]);
             }
             try {
