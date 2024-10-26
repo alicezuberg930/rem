@@ -3,16 +3,15 @@
 
 <head>
     @include('components.head_tag')
-    {{-- <x-head_tag /> --}}
     <title>Trang chủ</title>
 </head>
 
 <body>
-    <x-header />
+    @include('components.header')
     <div class="container">
         <x-slideshow />
         <div class="news">
-            <h2 class="title">Sản Phẩm Mới</h2>
+            <h2 class="text-2xl font-bold mb-4">Sản Phẩm Mới</h2>
             <div class="row">
                 <?php $a = 0; ?>
                 @foreach ($Products as $product)
@@ -26,7 +25,7 @@
             </div>
         </div>
         <div class="onsale">
-            <h2 class="title">Đang khuyến mãi</h2>
+            <h2 class="text-2xl font-bold mb-4">Đang khuyến mãi</h2>
             <div class="row">
                 <?php $i = 0; ?>
                 @foreach ($Products as $product)

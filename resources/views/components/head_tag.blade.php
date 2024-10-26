@@ -12,3 +12,4 @@
 <link rel="stylesheet" href="{{ url('bootstrap/dist/css/bootstrap.min.css') }}">
 <link rel="stylesheet" href="{{ url('css/style.css') }}">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.2.0/css/all.css">
+@vite('resources/css/app.css')
