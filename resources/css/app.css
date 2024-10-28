@@ -1,3 +1,17 @@
+@import url('bootstrap/dist/css/bootstrap.css');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.carousel-item {
+    transition: -webkit-transform .6s ease;
+    transition: transform .6s ease;
+    transition: transform .6s ease, -webkit-transform .6s ease;
+}
+
+.logo-text {
+    background: -webkit-linear-gradient(left, #1d39be, #0bdad0, #745eed, #e900a7);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}

@@ -64,7 +64,7 @@ Route::get('/admin/manage_statistic', function () {
 });
 
 // Giao diện trang chủ
-Route::get('/', [ProductController::class, 'indexPage']);
+Route::get('/', [ProductController::class, 'index']);
 
 // Xử lý đăng nhập & đăng ký
 Route::post('/login', [AuthController::class, 'login']);

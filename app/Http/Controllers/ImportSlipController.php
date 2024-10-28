@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\import_slip;
 use App\Models\import_slip_details;
-use App\Models\product;
+use App\Models\Product;
 use App\Models\supplier;
 use Illuminate\Http\Request;
 
@@ -41,7 +41,7 @@ class ImportSlipController extends Controller
             } catch (\Exception $e) {
                 return response()->json(['message' => 'Thêm phiếu nhập thất bại', 'status' => 0]);
             }
-            $product = product::find($request->input('product_id'));
+            $product = Product::find($request->input('product_id'));
             $product->update(['amount' => $product->amount + $quantity]);
             return response()->json(['message' => 'Thêm phiếu nhập thành công', 'status' => 1, 'response' => $this->importSlipReload($request->input('page'))]);
         } catch (\Exception $e) {
@@ -59,7 +59,7 @@ class ImportSlipController extends Controller
         $authorize = AuthController::tokenCan("import_slips:manage");
         if (session()->has('search')) session()->forget("search");
         return view('admin.import_slips_manager', [
-            'Products' => product::all(['id', 'product_name']),
+            'Products' => Product::all(['id', 'product_name']),
             'Suppliers' => supplier::all(),
             'Import_slips' => $this->getImportSlip(1),
             'total' => import_slip::all()->count(),

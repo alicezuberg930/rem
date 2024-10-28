@@ -3,17 +3,31 @@
 namespace App\Http\Controllers;
 
 use App\Models\category;
-use App\Models\product;
+use App\Models\Product;
 use App\Models\sales;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
+    public function index()
+    {
+        if (session()->has('orders') && session()->has('cart')) {
+            session()->forget('orders');
+            session()->forget('cart');
+        }
+        $banners = [
+            array("src" => url('image/banners/zippo_banner_1.jpg')),
+            array("src" => url('image/banners/zippo_banner_2.jpg')),
+            array("src" => url('image/banners/zippo_banner_3.jpg'))
+        ];
+        return view("index", ['Products' => $this->getHomePageProducts(), 'banners' => $banners]);
+    }
+
     public function addProduct(Request $request)
     {
         try {
-            product::create($request->all());
+            Product::create($request->all());
             return response()->json(['message' => 'Thêm sản phẩm thành công', 'status' => 1, 'response' => $this->productReload($request->input('page'))]);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Thêm sản phẩm thất bại', 'status' => 0]);
@@ -23,7 +37,7 @@ class ProductController extends Controller
     public function editProduct(Request $request)
     {
         try {
-            product::findOrfail($request->input('id'))->update($request->all());
+            Product::findOrfail($request->input('id'))->update($request->all());
             return response()->json(['message' => 'Cập nhật sản phẩm thành công', 'status' => 1, 'response' => $this->productReload($request->input('page'))]);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Cập nhật sản phẩm thất bại', 'status' => 0]);
@@ -33,7 +47,7 @@ class ProductController extends Controller
     public function deleteProduct(Request $request)
     {
         try {
-            product::find($request->input('id'))->delete();
+            Product::find($request->input('id'))->delete();
             return response()->json(['response' => $this->productReload($request->input('page')), 'message' => 'Xóa sản phẩm thành công', 'status' => 1]);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Xóa sản phẩm thất bại', 'status' => 0]);
@@ -42,7 +56,7 @@ class ProductController extends Controller
 
     public function getHomePageProducts()
     {
-        $Products = product::leftjoin('sales', 'products.discount', '=', 'sales.id')
+        $Products = Product::leftjoin('sales', 'products.discount', '=', 'sales.id')
             ->join('categories', 'products.category', '=', 'categories.id')
             ->orderBy('products.created_at', 'desc')
             ->get(['*', 'products.id as ProductsID', 'sales.id as SaleID']);
@@ -81,7 +95,7 @@ class ProductController extends Controller
 
     public static function getProducts($current_page)
     {
-        return product::take(6)->skip(($current_page - 1) * 6)->get();
+        return Product::take(6)->skip(($current_page - 1) * 6)->get();
     }
 
     public function searchProduct(Request $request)
@@ -96,7 +110,7 @@ class ProductController extends Controller
         $Products = null;
         $total = 0;
         if (session()->has('search') && session()->get('search') != '') {
-            $query = product::where('product_name', 'like', '%' . session()->get('search') . '%');
+            $query = Product::where('product_name', 'like', '%' . session()->get('search') . '%');
             $total = $query->count();
             $Products = $query->take(5)->skip(($current_page - 1) * 5)->get();
         } else {
@@ -114,8 +128,8 @@ class ProductController extends Controller
             'Categories' => category::all(),
             'Sales' => sales::all(),
             'Products' => $this->getProducts(1),
-            'Materials' => product::select('material')->distinct()->get(),
-            'total' => product::all()->count(),
+            'Materials' => Product::select('material')->distinct()->get(),
+            'total' => Product::all()->count(),
             'currentpage' => 1,
             'authorize' => $authorize
         ]);
@@ -123,7 +137,7 @@ class ProductController extends Controller
 
     public function getProductDetails($id)
     {
-        return product::leftjoin('sales', 'products.discount', '=', 'sales.id')
+        return Product::leftjoin('sales', 'products.discount', '=', 'sales.id')
             ->join('categories', 'products.category', '=', 'categories.id')
             ->where('products.id', '=', $id)
             ->get(['*', 'products.id as ProductsID', 'categories.id as categoryID', 'sales.id as salesID'])[0];
@@ -134,25 +148,16 @@ class ProductController extends Controller
         return view("product.product_details", ['product' => $this->getProductDetails($id)]);
     }
 
-    public function indexPage()
-    {
-        if (session()->has('orders') && session()->has('cart')) {
-            session()->forget('orders');
-            session()->forget('cart');
-        }
-        return view("index", ['Products' => $this->getHomePageProducts()]);
-    }
-
     public function filterPage(Request $request)
     {
         $Array = [
             'Caterogies' => category::all(),
-            'Materials' => product::select('material')->distinct()->get(),
-            'Countries' => product::select('origin')->distinct()->get()
+            'Materials' => Product::select('material')->distinct()->get(),
+            'Countries' => Product::select('origin')->distinct()->get()
         ];
         $query = '';
         if ($request->input('search_name') != null) {
-            $query = product::where('product_name', 'like', '%' . $request->input('search_name') . '%');
+            $query = Product::where('product_name', 'like', '%' . $request->input('search_name') . '%');
             $Array['total'] = $query->count();
             $Array['products'] = $query->get(['*', 'id as ProductsID']);
             $Array['current_page'] = 1;

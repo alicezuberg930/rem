@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\orderdetails;
 use App\Models\orders;
-use App\Models\product;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
@@ -153,7 +153,7 @@ class CheckoutController extends Controller
                         $orderdetails->product_price = $item['price'];
                         $orderdetails->save();
 
-                        $product = product::find($item['id']);
+                        $product = Product::find($item['id']);
                         $product->update(['amount' => $product->amount - $item['quantity']]);
                     }
                     $Result = 'Giao dịch thành công';
@@ -202,7 +202,7 @@ class CheckoutController extends Controller
                 $orderdetails->product_price = $item['price'];
                 $orderdetails->save();
 
-                $product = product::find($item['id']);
+                $product = Product::find($item['id']);
                 $product->update(['amount' => $product->amount - $item['quantity']]);
             }
             try {

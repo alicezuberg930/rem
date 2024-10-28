@@ -6,10 +6,15 @@
     "license": "MIT",
     "require": {
         "php": "^8.0.2",
+        "actb/blade-github-octicons": "^4.2",
+        "codeat3/blade-mono-icons": "^1.4",
+        "davidhsianturi/blade-bootstrap-icons": "^1.5",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^9.19",
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
+        "postare/blade-mdi": "^1.1",
+        "spatie/laravel-medialibrary": "^10.15",
         "tymon/jwt-auth": "^1.0"
     },
     "require-dev": {

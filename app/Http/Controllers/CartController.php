@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\product;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
@@ -25,7 +25,7 @@ class CartController extends Controller
     {
         $id = $request->input('id');
         $cart = session('cart');
-        $product = product::where('products.id', '=', $id)->leftjoin('sales', 'products.discount', '=', 'sales.id')->get()[0];
+        $product = Product::where('products.id', '=', $id)->leftjoin('sales', 'products.discount', '=', 'sales.id')->get()[0];
         if (isset($cart[$id])) {
             return response()->json(['status' => 0]);
         } else {
@@ -51,7 +51,7 @@ class CartController extends Controller
         $cities = Http::get("https://api.mysupership.vn/v1/partner/areas/province");
         $id = $request->input('id');
         $cart = session('cart');
-        if ($request->input('quantity') < product::where('id', $id)->first()->amount) {
+        if ($request->input('quantity') < Product::where('id', $id)->first()->amount) {
             $cart[$id]['quantity'] = $request->input('quantity');
             session()->put('cart', $cart);
             session()->save();
@@ -73,7 +73,7 @@ class CartController extends Controller
         $cities = Http::get("https://api.mysupership.vn/v1/partner/areas/province");
         $id = $request->input('id');
         $cart = session('cart');
-        if ($cart[$id]['quantity'] < product::where('id', $id)->first()->amount) {
+        if ($cart[$id]['quantity'] < Product::where('id', $id)->first()->amount) {
             $cart[$id]['quantity'] += 1;
             session()->put('cart', $cart);
             session()->save();
