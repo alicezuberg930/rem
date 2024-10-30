@@ -44,7 +44,7 @@
     <div class="xl:w-[65%] w-4/5 m-auto">
         <nav class="py-3 flex justify-between items-center gap-10">
             <a href="/" class="h-full flex items-center gap-2">
-                <img src="{{ url('black-fire-logo.png') }}" width="50" height="50" alt="logo">
+                <img src="{{ url('image/assets/black-fire-logo.png') }}" width="50" height="50" alt="logo">
                 <div class="logo-text text-2xl font-semibold">ZippoStore</div>
             </a>
             <div class="flex flex-auto gap-3">

@@ -18,6 +18,8 @@ use App\Http\Controllers\ImportSlipController;
 use App\Http\Controllers\ShippingController;
 use App\Http\Controllers\StatisticController;
 use App\Http\Controllers\SupplierController;
+use App\Livewire\Admin\ManageProduct;
+use App\Livewire\Admin\ManageStuff;
 use App\Models\User;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
@@ -201,3 +203,9 @@ Route::get('/admin/manage_orders/paginate/', [OrdersController::class, 'adminOrd
 Route::get('/admin/manage_orders/status/', [OrdersController::class, 'adminOrderStatusAndPaginate']);
 Route::get('/admin/manage_orders/order_details/{order_id}', [OrdersController::class, 'getOrderDetails']);
 Route::get('/admin/manage_orders/export', [OrdersController::class, 'getAllOrders']);
+
+
+
+Route::get('/test/create', ManageProduct::class);
+Route::get('/test2', ManageStuff::class);
+Route::post("/upload-image", [ProductController::class, 'uploadF']);

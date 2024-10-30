@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\category;
+use App\Models\Category;
 use App\Models\Product;
 use App\Models\sales;
 use Illuminate\Http\Request;
@@ -10,8 +10,24 @@ use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
+    public function uploadF(Request $request)
+    {
+        // dd($request->all());
+        $category = new Category();
+        if ($request->hasFile("image")) {
+            try {
+                $category->create(["category_name" => "fwtrr", "category_description" => "rjowioh;e"]);
+                ($category->addMediaFromRequest(('image'))->toMediaCollection());
+                dd('upload succes');
+            } catch (\Throwable $th) {
+                dd($th);
+            }
+        }
+    }
+
     public function index()
     {
+
         if (session()->has('orders') && session()->has('cart')) {
             session()->forget('orders');
             session()->forget('cart');
@@ -21,7 +37,7 @@ class ProductController extends Controller
             array("src" => url('image/banners/zippo_banner_2.jpg')),
             array("src" => url('image/banners/zippo_banner_3.jpg'))
         ];
-        return view("index", ['Products' => $this->getHomePageProducts(), 'banners' => $banners]);
+        return view("index", ['products' => Product::all(), 'banners' => $banners]);
     }
 
     public function addProduct(Request $request)

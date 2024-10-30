@@ -7,26 +7,20 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Product extends Model implements HasMedia
+class Review extends Model implements HasMedia
 {
     use HasFactory, InteractsWithMedia;
 
-    // protected $hidden = ['media'];
+    protected $hidden = ['media'];
 
     protected $appends = ['medias'];
 
     protected $fillable = [
-        "name",
-        "description",
-        "category_id",
-        "sale_id",
-        "origin",
-        "material",
-        "price",
-        "amount"
+        "comment",
+        "star",
     ];
 
-    protected $with = ['category', 'sale'];
+    protected $with = ['user', 'product'];
 
     public function registerMediaCollections(): void
     {
@@ -50,13 +44,13 @@ class Product extends Model implements HasMedia
         return $requiredAttributes;
     }
 
-    public function category()
+    public function user()
     {
-        return $this->belongsTo('App\Models\Category', 'category_id', 'id');
+        return $this->belongsTo('App\Models\User', 'user_id', 'id');
     }
 
-    public function sale()
+    public function product()
     {
-        return $this->belongsTo('App\Models\Sale', 'sale_id', 'id');
+        return $this->belongsTo('App\Models\Product', 'product_id', 'id');
     }
 }
