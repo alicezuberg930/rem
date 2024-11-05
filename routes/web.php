@@ -83,7 +83,7 @@ Route::get('/decrease_incart', [CartController::class, 'decreaseIncart']);
 Route::get('/set_quantity', [CartController::class, 'setQuantity']);
 
 // Giao diện trang chi tiết sản phẩm
-Route::get('/product_details/{id}', [ProductController::class, 'ProductDetailsPage']);
+Route::get('/product/{id}', [ProductController::class, 'ProductDetailsPage']);
 
 // Xử lý thánh toán
 Route::get('/vnpay_return', [CheckoutController::class, 'paymentsResult']);
@@ -118,7 +118,7 @@ Route::get('/admin/manage_statistic/annual_orders', [StatisticController::class,
 Route::get('/admin/manage_statistic/product_statistic', [StatisticController::class, 'getHighestSoldProduct']);
 
 //Quản lý sản phẩm
-Route::get('/admin/manage_products', [ProductController::class, 'manageProductPage']);
+Route::get('/admin/manage_products', ManageProduct::class);
 Route::get('/admin/manage_products/add', [ProductController::class, 'addProduct']);
 Route::post('/admin/manage_products/upload_file', [ProductController::class, 'uploadFile']);
 Route::get('/admin/manage_products/edit', [ProductController::class, 'editProduct']);
@@ -203,9 +203,3 @@ Route::get('/admin/manage_orders/paginate/', [OrdersController::class, 'adminOrd
 Route::get('/admin/manage_orders/status/', [OrdersController::class, 'adminOrderStatusAndPaginate']);
 Route::get('/admin/manage_orders/order_details/{order_id}', [OrdersController::class, 'getOrderDetails']);
 Route::get('/admin/manage_orders/export', [OrdersController::class, 'getAllOrders']);
-
-
-
-Route::get('/test/create', ManageProduct::class);
-Route::get('/test2', ManageStuff::class);
-Route::post("/upload-image", [ProductController::class, 'uploadF']);

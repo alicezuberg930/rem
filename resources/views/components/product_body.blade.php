@@ -7,17 +7,16 @@
                 </div>
             </div>
         @endif
-        <a class="h-100 d-flex flex-column text-decoration-none" href="/product_details/{{ $product->id }}">
+        <a class="h-100 d-flex flex-column text-decoration-none" href="/product/{{ $product->id }}">
             <div class="h-48 w-full">
-                <img src="{{ url('image/' . $product->getFirstMediaUrl('medias')) }}" class="rounded-t-md"
+                <img src="{{ $product->getFirstMediaUrl('photos') }}" class="rounded-t-md h-full w-full object-cover"
                     alt="{{ $product->id }}">
             </div>
             <div class="p-1">
                 <span class="text-wrap line-clamp-2 text-bold text-sm h-9">{{ $product->name }}</span>
                 <div class="mt-2">
                     <span class="text-blue-500 text-sm">đ</span>
-                    <span
-                        class="text-blue-500 font-semibold text-lg">{{ number_format($product->price, 0, '.') }}</span>
+                    <span class="text-blue-500 font-semibold text-lg">{{ $product->formatPrice() }}</span>
                 </div>
                 <div class="flex items-center">
                     <div class="">

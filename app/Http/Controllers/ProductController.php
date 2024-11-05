@@ -4,27 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Product;
-use App\Models\sales;
+use App\Models\Sale;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
-    public function uploadF(Request $request)
-    {
-        // dd($request->all());
-        $category = new Category();
-        if ($request->hasFile("image")) {
-            try {
-                $category->create(["category_name" => "fwtrr", "category_description" => "rjowioh;e"]);
-                ($category->addMediaFromRequest(('image'))->toMediaCollection());
-                dd('upload succes');
-            } catch (\Throwable $th) {
-                dd($th);
-            }
-        }
-    }
-
     public function index()
     {
 
@@ -142,7 +127,7 @@ class ProductController extends Controller
         if (session()->has('search')) session()->forget("search");
         return view('admin.products_manager', [
             'Categories' => category::all(),
-            'Sales' => sales::all(),
+            'Sales' => Sale::all(),
             'Products' => $this->getProducts(1),
             'Materials' => Product::select('material')->distinct()->get(),
             'total' => Product::all()->count(),
@@ -151,17 +136,9 @@ class ProductController extends Controller
         ]);
     }
 
-    public function getProductDetails($id)
-    {
-        return Product::leftjoin('sales', 'products.discount', '=', 'sales.id')
-            ->join('categories', 'products.category', '=', 'categories.id')
-            ->where('products.id', '=', $id)
-            ->get(['*', 'products.id as ProductsID', 'categories.id as categoryID', 'sales.id as salesID'])[0];
-    }
-
     public function ProductDetailsPage($id)
     {
-        return view("product.product_details", ['product' => $this->getProductDetails($id)]);
+        return view("product.product_details", ['product' => Product::find($id)]);
     }
 
     public function filterPage(Request $request)

@@ -11,9 +11,9 @@ class Product extends Model implements HasMedia
 {
     use HasFactory, InteractsWithMedia;
 
-    // protected $hidden = ['media'];
+    protected $hidden = ['media'];
 
-    protected $appends = ['medias'];
+    protected $appends = ['photos'];
 
     protected $fillable = [
         "name",
@@ -30,21 +30,21 @@ class Product extends Model implements HasMedia
 
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection('medias');
+        $this->addMediaCollection('photos');
     }
 
-    public function getMediasAttribute()
+    public function getPhotosAttribute()
     {
-        $medias = $this->getMedia('medias');
+        $medias = $this->getMedia('photos');
         $requiredAttributes = [];
         foreach ($medias as $media) {
-            $attributes = array(
+            $attributes = [
                 "original_url" => $media->getFullUrl(),
                 "file_name" => $media->file_name,
                 "size" => $media->size,
-                "human_readable_size" => $media->human_readable_size,
+                "human_readable_size" => $media->humanReadableSize,
                 "mime_type" => $media->mime_type,
-            );
+            ];
             array_push($requiredAttributes, $attributes);
         }
         return $requiredAttributes;
@@ -58,5 +58,18 @@ class Product extends Model implements HasMedia
     public function sale()
     {
         return $this->belongsTo('App\Models\Sale', 'sale_id', 'id');
+    }
+
+    public function scopeSearch($query, $term)
+    {
+        $term = "%$term%";
+        $query->where(function ($query) use ($term) {
+            $query->where("name", "like", $term);
+        });
+    }
+
+    public function formatPrice()
+    {
+        return number_format($this->price, 0, '.');
     }
 }

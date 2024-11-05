@@ -8,27 +8,6 @@
 
 <body>
     @include('components.header')
-    <div>
-        {{-- @dd($products) --}}
-        <form class="form" action="/upload-image" method="POST" enctype="multipart/form-data">
-            @csrf
-            <div class="modal-body">
-                <div class="row justify-content-center justify-content-around">
-                    <div class="col-md-5">
-                        <div class="col-md-auto">
-                            <div class="input-group mb-3">
-                                <input type="file" class="form-control" id="image" name="image">
-                            </div>
-                            {{-- <div wire:loading wire:target="photo">Uploading...</div> --}}
-                        </div>
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-primary" data-dismiss="modal">Thêm</button>
-
-            </div>
-        </form>
-    </div>
-
     <div class="xl:w-[65%] w-4/5 m-auto">
         @include('components.banners')
         @include('components.slideshow')

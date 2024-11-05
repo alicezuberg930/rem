@@ -7,36 +7,36 @@ use App\Models\Product;
 use App\Models\Sale;
 use Livewire\Component;
 use Livewire\WithFileUploads;
-// use Spatie\MediaLibraryPro\Livewire\Concerns\WithMedia;
+use Spatie\LivewireFilepond\WithFilePond;
+use Livewire\WithPagination;
 
 class ManageProduct extends Component
 {
-    use WithFileUploads;
+    use WithFileUploads, WithFilePond, WithPagination;
 
+    protected $listeners = ['refreshPage' => '$refresh'];
     public $name = '';
-    public $description = '';
+    public $description;
     public $category_id;
     public $sale_id;
     public $origin;
     public $material;
-    public $price;
-    public $amount;
+    public $price = 0;
+    public $amount = 0;
     public $photos = [];
     public $categories = [];
     public $sales = [];
     public $materials = [];
-    public $products = [];
     public $product;
+    public $active = true;
+    public $search;
+    public $perPage = 5;
 
     public function mount()
     {
-        $this->product = new Product();
         $this->categories = Category::all();
         $this->sales = Sale::all();
-        $this->products = Product::select('*')->get();
         $this->materials = Product::select('material')->distinct()->get();
-        // 'total' => Product::all()->count(),
-        // 'currentpage' => 1,
         $this->category_id = $this->categories[0]->id;
         $this->sale_id = $this->sales[0]->id;
         $this->material = $this->materials[0]->material;
@@ -44,14 +44,20 @@ class ManageProduct extends Component
 
     public function render()
     {
-        return view('livewire.admin.manage_product');
+        return view(
+            'livewire.admin.manage_product',
+            ["products" => Product::search(trim($this->search))->paginate($this->perPage)]
+        );
+    }
+
+    public function refreshPage()
+    {
+        $this->render();
     }
 
     public function save()
     {
         try {
-            // dd($this->photos[0]->getClientOriginalName());
-            // dd($this->photos[0]->getRealPath());
             $data = $this->validate([
                 'amount' => 'required',
                 'name' => 'required|max:255',
@@ -63,15 +69,55 @@ class ManageProduct extends Component
                 'price' => 'required',
                 'photos.*' => 'required|mimes:jpeg,jpg,png|max:1024',
             ]);
-            $this->product->create($data);
+            $this->product = Product::create($data);
 
             foreach ($this->photos as $photo) {
-                // $product->addMediaFromString($photo->get())->usingFileName($photo->getFilename())->toMediaCollection('medias');
-                // $this->product->addMedia($photo->getRealPath())->usingName($photo->getClientOriginalName())->toMediaCollection('medias');
-                $this->product->addMediaFromDisk('livewire-tmp/' . $photo->getFilename())->toMediaCollection("medias");
+                $this->product->addMedia($photo->getRealPath())->toMediaCollection('photos');
             }
-            $this->name = '';
-            // $this->reset();
+            $this->dispatch("close-create-modal");
+            $this->photos = null;
+            $this->reset();
+        } catch (\Throwable $th) {
+            dd($th->getMessage());
+        }
+    }
+
+    public function edit($id)
+    {
+        try {
+            $this->product = Product::find($id);
+
+            $this->amount = $this->product->amount;
+            $this->name = $this->product->name;
+            $this->description = $this->product->description;
+            $this->category_id = $this->product->category_id;
+            $this->sale_id = $this->product->sale_id;
+            $this->origin = $this->product->origin;
+            $this->material = $this->product->material;
+            $this->price = $this->product->price;
+            // if ($this->photos != null) {
+            //     foreach ($this->product->getPhotosAttribute() as $attribute) {
+            //         array_push($this->photos, new TemporaryUploadedFile($attribute["file_name"], "public"));
+            //     }
+            // }
+            $this->dispatch("open-edit-modal");
+        } catch (\Throwable $th) {
+            dd($th->getMessage());
+        }
+    }
+
+    public function update()
+    {
+        try {
+            $this->product->update($this->all());
+            if ($this->photos != null) {
+                $this->product->clearMediaCollection("photos");
+                foreach ($this->photos as $photo) {
+                    $this->product->addMedia($photo->getRealPath())->toMediaCollection('photos');
+                }
+            }
+            $this->product = null;
+            $this->dispatch("close-edit-modal");
         } catch (\Throwable $th) {
             dd($th->getMessage());
         }

@@ -1,4 +1,4 @@
-<div class="bg-blue-300 w-full">
+<div class="bg-gray-800 w-full">
     <div class="xl:w-[65%] w-4/5 m-auto">
         <div class="navbar justify-content-end p-0 pr-3">
             @if (session()->has('UserID'))
@@ -7,7 +7,7 @@
                     <div class="d-flex dropdown">
                         <button class="btn p-0 text-white dropdown-toggle" type="button" id="dropdownMenuButton"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fa-solid fa-user"></i>
+                            <x-forkawesome-user class="text-white w-5 h-5" />
                             {{ $user[0]->username }}
                         </button>
                         <div class="dropdown-menu animation bg-secondary mt-4" aria-labelledby="dropdownMenuButton">
@@ -44,7 +44,7 @@
     <div class="xl:w-[65%] w-4/5 m-auto">
         <nav class="py-3 flex justify-between items-center gap-10">
             <a href="/" class="h-full flex items-center gap-2">
-                <img src="{{ url('image/assets/black-fire-logo.png') }}" width="50" height="50" alt="logo">
+                <img src="{{ url('assets/black-fire-logo.png') }}" width="50" height="50" alt="logo">
                 <div class="logo-text text-2xl font-semibold">ZippoStore</div>
             </a>
             <div class="flex flex-auto gap-3">

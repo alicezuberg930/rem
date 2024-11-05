@@ -10,33 +10,33 @@
 <body>
     <x-header />
     <div id="product">
-        <img id="product-background" src="{{ url("/image/$product->image") }}">
+        <img id="product-background" src="{{ $product->getFirstMediaUrl('photos') }}">
         <div class="product-description text-light" style="background-color: rgb(118, 118, 118)">
             <div class="container mt-3">
                 <div id="product-description-header">
-                    <h1 id="product-description-display">{{ $product->product_name }}</h1>
+                    <h1 id="product-description-display">{{ $product->name }}</h1>
                     <div id="product-cart">
                         <div class="product-cart-price">
-                            @if (isset($product->percent) && $product->percent > 0)
+                            @if ($product->sale != null && $product->sale->percent > 0)
                                 <span
-                                    class="product-cart-discount float-left badge bg-primary text-white">-{{ $product->percent }}%</span>
+                                    class="product-cart-discount float-left badge bg-primary text-white">-{{ $product->sale->percent }}%</span>
                             @endif
                             <span class="badge p-0 pt-1 pb-2">
-                                @if (isset($product->percent) && $product->percent > 0)
-                                    <?php $discount = doubleval($product->price) * (1 - doubleval($product->percent / 100)); ?>
+                                @if ($product->sale != null && $product->sale->percent > 0)
+                                    <?php $discount = doubleval($product->price) * (1 - doubleval($product->sale->percent / 100)); ?>
                                     <span
                                         class="product-cart-discount-price text-decoration-line-through text-secondary mr-1">{{ number_format($discount, 0, '.') }}
-                                        VND</span>
+                                        đ</span>
                                 @endif
                                 <span class="product-cart-final-price text-white">
-                                    {{ number_format($product->price, 0, '.') }} VND </span>
+                                    {{ $product->formatPrice() }} đ</span>
                             </span>
                         </div>
                         <div class="product-confirm m-0">
-                            <button data-id="{{ $product->ProductsID }}"
+                            <button data-id="{{ $product->id }}"
                                 class="add-cart btn btn-primary w-100 font-weight-bold">
                                 <i class="m-1 fa-solid fa-cart-shopping"></i>
-                                <span>{{ isset(session('cart')[$product->ProductsID]) ? 'Đã thêm vào giỏ' : 'Thêm vô giỏ hèng' }}</span>
+                                <span>{{ isset(session('cart')[$product->id]) ? 'Đã thêm vào giỏ' : 'Thêm vô giỏ hàng' }}</span>
                             </button>
                         </div>
                     </div>
@@ -53,7 +53,7 @@
                 <!-- Tab panes -->
                 <div class="tab-content pb-5">
                     <div id="description" class="container tab-pane active"><br>
-                        <h1 class="title">Mô tả</h1>{{ $product->product_description }}
+                        {!! $product->description !!}
                     </div>
                     <div id="details" class="container tab-pane fade"><br>
                         <div class="content-summary-section">
@@ -74,7 +74,7 @@
                                     </div>
                                     <div class="col-12 col-md-4 pl-0">
                                         <div class="details-category"> Danh Mục: </div>
-                                        <div class="details-content">{{ $product->category_name }}</div>
+                                        <div class="details-content">{{ $product->category->name }}</div>
                                     </div>
                                     <div class="col-12 col-md-4 pl-0">
                                         <div class="details-category"> Số lượng còn lại: </div>
@@ -96,13 +96,6 @@
     <x-toast />
 </body>
 
-<script>
-    // $(document).ready(function() {
-    //     $(".nav-tabs a").click(function() {
-    //         $(this).tab('show');
-    //     });
-    // });
-</script>
 <script src="{{ url('/js/add_cart.js') }}"></script>
 
 </html>
