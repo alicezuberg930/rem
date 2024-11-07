@@ -18,9 +18,11 @@ class Review extends Model implements HasMedia
     protected $fillable = [
         "comment",
         "star",
+        "product_id",
+        "user_id"
     ];
 
-    protected $with = ['user', 'product'];
+    protected $with = ['user'];
 
     public function registerMediaCollections(): void
     {
@@ -47,10 +49,5 @@ class Review extends Model implements HasMedia
     public function user()
     {
         return $this->belongsTo('App\Models\User', 'user_id', 'id');
-    }
-
-    public function product()
-    {
-        return $this->belongsTo('App\Models\Product', 'product_id', 'id');
     }
 }

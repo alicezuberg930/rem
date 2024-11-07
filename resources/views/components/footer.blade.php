@@ -1,6 +1,6 @@
 <footer class="bg-gray-800">
     <div class="max-w-screen-xl px-4 pt-8 pb-6 mx-auto sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
             <div>
                 <div class="flex text-blue-300">
                     <svg class="h-8" viewBox="0 0 118 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -36,9 +36,12 @@
                             fill="currentColor" />
                     </svg>
                 </div>
-                <p class="max-w-md mt-6 leading-relaxed text-gray-400 sm:max-w-xs sm:mx-0 text-left">
-                    Lorem ipsum dolor, sit amet consectetur adipisicing elit. Incidunt
-                    consequuntur amet culpa cum itaque neque.
+                <p class="mt-6 leading-relaxed text-gray-400 md:w-full sm:mx-0 text-left">
+                    Thương hiệu ZippoStore được thành lập vào năm 2015 với mục tiêu đem lại cho người tiêu dùng những
+                    dịch vụ và sản phẩm tốt nhất. ZippoStore chuyên cung cấp các loại bật lửa kim loại từ các nhãn hiệu
+                    cao cấp, thiết kế riêng phục vụ từng đối tượng khách hàng.
+                    Nhiều năm kinh nghiệm trong lĩnh vực nhập khẩu, phân phối bật lửa cùng kiến thức sản phẩm chuyên
+                    sâu, cam kết mang đến Quý Khách hàng sự hài lòng.
                 </p>
                 <ul class="flex justify-center gap-6 mt-8 md:gap-8 sm:justify-start">
                     <li>

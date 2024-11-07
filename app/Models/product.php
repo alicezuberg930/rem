@@ -23,7 +23,7 @@ class Product extends Model implements HasMedia
         "origin",
         "material",
         "price",
-        "amount"
+        "amount",
     ];
 
     protected $with = ['category', 'sale'];
@@ -60,6 +60,11 @@ class Product extends Model implements HasMedia
         return $this->belongsTo('App\Models\Sale', 'sale_id', 'id');
     }
 
+    public function reviews()
+    {
+        return $this->hasMany('App\Models\Review', 'product_id', 'id');
+    }
+
     public function scopeSearch($query, $term)
     {
         $term = "%$term%";
@@ -68,8 +73,24 @@ class Product extends Model implements HasMedia
         });
     }
 
+    public function getStarsReview($stars)
+    {
+        return $this->reviews->where("star", $stars);
+    }
+
+    public function calculateAverageStars()
+    {
+        $totalStars = sizeof($this->getStarsReview(5)) * 5 + sizeof($this->getStarsReview(4)) * 4 + sizeof($this->getStarsReview(3)) * 3 + sizeof($this->getStarsReview(2)) * 2 + sizeof($this->getStarsReview(1));
+        return round($totalStars / sizeof($this->reviews), 1);
+    }
+
     public function formatPrice()
     {
         return number_format($this->price, 0, '.');
+    }
+
+    public function formatDiscountedPrice()
+    {
+        return number_format($this->price / 100 * $this->sale->percent, 0, '.');
     }
 }

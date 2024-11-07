@@ -1,8 +1,8 @@
 @extends('admin.adminpage')
 @section('body_manager')
     <div class="col-md-9 col-lg-10">
-        <x-admin_header />
-        @if (!$authorize)
+        {{-- <x-admin_header /> --}}
+        @if (0)
             <h3>Bạn không có quyền thống kê</h3>
         @else
             <div class="row row-cols-1 row-cols-md-4 justify-content-between mt-2">

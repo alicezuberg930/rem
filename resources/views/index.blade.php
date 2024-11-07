@@ -1,47 +1,54 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('components.common')
 
-<head>
-    @include('components.head_tag')
+@section('head')
     <title>Trang chủ</title>
-</head>
+@endsection
 
-<body>
-    @include('components.header')
+@section('body')
     <div class="xl:w-[65%] w-4/5 m-auto">
-        @include('components.banners')
-        @include('components.slideshow')
-        <div class="news w-full mb-4">
-            <h2 class="text-2xl font-bold mb-3">Sản Phẩm Mới</h2>
-            <div class="w-full grid xl:grid-cols-6 lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-3 grid-cols-2 gap-2">
-                @foreach ($products as $product)
-                    @include('components.product_body')
+        <div class="carousel slide mt-5 h-[450px]" id="carouselDemo" data-bs-ride="carousel" data-bs-wrap="true">
+            <div class="carousel-inner h-full">
+                @foreach ($banners as $key => $banner)
+                    <div class="carousel-item object-cover h-full {{ $key == 0 ? 'active' : '' }}">
+                        <img src="{{ $banner['src'] }}" alt="{{ $banner['src'] }}" class="w-full h-full" />
+                    </div>
+                @endforeach
+            </div>
+            <button class="carousel-control-prev justify-start left-2" data-bs-target="#carouselDemo" data-bs-slide="prev"
+                type="button">
+                <x-bi-arrow-left-circle class="w-10 h-10" fill="white" />
+            </button>
+            <button class="carousel-control-next justify-end right-2" data-bs-target="#carouselDemo" data-bs-slide="next"
+                type="button">
+                <x-bi-arrow-right-circle class="w-10 h-10" fill="white" />
+            </button>
+
+            <div class="carousel-indicators">
+                @foreach ($banners as $key => $banner)
+                    <button type="button" data-bs-target="#carouselDemo" data-bs-slide-to="{{ $key }}"
+                        class="{{ $key == 0 ? 'active' : '' }}"></button>
                 @endforeach
             </div>
         </div>
+
+        <div class="news w-full mb-4 mt-12">
+            <h2 class="text-2xl font-bold mb-3">Sản Phẩm Mới</h2>
+            <div class="w-full grid xl:grid-cols-6 lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-3 grid-cols-2 gap-2">
+                @foreach ($products as $product)
+                    @include('components.product_list')
+                @endforeach
+            </div>
+        </div>
+
         <div class="onsale w-full mb-4">
             <h2 class="text-2xl font-bold mb-3">Đang khuyến mãi</h2>
             <div class="w-full grid xl:grid-cols-6 lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-3 grid-cols-2 gap-2">
                 @foreach ($products as $product)
                     @if ($product->sale != null && $product->sale->percent > 0)
-                        @include('components.product_body')
+                        @include('components.product_list')
                     @endif
                 @endforeach
             </div>
         </div>
     </div>
-    @include('components.footer')
-    @include('components.toast')
-
-</body>
-
-@if (session()->has('invalid_token'))
-    <script>
-        $('.toast').toast('show')
-        $('.toast-body').html("Vui lòng xác thực")
-    </script>
-@endif
-
-<script src="{{ url('./js/add_cart.js') }}"></script>
-
-</html>
+@endsection

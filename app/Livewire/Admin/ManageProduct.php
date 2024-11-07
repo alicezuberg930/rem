@@ -31,6 +31,7 @@ class ManageProduct extends Component
     public $active = true;
     public $search;
     public $perPage = 5;
+    public $currentPhotos = [];
 
     public function mount()
     {
@@ -70,7 +71,7 @@ class ManageProduct extends Component
                 'photos.*' => 'required|mimes:jpeg,jpg,png|max:1024',
             ]);
             $this->product = Product::create($data);
-
+            
             foreach ($this->photos as $photo) {
                 $this->product->addMedia($photo->getRealPath())->toMediaCollection('photos');
             }
@@ -118,6 +119,18 @@ class ManageProduct extends Component
             }
             $this->product = null;
             $this->dispatch("close-edit-modal");
+        } catch (\Throwable $th) {
+            dd($th->getMessage());
+        }
+    }
+
+    public function show($id)
+    {
+        try {
+            $this->product = Product::find($id);
+            $this->currentPhotos = $this->product->getPhotosAttribute();
+            // dd($this->product);
+            $this->dispatch("open-details-modal");
         } catch (\Throwable $th) {
             dd($th->getMessage());
         }

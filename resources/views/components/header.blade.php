@@ -19,7 +19,7 @@
                         </div>
                         <div class="mx-2 text-white"> | </div>
                         <a class="flex text-white items-center gap-1" href="/logout">
-                            Đăng xuất
+                            <span>Đăng xuất</span>
                             <x-mdi-logout class="text-white w-5 h-5" />
                         </a>
                     </div>
@@ -47,17 +47,20 @@
                 <img src="{{ url('assets/black-fire-logo.png') }}" width="50" height="50" alt="logo">
                 <div class="logo-text text-2xl font-semibold">ZippoStore</div>
             </a>
-            <div class="flex flex-auto gap-3">
+            <div class="flex flex-auto gap-3 items-center">
                 <form action="/search_product" method="GET" class="w-full">
                     <div class="flex rounded-md bg-white">
                         <input type="text" name="search_name" class="px-3 focus:outline-none w-full bg-transparent"
                             placeholder="Tìm kiếm" id="search_name">
-                        <x-monoicon-search class="py-1 px-2 text-white h-11 w-12 bg-orange-500 rounded-r-md" />
+                        <x-monoicon-search class="py-1 px-2 text-white h-11 w-12 bg-blue-300 rounded-r-md" />
                     </div>
                 </form>
-                <a href="/cart">
-                    <x-bi-cart class="text-white h-10 w-10" />
-                </a>
+                <div class="relative h-6 w-6">
+                    <div class="absolute -top-3 -right-3 p-[3px] bg-blue-300 text-xs text-white rounded-xl">10</div>
+                    <a href="/cart">
+                        <x-bi-cart class="text-blue-300 h-6 w-6" />
+                    </a>
+                </div>
             </div>
         </nav>
     </div>

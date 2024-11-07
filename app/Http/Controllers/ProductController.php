@@ -138,7 +138,7 @@ class ProductController extends Controller
 
     public function ProductDetailsPage($id)
     {
-        return view("product.product_details", ['product' => Product::find($id)]);
+        return view("product.details", ['product' => Product::with("reviews")->find($id)]);
     }
 
     public function filterPage(Request $request)

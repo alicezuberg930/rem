@@ -1,28 +1,25 @@
 <?php
 
-use App\Http\Controllers\AddressController;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CheckoutController;
-use App\Http\Controllers\GroupController;
 use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SalesController;
-use App\Http\Controllers\Authentication;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\ImportSlipController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ShippingController;
 use App\Http\Controllers\StatisticController;
 use App\Http\Controllers\SupplierController;
 use App\Livewire\Admin\ManageProduct;
-use App\Livewire\Admin\ManageStuff;
+use App\Livewire\Admin\ManageStatistics;
 use App\Models\User;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -60,10 +57,7 @@ Route::get('/personal_password', function () {
     return view('user.user_password');
 });
 // Trang quản lý thống kê
-Route::get('/admin/manage_statistic', function () {
-    $authorize = AuthController::tokenCan("statistic:manage");
-    return view('admin.statistic_manager', ['authorize' => $authorize]);
-});
+Route::get('/admin/manage_statistic', ManageStatistics::class);
 
 // Giao diện trang chủ
 Route::get('/', [ProductController::class, 'index']);
@@ -84,6 +78,7 @@ Route::get('/set_quantity', [CartController::class, 'setQuantity']);
 
 // Giao diện trang chi tiết sản phẩm
 Route::get('/product/{id}', [ProductController::class, 'ProductDetailsPage']);
+Route::post('/review/post', [ReviewController::class, 'store']);
 
 // Xử lý thánh toán
 Route::get('/vnpay_return', [CheckoutController::class, 'paymentsResult']);
@@ -119,13 +114,6 @@ Route::get('/admin/manage_statistic/product_statistic', [StatisticController::cl
 
 //Quản lý sản phẩm
 Route::get('/admin/manage_products', ManageProduct::class);
-Route::get('/admin/manage_products/add', [ProductController::class, 'addProduct']);
-Route::post('/admin/manage_products/upload_file', [ProductController::class, 'uploadFile']);
-Route::get('/admin/manage_products/edit', [ProductController::class, 'editProduct']);
-Route::get('/admin/manage_products/store/{id}', [ProductController::class, 'getProductDetails']);
-Route::get('/admin/manage_products/delete', [ProductController::class, 'deleteProduct']);
-Route::get('/admin/manage_products/search', [ProductController::class, 'searchProduct']);
-Route::get('/admin/manage_products/paginate/{current_page}', [ProductController::class, 'productReload']);
 Route::get('/admin/manage_products/export', [ProductController::class, 'getHomePageProducts']);
 
 //Quản lý khách hàng
