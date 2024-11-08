@@ -19,9 +19,30 @@ body {
     background-clip: text;
     -webkit-text-fill-color: transparent;
 }
-
-.custom-scrollbar::-webkit-scrollbar {
-    width: 3px;
-    background: rgb(147 197 253);
-    color: rgb(35, 137, 253);
+/* 
+::-webkit-scrollbar {
+    width: 0.5rem;
+    height: 0.5rem;
 }
+
+::-webkit-scrollbar-track {
+    background: var(--main-color);
+    border-left: 1px solid hsla(0, 0%, 100%, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+    background: hsla(0, 0%, 100%, 0.4);
+}
+
+a {
+    color: unset;
+}
+
+a:hover {
+    color: unset !important;
+    text-decoration: unset !important;
+}
+
+html {
+    scroll-behavior: smooth;
+} */

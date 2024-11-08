@@ -6,13 +6,81 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Http\Controllers\Controller;
 use App\Models\employee;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Request as FacadesRequest;
 
 class AuthController extends Controller
 {
-    public function __construct()
+    public function login(Request $request)
     {
-        // $this->middleware('auth:api', ['except' => ['login', 'register']]);
+        $credentials = $request->validate([
+            "email" => "required|email",
+            "password" => "required",
+        ]);
+
+        if (Auth::attempt($credentials, true)) {
+            $request->session()->regenerate();
+            return redirect("/");
+        }
+
+        return back()->withErrors([
+            "email" => "The provided credentials do not match our records.",
+            "password" => "The provided password is wrong",
+        ]);
+    }
+
+    public function signup(Request $request)
+    {
+        try {
+            $credentials = $request->validate([
+                "email" => "required|email",
+                "password" => "required",
+                "username" => "required",
+                "phone" => "required|regex:/(0)[0-9]{9}/",
+                "gender" => "required",
+                "role_id" => "required",
+            ]);
+            if (count(User::where('email', $request->email)->get()) > 0) {
+                dd("The provided email is already registered.");
+                return back()->withErrors([
+                    "email" => "The provided email is already registered."
+                ]);
+            }
+            if (count(User::where('phone', $request->phone)->get()) > 0) {
+                dd("The provided phone is already registered");
+                return back()->withErrors([
+                    "phone" => "The provided phone is already registered."
+                ]);
+            }
+
+            $user = User::create($credentials);
+
+            if ($user) {
+                Auth::login($user, true);
+                Mail::send("email_templates.register", ['username' => $request->input('username')], function ($email) use ($request) {
+                    $email->subject('Thông báo đăng ký');
+                    $email->to($request->email, "Header");
+                });
+                return redirect("/");
+            } else {
+                return back()->withErrors([
+                    "message" => "Đăng ký thất bại."
+                ]);
+            }
+        } catch (\Throwable $th) {
+            dd($th);
+        }
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        // FacadesRequest::session()->invalidate();
+        // FacadesRequest::session()->regenerateToken();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect("/");
     }
 
     public function verifyUser($token)
@@ -28,85 +96,6 @@ class AuthController extends Controller
             return response()->json(['message' => 'Người dùng không hợp lệ']);
     }
 
-    public function login(Request $request)
-    {
-        $token = $request->input('token');
-        $user = User::where('email', '=', $request->input('email'))->first();
-        if ($user) {
-            if ($user->email_verified_at == null)
-                return response()->json(['message' => 'Hãy xác nhận tài khoản của mình trước khi đăng nhập', 'status' => -2]);
-            if (($request->input('password') == $user->password)) {
-                session()->put('UserID', $user->id);
-                session()->put('token', $token);
-                $user::where("id", "=", session()->get('UserID'))->update(['remember_token' => $token]);
-                return response()->json(['message' => 'Đăng nhập thành công', 'status' => 1,]);
-            } else
-                return response()->json(['message' => 'Mật khẩu không hợp lệ', 'status' => 0]);
-        } else {
-            return response()->json(['message' => 'Email chưa được sử dụng', 'status' => -1]);
-        }
-    }
-
-    // public function CreateNewToken($token)
-    // {
-    //     return response()->json([
-    //         'access_token' => $token,
-    //         'token_type' => 'bearer',
-    //         'expires_in' => JWTAuth::factory()->getTTL() * 60,
-    //         'user' => auth()->user()
-    //     ]);
-    // }
-
-    public function logout()
-    {
-        $user = new User();
-        $user::where("id", "=", session()->get('UserID'))->update(['remember_token' => '']);
-        session()->forget('token');
-        session()->forget('UserID');
-        return redirect('/');
-    }
-
-    public function register(Request $request)
-    {
-        if (count(User::where('email', '=', $request->input('email'))->get()) > 0)
-            return response()->json([
-                'message' => 'Email đã được sử dụng',
-                'status' => -1
-            ]);
-        if (count(User::where('phonenumber', '=', $request->input('phonenumber'))->get()) > 0)
-            return response()->json([
-                'message' => 'Số điện thoại đã được sử dụng',
-                'status' => -2
-            ]);
-        $token = $request->input('token');
-        $RegisteredEmail = $request->input('email');
-        $user = new User();
-        $user->email = $RegisteredEmail;
-        $user->gender = $request->input('gender');
-        $user->password = $request->input('password');
-        $user->phonenumber = $request->input('phonenumber');
-        $user->username = $request->input('username');
-        $user->remember_token = $token;
-        $res = $user->save();
-        if ($res) {
-            session()->put('email', $RegisteredEmail);
-            session()->save();
-            Mail::send("email_templates.register", ['token' => $token, 'username' => $request->input('username')], function ($email) use ($RegisteredEmail) {
-                $email->subject('Thông báo đăng ký');
-                $email->to($RegisteredEmail, "Header");
-            });
-            return response()->json([
-                'message' => '1 email đã được gửi đến hòm thư của bạn, hãy kiểm tra nó',
-                'status' => 1
-            ], 201);
-        } else {
-            return response()->json([
-                'message' => 'Đăng ký thất bại',
-                'status' => 0
-            ], 200);
-        }
-    }
-
     public function editPersonalInfo(Request $request)
     {
         $user = User::find($request->input('id'));
@@ -118,6 +107,7 @@ class AuthController extends Controller
 
     public function changePassword(Request $request)
     {
+        // Auth::logoutOtherDevices($currentPassword);
         $user = User::find($request->input('id'));
         if ($request->input('current_password') != $user->password)
             return response()->json(['status' => 0, 'message' => "Mật khẩu không trùng với hiện tại"]);

@@ -27,13 +27,6 @@
                             <x-go-star-fill-24 class="text-[#faca51] h-3 w-3" />
                             <x-go-star-fill-24 class="text-[#faca51] h-3 w-3" />
                         </div>
-                        {{-- <div class="card-jfy-rating-layer">
-                            <span class="rating lazada-ic-Star0 lazada-icon"></span>
-                            <span class="rating lazada-ic-Star0 lazada-icon"></span>
-                            <span class="rating lazada-ic-Star0 lazada-icon"></span>
-                            <span class="rating lazada-ic-Star0 lazada-icon"></span>
-                            <span class="rating lazada-ic-Star0 lazada-icon"></span>
-                        </div> --}}
                     </div>
                     <div class="text-sm opacity-70">(263)</div>
                 </div>

@@ -8,19 +8,26 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Illuminate\Auth\Passwords\CanResetPassword;
 
 class User extends Authenticatable implements HasMedia
 {
-    use HasApiTokens, HasFactory, Notifiable, InteractsWithMedia;
+    use HasApiTokens, HasFactory, Notifiable, InteractsWithMedia, CanResetPassword;
+
+    public static $roles = [
+        "SELLER" => 1,
+        "BUYER" => 2,
+        "ADMIN" => 3,
+    ];
 
     protected $fillable = [
         'username',
         'email',
         'password',
-        'phonenumber',
+        'phone',
         'gender',
         'remember_token',
-        'role_as',
+        'role_id',
         "email_verified_at"
     ];
 
@@ -35,6 +42,11 @@ class User extends Authenticatable implements HasMedia
         'email_verified_at' => 'datetime',
     ];
 
+    public function setPasswordAttribute($password)
+    {
+        $this->attributes['password'] = bcrypt($password);
+    }
+
     public function reviews()
     {
         return $this->hasMany('App\Models\Review', 'user_id', 'id');
@@ -42,16 +54,6 @@ class User extends Authenticatable implements HasMedia
 
     public function getAvatarAttribute()
     {
-        return $this->getFirstMediaUrl("avatar");
+        return $this->getFirstMediaUrl('avatar');
     }
-
-    // public function getJWTIdentifier()
-    // {
-    //     return $this->getKey();
-    // }
-
-    // public function getJWTCustomClaims()
-    // {
-    //     return [];
-    // }
 }

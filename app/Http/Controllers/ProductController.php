@@ -136,7 +136,7 @@ class ProductController extends Controller
         ]);
     }
 
-    public function ProductDetailsPage($id)
+    public function show($id)
     {
         return view("product.details", ['product' => Product::with("reviews")->find($id)]);
     }

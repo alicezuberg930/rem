@@ -12,7 +12,7 @@
         <input name="images[]" type="file" multiple />
         <input name="product_id" type="number" value={{ $product->id }} />
         <input name="user_id" type="number" value="37" />
-        <button type="submit">erhfie</button>
+        <button type="submit">submit</button>
     </form> --}}
     <div class="w-full bg-[#f6f5fa] py-6">
         <div class="xl:w-[65%] w-4/5 mx-auto">
@@ -371,7 +371,7 @@
                     </div>
                 </div>
                 <div class="pb-3">
-                    @foreach ($product->reviews as $review)
+                    @foreach ($product->reviews as $key => $review)
                         <div class="flex gap-4 py-4 border-b">
                             <div class="w-1/5">
                                 <div class="flex items-center gap-3 mb-2">

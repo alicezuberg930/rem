@@ -1,33 +1,26 @@
 <div class="bg-gray-800 w-full">
     <div class="xl:w-[65%] w-4/5 m-auto">
-        <div class="navbar justify-content-end p-0 pr-3">
-            @if (session()->has('UserID'))
-                <?php $user = App\Models\User::where('id', '=', session()->get('UserID'))->get(); ?>
-                <div class="nav-link pt-1">
-                    <div class="d-flex dropdown">
-                        <button class="btn p-0 text-white dropdown-toggle" type="button" id="dropdownMenuButton"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <x-forkawesome-user class="text-white w-5 h-5" />
-                            {{ $user[0]->username }}
+        <div class="flex justify-end">
+            @if (auth()->user())
+                <div class="group pt-2">
+                    <div class="relative">
+                        <button class="text-white flex gap-2 items-center">
+                            <img src={{ auth()->user()->getAvatarAttribute() }}
+                                class="h-6 w-6 rounded-full object-cover" />
+                            {{ auth()->user()->username }}
                         </button>
-                        <div class="dropdown-menu animation bg-secondary mt-4" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item text-white"
-                                href="/personal_information/{{ session()->get('UserID') }}">Thông tin cá nhân</a>
-                            <a class="text-white dropdown-item"
-                                href="/purchase_history/{{ session()->get('UserID') }}">Lịch sử mua hàng</a>
-                            <a class="dropdown-item text-white" href="/personal_password">Đổi mật khẩu</a>
+                        <div
+                            class="rounded-md whitespace-nowrap mt-2 hidden w-fit group-hover:block absolute top-4 right-0 shadow-lg p-3 bg-white z-50">
+                            <a class="block" href="/user/profile">Thông tin cá nhân</a>
+                            <a class="block py-3" href="/user/orders">Lịch sử mua hàng</a>
+                            <a class="block" href="/logout">Đăng xuất</a>
                         </div>
-                        <div class="mx-2 text-white"> | </div>
-                        <a class="flex text-white items-center gap-1" href="/logout">
-                            <span>Đăng xuất</span>
-                            <x-mdi-logout class="text-white w-5 h-5" />
-                        </a>
                     </div>
                 </div>
             @else
-                <div class="d-flex pt-1">
+                <div class="flex pt-1">
                     <div class="">
-                        <a class="p-0 text-white" href="/login_register">Đăng nhập</a>
+                        <a class="p-0 text-white" href="/buyer/login">Đăng nhập</a>
                     </div>
                     <div class="mx-2 text-light"> | </div>
                     <div class="">
@@ -35,7 +28,7 @@
                     </div>
                     <div class="mx-2 text-light"> | </div>
                     <div class="">
-                        <a id="login-logout" class="text-white" href="/login_register">Đăng ký</a>
+                        <a id="login-logout" class="text-white" href="/buyer/signup">Đăng ký</a>
                     </div>
                 </div>
             @endif

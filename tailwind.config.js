@@ -7,6 +7,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      backgroundImage: {
+        'half-gradient': 'linear-gradient(to right, #7d41d9 50%, #032795 50%);',
+      },
       keyframes: {
         'slide-left': {
           '0%': {

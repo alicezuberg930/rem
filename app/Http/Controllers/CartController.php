@@ -3,11 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Province;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
 class CartController extends Controller
 {
+
+    public function index()
+    {
+        return view('cart.index', ['provinces' => Province::all()]);
+    }
 
     public function getDistrict(Request $request)
     {

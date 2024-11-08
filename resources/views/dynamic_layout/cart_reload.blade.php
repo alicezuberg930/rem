@@ -90,8 +90,7 @@
             <div class="row mb-3">
                 <label for="inputEmail3" class="col-sm-4 col-form-label fs-6">Họ và tên</label>
                 <div class="col-sm-8">
-                    <input type="text" class="form-control" id="pay-name" name="fullname"
-                        value="Nguyễn Vĩnh Tiến">
+                    <input type="text" class="form-control" id="pay-name" name="fullname" value="Nguyễn Vĩnh Tiến">
                 </div>
             </div>
             <div class="row mb-3">
@@ -111,9 +110,9 @@
                     <select name="city" class="form-select mb-2" aria-label="Default select example"
                         id="city-select">
                         <option selected class="text-center" value="">------Thành phố------</option>
-                        @foreach ($cities['results'] as $city)
-                            <option value="{{ $city['name'] }}" data-id="{{ $city['code'] }}">
-                                {{ $city['name'] }}
+                        @foreach ($provinces as $province)
+                            <option value="{{ $province->name }}" data-id="{{ $province->code }}">
+                                {{ $province->name }}
                             </option>
                         @endforeach
                     </select>
