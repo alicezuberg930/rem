@@ -13,8 +13,8 @@
                     <div class="mb-3">
                         <div class="flex justify-between items-center">
                             <div class="font-semibold text-xl">Đăng ký</div>
-                            <a title="Đăng nhập với mã QR" class="text-blue-300" href="/buyer/login/qr">
-                                <x-bi-qr-code-scan class="w-10 h-10" />
+                            <a title="Đăng nhập" class="text-blue-300 underline" href="/buyer/login">
+                                <span>Đăng nhập</span>
                             </a>
                         </div>
                     </div>

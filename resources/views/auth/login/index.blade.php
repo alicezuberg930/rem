@@ -26,7 +26,7 @@
                             <div class="mb-4">
                                 <div class="w-[340px]">
                                     <input class="focus:outline-blue-300 w-full p-2 border outline-none" type="text"
-                                        placeholder="Email/Số điện thoại/Tên đăng nhập" autocomplete="on" name="email"
+                                        placeholder="Email/Số điện thoại/Tên đăng nhập" autocomplete="off" name="email"
                                         maxlength="128">
                                 </div>
                                 <span class="error text-xs">
@@ -50,7 +50,7 @@
                             <button class="rounded-md py-2 w-full bg-blue-300 text-white">Đăng nhập</button>
                         </form>
                         <div class="text-xs text-blue-300 flex justify-between mb-2">
-                            <a class="" href="/buyer/reset">Quên mật khẩu</a>
+                            <a class="" href="/buyer/password/forgot">Quên mật khẩu</a>
                             <a class="" href="/buyer/login/otp">Đăng nhập với SMS</a>
                         </div>
                         <div class="">
@@ -77,7 +77,7 @@
                     </div>
                     <div class="text-sm text-center">
                         <div class="text-gray-500">
-                            Bạn mới biết đến Shopee?
+                            Bạn mới biết đến Store?
                             <a class="text-blue-30" href="/buyer/signup">Đăng ký</a>
                         </div>
                     </div>

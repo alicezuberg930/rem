@@ -17,17 +17,4 @@ class Category extends Model implements HasMedia
         "category_name",
         "category_description"
     ];
-
-    // protected $appends = ['avatar'];
-
-    // public function registerMediaCollections(): void
-    // {
-    //     $this->addMediaCollection('avatar')
-    //         ->useFallbackUrl(asset('image/assets/') . '/black-fire-logo.png');
-    // }
-
-    // public function getAvatarAttribute()
-    // {
-    //     return $this->getFirstMediaUrl('avatar');
-    // }
 }

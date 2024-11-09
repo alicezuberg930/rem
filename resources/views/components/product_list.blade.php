@@ -1,4 +1,5 @@
-<div class="border-[1.1px] border-gray-300 rounded-md mb-2 hover:border-blue-500 hover:shadow-md transition-shadow">
+<div
+    class="border-[1.1px] border-gray-300 bg-white rounded-md mb-2 hover:border-blue-500 hover:shadow-md transition-shadow">
     <div class="relative w-full">
         @if ($product->sale != null && $product->sale->percent > 0)
             <div class="absolute top-0 right-0">

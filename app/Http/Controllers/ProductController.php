@@ -10,20 +10,6 @@ use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
-    public function index()
-    {
-
-        if (session()->has('orders') && session()->has('cart')) {
-            session()->forget('orders');
-            session()->forget('cart');
-        }
-        $banners = [
-            array("src" => url('image/banners/zippo_banner_1.jpg')),
-            array("src" => url('image/banners/zippo_banner_2.jpg')),
-            array("src" => url('image/banners/zippo_banner_3.jpg'))
-        ];
-        return view("index", ['products' => Product::all(), 'banners' => $banners]);
-    }
 
     public function addProduct(Request $request)
     {
@@ -134,11 +120,6 @@ class ProductController extends Controller
             'currentpage' => 1,
             'authorize' => $authorize
         ]);
-    }
-
-    public function show($id)
-    {
-        return view("product.details", ['product' => Product::with("reviews")->find($id)]);
     }
 
     public function filterPage(Request $request)

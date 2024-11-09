@@ -10,4 +10,8 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 class Banner extends Model implements HasMedia
 {
     use HasFactory, InteractsWithMedia;
+
+    protected $fillable = ["name", "order"];
+
+    public $timestamps = false;
 }

@@ -9,16 +9,13 @@ use Laravel\Sanctum\HasApiTokens;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Auth\Passwords\CanResetPassword;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 
-class User extends Authenticatable implements HasMedia
+class User extends Authenticatable implements HasMedia, MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable, InteractsWithMedia, CanResetPassword;
 
-    public static $roles = [
-        "SELLER" => 1,
-        "BUYER" => 2,
-        "ADMIN" => 3,
-    ];
+    public static $roles = ["SELLER" => 1, "BUYER" => 2, "ADMIN" => 3,];
 
     protected $fillable = [
         'username',
@@ -31,16 +28,16 @@ class User extends Authenticatable implements HasMedia
         "email_verified_at"
     ];
 
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+    protected $hidden = ['password', 'remember_token',];
 
     protected $appends = ['avatar'];
 
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
+    protected $casts = ['email_verified_at' => 'datetime',];
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('avatar')->useFallbackPath(public_path('/assets/default_avatar.jpg'));
+    }
 
     public function setPasswordAttribute($password)
     {

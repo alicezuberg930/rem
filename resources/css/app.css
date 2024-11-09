@@ -19,8 +19,8 @@ body {
     background-clip: text;
     -webkit-text-fill-color: transparent;
 }
-/* 
-::-webkit-scrollbar {
+
+/* ::-webkit-scrollbar {
     width: 0.5rem;
     height: 0.5rem;
 }
@@ -32,17 +32,4 @@ body {
 
 ::-webkit-scrollbar-thumb {
     background: hsla(0, 0%, 100%, 0.4);
-}
-
-a {
-    color: unset;
-}
-
-a:hover {
-    color: unset !important;
-    text-decoration: unset !important;
-}
-
-html {
-    scroll-behavior: smooth;
 } */

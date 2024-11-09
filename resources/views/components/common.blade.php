@@ -20,7 +20,9 @@
 <body>
     @include('components.header')
 
-    @yield('body')
+    <div class="bg-[#f6f5fa] py-5">
+        @yield('body')
+    </div>
 
     @include('components.footer')
 

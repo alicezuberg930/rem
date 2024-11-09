@@ -5,12 +5,19 @@
 @endsection
 
 @section('body')
+    {{-- <form method="POST" action="banner/gay" enctype="multipart/form-data">
+        @csrf
+        <input name="name" type="text" />
+        <input type="number" name="order">
+        <input type="file" name="image" />
+        <button>Submut</button>
+    </form> --}}
     <div class="xl:w-[65%] w-4/5 m-auto">
-        <div class="carousel slide mt-5 h-[450px]" id="carouselDemo" data-bs-ride="carousel" data-bs-wrap="true">
+        <div class="carousel slide h-[450px]" id="carouselDemo" data-bs-ride="carousel" data-bs-wrap="true">
             <div class="carousel-inner h-full">
                 @foreach ($banners as $key => $banner)
                     <div class="carousel-item object-cover h-full {{ $key == 0 ? 'active' : '' }}">
-                        <img src="{{ $banner['src'] }}" alt="{{ $banner['src'] }}" class="w-full h-full" />
+                        <img src="{{ $banner->getFirstMediaUrl() }}" alt="{{ $banner->name }}" class="w-full h-full" />
                     </div>
                 @endforeach
             </div>
@@ -31,7 +38,7 @@
             </div>
         </div>
 
-        <div class="news w-full mb-4 mt-12">
+        <div class="news w-full pb-4 mt-12">
             <h2 class="text-2xl font-bold mb-3">Sản Phẩm Mới</h2>
             <div class="w-full grid xl:grid-cols-6 lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-3 grid-cols-2 gap-2">
                 @foreach ($products as $product)
@@ -40,7 +47,7 @@
             </div>
         </div>
 
-        <div class="onsale w-full mb-4">
+        <div class="onsale w-full">
             <h2 class="text-2xl font-bold mb-3">Đang khuyến mãi</h2>
             <div class="w-full grid xl:grid-cols-6 lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-3 grid-cols-2 gap-2">
                 @foreach ($products as $product)
