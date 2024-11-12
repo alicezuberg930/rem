@@ -8,24 +8,21 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('groups', function (Blueprint $table) {
-            $table->id();
-            $table->string('role_name', 100);
+        Schema::table('users', function (Blueprint $table) {
+            $table->date("birthday")->after("email")->nullable();
         });
     }
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
-        Schema::dropIfExists('groups');
+        Schema::table('users', function (Blueprint $table) {
+            //
+        });
     }
 };

@@ -7,7 +7,6 @@ use App\Models\User;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
-use App\Models\employee;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -75,7 +74,7 @@ class AuthController extends Controller
         return redirect('/');
     }
 
-    public function resendVerifyEmail(Request $request)
+    public function sendVerifyEmail(Request $request)
     {
         try {
             $request->user()->sendEmailVerificationNotification();
@@ -127,46 +126,5 @@ class AuthController extends Controller
         } catch (\Throwable $th) {
             dd($th->getMessage());
         }
-    }
-
-
-
-
-
-
-    public function editPersonalInfo(Request $request)
-    {
-        $user = User::find($request->input('id'));
-        if ($user->update($request->all()))
-            return response()->json(['message' => 'Đã thay đổi thông tin', 'status' => 1]);
-        else
-            return response()->json(['message' => 'Đổi thông tin thất bại', 'status' => 0]);
-    }
-
-    public function changePassword(Request $request)
-    {
-        // Auth::logoutOtherDevices($currentPassword);
-        $user = User::find($request->input('id'));
-        if ($request->input('current_password') != $user->password)
-            return response()->json(['status' => 0, 'message' => "Mật khẩu không trùng với hiện tại"]);
-        if ($request->input('current_password') != $request->input('retype_password'))
-            return response()->json(['status' => 0, 'message' => "Mật khẩu không trùng"]);
-        if (!$request->input('checkNewPassword'))
-            return response()->json(['status' => 0, 'message' => "Mật khẩu mới không đúng định dạng"]);
-        if ($user->update(['password' => $request->input("new_password")])) {
-            return response()->json(['status' => 1, 'message' => "Cập nhật mật khẩu thành công"]);
-        } else {
-            return response()->json(['status' => 0, 'message' => "Cập nhật mật khẩu thất bại"]);
-        }
-    }
-
-    public static function tokenCan($needle)
-    {
-        $abilitiesStr = '';
-        if (session()->has("Employee")) {
-            $abilitiesStr = employee::join('personal_access_tokens', 'employees.id', '=', 'tokenable_id')
-                ->where('employees.id', '=', session('Employee')['EmployeeID'])->first(['abilities'])->abilities;
-        }
-        return str_contains($abilitiesStr, $needle);
     }
 }

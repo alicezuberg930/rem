@@ -13,3 +13,4 @@ function isPhonenumberValid(str) {
     return /^[0][0-9]{9}$/.test(str);
 }
 export { isEmailValid, isPasswordValid, isPhonenumberValid }
+

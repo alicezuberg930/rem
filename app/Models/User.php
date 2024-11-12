@@ -10,6 +10,7 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Notifications\Notification;
 
 class User extends Authenticatable implements HasMedia, MustVerifyEmail
 {
@@ -39,9 +40,16 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
         $this->addMediaCollection('avatar')->useFallbackPath(public_path('/assets/default_avatar.jpg'));
     }
 
+    // Tự động hash mật khẩu mỗi khi tạo 1 user mới
     public function setPasswordAttribute($password)
     {
         $this->attributes['password'] = bcrypt($password);
+    }
+
+    // Xác định trường SĐT mặc định để gửi SMS bằng kênh sms vonage
+    public function routeNotificationForVonage(Notification $notification): string
+    {
+        return "84" . substr($this->phone, 1, 9);
     }
 
     public function reviews()

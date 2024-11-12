@@ -6,10 +6,10 @@
 
 @section('body')
     <div class="bg-half-gradient">
-        <div class="bg-no-repeat mx-auto bg-center bg-cover h-full w-[500px] lg:w-[900px] flex justify-end"
+        <div class="bg-no-repeat mx-auto bg-center bg-cover h-full w-full max-w-4xl flex justify-center md:justify-end"
             style="background-image: url({{ url('assets/online_shopping.jpg') }});">
-            <div class="my-4 p-4 bg-white rounded-md">
-                <div class="w-[340px]">
+            <div class="my-4 p-4 bg-white rounded-md w-full max-w-sm">
+                <div class="w-full">
                     <div class="mb-3">
                         <div class="flex justify-between items-center">
                             <div class="font-semibold text-xl">Đăng ký</div>
@@ -23,7 +23,7 @@
                             @csrf
                             <input hidden name="role_id" value="2" type="number" />
                             <div class="mb-4">
-                                <div class="w-[340px]">
+                                <div class="w-full">
                                     <input class="focus:outline-blue-300 w-full p-2 border outline-none" type="text"
                                         placeholder="Email" autocomplete="on" name="email" maxlength="128">
                                 </div>
@@ -34,7 +34,7 @@
                                 </span>
                             </div>
                             <div class="mb-4">
-                                <div class="w-[340px]">
+                                <div class="w-full">
                                     <input class="focus:outline-blue-300 w-full p-2 border outline-none" type="text"
                                         placeholder="Số điện thoại" autocomplete="on" name="phone" maxlength="128">
                                 </div>
@@ -45,7 +45,7 @@
                                 </span>
                             </div>
                             <div class="mb-4">
-                                <div class="w-[340px]">
+                                <div class="w-full">
                                     <input class="focus:outline-blue-300 w-full p-2 border outline-none" type="text"
                                         placeholder="Tên đăng nhập" autocomplete="on" name="username" maxlength="128">
                                 </div>
@@ -56,7 +56,7 @@
                                 </span>
                             </div>
                             <div class="mb-4">
-                                <div class="w-[340px]">
+                                <div class="w-full">
                                     <input class="focus:outline-blue-300 w-full p-2 border outline-none" type="password"
                                         placeholder="Mật khẩu" autocomplete="current-password" name="password"
                                         maxlength="16">
@@ -68,7 +68,7 @@
                                 </span>
                             </div>
                             <div class="mb-4">
-                                <div class="w-[340px]">
+                                <div class="w-full">
                                     <input class="focus:outline-blue-300 w-full p-2 border outline-none" type="text"
                                         placeholder="Xác nhận mật khẩu" autocomplete="on" name="rePassword" maxlength="128">
                                 </div>
@@ -79,7 +79,7 @@
                                 </span>
                             </div>
                             <div class="mb-4">
-                                <div class="w-[340px]">
+                                <div class="w-full">
                                     <select name="gender" class="focus:outline-blue-300 w-full p-2 border outline-none">
                                         <option selected value="1">Nam</option>
                                         <option value="0">Nữ</option>

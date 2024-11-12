@@ -24,10 +24,6 @@
                     </div>
                     <div class="mx-2 text-light"> | </div>
                     <div class="">
-                        <a class="p-0 text-white" href="/admin_login">Đăng nhập quản lý</a>
-                    </div>
-                    <div class="mx-2 text-light"> | </div>
-                    <div class="">
                         <a id="login-logout" class="text-white" href="/buyer/signup">Đăng ký</a>
                     </div>
                 </div>
@@ -35,10 +31,10 @@
         </div>
     </div>
     <div class="xl:w-[65%] w-4/5 m-auto">
-        <nav class="py-3 flex justify-between items-center gap-10">
+        <nav class="py-3 flex justify-between items-center gap-8">
             <a href="/" class="h-full flex items-center gap-2">
                 <img src="{{ url('assets/black-fire-logo.png') }}" width="50" height="50" alt="logo">
-                <div class="logo-text text-2xl font-semibold">ZippoStore</div>
+                <div class="logo-text text-2xl font-semibold hidden md:block">ZippoStore</div>
             </a>
             <div class="flex flex-auto gap-3 items-center">
                 <form action="/search_product" method="GET" class="w-full">

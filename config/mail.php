@@ -44,17 +44,6 @@ return [
             'local_domain' => env('MAIL_EHLO_DOMAIN'),
         ],
 
-        // 'smtp' => [
-        //     'transport' => 'smtp',
-        //     'host' => 'smtp.gmail.com',
-        //     'port' => 587,
-        //     'encryption' => 'tls',
-        //     'username' => "tien23851@gmail.com",
-        //     'password' => "osoezypaqkmbogpr",
-        //     'timeout' => null,
-        //     'local_domain' => env('MAIL_EHLO_DOMAIN'),
-        // ],
-
         'ses' => [
             'transport' => 'ses',
         ],
@@ -102,8 +91,8 @@ return [
     */
 
     'from' => [
-        'address' => 'tien23851@gmail.com',
-        'name' => 'ZippoStore',
+        'address' => env('MAIL_USERNAME'),
+        'name' => env('APP_NAME'),
     ],
 
     /*

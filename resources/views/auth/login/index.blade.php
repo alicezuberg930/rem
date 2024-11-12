@@ -2,16 +2,14 @@
 
 @section('head')
     <title>Đăng Nhập</title>
-    <link rel="stylesheet" type="text/css" href="{{ url('./css/login_register.css') }}">
 @endsection
 
 @section('body')
-    <div class="bg-half-gradient h-[600px]">
-        <div class="bg-no-repeat mx-auto bg-center bg-cover h-full w-[500px] lg:w-[900px] flex justify-between items-center"
+    <div class="bg-half-gradient">
+        <div class="bg-no-repeat mx-auto bg-center bg-cover h-full w-full max-w-4xl flex justify-center md:justify-end"
             style="background-image: url({{ url('assets/online_shopping.jpg') }});">
-            <div></div>
-            <div class="p-4 bg-white rounded-md">
-                <div class="">
+            <div class="my-4 p-4 bg-white rounded-md w-full max-w-sm">
+                <div class="w-full">
                     <div class="mb-3">
                         <div class="flex justify-between items-center">
                             <div class="font-semibold text-xl">Đăng nhập</div>
@@ -24,7 +22,7 @@
                         <form method="POST" action="/buyer/login" class="mb-1">
                             @csrf
                             <div class="mb-4">
-                                <div class="w-[340px]">
+                                <div class="w-full">
                                     <input class="focus:outline-blue-300 w-full p-2 border outline-none" type="text"
                                         placeholder="Email/Số điện thoại/Tên đăng nhập" autocomplete="off" name="email"
                                         maxlength="128">
@@ -36,7 +34,7 @@
                                 </span>
                             </div>
                             <div class="mb-4">
-                                <div class="w-[340px]">
+                                <div class="w-full">
                                     <input class="focus:outline-blue-300 w-full p-2 border outline-none" type="password"
                                         placeholder="Mật khẩu" autocomplete="current-password" name="password"
                                         maxlength="16">
@@ -50,8 +48,8 @@
                             <button class="rounded-md py-2 w-full bg-blue-300 text-white">Đăng nhập</button>
                         </form>
                         <div class="text-xs text-blue-300 flex justify-between mb-2">
-                            <a class="" href="/buyer/password/forgot">Quên mật khẩu</a>
-                            <a class="" href="/buyer/login/otp">Đăng nhập với SMS</a>
+                            <a href="/buyer/password/forgot">Quên mật khẩu</a>
+                            <a href="/buyer/login/otp">Đăng nhập với SMS</a>
                         </div>
                         <div class="">
                             <div class="mb-3 flex justify-center items-center">

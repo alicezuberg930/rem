@@ -4,9 +4,19 @@
     "src": "resources/js/app.js",
     "isEntry": true
   },
+  "resources/js/uppload.js": {
+    "file": "assets/uppload.d4c3f861.js",
+    "src": "resources/js/uppload.js",
+    "isEntry": true
+  },
   "resources/css/app.css": {
-    "file": "assets/app.874d6e1e.css",
+    "file": "assets/app.f729a2a2.css",
     "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/css/uppload.css": {
+    "file": "assets/uppload.fcd7a1a2.css",
+    "src": "resources/css/uppload.css",
     "isEntry": true
   },
   "resources/css/bootstrap.css": {

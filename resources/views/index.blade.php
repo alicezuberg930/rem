@@ -5,6 +5,7 @@
 @endsection
 
 @section('body')
+    {{-- <a href="test">test</a> --}}
     {{-- <form method="POST" action="banner/gay" enctype="multipart/form-data">
         @csrf
         <input name="name" type="text" />
@@ -12,7 +13,7 @@
         <input type="file" name="image" />
         <button>Submut</button>
     </form> --}}
-    <div class="xl:w-[65%] w-4/5 m-auto">
+    <div class="xl:w-[65%] w-4/5 mx-auto">
         <div class="carousel slide h-[450px]" id="carouselDemo" data-bs-ride="carousel" data-bs-wrap="true">
             <div class="carousel-inner h-full">
                 @foreach ($banners as $key => $banner)

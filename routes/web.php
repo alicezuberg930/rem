@@ -16,8 +16,11 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ShippingController;
 use App\Http\Controllers\StatisticController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\UserController;
 use App\Livewire\Admin\ManageProduct;
 use App\Livewire\Admin\ManageStatistics;
+use App\Notifications\SMSNotification;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -70,7 +73,9 @@ Route::group(["middleware" => ["auth", "auth.session"]], function () {
     // Xử lý xác thực email
     Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])->name('verification.verify');
     // Xử lý gửi lại email xác thực
-    Route::post('/email/verify/resend', [AuthController::class, 'resendVerifyEmail'])->middleware(['throttle:6,1'])->name('verification.send');
+    Route::post('/email/verify/send', [AuthController::class, 'sendVerifyEmail'])->middleware(['throttle:6,1'])->name('verification.send');
+    // Xử lý đăng bình luận đánh giá
+    Route::post("/review/post", [ReviewController::class, "store"]);
     // group seller
     Route::group(["middleware" => "auth.seller", "prefix" => "seller"], function () {
         // Trang đăng ký seller
@@ -83,7 +88,13 @@ Route::group(["middleware" => ["auth", "auth.session"]], function () {
         // Trang mật khẩu cá nhân
         Route::view("/password", "user.buyer.password");
         // Trang thông tin cá nhân
-        Route::view("/profile", "user.buyer.profile");
+        Route::view("/profile", "user.buyer.profile")->name("user.profile");
+        // Xử lý cập nhật thông tin cá nhân
+        // Route::post("/avatar", [UserController::class, 'update'])->name("user.profile");
+
+        Route::post("/password", [AuthController::class, "changePassword"]);
+        // Trang đơn hàng của người dùng
+        Route::get("/orders", [OrdersController::class, "manageUserOrderPage"]);
     });
     // group admin
     Route::group(["middleware" => "auth.admin", "prefix" => "admin"], function () {
@@ -95,16 +106,13 @@ Route::group(["middleware" => ["auth", "auth.session"]], function () {
     });
 });
 
-
-
-
-
-
-
-
-
-
-
+// Route::get('/test', function (Request $request) {
+//     try {
+//         $request->user()->notify((new SMSNotification()));
+//     } catch (\Throwable $th) {
+//         dd($th->getMessage());
+//     }
+// });
 
 // đống shit đang chờ được sửa :v
 // Xử lý giỏ hàng
@@ -113,7 +121,6 @@ Route::get("/remove_cart", [CartController::class, "removeCart"]);
 Route::get("/increase_incart", [CartController::class, "increaseIncart"]);
 Route::get("/decrease_incart", [CartController::class, "decreaseIncart"]);
 Route::get("/set_quantity", [CartController::class, "setQuantity"]);
-Route::post("/review/post", [ReviewController::class, "store"]);
 // Xử lý thánh toán
 Route::get("/vnpay_return", [CheckoutController::class, "paymentsResult"]);
 Route::post("/vnpay_payment", [CheckoutController::class, "vnpayPayment"]);
@@ -121,12 +128,6 @@ Route::post("/direct_payment", [CheckoutController::class, "directPayment"]);
 //Lấy thông tin api thành phố quận huyện
 Route::get("/cart/get_district", [CartController::class, "getDistrict"]);
 Route::get("/cart/get_ward", [CartController::class, "getWard"]);
-//Xác thực thông tin đăng ký
-Route::get("/verification/{token}", [AuthController::class, "verifyUser"]);
-//Thông tin cá nhân
-Route::post("/edit_personal_info", [AuthController::class, "editPersonalInfo"]);
-Route::post("/change_password", [AuthController::class, "changePassword"]);
-Route::get("/purchase_history/{user_id}", [OrdersController::class, "manageUserOrderPage"]);
 //Lọc sản phẩm
 Route::get("/filter/search", [ProductController::class, "filterProducts"]);
 Route::get("/filter", [ProductController::class, "filterPage"]);
