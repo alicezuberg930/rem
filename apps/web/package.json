@@ -17,7 +17,7 @@
     "@schedule-x/events-service": "^4.5.0",
     "@schedule-x/react": "^4.1.0",
     "@schedule-x/theme-default": "^4.5.0",
-    "@tanstack/react-query": "catalog:",
+    "@tanstack/react-query": "5.90.11",
     "@tanstack/react-table": "8.21.3",
     "@tinymce/tinymce-react": "^6.3.0",
     "class-variance-authority": "^0.7.1",
@@ -46,7 +46,7 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "typescript": "catalog:",
+    "typescript": "5.9.2",
     "@types/node": "catalog:",
     "@types/react": "catalog:react",
     "@types/react-dom": "catalog:react",

@@ -72,8 +72,7 @@ export const templates = () => ({
             mutationOptions({
                 mutationKey: keys.delete(),
                 mutationFn: async (id: string) => {
-                    const { data } = await httpClient.delete<ApiResponse<Template[]>>(`/templates/${id}`)
-                    return data
+                    return await httpClient.delete<ApiResponse<Template[]>>(`/templates/${id}`)
                 },
                 onSuccess: () => {
                     queryClient.invalidateQueries({ queryKey: keys.all({}) })

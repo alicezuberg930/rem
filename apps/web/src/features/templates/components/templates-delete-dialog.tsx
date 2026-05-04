@@ -7,7 +7,6 @@ import { Label } from '@/components/ui/label'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 import { Template } from '@/@types'
 import { toast } from 'sonner'
-import { deleteTemplate } from '@/lib/repository/api'
 import { HttpError } from '@/lib/repository/httpError'
 import { useMutation } from '@tanstack/react-query'
 import { templates } from '@/lib/queries/template'
@@ -29,7 +28,7 @@ export function TemplatesDeleteDialog({
   const handleDelete = () => {
     if (value.trim() !== currentRow.name) return
     const submit = async () => {
-      const res = _delete.mutateAsync(currentRow.id)
+      const res = await _delete.mutateAsync(currentRow.id)
       onOpenChange(false)
       return res
     }
