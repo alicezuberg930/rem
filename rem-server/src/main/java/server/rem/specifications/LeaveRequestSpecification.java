@@ -9,15 +9,15 @@ import java.time.LocalDate;
 
 public class LeaveRequestSpecification {
 
-    public static Specification<LeaveRequest> withFilters(QueryLeaveRequest dto) {
+    public static Specification<LeaveRequest> withFilters(QueryLeaveRequest dto, String businessId) {
         return Specification
-                .where(hasBusinessId(dto.getBusinessId()))
+                .where(hasBusinessId(businessId))
                 .and(hasStartDate(dto.getStartDate()))
                 .and(hasEndDate(dto.getEndDate()));
     }
 
     private static Specification<LeaveRequest> hasBusinessId(String businessId) {
-        return (root, query, cb) -> businessId == null ? null : cb.equal(root.get("business").get("id"), businessId);
+        return (root, query, cb) -> cb.equal(root.get("business").get("id"), businessId);
     }
 
     private static Specification<LeaveRequest> hasStartDate(LocalDate startDate) {

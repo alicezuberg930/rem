@@ -54,8 +54,19 @@ export class HttpClient {
         }
     }
 
-    get<T>(endpoint: string, options?: RequestInit) {
-        return this.fetchJson<T>(`${BASE_URL}${endpoint}`, {
+    get<T>(endpoint: string, params: Record<string, unknown> = {}, options?: RequestInit) {
+        const queryParams = new URLSearchParams()
+        for (const key in params) {
+            const value = params[key]
+            if (value !== undefined && value !== null) {
+                if (Array.isArray(value)) {
+                    queryParams.append(key, JSON.stringify(value))
+                } else {
+                    queryParams.append(key, String(value))
+                }
+            }
+        }
+        return this.fetchJson<T>(`${BASE_URL}${endpoint}?${queryParams.toString()}`, {
             method: 'GET',
             credentials: 'include',
             ...options,

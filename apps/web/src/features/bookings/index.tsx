@@ -9,6 +9,7 @@ import {
     createViewMonthGrid,
     createViewWeek,
     createViewList,
+    CalendarEventExternal,
 } from '@schedule-x/calendar'
 import { createEventsServicePlugin } from '@schedule-x/events-service'
 import { useEffect, useState } from "react";
@@ -37,63 +38,12 @@ export function Bookings() {
     const eventsService = useState(() => createEventsServicePlugin())[0]
     const eventModal = useState(() => createEventModalPlugin())[0]
     const { theme } = useTheme()
-    const [bookings, setBookings] = useState<CalendarBooking[]>([])
-
-    const mapToEvents = (bookings: CalendarBooking[]) => {
-        return bookings.map(b => ({
-            id: String(b.id),
-            title: b.contact.firstName,
-            start: Temporal.Instant.from(b.bookingStartDate).toZonedDateTimeISO(timezone),
-            end: Temporal.Instant.from(b.bookingEndDate).toZonedDateTimeISO(timezone),
-        }))
-    }
-
-    useEffect(() => {
-        getBookings().then(res => setBookings(res.data))
-    }, [])
-
-    useEffect(() => {
-        if (!bookings.length) return
-        const events = mapToEvents(bookings)
-        eventsService.set(events)
-    }, [bookings, timezone])
-
-    useEffect(() => {
-        calendar?.setTheme(theme as 'light' | 'dark')
-    }, [theme])
 
     const calendar = useCalendarApp({
         defaultView: "month-grid",
         timezone,
         views: [createViewMonthGrid(), createViewDay(), createViewMonthAgenda(), createViewList(), createViewWeekAgenda(), createViewWeek()],
         // events: [
-        //     {
-        //         id: '1',
-        //         title: 'Event 1',
-        //         start: Temporal.Instant.from('2026-04-30T04:15:00Z')
-        //             .toZonedDateTimeISO(timezone),
-        //         end: Temporal.Instant.from('2026-04-30T08:21:00Z')
-        //             .toZonedDateTimeISO(timezone),
-        //     },
-
-        //     {
-        //         id: '3',
-        //         title: 'Event 3',
-        //         start: Temporal.PlainDate.from('2026-04-13'),
-        //         end: Temporal.PlainDate.from('2026-04-17'),
-        //     },
-        //     {
-        //         id: '6',
-        //         title: 'Event 6',
-        //         start: Temporal.PlainDate.from('2026-04-25'),
-        //         end: Temporal.PlainDate.from('2026-04-27'),
-        //     },
-        //     {
-        //         id: '7',
-        //         title: 'Event 7',
-        //         start: Temporal.PlainDate.from('2026-04-25'),
-        //         end: Temporal.PlainDate.from('2026-04-27'),
-        //     },
         //     {
         //         id: '8',
         //         title: 'Event 8',
@@ -113,7 +63,29 @@ export function Bookings() {
                 eventsService.getAll()
             }
         },
+        
     })
+
+    const mapToEvents = (bookings: CalendarBooking[]): CalendarEventExternal[] => {
+        return bookings.map(b => ({
+            id: String(b.id),
+            title: b.contact.firstName,
+            start: Temporal.Instant.from(b.bookingStartDate).toZonedDateTimeISO(timezone),
+            end: Temporal.Instant.from(b.bookingEndDate).toZonedDateTimeISO(timezone),
+            
+        }))
+    }
+
+    useEffect(() => {
+        getBookings().then(res => {
+            const events = mapToEvents(res.data)
+            eventsService.set(events)
+        })
+    }, [])
+
+    useEffect(() => {
+        calendar?.setTheme(theme as 'light' | 'dark')
+    }, [theme])
 
     return (
         <BookingsProvider>

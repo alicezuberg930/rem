@@ -1,4 +1,3 @@
-'use client'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { Header } from '@/layout/header'
 import { Main } from '@/layout/main'
@@ -9,21 +8,8 @@ import { TemplatesDialogs } from './components/templates-dialogs'
 import { TemplatesPrimaryButtons } from './components/templates-primary-buttons'
 import { TemplatesProvider } from './components/templates-provider'
 import { TemplatesTable } from './components/templates-table'
-import { getTemplates as gt } from '@/lib/repository/api'
-import { useEffect, useState } from 'react'
-import { Template } from '@/@types'
 
-export function Templates() {
-  const [templates, setTemplates] = useState<Template[]>([])
-
-  useEffect(() => {
-    const getTemplates = async () => {
-      const response = await gt()
-      setTemplates(response.data)
-    }
-    getTemplates()
-  }, [])
-
+export async function Templates() {
   return (
     <TemplatesProvider>
       <Header fixed>
@@ -45,7 +31,7 @@ export function Templates() {
           </div>
           <TemplatesPrimaryButtons />
         </div>
-        <TemplatesTable data={templates} />
+        <TemplatesTable />
       </Main>
 
       <TemplatesDialogs />

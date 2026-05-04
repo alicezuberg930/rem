@@ -9,6 +9,8 @@ import { Template } from '@/@types'
 import { toast } from 'sonner'
 import { deleteTemplate } from '@/lib/repository/api'
 import { HttpError } from '@/lib/repository/httpError'
+import { useMutation } from '@tanstack/react-query'
+import { templates } from '@/lib/queries/template'
 
 type TemplateDeleteDialogProps = {
   open: boolean
@@ -22,17 +24,14 @@ export function TemplatesDeleteDialog({
   currentRow,
 }: TemplateDeleteDialogProps) {
   const [value, setValue] = useState<string>('')
+  const _delete = useMutation(templates().delete.mutationOptions())
 
   const handleDelete = () => {
     if (value.trim() !== currentRow.name) return
     const submit = async () => {
-      try {
-        return await deleteTemplate(currentRow.id)
-      } catch (error) {
-        throw error
-      } finally {
-        onOpenChange(false)
-      }
+      const res = _delete.mutateAsync(currentRow.id)
+      onOpenChange(false)
+      return res
     }
     toast.promise(submit,
       {

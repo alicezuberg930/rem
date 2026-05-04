@@ -47,10 +47,7 @@ public class AttendanceService {
     }
 
     private Page<Attendance> getAttendanceList(QueryAttendance dto, String userId) {
-        Pageable pageable = PageRequest.of(
-                dto.getPage() != null ? Integer.parseInt(dto.getPage()) : 0,
-                dto.getLimit() != null ? Integer.parseInt(dto.getLimit()) : 10
-        );
+        Pageable pageable = PageRequest.of(dto.getPage(), dto.getPageSize());
         Specification<Attendance> spec = AttendanceSpecification.withFilters(dto, userId);
         return attendanceRepository.findAll(spec, pageable);
     }

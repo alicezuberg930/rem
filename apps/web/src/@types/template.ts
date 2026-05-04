@@ -1,3 +1,5 @@
+import { QueryPaginate } from "."
+
 export type Template = {
     id: string
     name: string
@@ -6,6 +8,10 @@ export type Template = {
     footer: string
     contactPhone: string | null
     websiteUrl: string | null
+}
+
+export type QueryTemplate = QueryPaginate & {
+    [key: string]: unknown
 }
 
 // export type CreateTemplate = Template

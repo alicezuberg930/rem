@@ -32,11 +32,14 @@ public class LeaveRequestController {
     }
 
     @GetMapping
-    public ResponseEntity<APIResponse<Page<LeaveRequest>>> getAllUsers(@ModelAttribute QueryLeaveRequest dto) {
+    public ResponseEntity<APIResponse<Page<LeaveRequest>>> getAll(
+        @ModelAttribute QueryLeaveRequest dto, 
+        @RequestAttribute("businessId") String businessId
+    ) {
         return ResponseEntity.ok().body(APIResponse.success(
             200,
             "Leave request list retrieved successfully",
-            leaveRequestService.getLeaveRequests(dto)
+            leaveRequestService.getAll(dto, businessId)
         ));
     }
 

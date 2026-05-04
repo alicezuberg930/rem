@@ -14,10 +14,11 @@ import { Template } from '@/@types'
 import { FormProvider, RHFRichTextEditor, RHFTextField } from '@/components/hook-form'
 import { FieldGroup } from '@/components/ui/field'
 import { TemplateValidators } from '@/validators/template'
-import { createTemplate, updateTemplate } from '@/lib/repository/api'
 import { toast } from 'sonner'
 import { HttpError } from '@/lib/repository/httpError'
-// import { inlineQuillStyles } from '@/lib/utils'
+import { inlineQuillStyles } from '@/lib/utils'
+import { templates } from '@/lib/queries/template'
+import { useMutation } from '@tanstack/react-query'
 
 type TemplateActionDialogProps = {
   currentRow?: Template
@@ -30,6 +31,9 @@ export function TemplatesActionDialog({
   open,
   onOpenChange,
 }: TemplateActionDialogProps) {
+  const update = useMutation(templates().update.mutationOptions())
+  const create = useMutation(templates().create.mutationOptions())
+
   const isEdit = !!currentRow
   const form = useForm<TemplateValidators.TemplateForm>({
     resolver: zodResolver(TemplateValidators.formSchema),
@@ -55,30 +59,19 @@ export function TemplatesActionDialog({
     const submit = async () => {
       values = {
         ...values,
-        // header: inlineQuillStyles(values.header),
-        // body: inlineQuillStyles(values.body),
-        // footer: inlineQuillStyles(values.footer),
+        header: inlineQuillStyles(values.header),
+        body: inlineQuillStyles(values.body),
+        footer: inlineQuillStyles(values.footer),
       }
-      let response
-      try {
-        if (values.isEdit) {
-          response = await updateTemplate(values, currentRow?.id!)
-        } else {
-          response = await createTemplate(values)
-        }
-        return response
-      } catch (error) {
-        throw error
-      } finally {
-        form.reset()
-        onOpenChange(false)
-      }
+      return isEdit && currentRow?.id
+        ? await update.mutateAsync(values)
+        : await create.mutateAsync(values)
     }
     toast.promise(submit,
       {
         loading: "Submitting data",
         error: (err) => err instanceof HttpError ? err.message : "Internal server error",
-        success: (data) => data?.message
+        success: (response) => response.message
       }
     )
   }

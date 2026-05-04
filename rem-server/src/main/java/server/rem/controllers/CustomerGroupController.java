@@ -20,11 +20,14 @@ public class CustomerGroupController {
     private final CustomerGroupService customerGroupService;
  
     @GetMapping
-    public ResponseEntity<APIResponse<List<CustomerGroup>>> getCustomerGroupList(@ModelAttribute QueryCustomerGroup dto) {
+    public ResponseEntity<APIResponse<List<CustomerGroup>>> getAll(
+        @ModelAttribute QueryCustomerGroup dto, 
+        @RequestAttribute("businessId") String businessId
+    ) {
         return ResponseEntity.ok(APIResponse.success(
             200, 
             "Customer groups fetched sucessfully", 
-            customerGroupService.getCustomerGroupList(dto))
+            customerGroupService.getAll(dto, businessId))
         );
     }
  

@@ -2,7 +2,9 @@
 import React, { useEffect, useState } from 'react'
 import useDialogState from '@/hooks/use-dialog-state'
 import { Campaign, Contact, Template } from '@/@types'
-import { getContacts, getTemplates } from '@/lib/repository/api'
+import { getContacts } from '@/lib/repository/api'
+import { useQuery } from '@tanstack/react-query'
+import { templates as t } from '@/lib/queries/template'
 
 type CampaignsDialogType = 'preview' | 'add' | 'edit' | 'delete'
 
@@ -20,11 +22,11 @@ const CampaignsContext = React.createContext<CampaignsContextType | null>(null)
 export function CampaignsProvider({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useDialogState<CampaignsDialogType>(null)
   const [currentRow, setCurrentRow] = useState<Campaign | null>(null)
-  const [templates, setTemplates] = useState<Template[]>([])
   const [contacts, setContacts] = useState<Contact[]>([])
+  const { data } = useQuery(t().all.queryOptions())
+  const templates = data?.content || []
 
   useEffect(() => {
-    getTemplates().then(res => setTemplates(res.data))
     getContacts().then(res => setContacts(res.data.content))
   }, [])
 

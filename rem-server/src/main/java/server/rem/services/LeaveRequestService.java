@@ -52,12 +52,9 @@ public class LeaveRequestService {
         return leaveRequestRepository.findAllByUser(user);
     }
 
-    public Page<LeaveRequest> getLeaveRequests(QueryLeaveRequest dto) {
-        Pageable pageable = PageRequest.of(
-                dto.getPage() != null ? Integer.parseInt(dto.getPage()) : 0,
-                dto.getLimit() != null ? Integer.parseInt(dto.getLimit()) : 10
-        );
-        Specification<LeaveRequest> spec = LeaveRequestSpecification.withFilters(dto);
+    public Page<LeaveRequest> getAll(QueryLeaveRequest dto, String businessId) {
+        Pageable pageable = PageRequest.of(dto.getPage(), dto.getPageSize());
+        Specification<LeaveRequest> spec = LeaveRequestSpecification.withFilters(dto, businessId);
         return leaveRequestRepository.findAll(spec, pageable);
     }
 

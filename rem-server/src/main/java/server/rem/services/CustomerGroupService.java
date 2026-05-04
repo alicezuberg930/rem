@@ -3,13 +3,11 @@ package server.rem.services;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import server.rem.dtos.customer_group.CreateCustomerGroupRequest;
-import server.rem.dtos.customer_group.QueryCustomerGroup;
-import server.rem.entities.Business;
-import server.rem.entities.CustomerGroup;
+import server.rem.common.messages.*;
+import server.rem.dtos.customer_group.*;
+import server.rem.entities.*;
 import server.rem.mappers.CustomerGroupMapper;
-import server.rem.repositories.BusinessRepository;
-import server.rem.repositories.CustomerGroupRepository;
+import server.rem.repositories.*;
 import server.rem.utils.exceptions.ResourceNotFoundException;
 
 import java.util.List;
@@ -21,8 +19,8 @@ public class CustomerGroupService {
     private final BusinessRepository businessRepository;
     private final CustomerGroupMapper customerGroupMapper;
 
-    public List<CustomerGroup> getCustomerGroupList(QueryCustomerGroup dto) {
-        Business business = businessRepository.findById(dto.getBusinessId()).orElseThrow(() -> new ResourceNotFoundException("Business not found"));
+    public List<CustomerGroup> getAll(QueryCustomerGroup dto, String businessId) {
+        Business business = businessRepository.findById(businessId).orElseThrow(() -> new ResourceNotFoundException(BusinessMessages.NOT_FOUND));
         return customerGroupRepository.findByBusiness(business);
     }
 

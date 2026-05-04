@@ -32,11 +32,11 @@ public class CalendarEventController {
     }
 
     @GetMapping
-    public ResponseEntity<APIResponse<List<CalendarEvent>>> getCalendarEvents(@ModelAttribute QueryCalendarEvent dto) {
+    public ResponseEntity<APIResponse<List<CalendarEvent>>> getAll(@ModelAttribute QueryCalendarEvent dto, @RequestAttribute("businessId") String businessId) {
         return ResponseEntity.ok().body(APIResponse.success(
             200,
             "Calendar event list retrieved successfully",
-            calendarEventService.getCalendarEvents(dto)
+            calendarEventService.getAll(dto, businessId)
         ));
     }
 }

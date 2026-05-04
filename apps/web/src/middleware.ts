@@ -11,41 +11,32 @@ export async function middleware(request: NextRequest) {
     const signInUrl = new URL('/sign-in', request.url)
     const businessesUrl = new URL('/businesses', request.url)
     let currentRole: Role | null = null
+    if (!token) {
+        if (pathname === '/sign-in') return NextResponse.next()
+        return NextResponse.redirect(signInUrl)
+    }
+
+    if (token) {
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/role`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'X-Business-Id': businessId!
+                },
+                // cache: "no-cache"
+            })
+            const data = await response.json() as ApiResponse<Role>
+            currentRole = data.data
+            return NextResponse.next()
+        } catch (error) {
+            console.log(error)
+            if (error instanceof HttpError) {
+                if (pathname === '/businesses') return NextResponse.next()
+                return NextResponse.redirect(businessesUrl)
+            }
+        }
+    }
     return NextResponse.next()
-    // if (!token) {
-    //     if (pathname === '/sign-in') return NextResponse.next()
-    //     return NextResponse.redirect(signInUrl)
-    // }
-
-    // if (token) {
-    //     try {
-    //         // let a = await fetch(`http://localhost:8080/auth/role?businessId=${businessId}`, {
-    //         //     headers: {
-    //         //         "Authorization": `Bearer ${token}`
-    //         //     }
-    //         // })
-    //         // let b = await a.json()
-    //         // console.log(b)
-    //         const response = await httpClient.get<ApiResponse<Role>>(`/auth/role?businessId=${businessId}`, {
-    //             headers: {
-    //                 'Authorization': `Bearer ${token}`
-    //             },
-    //             // cache: "no-cache"
-    //         })
-    //         console.log(response)
-    //         currentRole = response.data
-    //         return NextResponse.next()
-    //     } catch (error) {
-    //         console.log(error instanceof Error ? error.message : "NCEQuhcquieh")
-
-    //         if (error instanceof HttpError) {
-    //             console.log(error instanceof HttpError ? error.data : "NCEQuhcquieh")
-    //             // if (pathname === '/businesses') return NextResponse.next()
-    //             // return NextResponse.redirect(businessesUrl)
-    //         }
-    //     }
-    // }
-    // return NextResponse.next()
 }
 
 export const config = {

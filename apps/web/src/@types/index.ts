@@ -1,3 +1,8 @@
+export type QueryPaginate = {
+    page?: number
+    pageSize?: number
+}
+
 export * from './business'
 export * from './campaign'
 export * from './contact'

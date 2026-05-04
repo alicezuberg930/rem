@@ -5,15 +5,11 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import server.rem.dtos.calendar_event.CreateCalendarEventRequest;
-import server.rem.dtos.calendar_event.QueryCalendarEvent;
-import server.rem.entities.Business;
-import server.rem.entities.CalendarEvent;
-import server.rem.entities.User;
+import server.rem.common.messages.*;
+import server.rem.dtos.calendar_event.*;
+import server.rem.entities.*;
 import server.rem.mappers.CalendarEventMapper;
-import server.rem.repositories.BusinessRepository;
-import server.rem.repositories.CalendarEventRepository;
-import server.rem.repositories.UserRepository;
+import server.rem.repositories.*;
 import server.rem.utils.exceptions.ResourceNotFoundException;
 
 @Service
@@ -32,8 +28,8 @@ public class CalendarEventService {
         return calendarEvent;
     }
 
-    public List<CalendarEvent> getCalendarEvents(QueryCalendarEvent dto) {
-        Business business = businessRepository.findById(dto.getBusinessId()).orElseThrow(() -> new ResourceNotFoundException("Business not found"));
+    public List<CalendarEvent> getAll(QueryCalendarEvent dto, String businessId) {
+        Business business = businessRepository.findById(businessId).orElseThrow(() -> new ResourceNotFoundException(BusinessMessages.NOT_FOUND));
         List<CalendarEvent> calendarEvents = calendarEventRepository.findByBusinessAndStartDateGreaterThanEqualAndEndDateLessThanEqual(business, dto.getStartDate(), dto.getEndDate());
         return calendarEvents;
     } 

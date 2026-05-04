@@ -6,9 +6,13 @@ import server.rem.dtos.QueryPaginate;
 import java.time.LocalDate;
 
 @Getter
-@AllArgsConstructor
 public class QueryCalendarEvent extends QueryPaginate {
-    private final String businessId;
+    public QueryCalendarEvent(Integer pageSize, Integer page, LocalDate startDate, LocalDate endDate, String createdById) {
+        super(pageSize, page);
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.createdById = createdById;
+    }
 
     private final LocalDate startDate;
 

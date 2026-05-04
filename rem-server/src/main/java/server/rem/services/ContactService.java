@@ -34,9 +34,7 @@ public class ContactService {
     private final ContactMapper contactMapper;
 
     public CustomPageResponse<ContactResponse> getContactList(QueryContact dto, String businessId) {
-        Pageable pageable = PageRequest.of(
-                dto.getPage() != null ? Integer.parseInt(dto.getPage()) : 0,
-                dto.getLimit() != null ? Integer.parseInt(dto.getLimit()) : 10);
+        Pageable pageable = PageRequest.of(dto.getPage(), dto.getPageSize());
         Specification<Contact> spec = ContactSpecification.withFilters(dto, businessId);
         Page<ContactResponse> result = contactRepository.findAll(spec, pageable).map(contactMapper::toContactResponse);
         return new CustomPageResponse<ContactResponse>(result);
@@ -78,8 +76,7 @@ public class ContactService {
     }
 
     private CustomerGroup resolveCustomerGroup(String customerGroupId) {
-        if (customerGroupId == null)
-            return null;
+        if (customerGroupId == null) return null;
         return customerGroupRepository.findById(customerGroupId)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer group not found"));
     }

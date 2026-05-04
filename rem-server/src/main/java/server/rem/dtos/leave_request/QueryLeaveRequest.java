@@ -6,9 +6,12 @@ import server.rem.dtos.QueryPaginate;
 import java.time.LocalDate;
 
 @Getter
-@AllArgsConstructor
 public class QueryLeaveRequest extends QueryPaginate {
-    private final String businessId;
+    public QueryLeaveRequest(Integer pageSize, Integer page, LocalDate startDate, LocalDate endDate) {
+        super(pageSize, page);
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
 
     private final LocalDate startDate;
 

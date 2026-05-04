@@ -3,6 +3,7 @@ import * as z from 'zod'
 export namespace TemplateValidators {
     export const formSchema = z
         .object({
+            id: z.string().optional(),
             name: z.string().min(1, 'Name is required.'),
             header: z.string().min(1, 'Header is required.'),
             body: z.string().min(1, 'Body is required.'),

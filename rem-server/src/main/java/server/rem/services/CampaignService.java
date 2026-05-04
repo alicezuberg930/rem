@@ -74,10 +74,7 @@ public class CampaignService {
     }
 
     public CustomPageResponse<CampaignResponse> getCampaigns(QueryCampaign dto, String businessId) {
-        Pageable pageable = PageRequest.of(
-            dto.getPage() != null ? Integer.parseInt(dto.getPage()) : 0,
-            dto.getLimit() != null ? Integer.parseInt(dto.getLimit()) : 10
-        );
+        Pageable pageable = PageRequest.of(dto.getPage(), dto.getPageSize());
         Specification<Campaign> spec = CampaignSpecification.withFilters(dto, businessId);
         Page<CampaignResponse> result = campaignRepository.findAll(spec, pageable).map(campaignMapper::toCampaignResponse);
         return new CustomPageResponse<CampaignResponse>(result);

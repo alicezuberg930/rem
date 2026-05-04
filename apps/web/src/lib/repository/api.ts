@@ -1,7 +1,7 @@
 import { Profile } from '@/@types/user'
 import { httpClient } from './httpClient'
 import { AuthValidators } from '@/validators/auth'
-import { Campaign, Role, Template, ApiResponse, PaginatedApiResponse, Contact, Business, CalendarBooking } from '@/@types'
+import { Campaign, Role, Template, ApiResponse, PaginatedApiResponse, Contact, Business, CalendarBooking, QueryTemplate } from '@/@types'
 import { getCookie } from '../cookies'
 import { BusinessValidators, TemplateValidators, CampaignValidators, BookingValidators } from '@/validators'
 
@@ -42,8 +42,12 @@ export const uploadFiles = async (files: File[], subFolder?: string): Promise<Ap
 }
 
 // templates management
-export const getTemplates = async (): Promise<ApiResponse<Template[]>> => {
-    return await httpClient.get<ApiResponse<Template[]>>('/templates')
+export const getTemplates = async (params: QueryTemplate = {}): Promise<PaginatedApiResponse<Template[]>> => {
+    return await httpClient.get<PaginatedApiResponse<Template[]>>('/templates', params)
+}
+
+export const getTemplate = async (params: QueryTemplate = {}): Promise<PaginatedApiResponse<Template[]>> => {
+    return await httpClient.get<PaginatedApiResponse<Template[]>>('/templates', params)
 }
 
 export const createTemplate = async (data: TemplateValidators.TemplateForm): Promise<ApiResponse<Template>> => {

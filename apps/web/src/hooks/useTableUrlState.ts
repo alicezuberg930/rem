@@ -134,8 +134,6 @@ export function useTableUrlState(
       [pageKey]: nextPage <= defaultPage ? undefined : String(nextPage),
       [pageSizeKey]: nextPageSize === defaultPageSize ? undefined : String(nextPageSize),
     }
-    console.log("onPaginationChange ran")
-    console.log(updates)
     navigate(updates)
   }
 
@@ -154,7 +152,6 @@ export function useTableUrlState(
       [pageKey]: undefined,
       [globalFilterKey]: value ? value : undefined,
     }
-    console.log("onGlobalFilterChange ran")
     navigate(updates)
   } : undefined
 
@@ -178,8 +175,6 @@ export function useTableUrlState(
       [pageKey]: undefined,
       ...patch as Record<string, undefined>,
     }
-    console.log("onColumnFiltersChange ran")
-    console.log(updates)
     navigate(updates)
   }
 

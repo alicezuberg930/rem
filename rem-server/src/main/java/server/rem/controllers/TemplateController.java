@@ -1,11 +1,10 @@
 package server.rem.controllers;
 
-import java.util.List;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -18,7 +17,10 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import server.rem.common.messages.TemplateMessages;
 import server.rem.dtos.APIResponse;
+import server.rem.dtos.CustomPageResponse;
 import server.rem.dtos.template.CreateTemplateRequest;
+import server.rem.dtos.template.QueryTemplate;
+import server.rem.dtos.template.TemplateResponse;
 import server.rem.dtos.template.UpdateTemplateRequest;
 import server.rem.entities.Template;
 import server.rem.services.TemplateService;
@@ -71,11 +73,13 @@ public class TemplateController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('template.view')")
-    public ResponseEntity<APIResponse<List<Template>>> getTemplates() {
+    public ResponseEntity<APIResponse<CustomPageResponse<TemplateResponse>>> getTemplates(@ModelAttribute QueryTemplate dto, @RequestAttribute("businessId") String businessId) {
+        System.out.println("Received QueryTemplate: " + dto.getContactPhone());
+
         return ResponseEntity.ok().body(APIResponse.success(
             200,
             TemplateMessages.LIST_RETRIEVED,
-            templateService.getTemplates())
+            templateService.getAll(dto, businessId))
         );
     }
 }

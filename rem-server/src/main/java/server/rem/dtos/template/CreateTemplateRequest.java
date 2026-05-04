@@ -2,10 +2,9 @@ package server.rem.dtos.template;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 
 @Getter
-@SuperBuilder
+@AllArgsConstructor
 public class CreateTemplateRequest {
     @NotBlank(message = "Template name is required")
     private final String name;

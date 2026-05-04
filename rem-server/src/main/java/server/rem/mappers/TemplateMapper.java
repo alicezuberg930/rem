@@ -6,6 +6,7 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 import server.rem.dtos.template.CreateTemplateRequest;
+import server.rem.dtos.template.TemplateResponse;
 import server.rem.dtos.template.UpdateTemplateRequest;
 import server.rem.entities.Business;
 import server.rem.entities.Template;
@@ -32,4 +33,6 @@ public interface TemplateMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     void updateEntity(UpdateTemplateRequest dto, @MappingTarget Template template);
+
+    TemplateResponse toTemplateResponse(Template template);
 }

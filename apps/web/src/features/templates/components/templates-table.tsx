@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { use, useEffect, useMemo, useState } from 'react'
 import {
   type SortingState,
   type VisibilityState,
@@ -23,16 +23,16 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { Template } from '@/@types'
+import { PaginatedApiResponse, Template } from '@/@types'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { templatesColumns as columns } from './templates-columns'
 import useQueryState from '@/hooks/useQueryState'
+import { getTemplates } from '@/lib/repository/api'
+import { useQuery } from '@tanstack/react-query'
+import { templates } from '@/lib/queries/template'
+import { Spinner } from '@/components/ui/spinner'
 
-type DataTableProps = {
-  data: Template[]
-}
-
-export function TemplatesTable({ data }: DataTableProps) {
+export function TemplatesTable() {
   const { navigate, search } = useQueryState()
   // Local UI-only states
   const [rowSelection, setRowSelection] = useState({})
@@ -63,10 +63,32 @@ export function TemplatesTable({ data }: DataTableProps) {
     ],
   })
 
+  // Build query params from filters and pagination
+  const queryParams = useMemo(() => {
+    return {
+      page: pagination.pageIndex,
+      pageSize: pagination.pageSize,
+      ...columnFilters.reduce(
+        (acc, filter) => {
+          // If the filter already exists, convert it to an array (if it's not already) and add the new value
+          if (Array.isArray(acc[filter.id])) {
+            (acc[filter.id] as unknown[]).push(filter.value)
+          } else {
+            acc[filter.id] = filter.value
+          }
+          return acc
+        },
+        {} as Record<string, unknown>
+      ),
+    }
+  }, [pagination, columnFilters])
+
+  const { data, isLoading } = useQuery(templates().all.queryOptions(queryParams))
+
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     autoResetPageIndex: false,
-    data,
+    data: data?.content ?? [],
     columns,
     state: {
       sorting,
@@ -81,9 +103,10 @@ export function TemplatesTable({ data }: DataTableProps) {
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnVisibilityChange: setColumnVisibility,
+    rowCount: data?.totalElements ?? 0,
+    manualPagination: true,
     getPaginationRowModel: getPaginationRowModel(),
     getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
@@ -134,39 +157,50 @@ export function TemplatesTable({ data }: DataTableProps) {
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
-                  className='group/row'
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell
-                      key={cell.id}
-                      className={cn(
-                        'bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted',
-                        cell.column.columnDef.meta?.className,
-                        cell.column.columnDef.meta?.tdClassName
-                      )}
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
+            {isLoading ? (
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className='h-24 text-center'
+                  className='h-32'
                 >
-                  No results.
+                  <Spinner className='w-16 h-16 mx-auto' />
                 </TableCell>
               </TableRow>
+            ) : (
+              table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && 'selected'}
+                    className='group/row'
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell
+                        key={cell.id}
+                        className={cn(
+                          'bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted',
+                          cell.column.columnDef.meta?.className,
+                          cell.column.columnDef.meta?.tdClassName
+                        )}
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className='h-24 text-center'
+                  >
+                    No results.
+                  </TableCell>
+                </TableRow>
+              )
             )}
           </TableBody>
         </Table>

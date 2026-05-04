@@ -4,9 +4,8 @@ import lombok.*;
 
 @Getter
 @AllArgsConstructor
-@NoArgsConstructor
 public class QueryPaginate {
-    private String limit;
+    private Integer pageSize = 10;
 
-    private String page;
+    private Integer page = 0;
 }
