@@ -1,7 +1,7 @@
-'use client'
+import { getRouteApi } from '@tanstack/react-router'
 import { ConfigDrawer } from '@/components/config-drawer'
-import { Header } from '@/layout/header'
-import { Main } from '@/layout/main'
+import { Header } from '@/components/layout/header'
+import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
@@ -10,10 +10,12 @@ import { UsersPrimaryButtons } from './components/users-primary-buttons'
 import { UsersProvider } from './components/users-provider'
 import { UsersTable } from './components/users-table'
 import { users } from './data/users'
-import useQueryState from '@/hooks/useQueryState'
+
+const route = getRouteApi('/_authenticated/users/')
 
 export function Users() {
-  const { navigate, search } = useQueryState()
+  const search = route.useSearch()
+  const navigate = route.useNavigate()
 
   return (
     <UsersProvider>

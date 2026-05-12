@@ -1,11 +1,11 @@
+import { format } from 'date-fns'
 import { type ColumnDef } from '@tanstack/react-table'
+import { Campaign } from '@/@types'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
-import { Campaign } from '@/@types'
 import { DataTableRowActions } from './data-table-row-actions'
-import { format } from 'date-fns'
 
 export const campaignsColumns: ColumnDef<Campaign>[] = [
   {
@@ -13,7 +13,9 @@ export const campaignsColumns: ColumnDef<Campaign>[] = [
     header: ({ table }) => (
       <Checkbox
         checked={table.getIsAllPageRowsSelected()}
-        indeterminate={table.getIsSomePageRowsSelected() && !table.getIsAllPageRowsSelected()}
+        indeterminate={
+          table.getIsSomePageRowsSelected() && !table.getIsAllPageRowsSelected()
+        }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label='Select all'
         className='translate-y-0.5'
@@ -69,12 +71,10 @@ export const campaignsColumns: ColumnDef<Campaign>[] = [
       <DataTableColumnHeader column={column} title='Scheduled at' />
     ),
     cell: ({ row }) => {
-      const date = row.getValue('scheduleAt') != null && format(row.getValue('scheduleAt'), "dd/MM/yyyy HH:mm")
-      return (
-        <LongText className='max-w-36 ps-3'>
-          {date}
-        </LongText>
-      )
+      const date =
+        row.getValue('scheduleAt') != null &&
+        format(row.getValue('scheduleAt'), 'dd/MM/yyyy HH:mm')
+      return <LongText className='max-w-36 ps-3'>{date}</LongText>
     },
     enableSorting: true,
   },

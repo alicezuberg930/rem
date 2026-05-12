@@ -1,14 +1,14 @@
-'use client'
 import { useState } from 'react'
+import { useMutation } from '@tanstack/react-query'
+import { Campaign } from '@/@types'
 import { AlertTriangle } from 'lucide-react'
+import { toast } from 'sonner'
+import { campaigns } from '@/lib/queries/campaign'
+import { HttpError } from '@/lib/repository/http-error'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ConfirmDialog } from '@/components/confirm-dialog'
-import { Campaign } from '@/@types'
-import { toast } from 'sonner'
-import { deleteCampaign } from '@/lib/repository/api'
-import { HttpError } from '@/lib/repository/httpError'
 
 type CampaignDeleteDialogProps = {
   open: boolean
@@ -22,25 +22,21 @@ export function CampaignsDeleteDialog({
   currentRow,
 }: CampaignDeleteDialogProps) {
   const [value, setValue] = useState<string>('')
+  const _delete = useMutation(campaigns().delete.mutationOptions())
 
   const handleDelete = () => {
     if (value.trim() !== currentRow.name) return
     const submit = async () => {
-      try {
-        return await deleteCampaign(currentRow.id)
-      } catch (error) {
-        throw error
-      } finally {
-        onOpenChange(false)
-      }
+      const res = await _delete.mutateAsync(currentRow.id)
+      onOpenChange(false)
+      return res
     }
-    toast.promise(submit,
-      {
-        loading: "Deleting campaign",
-        error: (err) => err instanceof HttpError ? err.message : "Internal server error",
-        success: (data) => data?.message
-      }
-    )
+    toast.promise(submit, {
+      loading: 'Deleting campaign',
+      error: (err) =>
+        err instanceof HttpError ? err.message : 'Internal server error',
+      success: (data) => data?.message,
+    })
   }
 
   return (
@@ -64,7 +60,8 @@ export function CampaignsDeleteDialog({
             Are you sure you want to delete{' '}
             <span className='font-bold'>{currentRow.name}</span>?
             <br />
-            This action will permanently remove the campaign from the system. This cannot be undone.
+            This action will permanently remove the campaign from the system.
+            This cannot be undone.
           </p>
 
           <Label className='my-2'>

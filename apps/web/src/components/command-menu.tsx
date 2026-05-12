@@ -1,10 +1,9 @@
-'use client'
 import React from 'react'
+import { useNavigate } from '@tanstack/react-router'
 import { ArrowRight, ChevronRight, Laptop, Moon, Sun } from 'lucide-react'
 import { useSearch } from '@/context/search-provider'
 import { useTheme } from '@/context/theme-provider'
 import {
-  Command,
   CommandDialog,
   CommandEmpty,
   CommandGroup,
@@ -13,25 +12,27 @@ import {
   CommandList,
   CommandSeparator,
 } from '@/components/ui/command'
-import { sidebarData } from '@/layout/data/sidebar-data'
+import { sidebarData } from './layout/data/sidebar-data'
 import { ScrollArea } from './ui/scroll-area'
-import { useRouter } from 'next/navigation'
 
 export function CommandMenu() {
-  const navigate = useRouter()
+  const navigate = useNavigate()
   const { setTheme } = useTheme()
   const { open, setOpen } = useSearch()
 
-  const runCommand = React.useCallback((command: () => unknown) => {
-    setOpen(false)
-    command()
-  }, [setOpen])
+  const runCommand = React.useCallback(
+    (command: () => unknown) => {
+      setOpen(false)
+      command()
+    },
+    [setOpen]
+  )
 
   return (
     <CommandDialog modal open={open} onOpenChange={setOpen}>
       <CommandInput placeholder='Type a command or search...' />
       <CommandList>
-        <ScrollArea className='h-72 pe-1'>
+        <ScrollArea itemType='hover' className='h-72 pe-1'>
           <CommandEmpty>No results found.</CommandEmpty>
           {sidebarData.navGroups.map((group) => (
             <CommandGroup key={group.title} heading={group.title}>
@@ -42,11 +43,11 @@ export function CommandMenu() {
                       key={`${navItem.url}-${i}`}
                       value={navItem.title}
                       onSelect={() => {
-                        runCommand(() => navigate.push(navItem.url))
+                        runCommand(() => navigate({ to: navItem.url }))
                       }}
                     >
                       <div className='flex size-4 items-center justify-center'>
-                        <ArrowRight className='size-4 text-muted-foreground/80' />
+                        <ArrowRight className='size-2 text-muted-foreground/80' />
                       </div>
                       {navItem.title}
                     </CommandItem>
@@ -57,11 +58,11 @@ export function CommandMenu() {
                     key={`${navItem.title}-${subItem.url}-${i}`}
                     value={`${navItem.title}-${subItem.url}`}
                     onSelect={() => {
-                      runCommand(() => navigate.push(subItem.url))
+                      runCommand(() => navigate({ to: subItem.url }))
                     }}
                   >
                     <div className='flex size-4 items-center justify-center'>
-                      <ArrowRight className='size-4 text-muted-foreground/80' />
+                      <ArrowRight className='size-2 text-muted-foreground/80' />
                     </div>
                     {navItem.title} <ChevronRight /> {subItem.title}
                   </CommandItem>

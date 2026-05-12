@@ -1,5 +1,5 @@
-import { X } from 'lucide-react'
 import { type Table } from '@tanstack/react-table'
+import { X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { DataTableFacetedFilter } from './faceted-filter'
@@ -26,7 +26,8 @@ export function DataTableToolbar<TData>({
   searchKey,
   filters = [],
 }: DataTableToolbarProps<TData>) {
-  const isFiltered = table.getState().columnFilters.length > 0 || table.getState().globalFilter
+  const isFiltered =
+    table.getState().columnFilters.length > 0 || table.getState().globalFilter
 
   return (
     <div className='flex items-center justify-between'>
@@ -37,7 +38,9 @@ export function DataTableToolbar<TData>({
             value={
               (table.getColumn(searchKey)?.getFilterValue() as string) ?? ''
             }
-            onChange={(event) => table.getColumn(searchKey)?.setFilterValue(event.target.value)}
+            onChange={(event) =>
+              table.getColumn(searchKey)?.setFilterValue(event.target.value)
+            }
             className='h-8 w-37.5 lg:w-62.5'
           />
         ) : (

@@ -1,6 +1,16 @@
-'use client'
+// hooks
 import { useForm } from 'react-hook-form'
+// utils
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation } from '@tanstack/react-query'
+// types
+import { Template } from '@/@types'
+import { toast } from 'sonner'
+import { templates } from '@/lib/queries/template'
+import { HttpError } from '@/lib/repository/http-error'
+import { inlineQuillStyles } from '@/lib/utils'
+import { TemplateValidators } from '@/lib/validators/template'
+// components
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -10,15 +20,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Template } from '@/@types'
-import { FormProvider, RHFRichTextEditor, RHFTextField } from '@/components/hook-form'
 import { FieldGroup } from '@/components/ui/field'
-import { TemplateValidators } from '@/validators/template'
-import { toast } from 'sonner'
-import { HttpError } from '@/lib/repository/httpError'
-import { inlineQuillStyles } from '@/lib/utils'
-import { templates } from '@/lib/queries/template'
-import { useMutation } from '@tanstack/react-query'
+import {
+  FormProvider,
+  RHFRichTextEditor,
+  RHFTextField,
+} from '@/components/hook-form'
 
 type TemplateActionDialogProps = {
   currentRow?: Template
@@ -39,18 +46,18 @@ export function TemplatesActionDialog({
     resolver: zodResolver(TemplateValidators.formSchema),
     defaultValues: isEdit
       ? {
-        ...currentRow,
-        isEdit,
-      }
+          ...currentRow,
+          isEdit,
+        }
       : {
-        name: '',
-        header: '',
-        body: '',
-        footer: '',
-        websiteUrl: null,
-        contactPhone: null,
-        isEdit,
-      },
+          name: '',
+          header: '',
+          body: '',
+          footer: '',
+          websiteUrl: null,
+          contactPhone: null,
+          isEdit,
+        },
   })
 
   const { handleSubmit, reset } = form
@@ -63,17 +70,20 @@ export function TemplatesActionDialog({
         body: inlineQuillStyles(values.body),
         footer: inlineQuillStyles(values.footer),
       }
-      return isEdit && currentRow?.id
-        ? await update.mutateAsync(values)
-        : await create.mutateAsync(values)
+      const res =
+        isEdit && currentRow?.id
+          ? await update.mutateAsync(values)
+          : await create.mutateAsync(values)
+      form.reset()
+      onOpenChange(false)
+      return res
     }
-    toast.promise(submit,
-      {
-        loading: "Submitting data",
-        error: (err) => err instanceof HttpError ? err.message : "Internal server error",
-        success: (response) => response.message
-      }
-    )
+    toast.promise(submit, {
+      loading: 'Submitting data',
+      error: (err) =>
+        err instanceof HttpError ? err.message : 'Internal server error',
+      success: (response) => response.message,
+    })
   }
 
   // const handleDropThumbnail = useCallback((acceptedFiles: File[]) => {
@@ -112,14 +122,22 @@ export function TemplatesActionDialog({
     >
       <DialogContent className='sm:max-w-xl'>
         <DialogHeader className='text-start'>
-          <DialogTitle>{isEdit ? 'Edit Template' : 'Add New Template'}</DialogTitle>
+          <DialogTitle>
+            {isEdit ? 'Edit Template' : 'Add New Template'}
+          </DialogTitle>
           <DialogDescription>
-            {isEdit ? 'Update the Template here. ' : 'Create new Template here. '}
+            {isEdit
+              ? 'Update the Template here. '
+              : 'Create new Template here. '}
             Click save when you're done.
           </DialogDescription>
         </DialogHeader>
         <div className='h-105 w-[calc(100%+0.75rem)] overflow-y-auto py-1 pe-3'>
-          <FormProvider id='templates-form' methods={form} onSubmit={handleSubmit(onSubmit)}>
+          <FormProvider
+            id='templates-form'
+            methods={form}
+            onSubmit={handleSubmit(onSubmit)}
+          >
             <div className='space-y-4 px-0.5'>
               <FieldGroup>
                 {/* <RHFUpload
@@ -130,30 +148,12 @@ export function TemplatesActionDialog({
                   onDelete={() => setValue('thumbnail', null, { shouldValidate: true })}
                   fieldLabel={('song_audio_file')}
                 /> */}
-                <RHFTextField
-                  name='name'
-                  fieldLabel='Name'
-                />
-                <RHFRichTextEditor
-                  name='header'
-                  fieldLabel='Header'
-                />
-                <RHFRichTextEditor
-                  name='body'
-                  fieldLabel='Body'
-                />
-                <RHFRichTextEditor
-                  name='footer'
-                  fieldLabel='Footer'
-                />
-                <RHFTextField
-                  name='websiteUrl'
-                  fieldLabel='Website URL'
-                />
-                <RHFTextField
-                  name='contactPhone'
-                  fieldLabel='Contact Phone'
-                />
+                <RHFTextField name='name' fieldLabel='Name' />
+                <RHFRichTextEditor name='header' fieldLabel='Header' />
+                <RHFRichTextEditor name='body' fieldLabel='Body' />
+                <RHFRichTextEditor name='footer' fieldLabel='Footer' />
+                <RHFTextField name='websiteUrl' fieldLabel='Website URL' />
+                <RHFTextField name='contactPhone' fieldLabel='Contact Phone' />
               </FieldGroup>
             </div>
           </FormProvider>

@@ -20,16 +20,14 @@ export function LearnMore({
 }: LearnMoreProps) {
   return (
     <Popover>
-      <PopoverTrigger
-        {...triggerProps}
-      >
+      <PopoverTrigger {...triggerProps}>
         <Button
-          variant="outline"
-          size="icon"
+          variant='outline'
+          size='icon'
           className={cn('size-5', triggerProps?.className)}
         >
-          <span className="sr-only">Learn more</span>
-          <CircleQuestionMark className="size-4" />
+          <span className='sr-only'>Learn more</span>
+          <CircleQuestionMark className='size-4' />
         </Button>
       </PopoverTrigger>
       <PopoverContent

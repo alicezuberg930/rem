@@ -1,4 +1,3 @@
-'use client'
 import { createContext, useContext, useEffect, useState } from 'react'
 import { CommandMenu } from '@/components/command-menu'
 
@@ -23,10 +22,8 @@ export function SearchProvider({ children }: SearchProviderProps) {
         setOpen((open) => !open)
       }
     }
-    if (typeof window !== 'undefined') {
-      document.addEventListener('keydown', down)
-      return () => document.removeEventListener('keydown', down)
-    }
+    document.addEventListener('keydown', down)
+    return () => document.removeEventListener('keydown', down)
   }, [])
 
   return (

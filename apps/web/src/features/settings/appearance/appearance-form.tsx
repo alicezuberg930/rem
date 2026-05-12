@@ -1,9 +1,8 @@
-'use client'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
-import { ChevronDownIcon } from 'lucide-react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { fonts } from '@/config/fonts'
+import { ChevronDownIcon } from 'lucide-react'
 import { showSubmittedData } from '@/lib/show-submitted-data'
 import { cn } from '@/lib/utils'
 import { useFont } from '@/context/font-provider'
@@ -104,11 +103,12 @@ export function AppearanceForm() {
                     <RadioGroupItem
                       value='light'
                       render={(props, state) => {
-                        const { checked } = state;
+                        const { checked } = state
 
                         return (
-                          <div className='flex flex-col cursor-pointer'>
-                            <div {...props}
+                          <div className='flex cursor-pointer flex-col'>
+                            <div
+                              {...props}
                               className={cn(
                                 'items-center rounded-md border-2 p-1 hover:border-accent',
                                 checked ? 'border-primary' : 'border-muted'
@@ -145,10 +145,11 @@ export function AppearanceForm() {
                       render={(props, state) => {
                         const { checked } = state
                         return (
-                          <div className='flex flex-col cursor-pointer'>
-                            <div {...props}
+                          <div className='flex cursor-pointer flex-col'>
+                            <div
+                              {...props}
                               className={cn(
-                                'items-center rounded-md border-2 p-1 bg-popover hover:bg-accent hover:text-accent-foreground',
+                                'items-center rounded-md border-2 bg-popover p-1 hover:bg-accent hover:text-accent-foreground',
                                 checked ? 'border-primary' : 'border-muted'
                               )}
                             >

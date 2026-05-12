@@ -1,10 +1,10 @@
 import { type FileRejection } from 'react-dropzone'
 // utils
-import { fData } from '@/lib/formatNumber'
+import { fData } from '@/lib/format-number'
+import { Paper } from '@/components/ui/paper'
+import { Typography } from '@/components/ui/typography'
 // components
 import { fileData } from '@/components/file-thumbnail'
-import { Typography } from '@/components/ui/typography'
-import { Paper } from '@/components/ui/paper'
 
 type Props = {
   fileRejections: readonly FileRejection[]
@@ -14,16 +14,13 @@ export default function RejectionFiles({ fileRejections }: Readonly<Props>) {
   if (!fileRejections.length) return null
 
   return (
-    <Paper
-      variant='outline'
-      className='py-2 mt-8 bg-red-50 border-red-300'
-    >
+    <Paper variant='outline' className='mt-8 border-red-300 bg-red-50 py-2'>
       {fileRejections.map(({ file, errors }) => {
         const { path, size } = fileData(file)
 
         return (
           <div key={path} className='my-2 flex flex-col'>
-            <Typography variant='caption' className='font-semibold w-fit'>
+            <Typography variant='caption' className='w-fit font-semibold'>
               {path} - {size ? fData(size) : ''}
             </Typography>
 

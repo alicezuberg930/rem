@@ -1,19 +1,26 @@
-'use client'
-import { useEffect, useState } from 'react'
+// hooks
+import { useEffect, useMemo, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { getRouteApi } from '@tanstack/react-router'
 import {
+  type ColumnFilter,
   type SortingState,
   type VisibilityState,
   flexRender,
   getCoreRowModel,
   getFacetedRowModel,
   getFacetedUniqueValues,
-  getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import { QueryCampaign } from '@/@types'
+import { campaigns } from '@/lib/queries/campaign'
+// utils
 import { cn } from '@/lib/utils'
-import { type NavigateFn, useTableUrlState } from '@/hooks/useTableUrlState'
+import { useTableUrlState } from '@/hooks/use-table-url-state'
+import { Spinner } from '@/components/ui/spinner'
+// components
 import {
   Table,
   TableBody,
@@ -23,17 +30,14 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { Campaign } from '@/@types'
-import { DataTableBulkActions } from './data-table-bulk-actions'
 import { campaignsColumns as columns } from './campaigns-columns'
-import useQueryState from '@/hooks/useQueryState'
+import { DataTableBulkActions } from './data-table-bulk-actions'
 
-type DataTableProps = {
-  data: Campaign[]
-}
+const route = getRouteApi('/_authenticated/campaigns/')
 
-export function CampaignsTable({ data }: DataTableProps) {
-  const { navigate, search } = useQueryState()
+export function CampaignsTable() {
+  const search = route.useSearch()
+  const navigate = route.useNavigate()
   // Local UI-only states
   const [rowSelection, setRowSelection] = useState({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
@@ -63,10 +67,44 @@ export function CampaignsTable({ data }: DataTableProps) {
     ],
   })
 
+  // Build query params from filters and pagination
+  const queryParams = useMemo(() => {
+    const validKeys: (keyof QueryCampaign)[] = ['name', 'status', 'sendType']
+    const params = columnFilters.reduce(
+      (acc: Record<string, unknown>, filter: ColumnFilter) => {
+        // If the filter already exists, convert it to an array (if it's not already) and add the new value
+        const key = filter.id as keyof QueryCampaign
+        if (validKeys.includes(key)) {
+          if (Array.isArray(acc[key])) {
+            ;(acc[key] as unknown[]).push(filter.value)
+          } else {
+            acc[key] = filter.value as string
+          }
+        }
+        return acc
+      },
+      {} as Record<string, unknown>
+    )
+    return Object.entries(params).reduce((acc, [key, value]) => {
+      acc[key as keyof QueryCampaign] = Array.isArray(value)
+        ? JSON.stringify(value)
+        : (value as string)
+      return acc
+    }, params)
+  }, [columnFilters])
+
+  const { data, isLoading } = useQuery(
+    campaigns().all.queryOptions({
+      page: pagination.pageIndex,
+      pageSize: pagination.pageSize,
+      ...queryParams,
+    })
+  )
+
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     autoResetPageIndex: false,
-    data,
+    data: data?.content ?? [],
     columns,
     state: {
       sorting,
@@ -81,9 +119,10 @@ export function CampaignsTable({ data }: DataTableProps) {
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnVisibilityChange: setColumnVisibility,
+    rowCount: data?.totalElements ?? 0,
+    manualPagination: true,
     getPaginationRowModel: getPaginationRowModel(),
     getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
@@ -124,9 +163,9 @@ export function CampaignsTable({ data }: DataTableProps) {
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
                     </TableHead>
                   )
                 })}
@@ -134,7 +173,13 @@ export function CampaignsTable({ data }: DataTableProps) {
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {isLoading ? (
+              <TableRow>
+                <TableCell colSpan={columns.length} className='h-32'>
+                  <Spinner className='mx-auto h-16 w-16' />
+                </TableCell>
+              </TableRow>
+            ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}

@@ -1,6 +1,4 @@
-'use client'
 import { type SVGProps } from 'react'
-import { RadioGroup, RadioGroupItem as Item } from './ui/radio-group'
 import { CircleCheck, RotateCcw, Settings } from 'lucide-react'
 import { IconDir } from '@/assets/custom/icon-dir'
 import { IconLayoutCompact } from '@/assets/custom/icon-layout-compact'
@@ -26,6 +24,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet'
+import { RadioGroup, RadioGroupItem as Item } from './ui/radio-group'
 import { useSidebar } from './ui/sidebar'
 
 export function ConfigDrawer() {
@@ -157,7 +156,7 @@ function RadioGroupItem({
               <item.icon
                 className={cn(
                   !isTheme && 'fill-primary stroke-primary',
-                  !checked && 'fill-muted-foreground stroke-muted-foreground',
+                  !checked && 'fill-muted-foreground stroke-muted-foreground'
                 )}
                 aria-hidden='true'
               />

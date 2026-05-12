@@ -1,8 +1,7 @@
-'use client'
 import React, { useEffect, useState } from 'react'
-import useDialogState from '@/hooks/use-dialog-state'
 import { CalendarBooking, Contact } from '@/@types'
 import { getContacts } from '@/lib/repository/api'
+import useDialogState from '@/hooks/use-dialog-state'
 
 type BookingsDialogType = 'add'
 
@@ -22,11 +21,13 @@ export function BookingsProvider({ children }: { children: React.ReactNode }) {
   const [contacts, setContacts] = useState<Contact[]>([])
 
   useEffect(() => {
-    getContacts().then(res => setContacts(res.data.content))
+    getContacts().then((res) => setContacts(res.data.content))
   }, [])
 
   return (
-    <BookingsContext value={{ open, setOpen, currentRow, setCurrentRow, contacts }}>
+    <BookingsContext
+      value={{ open, setOpen, currentRow, setCurrentRow, contacts }}
+    >
       {children}
     </BookingsContext>
   )
@@ -37,7 +38,9 @@ export const useBookings = () => {
   const bookingsContext = React.useContext(BookingsContext)
 
   if (!bookingsContext) {
-    throw new Error('useCampaigns hook has to be used within <CampaignsContext>')
+    throw new Error(
+      'useCampaigns hook has to be used within <CampaignsContext>'
+    )
   }
 
   return bookingsContext

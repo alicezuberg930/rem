@@ -1,23 +1,25 @@
-'use client'
-import { useRouter } from 'next/navigation'
-import { createContext, useEffect, useReducer, useCallback, useMemo, useRef, useContext } from 'react'
-// import { useQuery } from '@tanstack/react-query'
-// request
 import {
-    profile as profileApi,
-    signIn as signInApi,
-    signOut as signOutApi,
-    signUp as SignUpApi
-} from '@/lib/repository/api'
-// types
-import type { Profile } from "@/@types/user"
-import { AuthValidators } from '@/validators/auth'
-import { toast } from 'sonner'
+    createContext,
+    useEffect,
+    useReducer,
+    useCallback,
+    useMemo,
+    useContext,
+} from 'react'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { useNavigate } from '@tanstack/react-router'
 import { Role } from '@/@types'
+// types
+import type { Profile } from '@/@types/user'
+import { toast } from 'sonner'
 import { getCookie } from '@/lib/cookies'
+import { auth } from '@/lib/queries/auth'
+import { AuthValidators } from '@/lib/validators/auth'
 
 export type ActionMapType<M extends { [index: string]: any }> = {
-    [Key in keyof M]: M[Key] extends undefined ? { type: Key } : { type: Key, payload: M[Key] }
+    [Key in keyof M]: M[Key] extends undefined
+    ? { type: Key }
+    : { type: Key; payload: M[Key] }
 }
 
 export type AuthStateType = {
@@ -89,7 +91,7 @@ type Payload = {
         user: Profile
     }
     [Types.REGISTER]: {
-        user: Profile
+        user: null
     }
     [Types.LOGOUT]: undefined
 }
@@ -109,14 +111,14 @@ const reducer = (state: AuthStateType, action: ActionsType) => {
             isInitialized: true,
             isAuthenticated: action.payload.isAuthenticated,
             user: action.payload.user,
-            role: action.payload.role
+            role: action.payload.role,
         }
     }
     if (action.type === Types.BUSINESS) {
         return {
             ...state,
             isAuthenticated: true,
-            role: action.payload.role
+            role: action.payload.role,
         }
     }
     if (action.type === Types.LOGIN) {
@@ -138,7 +140,7 @@ const reducer = (state: AuthStateType, action: ActionsType) => {
             ...state,
             isAuthenticated: false,
             user: null,
-            role: null
+            role: null,
         }
     }
     return state
@@ -146,68 +148,89 @@ const reducer = (state: AuthStateType, action: ActionsType) => {
 
 export const AuthContext = createContext<JWTContextType | null>(null)
 
-export function AuthProvider({ children }: Readonly<{ children: React.ReactNode }>) {
+export function AuthProvider({
+    children,
+}: Readonly<{ children: React.ReactNode }>) {
     const [state, dispatch] = useReducer(reducer, initialState)
-    const router = useRouter()
-    const isRefreshing = useRef<boolean>(false)
-    const refreshTimerRef = useRef<number | null>(null)
+    const navigate = useNavigate()
+    const { mutateAsync: m1 } = useMutation(auth().signIn.mutationOptions())
+    const { mutateAsync: m2 } = useMutation(auth().signUp.mutationOptions())
+    const { mutateAsync: m3 } = useMutation(auth().signOut.mutationOptions())
+    const { data } = useQuery(auth().profile.queryOptions())
+
+    // const isRefreshing = useRef<boolean>(false)
+    // const refreshTimerRef = useRef<number | null>(null)
     // const { lastTokenRefresh } = useSelector(state => state.app)
 
     useEffect(() => {
-        profileApi().then(res => {
-            let role = getCookie("X-Business-Id") ? res.data.businesses.find(b => b.id === getCookie("X-Business-Id"))?.role ?? null : null
+        if (data) {
+            let role = getCookie('X-Business-Id')
+                ? (data.data.businesses.find((b) => b.id === getCookie('X-Business-Id'))
+                    ?.role ?? null)
+                : null
             dispatch({
                 type: Types.INITIAL,
                 payload: {
-                    user: res.data,
+                    user: data.data,
                     isAuthenticated: true,
-                    role
-                }
+                    role,
+                },
             })
-        })
-    }, [state.isAuthenticated])
-
-    const getCurrentRole = useCallback(async (businessId: string) => {
-        let role = state.user?.businesses.find(b => b.id === businessId)?.role ?? null
-        dispatch({
-            type: Types.BUSINESS,
-            payload: { role }
-        })
-    }, [router])
-
-    const signIn = useCallback(async (data: AuthValidators.SignIn) => {
-        try {
-            const response = await signInApi(data)
-            toast.success(response.message)
-            dispatch({
-                type: Types.LOGIN,
-                payload: { user: response.data.user }
-            })
-            router.replace('/businesses')
-        } catch (err) {
-            toast.error(err instanceof Error ? err.message : 'Sign in failed')
         }
-    }, [router])
+    }, [state.isAuthenticated, data])
 
-    const signUp = useCallback(async (data: AuthValidators.SignUp) => {
-        try {
-            const response = await SignUpApi(data)
-            toast.success(response.message)
+    const getCurrentRole = useCallback(
+        async (businessId: string) => {
+            let role =
+                state.user?.businesses.find((b) => b.id === businessId)?.role ?? null
             dispatch({
-                type: Types.REGISTER,
-                payload: { user: response.data }
+                type: Types.BUSINESS,
+                payload: { role },
             })
-            router.push('/sign-in')
-        } catch (err) {
-            toast.error(err instanceof Error ? err.message : 'Sign in failed')
-        }
-    }, [router])
+        },
+        [navigate]
+    )
+
+    const signIn = useCallback(
+        async (data: AuthValidators.SignIn) => {
+            await m1(data, {
+                onSuccess: (response) => {
+                    dispatch({
+                        type: Types.LOGIN,
+                        payload: { user: response.data.user },
+                    })
+                    toast.success(response.message)
+                    navigate({ replace: true, to: '/businesses' })
+                },
+            })
+        },
+        [navigate, m1]
+    )
+
+    const signUp = useCallback(
+        async (data: AuthValidators.SignUp) => {
+            await m2(data, {
+                onSuccess: (response) => {
+                    dispatch({
+                        type: Types.REGISTER,
+                        payload: { user: null },
+                    })
+                    toast.success(response.message)
+                    navigate({ to: '/sign-in' })
+                },
+            })
+        },
+        [navigate, m2]
+    )
 
     const signOut = useCallback(async () => {
-        await signOutApi()
-        dispatch({ type: Types.LOGOUT })
-        router.replace('/sign-in')
-    }, [router])
+        await m3(undefined, {
+            onSuccess: (_) => {
+                dispatch({ type: Types.LOGOUT })
+                navigate({ replace: true, to: '/sign-in' })
+            },
+        })
+    }, [navigate, m3])
 
     // const refreshToken = useCallback(async () => {
     //     if (isRefreshing.current) return
@@ -256,7 +279,7 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
     //     }
     // }, [refreshToken])
 
-    // Set up automatic token refresh every 30 minutes  
+    // Set up automatic token refresh every 30 minutes
     // useEffect(() => {
     //     if (state.isAuthenticated) {
     //         // 29 minutes in milliseconds
@@ -295,18 +318,25 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
     //     }
     // }, [state.isAuthenticated, refreshToken])
 
-    const memoizedValue = useMemo(() => ({
-        isInitialized: state.isInitialized,
-        isAuthenticated: state.isAuthenticated,
-        user: state.user,
-        role: state.role,
-        signIn,
-        signUp,
-        signOut,
-        getCurrentRole,
-    }), [state, signIn, signOut, signUp, getCurrentRole])
+    const memoizedValue = useMemo(
+        () => ({
+            isInitialized: state.isInitialized,
+            isAuthenticated: state.isAuthenticated,
+            user: state.user,
+            role: state.role,
+            signIn,
+            signUp,
+            signOut,
+            getCurrentRole,
+        }),
+        [state, signIn, signOut, signUp, getCurrentRole]
+    )
 
-    return <AuthContext.Provider value={memoizedValue}>{children}</AuthContext.Provider>
+    return (
+        <AuthContext.Provider value={memoizedValue}>
+            {children}
+        </AuthContext.Provider>
+    )
 }
 
 export const useAuth = () => {

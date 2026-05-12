@@ -1,52 +1,17 @@
-'use client'
-import { z } from 'zod'
+import { useCallback } from 'react'
 import { useForm } from 'react-hook-form'
-import { CheckIcon, Cigarette } from 'lucide-react'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { updateBusiness } from '@/lib/repository/api'
 import { showSubmittedData } from '@/lib/show-submitted-data'
-import { cn } from '@/lib/utils'
+import { BusinessValidators } from '@/lib/validators/business'
 import { Button } from '@/components/ui/button'
 import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command'
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
-import { RHFSingleDatePicker, RHFTextArea, RHFTextField } from '@/components/hook-form'
-import { DatePicker } from '@/components/date-picker'
-import { BusinessValidators } from '@/validators/business'
-import { useCallback } from 'react'
+  FormProvider,
+  RHFSingleDatePicker,
+  RHFTextArea,
+  RHFTextField,
+} from '@/components/hook-form'
 import { RHFUpload } from '@/components/hook-form/RHFUpload'
-import { updateBusiness, uploadFile } from '@/lib/repository/api'
-
-const languages = [
-  { label: 'English', value: 'en' },
-  { label: 'French', value: 'fr' },
-  { label: 'German', value: 'de' },
-  { label: 'Spanish', value: 'es' },
-  { label: 'Portuguese', value: 'pt' },
-  { label: 'Russian', value: 'ru' },
-  { label: 'Japanese', value: 'ja' },
-  { label: 'Korean', value: 'ko' },
-  { label: 'Chinese', value: 'zh' },
-] as const
 
 export function BusinessForm() {
   const form = useForm<BusinessValidators.BusinessForm>({
@@ -57,75 +22,69 @@ export function BusinessForm() {
       slug: '',
       logoUrl: null,
       workStartTime: undefined,
-      insuranceContributionSalary: "1000000",
+      insuranceContributionSalary: '1000000',
     },
   })
 
-  const { setValue } = form
+  const { setValue, handleSubmit } = form
 
   const onSubmit = async (data: BusinessValidators.BusinessForm) => {
     // if (data.logoUrl instanceof File) {
     //   uploadFile(data.logoUrl, "/logo").then(res => data.logoUrl = res.data)
     // }
     try {
-      const response = await updateBusiness(data)
+      await updateBusiness(data)
     } catch (error) {
       throw error
     }
     showSubmittedData(data)
   }
 
-  const handleDropThumbnail = useCallback((acceptedFiles: File[]) => {
-    const file = acceptedFiles[0]
-    if (!file) return
-    const img = new window.Image()
-    img.src = URL.createObjectURL(file)
-    const newFile = Object.assign(file, { preview: URL.createObjectURL(file) })
-    setValue('logoUrl', newFile, { shouldValidate: true })
-  }, [setValue])
+  const handleDropThumbnail = useCallback(
+    (acceptedFiles: File[]) => {
+      const file = acceptedFiles[0]
+      if (!file) return
+      const img = new window.Image()
+      img.src = URL.createObjectURL(file)
+      const newFile = Object.assign(file, {
+        preview: URL.createObjectURL(file),
+      })
+      setValue('logoUrl', newFile, { shouldValidate: true })
+    },
+    [setValue]
+  )
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
+    <FormProvider methods={form} onSubmit={handleSubmit(onSubmit)}>
+      <RHFTextField name='name' fieldLabel='Your name' />
+      <RHFTextArea name='description' fieldLabel='Business description' />
+      <RHFSingleDatePicker
+        name='dob'
+        fieldLabel='Date of birth'
+        placeholder='Pick a date'
+      />
+      <div className='flex gap-2'>
+        <RHFTextField disabled name='slug' fieldLabel='Slug' />
         <RHFTextField
-          name='name'
-          fieldLabel='Your name'
+          type='time'
+          name='workStartTime'
+          fieldLabel='Work start time'
         />
-        <RHFTextArea
-          name='description'
-          fieldLabel='Business description'
-        />
-        <RHFSingleDatePicker
-          name='dob'
-          fieldLabel='Date of birth'
-          placeholder='Pick a date'
-        />
-        <div className='flex gap-2'>
-          <RHFTextField
-            disabled
-            name='slug'
-            fieldLabel='Slug'
-          />
-          <RHFTextField
-            type='time'
-            name='workStartTime'
-            fieldLabel='Work start time'
-          />
-        </div>
-        <RHFTextField
-          type='number'
-          name='insuranceContributionSalary'
-          fieldLabel='Insurance Contribution Salary'
-        />
-        <RHFUpload
-          multiple={false}
-          name='logoUrl'
-          maxSize={15728640}
-          onDrop={handleDropThumbnail}
-          onDelete={() => setValue('logoUrl', null, { shouldValidate: true })}
-          fieldLabel={('song_audio_file')}
-        />
-        {/* <FormField
+      </div>
+      <RHFTextField
+        type='number'
+        name='insuranceContributionSalary'
+        fieldLabel='Insurance Contribution Salary'
+      />
+      <RHFUpload
+        multiple={false}
+        name='logoUrl'
+        maxSize={15728640}
+        onDrop={handleDropThumbnail}
+        onDelete={() => setValue('logoUrl', null, { shouldValidate: true })}
+        fieldLabel={'song_audio_file'}
+      />
+      {/* <FormField
           control={form.control}
           name='language'
           render={({ field }) => (
@@ -187,8 +146,7 @@ export function BusinessForm() {
             </FormItem>
           )}
         /> */}
-        <Button type='submit'>Update business</Button>
-      </form>
-    </Form>
+      <Button type='submit'>Update business</Button>
+    </FormProvider>
   )
 }

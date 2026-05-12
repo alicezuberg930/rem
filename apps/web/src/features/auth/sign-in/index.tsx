@@ -1,4 +1,4 @@
-'use client'
+import { Link } from '@tanstack/react-router'
 import {
   Card,
   CardContent,
@@ -8,13 +8,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { AuthLayout } from '../auth-layout'
-import dynamic from 'next/dynamic'
-import Link from 'next/link'
-
-const SignInForm = dynamic(
-  () => import('./components/sign-in-form').then(mod => mod.SignInForm),
-  { ssr: false }
-)
+import { SignInForm } from './components/sign-in-form'
 
 export function SignIn() {
   return (
@@ -24,9 +18,9 @@ export function SignIn() {
           <CardTitle className='text-lg tracking-tight'>Sign in</CardTitle>
           <CardDescription>
             Enter your email and password below to log into your account <br />
-            Don't have an account? {' '}
+            Don't have an account?{' '}
             <Link
-              href='/sign-up'
+              to='/sign-up'
               className='underline underline-offset-4 hover:text-primary'
             >
               Sign up

@@ -1,30 +1,24 @@
-'use client'
 import { useEffect, useRef } from 'react'
-import { usePathname } from 'next/navigation'
+import { useRouterState } from '@tanstack/react-router'
 import LoadingBar, { type LoadingBarRef } from 'react-top-loading-bar'
 
 export function NavigationProgress() {
   const ref = useRef<LoadingBarRef>(null)
-  const pathname = usePathname()
-  const prev = useRef<string | null>(null)
-  const current = pathname
+  const state = useRouterState()
 
   useEffect(() => {
-    if (prev.current && prev.current !== current) {
+    if (state.status === 'pending') {
       ref.current?.continuousStart()
-      // simulate loading end (since Next has no "done" event)
-      setTimeout(() => {
-        ref.current?.complete()
-      }, 300)
+    } else {
+      ref.current?.complete()
     }
-    prev.current = current
-  }, [current])
+  }, [state.status])
 
   return (
     <LoadingBar
-      color="var(--muted-foreground)"
+      color='var(--muted-foreground)'
       ref={ref}
-      shadow
+      shadow={true}
       height={2}
     />
   )

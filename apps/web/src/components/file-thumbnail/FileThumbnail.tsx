@@ -1,7 +1,11 @@
-import { fileData, fileFormat, fileThumb } from './utils'
-import DownloadButton from './DownloadButton'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
+import DownloadButton from './DownloadButton'
+import { fileData, fileFormat, fileThumb } from './utils'
 
 type FileIconProps = {
   file: File | string
@@ -18,7 +22,7 @@ export default function FileThumbnail({
   imageView,
   onDownload,
   imageProps,
-  fileProps
+  fileProps,
 }: Readonly<FileIconProps>) {
   const { name = '', path = '', preview = '' } = fileData(file)
 
@@ -29,13 +33,16 @@ export default function FileThumbnail({
       <img
         src={preview}
         {...imageProps}
-        className={cn('shrink-0 w-full h-full object-cover', imageProps?.className)}
+        className={cn(
+          'h-full w-full shrink-0 object-cover',
+          imageProps?.className
+        )}
       />
     ) : (
       <img
         src={fileThumb(format)}
         {...fileProps}
-        className={cn('w-8 h-8 shrink-0', fileProps?.className)}
+        className={cn('h-8 w-8 shrink-0', fileProps?.className)}
       />
     )
 
@@ -43,14 +50,12 @@ export default function FileThumbnail({
     return (
       <Tooltip>
         <TooltipTrigger>
-          <div className='shrink-0 items-center flex flex-col justify-center w-fit'>
+          <div className='flex w-fit shrink-0 flex-col items-center justify-center'>
             {renderContent}
             {onDownload && <DownloadButton onDownload={onDownload} />}
           </div>
         </TooltipTrigger>
-        <TooltipContent>
-          {name}
-        </TooltipContent>
+        <TooltipContent>{name}</TooltipContent>
       </Tooltip>
     )
   }

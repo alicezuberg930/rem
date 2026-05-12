@@ -1,4 +1,3 @@
-'use client'
 import { createContext, useContext, useEffect, useState } from 'react'
 import { fonts } from '@/config/fonts'
 import { getCookie, setCookie, removeCookie } from '@/lib/cookies'
@@ -24,13 +23,11 @@ export function FontProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const applyFont = (font: string) => {
-      if (typeof window !== 'undefined') {
-        const root = document.documentElement
-        root.classList.forEach((cls) => {
-          if (cls.startsWith('font-')) root.classList.remove(cls)
-        })
-        root.classList.add(`font-${font}`)
-      }
+      const root = document.documentElement
+      root.classList.forEach((cls) => {
+        if (cls.startsWith('font-')) root.classList.remove(cls)
+      })
+      root.classList.add(`font-${font}`)
     }
 
     applyFont(font)

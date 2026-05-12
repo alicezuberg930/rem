@@ -1,15 +1,14 @@
-'use client'
 import { useState } from 'react'
+import { useMutation } from '@tanstack/react-query'
+import { Template } from '@/@types'
 import { AlertTriangle } from 'lucide-react'
+import { toast } from 'sonner'
+import { templates } from '@/lib/queries/template'
+import { HttpError } from '@/lib/repository/http-error'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ConfirmDialog } from '@/components/confirm-dialog'
-import { Template } from '@/@types'
-import { toast } from 'sonner'
-import { HttpError } from '@/lib/repository/httpError'
-import { useMutation } from '@tanstack/react-query'
-import { templates } from '@/lib/queries/template'
 
 type TemplateDeleteDialogProps = {
   open: boolean
@@ -32,13 +31,12 @@ export function TemplatesDeleteDialog({
       onOpenChange(false)
       return res
     }
-    toast.promise(submit,
-      {
-        loading: "Deleting template",
-        error: (err) => err instanceof HttpError ? err.message : "Internal server error",
-        success: (data) => data?.message
-      }
-    )
+    toast.promise(submit, {
+      loading: 'Deleting template',
+      error: (err) =>
+        err instanceof HttpError ? err.message : 'Internal server error',
+      success: (data) => data?.message,
+    })
   }
 
   return (
@@ -62,7 +60,8 @@ export function TemplatesDeleteDialog({
             Are you sure you want to delete{' '}
             <span className='font-bold'>{currentRow.name}</span>?
             <br />
-            This action will permanently remove the template from the system. This cannot be undone.
+            This action will permanently remove the template from the system.
+            This cannot be undone.
           </p>
 
           <Label className='my-2'>

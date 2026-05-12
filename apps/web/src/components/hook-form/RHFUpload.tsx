@@ -1,8 +1,8 @@
 // form
 import { useFormContext, Controller } from 'react-hook-form'
+import { Field, FieldError, FieldLabel } from '../ui/field'
 // components
 import { UploadAvatar, Upload, type UploadProps } from '../upload'
-import { Field, FieldError, FieldLabel } from '../ui/field'
 
 interface Props extends Omit<UploadProps, 'file'> {
   name: string
@@ -33,7 +33,13 @@ export function RHFUploadAvatar({ name, ...other }: Readonly<Props>) {
   )
 }
 
-export function RHFUpload({ name, multiple, helperText, fieldLabel, ...other }: Readonly<Props>) {
+export function RHFUpload({
+  name,
+  multiple,
+  helperText,
+  fieldLabel,
+  ...other
+}: Readonly<Props>) {
   const { control } = useFormContext()
 
   return (
@@ -49,7 +55,11 @@ export function RHFUpload({ name, multiple, helperText, fieldLabel, ...other }: 
               accept={{ 'image/*': [] }}
               files={field.value}
               error={!!error}
-              helperText={(!!error || helperText) && <FieldError errors={[error]} className='mt-3' />}
+              helperText={
+                (!!error || helperText) && (
+                  <FieldError errors={[error]} className='mt-3' />
+                )
+              }
               {...other}
             />
           </Field>
@@ -60,7 +70,11 @@ export function RHFUpload({ name, multiple, helperText, fieldLabel, ...other }: 
               accept={{ 'image/*': [] }}
               file={field.value}
               error={!!error}
-              helperText={(!!error || helperText) && <FieldError errors={[error]} className='mt-3' />}
+              helperText={
+                (!!error || helperText) && (
+                  <FieldError errors={[error]} className='mt-3' />
+                )
+              }
               {...other}
             />
           </Field>

@@ -1,5 +1,5 @@
-'use client'
-import Link from 'next/link'
+import { Link } from '@tanstack/react-router'
+import { useAuth } from '@/context/auth-provider'
 import useDialogState from '@/hooks/use-dialog-state'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -14,7 +14,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { SignOutDialog } from '@/components/sign-out-dialog'
-import { useAuth } from '@/context/auth-provider'
 
 export function ProfileDropdown() {
   const [open, setOpen] = useDialogState()
@@ -35,7 +34,9 @@ export function ProfileDropdown() {
           <DropdownMenuGroup>
             <DropdownMenuLabel className='font-normal'>
               <div className='flex flex-col gap-1.5'>
-                <p className='text-sm leading-none font-medium'>{user?.fullname}</p>
+                <p className='text-sm leading-none font-medium'>
+                  {user?.fullname}
+                </p>
                 <p className='text-xs leading-none text-muted-foreground'>
                   {user?.email}
                 </p>
@@ -45,7 +46,7 @@ export function ProfileDropdown() {
             <DropdownMenuGroup>
               <DropdownMenuItem
                 render={
-                  <Link href='/settings'>
+                  <Link to='/settings'>
                     Profile
                     <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
                   </Link>
@@ -53,7 +54,7 @@ export function ProfileDropdown() {
               />
               <DropdownMenuItem
                 render={
-                  <Link href='/settings'>
+                  <Link to='/settings'>
                     Billing
                     <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
                   </Link>
@@ -61,7 +62,7 @@ export function ProfileDropdown() {
               />
               <DropdownMenuItem
                 render={
-                  <Link href='/settings'>
+                  <Link to='/settings'>
                     Settings
                     <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
                   </Link>
@@ -70,7 +71,10 @@ export function ProfileDropdown() {
               <DropdownMenuItem>New Team</DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem variant='destructive' onClick={() => setOpen(true)}>
+            <DropdownMenuItem
+              variant='destructive'
+              onClick={() => setOpen(true)}
+            >
               Sign out
               <DropdownMenuShortcut className='text-current'>
                 ⇧⌘Q

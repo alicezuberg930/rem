@@ -1,4 +1,3 @@
-'use client'
 import { TemplatesActionDialog } from './templates-action-dialog'
 import { TemplatesDeleteDialog } from './templates-delete-dialog'
 import { TemplatesPreviewDialog } from './templates-preview-dialog'

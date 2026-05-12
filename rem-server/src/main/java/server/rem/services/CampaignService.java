@@ -39,7 +39,7 @@ public class CampaignService {
     private final CampaignScheduler campaignScheduler;
 
     @Transactional
-    public CampaignResponse createCampaign(CreateCampaignRequest dto, String businessId) throws Exception {
+    public CampaignResponse create(CreateCampaignRequest dto, String businessId) throws Exception {
         Business business = businessRepository.findById(businessId).orElseThrow(() -> new ResourceNotFoundException(BusinessMessages.NOT_FOUND));
         Template template = templateRepository.findById(dto.getTemplateId()).orElseThrow(() -> new ResourceNotFoundException(TemplateMessages.NOT_FOUND));
         List<Contact> contacts = contactRepository.findAllById(dto.getContactIds());
@@ -47,7 +47,7 @@ public class CampaignService {
         Campaign campaign = campaignRepository.save(campaignMapper.toEntity(dto, business, template, contacts));
         if(dto.getSendType().equals(CampaignSendType.SCHEDULED) && dto.getScheduleAt() == null) throw new BadRequestException(CampaignMessages.INVALID_DATE);
         if(dto.getSendType().equals(CampaignSendType.IMMEDIATE)){
-            sendCampaign(campaign.getId(), businessId);
+            send(campaign.getId(), businessId);
         } else {
             // schedule to quartz
             campaignScheduler.scheduleCampaign(campaign);
@@ -56,13 +56,13 @@ public class CampaignService {
     }
 
     @Transactional
-    public CampaignResponse updateCampaign(UpdateCampaignRequest dto, String businessId, String id) throws Exception {
+    public CampaignResponse update(UpdateCampaignRequest dto, String businessId, String id) throws Exception {
         Campaign campaign = campaignRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(CampaignMessages.NOT_FOUND));
         Optional<Template> template = templateRepository.findById(dto.getTemplateId());
         List<Contact> contacts = contactRepository.findAllById(dto.getContactIds());
         if(dto.getSendType() == CampaignSendType.IMMEDIATE) {
             campaign.setScheduleAt(null);
-            sendCampaign(campaign.getId(), businessId);
+            send(campaign.getId(), businessId);
         }
         if (dto.getSendType() == CampaignSendType.SCHEDULED && !campaign.getScheduleAt().equals(dto.getScheduleAt())) {
             campaign.setStatus(CampaignStatus.PENDING);
@@ -73,7 +73,7 @@ public class CampaignService {
         return campaignMapper.toCampaignResponse(updatedCampaign);
     }
 
-    public CustomPageResponse<CampaignResponse> getCampaigns(QueryCampaign dto, String businessId) {
+    public CustomPageResponse<CampaignResponse> getAll(QueryCampaign dto, String businessId) {
         Pageable pageable = PageRequest.of(dto.getPage(), dto.getPageSize());
         Specification<Campaign> spec = CampaignSpecification.withFilters(dto, businessId);
         Page<CampaignResponse> result = campaignRepository.findAll(spec, pageable).map(campaignMapper::toCampaignResponse);
@@ -81,7 +81,7 @@ public class CampaignService {
     }
 
     @Transactional
-    public void sendCampaign(String campaignId, String businessId) throws Exception{
+    public void send(String campaignId, String businessId) throws Exception{
         Campaign campaign = campaignRepository.findByIdWithContactsAndTemplate(campaignId).orElseThrow(() -> new ResourceNotFoundException(CampaignMessages.NOT_FOUND));
         try {
             List<Contact> contacts = campaign.getContacts().stream().toList();

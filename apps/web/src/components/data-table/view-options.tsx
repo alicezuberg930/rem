@@ -1,5 +1,5 @@
-import { SlidersHorizontal } from 'lucide-react'
 import { type Table } from '@tanstack/react-table'
+import { SlidersHorizontal } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,

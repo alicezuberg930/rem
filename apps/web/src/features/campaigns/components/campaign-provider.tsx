@@ -1,10 +1,9 @@
-'use client'
 import React, { useEffect, useState } from 'react'
-import useDialogState from '@/hooks/use-dialog-state'
-import { Campaign, Contact, Template } from '@/@types'
-import { getContacts } from '@/lib/repository/api'
 import { useQuery } from '@tanstack/react-query'
+import { Campaign, Contact, Template } from '@/@types'
 import { templates as t } from '@/lib/queries/template'
+import { getContacts } from '@/lib/repository/api'
+import useDialogState from '@/hooks/use-dialog-state'
 
 type CampaignsDialogType = 'preview' | 'add' | 'edit' | 'delete'
 
@@ -27,11 +26,13 @@ export function CampaignsProvider({ children }: { children: React.ReactNode }) {
   const templates = data?.content || []
 
   useEffect(() => {
-    getContacts().then(res => setContacts(res.data.content))
+    getContacts().then((res) => setContacts(res.data.content))
   }, [])
 
   return (
-    <CampaignsContext value={{ open, setOpen, currentRow, setCurrentRow, templates, contacts }}>
+    <CampaignsContext
+      value={{ open, setOpen, currentRow, setCurrentRow, templates, contacts }}
+    >
       {children}
     </CampaignsContext>
   )
@@ -42,7 +43,9 @@ export const useCampaigns = () => {
   const campaignsContext = React.useContext(CampaignsContext)
 
   if (!campaignsContext) {
-    throw new Error('useCampaigns hook has to be used within <CampaignsContext>')
+    throw new Error(
+      'useCampaigns hook has to be used within <CampaignsContext>'
+    )
   }
 
   return campaignsContext

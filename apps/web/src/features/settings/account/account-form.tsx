@@ -1,8 +1,7 @@
-'use client'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
-import { CheckIcon, Cigarette } from 'lucide-react'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { CheckIcon, Cigarette } from 'lucide-react'
 import { showSubmittedData } from '@/lib/show-submitted-data'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -83,7 +82,8 @@ export function AccountForm() {
                 <Input placeholder='Your name' {...field} />
               </FormControl>
               <FormDescription>
-                This is the name that will be displayed on your profile and in emails.
+                This is the name that will be displayed on your profile and in
+                emails.
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -128,15 +128,14 @@ export function AccountForm() {
                       >
                         {field.value
                           ? languages.find(
-                            (language) => language.value === field.value
-                          )?.label
+                              (language) => language.value === field.value
+                            )?.label
                           : 'Select language'}
                         <Cigarette className='ms-2 h-4 w-4 shrink-0 opacity-50' />
                       </Button>
                     </FormControl>
                   }
-                >
-                </PopoverTrigger>
+                ></PopoverTrigger>
                 <PopoverContent className='w-50 p-0'>
                   <Command>
                     <CommandInput placeholder='Search language...' />

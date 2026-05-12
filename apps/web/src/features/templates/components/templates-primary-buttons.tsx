@@ -1,4 +1,3 @@
-'use client'
 import { LayoutDashboard } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useTemplates } from './templates-provider'

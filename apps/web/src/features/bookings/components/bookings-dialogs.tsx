@@ -1,4 +1,3 @@
-'use client'
 import { BookingsActionDialog } from './bookings-action-dialog'
 import { useBookings } from './bookings-provider'
 

@@ -1,4 +1,3 @@
-'use client'
 import { type Row } from '@tanstack/react-table'
 import { EllipsisVertical, Trash2, UserPen } from 'lucide-react'
 import { Button } from '@/components/ui/button'

@@ -1,7 +1,6 @@
-'use client'
+import { useCampaigns } from './campaign-provider'
 import { CampaignsActionDialog } from './campaigns-action-dialog'
 import { CampaignsDeleteDialog } from './campaigns-delete-dialog'
-import { useCampaigns } from './campaign-provider'
 
 export function CampaignsDialogs() {
   const { open, setOpen, currentRow, setCurrentRow } = useCampaigns()

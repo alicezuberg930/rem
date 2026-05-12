@@ -1,6 +1,6 @@
 import * as React from 'react'
-import { CheckIcon, PlusCircle } from 'lucide-react'
 import { type Column } from '@tanstack/react-table'
+import { Check, PlusCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -110,7 +110,7 @@ export function DataTableFacetedFilter<TData, TValue>({
                           : 'opacity-50 [&_svg]:invisible'
                       )}
                     >
-                      <CheckIcon className={cn('h-4 w-4 text-background')} />
+                      <Check className={cn('h-4 w-4 text-background')} />
                     </div>
                     {option.icon && (
                       <option.icon className='size-4 text-muted-foreground' />

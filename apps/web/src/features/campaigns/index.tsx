@@ -1,29 +1,15 @@
-'use client'
 import { ConfigDrawer } from '@/components/config-drawer'
-import { Header } from '@/layout/header'
-import { Main } from '@/layout/main'
+import { Header } from '@/components/layout/header'
+import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
-import { CampaignsDialogs } from './components/campaigns-dialogs'
-import { TemplatesPrimaryButtons } from './components/templates-primary-buttons'
 import { CampaignsProvider } from './components/campaign-provider'
+import { CampaignsDialogs } from './components/campaigns-dialogs'
 import { CampaignsTable } from './components/campaigns-table'
-import { getCampaigns as gc } from '@/lib/repository/api'
-import { useEffect, useState } from 'react'
-import { Campaign } from '@/@types'
+import { TemplatesPrimaryButtons } from './components/templates-primary-buttons'
 
 export function Campaigns() {
-  const [campaigns, setCampaigns] = useState<Campaign[]>([])
-
-  useEffect(() => {
-    const getCampaigns = async () => {
-      const response = await gc()
-      setCampaigns(response.data.content)
-    }
-    getCampaigns()
-  }, [])
-
   return (
     <CampaignsProvider>
       <Header fixed>
@@ -45,7 +31,7 @@ export function Campaigns() {
           </div>
           <TemplatesPrimaryButtons />
         </div>
-        <CampaignsTable data={campaigns} />
+        <CampaignsTable />
       </Main>
 
       <CampaignsDialogs />

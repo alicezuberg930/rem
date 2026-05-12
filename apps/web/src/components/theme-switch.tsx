@@ -1,4 +1,3 @@
-'use client'
 import { useEffect } from 'react'
 import { Check, Moon, Sun } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -18,8 +17,7 @@ export function ThemeSwitch() {
    * when theme is updated */
   useEffect(() => {
     const themeColor = theme === 'dark' ? '#020817' : '#fff'
-    let metaThemeColor
-    if (typeof window !== 'undefined') metaThemeColor = document.querySelector("meta[name='theme-color']")
+    const metaThemeColor = document.querySelector("meta[name='theme-color']")
     if (metaThemeColor) metaThemeColor.setAttribute('content', themeColor)
   }, [theme])
 

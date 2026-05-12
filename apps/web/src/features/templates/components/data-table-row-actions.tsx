@@ -1,5 +1,5 @@
-'use client'
 import { type Row } from '@tanstack/react-table'
+import { Template } from '@/@types'
 import { EllipsisVertical, Trash2, UserPen, Eye } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -11,7 +11,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { useTemplates } from './templates-provider'
-import { Template } from '@/@types'
 
 type DataTableRowActionsProps = {
   row: Row<Template>

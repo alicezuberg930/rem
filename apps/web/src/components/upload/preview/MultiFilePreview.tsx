@@ -1,16 +1,20 @@
 // import { m, AnimatePresence } from 'framer-motion'
 // utils
-import { fData } from '@/lib/formatNumber'
+import { CircleX } from 'lucide-react'
+import { fData } from '@/lib/format-number'
+import { Button } from '@/components/ui/button'
+import { Typography } from '@/components/ui/typography'
 //
 // import { varFade } from '@/components/animate'
 import FileThumbnail, { fileData } from '@/components/file-thumbnail'
 //
 import { type UploadProps } from '../types'
-import { CircleX } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Typography } from '@/components/ui/typography'
 
-export default function MultiFilePreview({ thumbnail, files, onRemove }: UploadProps) {
+export default function MultiFilePreview({
+  thumbnail,
+  files,
+  onRemove,
+}: UploadProps) {
   if (!files?.length) return null
 
   return (
@@ -23,8 +27,8 @@ export default function MultiFilePreview({ thumbnail, files, onRemove }: UploadP
           return (
             <div
               key={key}
-              className='inline-flex items-center justify-center border border-border m-1 w-20 h-20 rounded-xl overflow-hidden relative'
-              // variants={varFade().inUp}
+              className='relative m-1 inline-flex h-20 w-20 items-center justify-center overflow-hidden rounded-xl border border-border'
+            // variants={varFade().inUp}
             >
               <FileThumbnail
                 tooltip
@@ -36,8 +40,9 @@ export default function MultiFilePreview({ thumbnail, files, onRemove }: UploadP
 
               {onRemove && (
                 <Button
-                  size={'icon-sm'} variant='ghost'
-                  className="absolute top-1 right-1 rounded-full bg-gray-900/60 hover:bg-gray-900/70"
+                  size={'icon-sm'}
+                  variant='ghost'
+                  className='absolute top-1 right-1 rounded-full bg-gray-900/60 hover:bg-gray-900/70'
                   onClick={() => onRemove(file)}
                 >
                   <CircleX className='size-5 stroke-white' />
@@ -50,13 +55,16 @@ export default function MultiFilePreview({ thumbnail, files, onRemove }: UploadP
         return (
           <div
             key={key}
-            className='inline-flex items-center my-2 px-2 py-1.5 border border-border rounded-lg'
-            // variants={varFade().inUp}
+            className='my-2 inline-flex items-center rounded-lg border border-border px-2 py-1.5'
+          // variants={varFade().inUp}
           >
             <FileThumbnail file={file} />
 
-            <div className='grow min-w-0'>
-              <Typography variant="caption" className='font-semibold text-ellipsis line-clamp-1 overflow-hidden'>
+            <div className='min-w-0 grow'>
+              <Typography
+                variant='caption'
+                className='line-clamp-1 overflow-hidden font-semibold text-ellipsis'
+              >
                 {isNotFormatFile ? file : name}
               </Typography>
 
@@ -67,8 +75,9 @@ export default function MultiFilePreview({ thumbnail, files, onRemove }: UploadP
 
             {onRemove && (
               <Button
-                size={'icon-sm'} variant='ghost'
-                className="absolute top-1 right-1 rounded-full h-8 w-8 bg-gray-900/60 hover:bg-gray-900/70"
+                size={'icon-sm'}
+                variant='ghost'
+                className='absolute top-1 right-1 h-8 w-8 rounded-full bg-gray-900/60 hover:bg-gray-900/70'
                 onClick={() => onRemove(file)}
               >
                 <CircleX className='size-4 stroke-white' />

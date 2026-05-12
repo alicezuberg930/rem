@@ -33,20 +33,20 @@ public class TemplateController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('template.create')")
-    public ResponseEntity<APIResponse<Template>> createTemplate(
+    public ResponseEntity<APIResponse<Template>> create(
         @Valid @RequestBody CreateTemplateRequest dto,         
         @RequestAttribute("businessId") String businessId
     ) {
         return ResponseEntity.ok().body(APIResponse.success(
             201,
             TemplateMessages.CREATED,
-            templateService.createTemplate(dto, businessId))
+            templateService.create(dto, businessId))
         );
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('template.edit')")
-    public ResponseEntity<APIResponse<Template>> updateTemplate(
+    public ResponseEntity<APIResponse<Template>> update(
         @Valid @RequestBody UpdateTemplateRequest dto,
         @PathVariable String id,  
         @RequestAttribute("businessId") String businessId
@@ -54,28 +54,26 @@ public class TemplateController {
         return ResponseEntity.ok().body(APIResponse.success(
             200,
             TemplateMessages.UPDATED,
-            templateService.updateTemplate(dto, id, businessId))
+            templateService.update(dto, id, businessId))
         );
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('template.delete')")
-    public ResponseEntity<APIResponse<Template>> deleteTemplate(
+    public ResponseEntity<APIResponse<Template>> delete(
         @PathVariable String id,  
         @RequestAttribute("businessId") String businessId
     ) {
         return ResponseEntity.ok().body(APIResponse.success(
             200,
             TemplateMessages.DELETED,
-            templateService.deleteTemplate(id, businessId))
+            templateService.delete(id, businessId))
         );
     }
 
     @GetMapping
     @PreAuthorize("hasAuthority('template.view')")
     public ResponseEntity<APIResponse<CustomPageResponse<TemplateResponse>>> getTemplates(@ModelAttribute QueryTemplate dto, @RequestAttribute("businessId") String businessId) {
-        System.out.println("Received QueryTemplate: " + dto.getContactPhone());
-
         return ResponseEntity.ok().body(APIResponse.success(
             200,
             TemplateMessages.LIST_RETRIEVED,

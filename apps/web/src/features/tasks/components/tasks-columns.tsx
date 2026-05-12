@@ -12,7 +12,9 @@ export const tasksColumns: ColumnDef<Task>[] = [
     header: ({ table }) => (
       <Checkbox
         checked={table.getIsAllPageRowsSelected()}
-        indeterminate={table.getIsSomePageRowsSelected() && !table.getIsAllPageRowsSelected()}
+        indeterminate={
+          table.getIsSomePageRowsSelected() && !table.getIsAllPageRowsSelected()
+        }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label='Select all'
         className='translate-y-0.5'
@@ -65,7 +67,9 @@ export const tasksColumns: ColumnDef<Task>[] = [
     ),
     meta: { className: 'ps-1', tdClassName: 'ps-4' },
     cell: ({ row }) => {
-      const status = statuses.find((status) => status.value === row.getValue('status'))
+      const status = statuses.find(
+        (status) => status.value === row.getValue('status')
+      )
 
       if (!status) {
         return null

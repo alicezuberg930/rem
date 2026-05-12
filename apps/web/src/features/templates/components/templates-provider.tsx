@@ -1,7 +1,6 @@
-'use client'
 import React, { useState } from 'react'
-import useDialogState from '@/hooks/use-dialog-state'
 import { Template } from '@/@types'
+import useDialogState from '@/hooks/use-dialog-state'
 
 type TemplatesDialogType = 'preview' | 'add' | 'edit' | 'delete'
 
@@ -30,7 +29,9 @@ export const useTemplates = () => {
   const templatesContext = React.useContext(TemplatesContext)
 
   if (!templatesContext) {
-    throw new Error('useTemplates hook has to be used within <TemplatesContext>')
+    throw new Error(
+      'useTemplates hook has to be used within <TemplatesContext>'
+    )
   }
 
   return templatesContext

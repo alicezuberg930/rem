@@ -6,15 +6,27 @@ const PRIMARY_MAIN = 'var(--primary)'
 const PRIMARY_DARK = 'var(--primary)'
 const PRIMARY_DARKER = 'var(--primary)'
 
-function UploadIllustration({ ...other }: React.HTMLAttributes<HTMLDivElement>) {
-
+function UploadIllustration({
+  ...other
+}: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div {...other}>
-      <svg width='100%' height='100%' viewBox='0 0 480 360' xmlns='http://www.w3.org/2000/svg'>
+      <svg
+        width='100%'
+        height='100%'
+        viewBox='0 0 480 360'
+        xmlns='http://www.w3.org/2000/svg'
+      >
         <BackgroundIllustration />
 
         <defs>
-          <linearGradient id='linearGradient-2' x1='30.113%' x2='30.113%' y1='0%' y2='100%'>
+          <linearGradient
+            id='linearGradient-2'
+            x1='30.113%'
+            x2='30.113%'
+            y1='0%'
+            y2='100%'
+          >
             <stop offset='0%' stopOpacity='0' />
             <stop offset='100%' />
           </linearGradient>

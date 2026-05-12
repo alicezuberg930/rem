@@ -1,4 +1,3 @@
-'use client'
 import { createContext, useContext, useEffect, useState } from 'react'
 import { DirectionProvider as RdxDirProvider } from '@base-ui/react'
 import { getCookie, setCookie, removeCookie } from '@/lib/cookies'
@@ -19,7 +18,9 @@ type DirectionContextType = {
 const DirectionContext = createContext<DirectionContextType | null>(null)
 
 export function DirectionProvider({ children }: { children: React.ReactNode }) {
-  const [dir, _setDir] = useState<Direction>(() => (getCookie(DIRECTION_COOKIE_NAME) as Direction) || DEFAULT_DIRECTION)
+  const [dir, _setDir] = useState<Direction>(
+    () => (getCookie(DIRECTION_COOKIE_NAME) as Direction) || DEFAULT_DIRECTION
+  )
 
   useEffect(() => {
     if (typeof window !== 'undefined') {

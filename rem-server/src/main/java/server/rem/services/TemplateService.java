@@ -25,14 +25,14 @@ public class TemplateService {
     // mappers
     private final TemplateMapper templateMapper;
 
-    public Template createTemplate(CreateTemplateRequest dto, String businessId) {
+    public Template create(CreateTemplateRequest dto, String businessId) {
         Business business = businessRepository.findById(businessId)
                 .orElseThrow(() -> new ResourceNotFoundException(BusinessMessages.NOT_FOUND));
         Template template = templateMapper.toEntity(dto, business);
         return templateRepository.save(template);
     }
 
-    public Template updateTemplate(UpdateTemplateRequest dto, String id, String businessId) {
+    public Template update(UpdateTemplateRequest dto, String id, String businessId) {
         businessRepository.findById(businessId)
                 .orElseThrow(() -> new ResourceNotFoundException(BusinessMessages.NOT_FOUND));
         Template template = templateRepository.findById(id)
@@ -41,7 +41,7 @@ public class TemplateService {
         return templateRepository.save(template);
     }
 
-    public Template deleteTemplate(String id, String businessId) {
+    public Template delete(String id, String businessId) {
         businessRepository.findById(businessId)
                 .orElseThrow(() -> new ResourceNotFoundException(BusinessMessages.NOT_FOUND));
         Template template = templateRepository.findById(id)

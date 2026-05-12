@@ -42,7 +42,7 @@ public class CampaignJob implements Job {
             return;
         }
         try {
-            campaignService.sendCampaign(campaignId, campaign.getBusiness().getId());
+            campaignService.send(campaignId, campaign.getBusiness().getId());
             log.info("Campaign {} sent successfully", campaignId);
         } catch (Exception e) {
             log.error("Failed to send campaign {}", campaignId, e);

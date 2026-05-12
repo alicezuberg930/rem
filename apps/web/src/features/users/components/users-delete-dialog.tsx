@@ -1,4 +1,3 @@
-'use client'
 import { useState } from 'react'
 import { AlertTriangle } from 'lucide-react'
 import { showSubmittedData } from '@/lib/show-submitted-data'

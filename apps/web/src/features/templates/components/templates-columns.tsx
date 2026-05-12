@@ -1,9 +1,9 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { Template } from '@/@types'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
-import { Template } from '@/@types'
 import { DataTableRowActions } from './data-table-row-actions'
 
 export const templatesColumns: ColumnDef<Template>[] = [
@@ -12,7 +12,9 @@ export const templatesColumns: ColumnDef<Template>[] = [
     header: ({ table }) => (
       <Checkbox
         checked={table.getIsAllPageRowsSelected()}
-        indeterminate={table.getIsSomePageRowsSelected() && !table.getIsAllPageRowsSelected()}
+        indeterminate={
+          table.getIsSomePageRowsSelected() && !table.getIsAllPageRowsSelected()
+        }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label='Select all'
         className='translate-y-0.5'

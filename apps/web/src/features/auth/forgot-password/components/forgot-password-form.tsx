@@ -1,15 +1,14 @@
-'use client'
 import { useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useRouter } from 'next/navigation'
+import { useNavigate } from '@tanstack/react-router'
 import { ArrowRight, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { sleep, cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { FormProvider, RHFTextField } from '@/components/hook-form'
 import { FieldGroup } from '@/components/ui/field'
+import { FormProvider, RHFTextField } from '@/components/hook-form'
 
 const formSchema = z.object({
   email: z.email({
@@ -21,7 +20,7 @@ export function ForgotPasswordForm({
   className,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
-  const navigate = useRouter()
+  const navigate = useNavigate()
   const [isLoading, setIsLoading] = useState(false)
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -41,7 +40,7 @@ export function ForgotPasswordForm({
       success: () => {
         setIsLoading(false)
         form.reset()
-        navigate.push('/otp')
+        navigate({ to: '/otp' })
         return `Email sent to ${data.email}`
       },
       error: 'Error',
@@ -50,15 +49,12 @@ export function ForgotPasswordForm({
 
   return (
     <FormProvider methods={form} onSubmit={handleSubmit(onSubmit)}>
-      <div
-        className={cn('grid gap-3', className)}
-        {...props}
-      >
+      <div className={cn('grid gap-3', className)} {...props}>
         <FieldGroup>
           <RHFTextField
-            name="email"
-            type="email"
-            fieldLabel="Email"
+            name='email'
+            type='email'
+            fieldLabel='Email'
             placeholder='name@example.com'
           />
         </FieldGroup>

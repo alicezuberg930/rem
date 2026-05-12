@@ -1,14 +1,13 @@
-'use client'
 import { useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useRouter } from 'next/navigation'
+import { useNavigate } from '@tanstack/react-router'
 import { showSubmittedData } from '@/lib/show-submitted-data'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
-  Form,
+  // Form,
   FormControl,
   FormField,
   FormItem,
@@ -33,7 +32,7 @@ const formSchema = z.object({
 type OtpFormProps = React.HTMLAttributes<HTMLDivElement>
 
 export function OtpForm({ className, ...props }: OtpFormProps) {
-  const navigate = useRouter()
+  const navigate = useNavigate()
   const [isLoading, setIsLoading] = useState(false)
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -52,16 +51,13 @@ export function OtpForm({ className, ...props }: OtpFormProps) {
 
     setTimeout(() => {
       setIsLoading(false)
-      navigate.push('/')
+      navigate({ to: '/' })
     }, 1000)
   }
 
   return (
     <FormProvider methods={form} onSubmit={handleSubmit(onSubmit)}>
-      <div
-        className={cn('grid gap-2', className)}
-        {...props}
-      >
+      <div className={cn('grid gap-2', className)} {...props}>
         <FormField
           control={control}
           name='otp'
@@ -94,7 +90,11 @@ export function OtpForm({ className, ...props }: OtpFormProps) {
             </FormItem>
           )}
         />
-        <Button className='mt-2' disabled={otp.length < 6 || isLoading} type='submit'>
+        <Button
+          className='mt-2'
+          disabled={otp.length < 6 || isLoading}
+          type='submit'
+        >
           Verify
         </Button>
       </div>

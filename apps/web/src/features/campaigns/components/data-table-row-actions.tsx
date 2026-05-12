@@ -1,5 +1,5 @@
-'use client'
 import { type Row } from '@tanstack/react-table'
+import { Campaign } from '@/@types'
 import { EllipsisVertical, Trash2, UserPen } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -11,7 +11,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { useCampaigns } from './campaign-provider'
-import { Campaign } from '@/@types'
 
 type DataTableRowActionsProps = {
   row: Row<Campaign>
@@ -32,7 +31,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align='end' className='w-40'>
-          {row.original.sendType !== "IMMEDIATE" && (
+          {row.original.sendType !== 'IMMEDIATE' && (
             <>
               <DropdownMenuItem
                 onClick={() => {

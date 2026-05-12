@@ -1,4 +1,4 @@
 export type Permission = {
-    name: string
-    description: string
+  name: string
+  description: string
 }

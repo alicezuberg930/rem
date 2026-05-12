@@ -1,6 +1,6 @@
 // utils
-import { bgBlur } from '@/lib/cssStyles'
 import { Download } from 'lucide-react'
+import { bgBlur } from '@/lib/css-styles'
 import { Button } from '@/components/ui/button'
 
 type Props = {
@@ -16,7 +16,7 @@ export default function DownloadButton({ onDownload }: Readonly<Props>) {
   return (
     <Button
       onClick={onDownload}
-      className='absolute top-0 right-0 w-full h-full z-10 opacity-0 hover:opacity-100 rounded-none justify-center bg-gray-800 text-white p-0 transition-opacity'
+      className='absolute top-0 right-0 z-10 h-full w-full justify-center rounded-none bg-gray-800 p-0 text-white opacity-0 transition-opacity hover:opacity-100'
       style={blurStyles}
     >
       <Download />

@@ -1,5 +1,6 @@
-'use client'
-import { MailPlus, Eye } from 'lucide-react'
+import { Template } from '@/@types'
+import { Eye } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogClose,
@@ -9,8 +10,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Template } from '@/@types'
-import { ScrollArea } from '@/components/ui/scroll-area'
 
 type UserInviteDialogProps = {
   open: boolean
@@ -21,9 +20,8 @@ type UserInviteDialogProps = {
 export function TemplatesPreviewDialog({
   open,
   onOpenChange,
-  currentRow
+  currentRow,
 }: UserInviteDialogProps) {
-
   return (
     <Dialog
       open={open}
@@ -31,7 +29,7 @@ export function TemplatesPreviewDialog({
         onOpenChange(state)
       }}
     >
-      <DialogContent className='sm:max-w-3xl max-h-[90vh] flex flex-col'>
+      <DialogContent className='flex max-h-[90vh] flex-col sm:max-w-3xl'>
         <DialogHeader className='text-start'>
           <DialogTitle className='flex items-center gap-2'>
             <Eye />
@@ -42,23 +40,16 @@ export function TemplatesPreviewDialog({
             invitation. Assign a role to define their access level.
           </DialogDescription>
         </DialogHeader>
-        <div className='flex-1 min-h-0 overflow-scroll wrap-break-word'>
-          <div dangerouslySetInnerHTML={{ __html: currentRow.header }}>
-          </div>
-          <div dangerouslySetInnerHTML={{ __html: currentRow.body }}>
-          </div>
-          <div dangerouslySetInnerHTML={{ __html: currentRow.footer }}>
-          </div>
+        <div className='min-h-0 flex-1 overflow-scroll wrap-break-word'>
+          <div dangerouslySetInnerHTML={{ __html: currentRow.header }}></div>
+          <div dangerouslySetInnerHTML={{ __html: currentRow.body }}></div>
+          <div dangerouslySetInnerHTML={{ __html: currentRow.footer }}></div>
         </div>
-        {/* <DialogFooter className='gap-y-2'>
+        <DialogFooter className='gap-y-2'>
           <DialogClose>
-            <Button variant='outline'>Cancel</Button>
+            <Button variant='outline'>Close</Button>
           </DialogClose>
-          <Button type='submit' form='user-invite-form'>
-            Invite
-            <Send />
-          </Button>
-        </DialogFooter> */}
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   )

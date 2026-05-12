@@ -1,4 +1,3 @@
-'use client'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -96,10 +95,10 @@ export function DisplayForm() {
                               return checked
                                 ? field.onChange([...field.value, item.id])
                                 : field.onChange(
-                                  field.value?.filter(
-                                    (value) => value !== item.id
+                                    field.value?.filter(
+                                      (value) => value !== item.id
+                                    )
                                   )
-                                )
                             }}
                           />
                         </FormControl>

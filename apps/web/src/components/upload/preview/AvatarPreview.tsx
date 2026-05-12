@@ -13,7 +13,7 @@ export default function AvatarPreview({ file }: Readonly<Props>) {
     <LazyLoadImage
       alt='avatar'
       src={imgUrl}
-      className='z-10 overflow-hidden rounded-full absolute w-[calc(100%-16px)] h-[calc(100%-16px)]'
+      className='absolute z-10 h-[calc(100%-16px)] w-[calc(100%-16px)] overflow-hidden rounded-full'
       effect='blur'
     />
   )

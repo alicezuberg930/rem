@@ -1,6 +1,6 @@
-'use client'
 import { useState } from 'react'
 import { type Table } from '@tanstack/react-table'
+import { Template } from '@/@types'
 import { Trash2, UserX, UserCheck, Mail } from 'lucide-react'
 import { toast } from 'sonner'
 import { sleep } from '@/lib/utils'
@@ -12,7 +12,6 @@ import {
 } from '@/components/ui/tooltip'
 import { DataTableBulkActions as BulkActionsToolbar } from '@/components/data-table'
 import { TemplatesMultiDeleteDialog } from './templates-multi-delete-dialog'
-import { Template } from '@/@types'
 
 type DataTableBulkActionsProps<TData> = {
   table: Table<TData>

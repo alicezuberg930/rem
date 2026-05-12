@@ -1,8 +1,16 @@
-import { Monitor, Bell, Palette, Wrench, UserCog, Briefcase } from 'lucide-react'
+import { Outlet } from '@tanstack/react-router'
+import {
+  Monitor,
+  Bell,
+  Palette,
+  Wrench,
+  UserCog,
+  Briefcase,
+} from 'lucide-react'
 import { Separator } from '@/components/ui/separator'
 import { ConfigDrawer } from '@/components/config-drawer'
-import { Header } from '@/layout/header'
-import { Main } from '@/layout/main'
+import { Header } from '@/components/layout/header'
+import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
@@ -41,7 +49,7 @@ const sidebarNavItems = [
   },
 ]
 
-export function Settings({ children }: { children: React.ReactNode }) {
+export function Settings() {
   return (
     <>
       {/* ===== Top Heading ===== */}
@@ -69,7 +77,7 @@ export function Settings({ children }: { children: React.ReactNode }) {
             <SidebarNav items={sidebarNavItems} />
           </aside>
           <div className='flex w-full overflow-y-hidden p-1'>
-            {children}
+            <Outlet />
           </div>
         </div>
       </Main>

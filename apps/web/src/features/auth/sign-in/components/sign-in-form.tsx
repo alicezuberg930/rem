@@ -1,15 +1,18 @@
-'use client'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import Link from 'next/link'
+import { Link } from '@tanstack/react-router'
 import { Loader2, LogIn } from 'lucide-react'
 import { IconFacebook, IconGithub } from '@/assets/brand-icons'
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
-import { FormProvider, RHFPasswordField, RHFTextField } from '@/components/hook-form'
-import { Field, FieldGroup } from '@/components/ui/field'
-import { AuthValidators } from '@/validators/auth'
+import { AuthValidators } from '@/lib/validators/auth'
 import { useAuth } from '@/context/auth-provider'
+import { Button } from '@/components/ui/button'
+import { Field, FieldGroup } from '@/components/ui/field'
+import {
+  FormProvider,
+  RHFPasswordField,
+  RHFTextField,
+} from '@/components/hook-form'
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
   redirectTo?: string
@@ -30,33 +33,33 @@ export function SignInForm({
     },
   })
 
-  const { handleSubmit, formState: { isSubmitting } } = form
+  const {
+    handleSubmit,
+    formState: { isSubmitting },
+  } = form
 
   const onSubmit = async (data: AuthValidators.SignIn) => await signIn(data)
 
   return (
     <FormProvider methods={form} onSubmit={handleSubmit(onSubmit)}>
-      <div
-        className={cn('grid gap-3', className)}
-        {...props}
-      >
+      <div className={cn('grid gap-3', className)} {...props}>
         <FieldGroup>
           <RHFTextField
-            name="email"
-            type="email"
-            fieldLabel="Email"
-            placeholder="name@example.com"
+            name='email'
+            type='email'
+            fieldLabel='Email'
+            placeholder='name@example.com'
           />
           <RHFPasswordField
-            name="password"
-            fieldLabel="Password"
+            name='password'
+            fieldLabel='Password'
             placeholder='********'
           />
         </FieldGroup>
 
         <Field orientation={'horizontal'}>
           <Link
-            href='/forgot-password'
+            to='/forgot-password'
             className='text-sm font-medium text-muted-foreground hover:opacity-75'
           >
             Forgot password?

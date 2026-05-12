@@ -1,36 +1,41 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+// wellness office: pick address -> choose total sessions -> choose package (& add-ons)
 
-## Getting Started
+// cleaning (on-demand): pick address -> choose duration maximum of space, rooms (& add-ons) -> options -> choose date & time -> weekly schedule -> note -> voucher -> payment
 
-First, run the development server:
+// cleaning (monthly)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+// deep cleaning
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+// home moving
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+// industrial cleaning
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+// A/C cleaning
 
-## Learn More
+// Upholsery
 
-To learn more about Next.js, take a look at the following resources:
+// bbeauty
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+// child care
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+// elderly care
 
-## Deploy on Vercel
+// patient care
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+// water heater cleaning
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+// washing machine cleaning
+
+// office cleaning
+
+// house keeping
+
+// office carpet cleaning
+
+// laundry
+
+// home cooking
+
+// grocery assistant
+
+// disinfection service

@@ -19,20 +19,20 @@ public class CampaignController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('campaign.create')")
-    public ResponseEntity<APIResponse<CampaignResponse>> createCampaign(
+    public ResponseEntity<APIResponse<CampaignResponse>> create(
         @Valid @RequestBody CreateCampaignRequest dto, 
         @RequestAttribute("businessId") String businessId
     ) throws Exception {
         return ResponseEntity.ok().body(APIResponse.success(
             201,
             CampaignMessages.CREATED,
-            campaignService.createCampaign(dto, businessId))
+            campaignService.create(dto, businessId))
         );
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('campaign.edit')")
-    public ResponseEntity<APIResponse<CampaignResponse>> updateCampaign(
+    public ResponseEntity<APIResponse<CampaignResponse>> update(
         @Valid @RequestBody UpdateCampaignRequest dto, 
         @RequestAttribute("businessId") String businessId,
         @PathVariable String id
@@ -40,20 +40,20 @@ public class CampaignController {
         return ResponseEntity.ok().body(APIResponse.success(
             200,
             CampaignMessages.UPDATED,
-            campaignService.updateCampaign(dto, businessId, id))
+            campaignService.update(dto, businessId, id))
         );
     }
 
     @GetMapping
     @PreAuthorize("hasAuthority('campaign.view')")
-    public ResponseEntity<APIResponse<CustomPageResponse<CampaignResponse>>> getCampaigns(
+    public ResponseEntity<APIResponse<CustomPageResponse<CampaignResponse>>> getAll(
         @ModelAttribute QueryCampaign dto, 
         @RequestAttribute("businessId") String businessId
     ) {
         return ResponseEntity.ok().body(APIResponse.success(
             200,
             CampaignMessages.LIST_RETRIEVED,
-            campaignService.getCampaigns(dto, businessId))
+            campaignService.getAll(dto, businessId))
         );
     }
 }

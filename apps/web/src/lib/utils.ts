@@ -1,30 +1,14 @@
+import { type ClassValue, clsx } from 'clsx'
 import juice from 'juice'
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { twMerge } from 'tailwind-merge'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export const alpha = (color: string, opacity: number): string => {
-  // Handle hex colors
-  if (color.startsWith('#')) {
-    const hex = color.replace('#', '')
-    const r = Number.parseInt(hex.substring(0, 2), 16)
-    const g = Number.parseInt(hex.substring(2, 4), 16)
-    const b = Number.parseInt(hex.substring(4, 6), 16)
-    return `rgba(${r}, ${g}, ${b}, ${opacity})`
-  }
-  // Handle rgb/rgba colors
-  if (color.startsWith('rgb')) {
-    const match = color.match(/\d+/g)
-    if (match && match.length >= 3) {
-      return `rgba(${match[0]}, ${match[1]}, ${match[2]}, ${opacity})`
-    }
-  }
-  return `rgba(0, 0, 0, ${opacity})`
+export function sleep(ms: number = 1000) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }
-
 
 /**
  * Generates page numbers for pagination with ellipsis
@@ -74,10 +58,6 @@ export function getPageNumbers(currentPage: number, totalPages: number) {
   }
 
   return rangeWithDots
-}
-
-export function sleep(ms: number = 1000) {
-  return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
 const quillCss = `
@@ -150,7 +130,7 @@ const quillCss = `
   ol { list-style-type: decimal; }
 `
 
-export const inlineQuillStyles = (html: string): string => {
+export function inlineQuillStyles(html: string): string {
   const wrapped = `<div>${html}</div>`
   const inlined = juice.inlineContent(wrapped, quillCss, {
     inlinePseudoElements: true,
@@ -160,19 +140,42 @@ export const inlineQuillStyles = (html: string): string => {
   return inlined
 }
 
-export function getBaseUrl(): string {
+export function getBaseUrl() {
   if (typeof window !== 'undefined') return window.location.origin
-  if (process.env.PRODUCTION_URL) return process.env.PRODUCTION_URL
-  return `http://localhost:${process.env.PORT ?? 3000}`
+  if (import.meta.env.VITE_PRODUCTION_URL)
+    return import.meta.env.VITE_PRODUCTION_URL
+  return `http://localhost:5173`
 }
 
-export const slugify = (str: string): string => {
+export function slugify(str: string): string {
   if (!str) return ''
-  return str.trim()
-    .normalize('NFD') // Normalize to decompose combined letters (e.g., ấ → a + ̂)
-    .replace(/[\u0300-\u036f]/g, '') // Remove diacritics (accents)
-    .replace(/[^A-Za-z0-9\s-đ]/g, '') // Allow Vietnamese characters, numbers, spaces, and hyphens
-    // .replace(/[^A-Za-z0-9\s-]/g, '') // Remove special characters except spaces and hyphens
-    .replace(/\s+/g, '-') // Replace spaces with hyphens
-    .replace(/-+/g, '-') // Collapse multiple hyphens into one
+  return (
+    str
+      .trim()
+      .normalize('NFD') // Normalize to decompose combined letters (e.g., ấ → a + ̂)
+      .replace(/[\u0300-\u036f]/g, '') // Remove diacritics (accents)
+      .replace(/[^A-Za-z0-9\s-đ]/g, '') // Allow Vietnamese characters, numbers, spaces, and hyphens
+      // .replace(/[^A-Za-z0-9\s-]/g, '') // Remove special characters except spaces and hyphens
+      .replace(/\s+/g, '-') // Replace spaces with hyphens
+      .replace(/-+/g, '-')
+  ) // Collapse multiple hyphens into one
+}
+
+export const alpha = (color: string, opacity: number): string => {
+  // Handle hex colors
+  if (color.startsWith('#')) {
+    const hex = color.replace('#', '')
+    const r = Number.parseInt(hex.substring(0, 2), 16)
+    const g = Number.parseInt(hex.substring(2, 4), 16)
+    const b = Number.parseInt(hex.substring(4, 6), 16)
+    return `rgba(${r}, ${g}, ${b}, ${opacity})`
+  }
+  // Handle rgb/rgba colors
+  if (color.startsWith('rgb')) {
+    const match = color.match(/\d+/g)
+    if (match && match.length >= 3) {
+      return `rgba(${match[0]}, ${match[1]}, ${match[2]}, ${opacity})`
+    }
+  }
+  return `rgba(0, 0, 0, ${opacity})`
 }

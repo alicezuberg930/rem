@@ -1,4 +1,3 @@
-'use client'
 import { useEffect, useState } from 'react'
 import {
   type SortingState,
@@ -13,7 +12,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { cn } from '@/lib/utils'
-import { type NavigateFn, useTableUrlState } from '@/hooks/useTableUrlState'
+import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
   Table,
   TableBody,
@@ -30,7 +29,7 @@ import { usersColumns as columns } from './users-columns'
 
 type DataTableProps = {
   data: User[]
-  search: Record<string, string | undefined>
+  search: Record<string, unknown>
   navigate: NavigateFn
 }
 
@@ -66,7 +65,6 @@ export function UsersTable({ data, search, navigate }: DataTableProps) {
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
-    autoResetPageIndex: false,
     data,
     columns,
     state: {
@@ -142,9 +140,9 @@ export function UsersTable({ data, search, navigate }: DataTableProps) {
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
                     </TableHead>
                   )
                 })}

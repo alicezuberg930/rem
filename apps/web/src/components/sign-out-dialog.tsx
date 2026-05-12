@@ -1,6 +1,5 @@
-'use client'
+import { useNavigate, useLocation } from '@tanstack/react-router'
 import { ConfirmDialog } from '@/components/confirm-dialog'
-import { useRouter } from 'next/navigation'
 
 interface SignOutDialogProps {
   open: boolean
@@ -8,10 +7,17 @@ interface SignOutDialogProps {
 }
 
 export function SignOutDialog({ open, onOpenChange }: SignOutDialogProps) {
-  const navigate = useRouter()
+  const navigate = useNavigate()
+  const location = useLocation()
 
   const handleSignOut = () => {
-    navigate.replace('/sign-in')
+    // Preserve current location for redirect after sign-in
+    const currentPath = location.href
+    navigate({
+      to: '/sign-in',
+      search: { redirect: currentPath },
+      replace: true,
+    })
   }
 
   return (

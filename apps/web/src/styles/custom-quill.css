@@ -1,0 +1,31 @@
+@reference "./index.css";
+
+.quill {
+  min-height: calc(150px + 42px);
+  max-height: calc(300px + 42px);
+  @apply rounded-md;
+}
+
+.ql-toolbar {
+  border-top-left-radius: var(--radius-md);
+  border-top-right-radius: var(--radius-md);
+  @apply border-input bg-white shadow-sm dark:bg-input/30;
+}
+
+.ql-container {
+  border-bottom-left-radius: var(--radius-md);
+  border-bottom-right-radius: var(--radius-md);
+  @apply relative max-h-75 min-h-37.5 overflow-hidden border-input bg-white shadow-sm dark:bg-input/30;
+}
+
+.ql-editor {
+  @apply no-scrollbar max-h-75 min-h-37.5 overflow-y-auto;
+}
+
+.quill-error .ql-container {
+  @apply border-destructive dark:border-destructive/50;
+}
+
+.quill-error .ql-toolbar {
+  @apply border-destructive dark:border-destructive/50;
+}

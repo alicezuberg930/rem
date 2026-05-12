@@ -1,13 +1,16 @@
-'use client'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { IconFacebook, IconGithub } from '@/assets/brand-icons'
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
-import { FormProvider, RHFPasswordField, RHFTextField } from '@/components/hook-form'
-import { FieldGroup } from '@/components/ui/field'
-import { AuthValidators } from '@/validators/auth'
+import { AuthValidators } from '@/lib/validators/auth'
 import { useAuth } from '@/context/auth-provider'
+import { Button } from '@/components/ui/button'
+import { FieldGroup } from '@/components/ui/field'
+import {
+  FormProvider,
+  RHFPasswordField,
+  RHFTextField,
+} from '@/components/hook-form'
 
 export function SignUpForm({
   className,
@@ -24,42 +27,42 @@ export function SignUpForm({
     },
   })
 
-  const { handleSubmit, formState: { isSubmitting } } = form
+  const {
+    handleSubmit,
+    formState: { isSubmitting },
+  } = form
 
   const onSubmit = async (data: AuthValidators.SignUp) => await signUp(data)
 
   return (
     <FormProvider methods={form} onSubmit={handleSubmit(onSubmit)}>
-      <div
-        className={cn('grid gap-3', className)}
-        {...props}
-      >
+      <div className={cn('grid gap-3', className)} {...props}>
         <FieldGroup>
           <RHFTextField
-            name="fullname"
-            type="text"
-            fieldLabel="Full name"
-            placeholder="Hatsune Miku"
+            name='fullname'
+            type='text'
+            fieldLabel='Full name'
+            placeholder='Hatsune Miku'
           />
           <RHFTextField
-            name="phone"
-            type="text"
-            fieldLabel="Phone"
-            placeholder="09333348882"
+            name='phone'
+            type='text'
+            fieldLabel='Phone'
+            placeholder='09333348882'
           />
           <RHFTextField
-            name="email"
-            fieldLabel="Email"
-            placeholder="name@example.com"
+            name='email'
+            fieldLabel='Email'
+            placeholder='name@example.com'
           />
           <RHFPasswordField
-            name="password"
-            fieldLabel="Password"
+            name='password'
+            fieldLabel='Password'
             placeholder='********'
           />
           <RHFPasswordField
-            name="confirmPassword"
-            fieldLabel="Confirm Password"
+            name='confirmPassword'
+            fieldLabel='Confirm Password'
             placeholder='********'
           />
         </FieldGroup>
