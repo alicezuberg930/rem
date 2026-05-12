@@ -156,7 +156,7 @@ export function AuthProvider({
     const { mutateAsync: m1 } = useMutation(auth().signIn.mutationOptions())
     const { mutateAsync: m2 } = useMutation(auth().signUp.mutationOptions())
     const { mutateAsync: m3 } = useMutation(auth().signOut.mutationOptions())
-    const { data } = useQuery(auth().profile.queryOptions())
+    const { data, isError } = useQuery(auth().profile.queryOptions())
 
     // const isRefreshing = useRef<boolean>(false)
     // const refreshTimerRef = useRef<number | null>(null)
@@ -177,7 +177,17 @@ export function AuthProvider({
                 },
             })
         }
-    }, [state.isAuthenticated, data])
+        if (isError) {
+            dispatch({
+                type: Types.INITIAL,
+                payload: {
+                    user: null,
+                    isAuthenticated: false,
+                    role: null,
+                },
+            })
+        }
+    }, [data, isError])
 
     const getCurrentRole = useCallback(
         async (businessId: string) => {
@@ -187,7 +197,7 @@ export function AuthProvider({
                 payload: { role },
             })
         },
-        [navigate]
+        [state.user]
     )
 
     const signIn = useCallback(
