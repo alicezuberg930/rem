@@ -50,7 +50,7 @@ export default function LazyLoadImage({
   return (
     <div
       ref={containerRef}
-      className={cn('relative overflow-hidden', wrapperClassName)}
+      className={cn('relative overflow-hidden h-full', wrapperClassName)}
     >
       {/* Placeholder */}
       {!isLoaded && placeholderSrc && (
@@ -59,7 +59,7 @@ export default function LazyLoadImage({
           alt='placeholder'
           className={cn(
             'absolute inset-0 h-full w-full object-cover',
-            props.className
+            props.className,
           )}
           aria-hidden='true'
         />
@@ -85,7 +85,7 @@ export default function LazyLoadImage({
           alt={props.alt}
           className={cn(
             props.className,
-            'transition-opacity duration-500 ease-in-out',
+            'transition-opacity duration-500 ease-in-out h-full w-full',
             isLoaded ? 'opacity-100' : 'opacity-0',
             effect === 'blur' && !isLoaded && 'blur-sm',
             effect === 'black-and-white' && !isLoaded && 'grayscale'

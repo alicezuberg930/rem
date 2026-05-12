@@ -53,7 +53,7 @@ export const sidebarData: SidebarData = {
       items: [
         {
           title: 'Dashboard',
-          url: '/dashboard',
+          url: '/',
           icon: LayoutDashboard,
         },
         {

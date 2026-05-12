@@ -85,7 +85,7 @@ export function TeamSwitcher() {
                   onClick={() => {
                     setActiveTeam(business)
                     setCookie('X-Business-Id', business.id)
-                    navigate({ to: '/dashboard' })
+                    navigate({ to: '/' })
                   }}
                   className='gap-2 p-2'
                 >

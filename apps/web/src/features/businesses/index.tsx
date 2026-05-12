@@ -31,7 +31,7 @@ export function Businesses() {
   const accessBusiness = async (businessId: string) => {
     setCookie('X-Business-Id', businessId)
     getCurrentRole(businessId)
-    navigate({ to: '/dashboard' })
+    navigate({ to: '/' })
   }
 
   return (

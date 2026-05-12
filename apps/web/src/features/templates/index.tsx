@@ -9,7 +9,7 @@ import { TemplatesPrimaryButtons } from './components/templates-primary-buttons'
 import { TemplatesProvider } from './components/templates-provider'
 import { TemplatesTable } from './components/templates-table'
 
-export async function Templates() {
+export function Templates() {
   return (
     <TemplatesProvider>
       <Header fixed>
@@ -38,3 +38,4 @@ export async function Templates() {
     </TemplatesProvider>
   )
 }
+// 0783684855
