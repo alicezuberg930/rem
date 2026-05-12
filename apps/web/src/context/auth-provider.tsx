@@ -181,8 +181,7 @@ export function AuthProvider({
 
     const getCurrentRole = useCallback(
         async (businessId: string) => {
-            let role =
-                state.user?.businesses.find((b) => b.id === businessId)?.role ?? null
+            let role = state.user?.businesses.find((b) => b.id === businessId)?.role ?? null
             dispatch({
                 type: Types.BUSINESS,
                 payload: { role },
