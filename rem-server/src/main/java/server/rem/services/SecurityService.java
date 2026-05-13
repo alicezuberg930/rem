@@ -140,8 +140,7 @@ public class SecurityService {
         return false; // Placeholder return value
     }
 
-    public boolean isAuthorized(String userId, String businessId, String requiredRole,
-            List<String> requiredPermissions) {
+    public boolean isAuthorized(String userId, String businessId, String requiredRole, List<String> requiredPermissions) {
         // Implement your logic to check if the user is authorized based on the required
         // role and permissions for the given business
         // This typically involves querying the database to check the user's roles and

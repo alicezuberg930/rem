@@ -12,16 +12,15 @@ export function AuthGuard({ children }: AuthGuardProps) {
 
     const dashboardRoutes = ["/", "/apps", "/tasks", "/chats", "/users", "/campaigns", "/templates", "/bookings", "/attendances", "/settings", "/settings/account", "/settings/appearance", "/settings/notifications", "/settings/display"]
 
-    const authenticatedRoutes = ['/business'].concat(dashboardRoutes)
+    const authenticatedRoutes = ["/businesses"].concat(dashboardRoutes)
 
     const authorizedRoutes: Record<string, string[]> = {
         "OWNER": dashboardRoutes,
         "MEMBER": dashboardRoutes
     }
-    console.log("router")
 
     if (!isInitialized) {
-        return <></>
+        return (<></>)
     }
 
     if (!isAuthenticated) {

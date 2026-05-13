@@ -12,4 +12,7 @@ public class Views {
 
     public static class Admin extends Business {
     }
+
+    public static class Me extends Public {
+    }
 }

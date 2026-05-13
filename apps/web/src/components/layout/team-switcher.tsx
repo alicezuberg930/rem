@@ -26,14 +26,10 @@ export function TeamSwitcher() {
   const navigate = useNavigate()
   const { user } = useAuth()
   const { isMobile } = useSidebar()
-  const [activeTeam, setActiveTeam] = React.useState<
-    (Business & { role: Role }) | undefined
-  >(undefined)
+  const [activeTeam, setActiveTeam] = React.useState<(Business & { role: Role }) | undefined>(undefined)
 
   React.useEffect(() => {
-    setActiveTeam(
-      user?.businesses.find((b) => b.id === getCookie('X-Business-Id'))
-    )
+    setActiveTeam(user?.businesses.find((b) => b.id === getCookie('X-Business-Id')))
   }, [user])
 
   return (
@@ -85,6 +81,7 @@ export function TeamSwitcher() {
                   onClick={() => {
                     setActiveTeam(business)
                     setCookie('X-Business-Id', business.id)
+                    window.dispatchEvent(new Event('business-id-change'))
                     navigate({ to: '/' })
                   }}
                   className='gap-2 p-2'

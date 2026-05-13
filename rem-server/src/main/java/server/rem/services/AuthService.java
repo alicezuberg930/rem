@@ -1,10 +1,10 @@
 package server.rem.services;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import server.rem.common.messages.AuthMessages;
 import server.rem.dtos.auth.RoleResponse;
 import server.rem.dtos.auth.SignInRequest;
 import server.rem.dtos.auth.SignInResponse;
@@ -15,6 +15,7 @@ import server.rem.entities.User;
 import server.rem.enums.JWTAlgorithm;
 import server.rem.mappers.AuthMapper;
 import server.rem.mappers.UserMapper;
+import server.rem.repositories.BusinessUserRepository;
 import server.rem.repositories.UserRepository;
 import server.rem.utils.JWT;
 import server.rem.utils.JWTOptions;
@@ -24,7 +25,6 @@ import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 @Service
@@ -32,6 +32,7 @@ import java.util.Map;
 public class AuthService {
     @Value("${jwt.secret}")
     private String secret;
+    private final BusinessUserRepository businessUserRepository;
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final AuthMapper authMapper;
@@ -40,13 +41,8 @@ public class AuthService {
     private final EmailService emailService;
 
     public RoleResponse getCurrentRole(String userId, String businessId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        BusinessUser businessUser = user
-                .getBusinessUsers()
-                .stream()
-                .filter(bu -> bu.getBusiness().getId().equals(businessId))
-                .findFirst()
-                .orElseThrow(() -> new UnauthorizedException("User is not authorized to view this business"));
+        BusinessUser businessUser = businessUserRepository.findByUserIdAndBusinessId(userId, businessId)
+                .orElseThrow(() -> new UnauthorizedException(AuthMessages.UNAUTHORIZED));
         return authMapper.toRoleResponse(businessUser.getRole());
     }
 

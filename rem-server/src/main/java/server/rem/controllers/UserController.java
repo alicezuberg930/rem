@@ -2,6 +2,8 @@ package server.rem.controllers;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import lombok.RequiredArgsConstructor;
 import server.rem.dtos.APIResponse;
 import server.rem.entities.User;
 import server.rem.repositories.UserRepository;
@@ -11,16 +13,11 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/users")
 public class UserController {
-
     private final UserRepository userRepository;
     private final UserService userService;
-
-    public UserController(UserRepository userRepository, UserService userService) {
-        this.userRepository = userRepository;
-        this.userService = userService;
-    }
 
     @PostMapping
     public ResponseEntity<?> createUser(@RequestBody User user) {
@@ -41,8 +38,7 @@ public class UserController {
         return ResponseEntity.ok().body(APIResponse.success(
                 200,
                 "User list retrieved successfully",
-                userService.getAllUsers()
-        ));
+                userService.getAllUsers()));
     }
 
     @GetMapping("/{id}")

@@ -66,14 +66,14 @@ public class AuthController {
                 "Profile fetched successfully",
                 authService.profile(userId)));
     }
-
-    @JsonView(Views.Public.class)
+    
+    @JsonView(Views.Me.class)
     @GetMapping("/role")
-    public ResponseEntity<APIResponse<RoleResponse>> getCurrentRole(@RequestUser String userId,
-            @RequestAttribute("businessId") String businessId) {
+    public ResponseEntity<APIResponse<RoleResponse>> getCurrentRole(@RequestUser String userId, @RequestAttribute("businessId") String businessId) {
         return ResponseEntity.status(200).body(APIResponse.success(
                 200,
                 "Role fetched successfully",
-                authService.getCurrentRole(userId, businessId)));
+                authService.getCurrentRole(userId, businessId))
+        );
     }
 }

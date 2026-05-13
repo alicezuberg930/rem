@@ -2,14 +2,13 @@ package server.rem.dtos.business;
 
 import jakarta.validation.constraints.*;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 import server.rem.enums.MailProvider;
 import server.rem.enums.PhoneProvider;
 
 import java.time.LocalTime;
 
 @Getter
-@SuperBuilder
+@AllArgsConstructor
 public class CreateBusinessRequest {
     @NotBlank(message = "Name is required")
     @NotEmpty(message = "Name cannot be empty")

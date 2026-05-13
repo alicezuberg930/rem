@@ -25,12 +25,12 @@ const roleColors: Record<string, string> = {
 
 export function Businesses() {
   const navigate = useNavigate()
-  const { user, getCurrentRole } = useAuth()
+  const { user } = useAuth()
   const [open, setOpen] = useDialogState<'add'>(null)
 
   const accessBusiness = async (businessId: string) => {
     setCookie('X-Business-Id', businessId)
-    getCurrentRole(businessId)
+    window.dispatchEvent(new Event('business-id-change'))
     navigate({ to: '/' })
   }
 

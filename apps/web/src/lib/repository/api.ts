@@ -14,12 +14,6 @@ import {
 import { getCookie } from '../cookies'
 import { httpClient } from './http-client'
 
-export const getCurrentRole = async (): Promise<ApiResponse<any>> => {
-  return await httpClient.get<ApiResponse<any>>(
-    `/auth/role?businessId=${'rc34mbn1q176xmzhk0lxkt4q'}`
-  )
-}
-
 // file handling
 export const uploadFile = async (
   file: File,

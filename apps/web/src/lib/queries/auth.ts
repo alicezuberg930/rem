@@ -1,10 +1,11 @@
 import { mutationOptions, queryOptions } from '@tanstack/react-query'
-import { ApiResponse, Profile } from '@/@types'
+import { ApiResponse, Profile, Role } from '@/@types'
 import { httpClient } from '../repository/http-client'
 import { AuthValidators } from '../validators/auth'
 
 const keys = {
-  profile: () => ['profile'],
+  profile: () => ['auth', 'profile'],
+  role: () => ['auth', 'role'],
   signIn: () => ['auth', 'sign-in'],
   signUp: () => ['auth', 'sign-up'],
   signOut: () => ['auth', 'sign-out'],
@@ -55,4 +56,15 @@ export const auth = () => ({
         },
       }),
   },
+
+  role: {
+    queryKey: keys.role,
+    queryOptions: () =>
+      queryOptions({
+        queryKey: keys.role(),
+        queryFn: async () => {
+          return await httpClient.get<ApiResponse<Role>>('/auth/role')
+        },
+      }),
+  }
 })

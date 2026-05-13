@@ -5,16 +5,17 @@ import {
     useCallback,
     useMemo,
     useContext,
+    useState,
 } from 'react'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
-import { Role } from '@/@types'
+import { Role, UserProvider } from '@/@types'
 // types
 import type { Profile } from '@/@types/user'
 import { toast } from 'sonner'
-import { getCookie } from '@/lib/cookies'
 import { auth } from '@/lib/queries/auth'
 import { AuthValidators } from '@/lib/validators/auth'
+import { getCookie } from '@/lib/cookies'
 
 export type ActionMapType<M extends { [index: string]: any }> = {
     [Key in keyof M]: M[Key] extends undefined
@@ -25,21 +26,22 @@ export type ActionMapType<M extends { [index: string]: any }> = {
 export type AuthStateType = {
     isAuthenticated: boolean
     isInitialized: boolean
+    isAuthorized: boolean
     user: Profile | null
     role: Role | null
 }
 
 export type JWTContextType = {
     isAuthenticated: boolean
+    isAuthorized: boolean
     isInitialized: boolean
     user: Profile | null
     role: Role | null
     signIn: (data: AuthValidators.SignIn) => Promise<void>
     signUp: (data: AuthValidators.SignUp) => Promise<void>
     signOut: () => void
-    signInWithProvider?: (provider: string) => void
+    signInWithProvider?: (provider: UserProvider) => void
     refreshToken?: () => Promise<void>
-    getCurrentRole: (businessId: string) => void
 }
 
 export type GoogleUserResponse = {
@@ -83,15 +85,14 @@ type Payload = {
         isAuthenticated: boolean
         user: Profile | null
         role: Role | null
+        isAuthorized: boolean
     }
     [Types.BUSINESS]: {
         role: Role | null
+        isAuthorized: boolean
     }
     [Types.LOGIN]: {
         user: Profile
-    }
-    [Types.REGISTER]: {
-        user: null
     }
     [Types.LOGOUT]: undefined
 }
@@ -99,6 +100,7 @@ type Payload = {
 type ActionsType = ActionMapType<Payload>[keyof ActionMapType<Payload>]
 
 const initialState: AuthStateType = {
+    isAuthorized: false,
     isInitialized: false,
     isAuthenticated: false,
     user: null,
@@ -112,23 +114,18 @@ const reducer = (state: AuthStateType, action: ActionsType) => {
             isAuthenticated: action.payload.isAuthenticated,
             user: action.payload.user,
             role: action.payload.role,
+            isAuthorized: action.payload.isAuthorized,
         }
     }
     if (action.type === Types.BUSINESS) {
         return {
             ...state,
             isAuthenticated: true,
+            isAuthorized: action.payload.isAuthorized,
             role: action.payload.role,
         }
     }
     if (action.type === Types.LOGIN) {
-        return {
-            ...state,
-            isAuthenticated: true,
-            user: action.payload.user,
-        }
-    }
-    if (action.type === Types.REGISTER) {
         return {
             ...state,
             isAuthenticated: true,
@@ -141,6 +138,7 @@ const reducer = (state: AuthStateType, action: ActionsType) => {
             isAuthenticated: false,
             user: null,
             role: null,
+            isAuthorized: false
         }
     }
     return state
@@ -156,49 +154,86 @@ export function AuthProvider({
     const { mutateAsync: m1 } = useMutation(auth().signIn.mutationOptions())
     const { mutateAsync: m2 } = useMutation(auth().signUp.mutationOptions())
     const { mutateAsync: m3 } = useMutation(auth().signOut.mutationOptions())
-    const { data, isError } = useQuery(auth().profile.queryOptions())
+    const { data: profile, isError: profileError, refetch: refetchProfile } = useQuery(auth().profile.queryOptions())
+    const { data: role, isError: roleError, refetch: refetchRole } = useQuery(auth().role.queryOptions())
+    const [businessId, setBusinessId] = useState<string | undefined>(getCookie('X-Business-Id'))
+
+    useEffect(() => {
+        const handler = () => {
+            setBusinessId(getCookie('X-Business-Id'))
+        }
+        window.addEventListener('business-id-change', handler)
+        return () => {
+            window.removeEventListener('business-id-change', handler)
+        }
+    }, [])
+
+    // Re-fetch role when businessId changes
+    useEffect(() => {
+        if (businessId) refetchRole()
+    }, [businessId, refetchRole])
+
+    // Update auth state when role data arrives
+    useEffect(() => {
+        if (role) {
+            dispatch({
+                type: Types.BUSINESS,
+                payload: {
+                    role: role.data,
+                    isAuthorized: true
+                },
+            })
+        }
+    }, [role])
+
+    // Handle role fetch errors
+    useEffect(() => {
+        if (roleError) {
+            dispatch({
+                type: Types.BUSINESS,
+                payload: {
+                    role: null,
+                    isAuthorized: false
+                },
+            })
+        }
+    }, [roleError])
 
     // const isRefreshing = useRef<boolean>(false)
     // const refreshTimerRef = useRef<number | null>(null)
     // const { lastTokenRefresh } = useSelector(state => state.app)
 
     useEffect(() => {
-        if (data) {
-            let role = getCookie('X-Business-Id')
-                ? (data.data.businesses.find((b) => b.id === getCookie('X-Business-Id'))
-                    ?.role ?? null)
-                : null
+        if (state.isAuthenticated) refetchProfile()
+    }, [state.isAuthenticated, refetchProfile])
+
+    useEffect(() => {
+        if (profile) {
             dispatch({
                 type: Types.INITIAL,
                 payload: {
-                    user: data.data,
+                    user: profile.data,
                     isAuthenticated: true,
-                    role,
+                    role: null,
+                    isAuthorized: false
                 },
             })
         }
-        if (isError) {
+    }, [profile])
+
+    useEffect(() => {
+        if (profileError) {
             dispatch({
                 type: Types.INITIAL,
                 payload: {
                     user: null,
                     isAuthenticated: false,
                     role: null,
+                    isAuthorized: false
                 },
             })
         }
-    }, [data, isError])
-
-    const getCurrentRole = useCallback(
-        async (businessId: string) => {
-            let role = state.user?.businesses.find((b) => b.id === businessId)?.role ?? null
-            dispatch({
-                type: Types.BUSINESS,
-                payload: { role },
-            })
-        },
-        [state.user]
-    )
+    }, [profileError])
 
     const signIn = useCallback(
         async (data: AuthValidators.SignIn) => {
@@ -220,10 +255,6 @@ export function AuthProvider({
         async (data: AuthValidators.SignUp) => {
             await m2(data, {
                 onSuccess: (response) => {
-                    dispatch({
-                        type: Types.REGISTER,
-                        payload: { user: null },
-                    })
                     toast.success(response.message)
                     navigate({ to: '/sign-in' })
                 },
@@ -261,7 +292,7 @@ export function AuthProvider({
     //     }
     // }, [navigate])
 
-    // const signInWithProvider = useCallback((provider: string) => {
+    // const signInWithProvider = useCallback((provider: UserProvider) => {
     //     const apiUrl = import.meta.env.VITE_API_URL
     //     window.location.href = `${apiUrl}/auth/provider/${provider}`
     // }, [])
@@ -327,8 +358,9 @@ export function AuthProvider({
     //     }
     // }, [state.isAuthenticated, refreshToken])
 
-    const memoizedValue = useMemo(
+    const memoizedValue: JWTContextType = useMemo(
         () => ({
+            isAuthorized: state.isAuthorized,
             isInitialized: state.isInitialized,
             isAuthenticated: state.isAuthenticated,
             user: state.user,
@@ -336,9 +368,8 @@ export function AuthProvider({
             signIn,
             signUp,
             signOut,
-            getCurrentRole,
         }),
-        [state, signIn, signOut, signUp, getCurrentRole]
+        [state, signIn, signOut, signUp]
     )
 
     return (

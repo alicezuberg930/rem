@@ -1,7 +1,7 @@
 import { Business } from './business'
 import { Role } from './role'
 
-type Provider = 'GOOGLE' | 'FACEBOOK' | 'LOCAL'
+export type UserProvider = 'GOOGLE' | 'FACEBOOK' | 'LOCAL'
 
 type UserBussinessDetails = {
   dependants: number
@@ -23,7 +23,7 @@ export type User = Partial<UserBussinessDetails> & {
   fullname: string
   email: string
   phone: string
-  provider: Provider
+  provider: UserProvider
   isVerified: boolean
 }
 

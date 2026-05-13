@@ -16,6 +16,6 @@ public class RoleResponse {
     @JsonView(Views.Public.class)
     private final String description;
 
-    @JsonView(Views.Public.class)
+    @JsonView(Views.Me.class)
     private final List<PermissionResponse> permissions;
 }
