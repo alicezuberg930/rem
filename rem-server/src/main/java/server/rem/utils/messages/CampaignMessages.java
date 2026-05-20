@@ -1,4 +1,4 @@
-package server.rem.common.messages;
+package server.rem.utils.messages;
 
 public class CampaignMessages {
     public static String NOT_FOUND = "Campaign not found";

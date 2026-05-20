@@ -1,4 +1,4 @@
-package server.rem.common.messages;
+package server.rem.utils.messages;
 
 public class BookingMessages {
     public static String NOT_FOUND = "Booking not found";

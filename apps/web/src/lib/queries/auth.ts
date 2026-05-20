@@ -9,6 +9,7 @@ const keys = {
   signIn: () => ['auth', 'sign-in'],
   signUp: () => ['auth', 'sign-up'],
   signOut: () => ['auth', 'sign-out'],
+  refresh: () => ['auth', 'refresh']
 }
 
 export const auth = () => ({
@@ -64,6 +65,16 @@ export const auth = () => ({
         queryKey: keys.role(),
         queryFn: async () => {
           return await httpClient.get<ApiResponse<Role>>('/auth/role')
+        },
+      }),
+  },
+
+  refresh: {
+    mutationOptions: () =>
+      mutationOptions({
+        mutationKey: keys.refresh(),
+        mutationFn: async () => {
+          return await httpClient.post<ApiResponse<string>>('/auth/refresh')
         },
       }),
   }

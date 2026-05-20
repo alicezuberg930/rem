@@ -8,13 +8,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import server.rem.common.messages.BusinessMessages;
 import server.rem.dtos.business.*;
 import server.rem.entities.*;
 import server.rem.mappers.*;
 import server.rem.repositories.*;
 import server.rem.utils.exceptions.*;
 import server.rem.utils.mail.DynamicMail;
+import server.rem.utils.messages.BusinessMessages;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;

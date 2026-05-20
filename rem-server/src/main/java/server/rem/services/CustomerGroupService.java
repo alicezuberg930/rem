@@ -3,12 +3,12 @@ package server.rem.services;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import server.rem.common.messages.*;
 import server.rem.dtos.customer_group.*;
 import server.rem.entities.*;
 import server.rem.mappers.CustomerGroupMapper;
 import server.rem.repositories.*;
 import server.rem.utils.exceptions.ResourceNotFoundException;
+import server.rem.utils.messages.*;
 
 import java.util.List;
 

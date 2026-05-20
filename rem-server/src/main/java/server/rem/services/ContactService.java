@@ -33,14 +33,14 @@ public class ContactService {
     private final CustomerGroupRepository customerGroupRepository;
     private final ContactMapper contactMapper;
 
-    public CustomPageResponse<ContactResponse> getContactList(QueryContact dto, String businessId) {
+    public CustomPageResponse<ContactResponse> getAll(QueryContact dto, String businessId) {
         Pageable pageable = PageRequest.of(dto.getPage(), dto.getPageSize());
         Specification<Contact> spec = ContactSpecification.withFilters(dto, businessId);
         Page<ContactResponse> result = contactRepository.findAll(spec, pageable).map(contactMapper::toContactResponse);
         return new CustomPageResponse<ContactResponse>(result);
     }
 
-    public Contact getById(String id) {
+    public Contact getOne(String id) {
         return contactRepository
                 .findById(id)
                 .orElseThrow(() -> new RuntimeException("Contact not found"));
@@ -62,7 +62,7 @@ public class ContactService {
     }
 
     public Contact update(String id, CreateContactRequest dto) {
-        Contact contact = getById(id);
+        Contact contact = getOne(id);
         ContactTag tag = contactTagRepository.findById(dto.getTagId())
                 .orElseThrow(() -> new RuntimeException("Tag not found"));
         CustomerGroup customerGroup = resolveCustomerGroup(dto.getCustomerGroupId());
@@ -72,7 +72,7 @@ public class ContactService {
     }
 
     public void delete(String id) {
-        contactRepository.delete(getById(id));
+        contactRepository.delete(getOne(id));
     }
 
     private CustomerGroup resolveCustomerGroup(String customerGroupId) {

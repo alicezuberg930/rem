@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import server.rem.common.messages.BookingMessages;
 import server.rem.dtos.APIResponse;
 import server.rem.dtos.calendar_booking.CreateBookingRequest;
 import server.rem.entities.CalendarBooking;
 import server.rem.services.CalendarBookingService;
+import server.rem.utils.messages.BookingMessages;
 
 @Controller
 @RequestMapping("/calendar-bookings")

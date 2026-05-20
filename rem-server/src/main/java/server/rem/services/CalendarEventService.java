@@ -5,12 +5,12 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import server.rem.common.messages.*;
 import server.rem.dtos.calendar_event.*;
 import server.rem.entities.*;
 import server.rem.mappers.CalendarEventMapper;
 import server.rem.repositories.*;
 import server.rem.utils.exceptions.ResourceNotFoundException;
+import server.rem.utils.messages.*;
 
 @Service
 @RequiredArgsConstructor

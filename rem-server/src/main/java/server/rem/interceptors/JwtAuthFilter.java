@@ -16,6 +16,7 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import server.rem.enums.JWTAlgorithm;
 import server.rem.repositories.UserRepository;
+import server.rem.utils.Constants;
 import server.rem.utils.JWT;
 
 import java.io.IOException;
@@ -25,8 +26,11 @@ import java.util.Map;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
-    @Value("${jwt.secret}")
-    private String secret;
+    @Value("${jwt.access_token_secret}")
+    private String accessTokenSecret;
+
+    @Value("${jwt.refresh_token_secret}")
+    private String refreshTokenSecret;
 
     private final HandlerExceptionResolver resolver;
     private final UserRepository userRepository;
@@ -37,14 +41,20 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         this.userRepository = userRepository;
     }
 
-    private String extractToken(HttpServletRequest request) {
-        String authHeader = request.getHeader("Authorization");
-        if (authHeader != null && authHeader.startsWith("Bearer ")) return authHeader.substring(7);
+    private String extractToken(HttpServletRequest request, String tokenType) {
+        if(tokenType.equals(Constants.accessTokenCookieKey)) {
+            String authHeader = request.getHeader("Authorization");
+            if (authHeader != null && authHeader.startsWith("Bearer ")) return authHeader.substring(7);
+        }
+        if(tokenType.equals(Constants.refreshTokenCookieKey)) {
+            String authHeader = request.getHeader(Constants.refreshTokenCookieKey);
+            if (authHeader != null && authHeader.startsWith("Bearer ")) return authHeader.substring(7);
+        }
 
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             return Arrays.stream(cookies)
-                    .filter(c -> c.getName().equals("X-Access-Token"))
+                    .filter(c -> c.getName().equals(tokenType))
                     .map(Cookie::getValue)
                     .findFirst()
                     .orElse(null);
@@ -55,13 +65,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws IOException {
         try {
-            String token = extractToken(request);
-            if (token == null) {
+            String refreshToken = extractToken(request, Constants.refreshTokenCookieKey);
+            if (refreshToken != null) request.setAttribute("refreshToken", refreshToken);
+            String accessToken = extractToken(request, Constants.accessTokenCookieKey);
+            if (accessToken == null) {
                 filterChain.doFilter(request, response);
                 return;
             }
-            JWT jwt = new JWT(secret, JWTAlgorithm.HS256);
-            Map<String, Object> decoded = jwt.verify(token);
+            JWT accessTokenJwt = new JWT(accessTokenSecret, JWTAlgorithm.HS256);
+            Map<String, Object> decoded = accessTokenJwt.verify(accessToken);
             String userId = decoded.get("userId").toString();
             if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 request.setAttribute("userId", userId);

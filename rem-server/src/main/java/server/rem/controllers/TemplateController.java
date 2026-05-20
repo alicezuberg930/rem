@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import server.rem.common.messages.TemplateMessages;
 import server.rem.dtos.APIResponse;
 import server.rem.dtos.CustomPageResponse;
 import server.rem.dtos.template.CreateTemplateRequest;
@@ -24,6 +23,7 @@ import server.rem.dtos.template.TemplateResponse;
 import server.rem.dtos.template.UpdateTemplateRequest;
 import server.rem.entities.Template;
 import server.rem.services.TemplateService;
+import server.rem.utils.messages.TemplateMessages;
 
 @RestController
 @RequestMapping("/templates")

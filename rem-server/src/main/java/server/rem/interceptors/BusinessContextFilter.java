@@ -21,6 +21,7 @@ import server.rem.entities.User;
 import server.rem.entities.Role;
 import server.rem.entities.Permission;
 import server.rem.repositories.BusinessUserRepository;
+import server.rem.utils.Constants;
 import server.rem.utils.exceptions.UnauthorizedException;
 
 import java.io.IOException;
@@ -46,13 +47,13 @@ public class BusinessContextFilter extends OncePerRequestFilter {
     private final BusinessUserRepository businessUserRepository;
 
     private String extractBusinessId(HttpServletRequest request) {
-        String businessHeader = request.getHeader("X-Business-Id");
+        String businessHeader = request.getHeader(Constants.businessIdCookieKey);
         if (businessHeader != null) return businessHeader;
 
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             return Arrays.stream(cookies)
-                    .filter(c -> c.getName().equals("X-Business-Id"))
+                    .filter(c -> c.getName().equals(Constants.businessIdCookieKey))
                     .map(Cookie::getValue)
                     .findFirst()
                     .orElse(null);

@@ -187,6 +187,16 @@ export function Dashboard() {
             <Analytics />
           </TabsContent>
         </Tabs>
+        {/* <svg width="138" height="138" viewBox="0 0 138 138" className="mask__44b0c svg__44b0c" aria-hidden="true">
+          <foreignObject x="0" y="0" width="120" height="120" mask="url(#svg-mask-avatar-status-round-120)">
+            <div className="avatarStack__44b0c">
+              <img alt=" " className="avatar__44b0c" aria-hidden="true" src="https://cdn.discordapp.com/avatars/989460728228511794/aaa0adac767ed5983a0be55669086ae9.webp?size=128" />
+            </div>
+          </foreignObject>
+          <g>
+            <rect width="24" height="24" x="88" y="88" fill="#84858d" mask="url(#svg-mask-status-offline)" className="pointerEvents__44b0c"></rect>
+          </g>
+        </svg> */}
       </Main>
     </>
   )

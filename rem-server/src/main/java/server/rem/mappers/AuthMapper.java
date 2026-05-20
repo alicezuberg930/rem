@@ -45,6 +45,7 @@ public interface AuthMapper {
     UserProfileResponse toSummaryResponse(User user);
 
     @Mapping(target = "accessToken", source = "accessToken")
+    @Mapping(target = "refreshToken", source = "refreshToken")
     @Mapping(target = "user.businesses", ignore = true)
-    SignInResponse toResponse(User user, String accessToken);
+    SignInResponse toResponse(User user, String accessToken, String refreshToken);
 }

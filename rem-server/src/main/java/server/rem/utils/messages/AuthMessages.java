@@ -1,4 +1,4 @@
-package server.rem.common.messages;
+package server.rem.utils.messages;
 
 public class AuthMessages {
     public static String INVALID_CREDENTIALS = "Invalid credentials";
@@ -6,6 +6,8 @@ public class AuthMessages {
     public static String UNAUTHORIZED = "User is not authorized to view this business";
     public static String EMAIL_EXISTS = "Email already existed";
     public static String LOGOUT_SUCCESS = "Logged out successfully";
+    public static String REFRESH_SUCCESS = "Token refreshed successfully";
+    public static String REFRESH_INVALID = "Refresh token is invalid";
 
     public static String SIGN_IN_SUCCESS(String name) {
         return "Welcome back, %s!".formatted(name);

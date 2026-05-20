@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.*;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import server.rem.annotations.RequestUser;
-import server.rem.common.messages.BusinessMessages;
 import server.rem.dtos.APIResponse;
 import server.rem.dtos.business.*;
 import server.rem.entities.*;
 import server.rem.services.BusinessService;
+import server.rem.utils.messages.BusinessMessages;
 import server.rem.views.Views;
 
 import java.util.List;

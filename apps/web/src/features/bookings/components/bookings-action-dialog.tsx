@@ -51,7 +51,7 @@ export function BookingsActionDialog({
         }
       : {
           status: 'BOOKED',
-          contactId: undefined,
+          contactId: "",
           bookingStartDate: new Date(),
           bookingEndDate: new Date(),
           serviceStaffId: null,

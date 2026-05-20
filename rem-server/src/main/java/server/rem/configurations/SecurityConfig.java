@@ -19,6 +19,7 @@ public class SecurityConfig {
         private static final String[] PUBLIC_ROUTES = {
                         "/auth/sign-in",
                         "/auth/sign-up",
+                        "/auth/refresh",
         };
 
         private final JwtAuthFilter jwtAuthFilter;

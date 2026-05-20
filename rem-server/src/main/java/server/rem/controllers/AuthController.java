@@ -14,10 +14,12 @@ import org.springframework.web.bind.annotation.*;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import server.rem.annotations.RequestUser;
-import server.rem.common.messages.AuthMessages;
 import server.rem.dtos.APIResponse;
 import server.rem.dtos.auth.*;
 import server.rem.services.AuthService;
+import server.rem.utils.Constants;
+import server.rem.utils.exceptions.UnauthorizedException;
+import server.rem.utils.messages.AuthMessages;
 import server.rem.views.Views;
 
 @RestController
@@ -26,22 +28,51 @@ import server.rem.views.Views;
 public class AuthController {
     private final AuthService authService;
 
-    @Value("${jwt.expiration}")
-    private String expireIn;
+    @Value("${jwt.access_token_expiration}")
+    private String accessTokenExpiration;
+
+    @Value("${jwt.refresh_token_expiration}")
+    private String refreshTokenExpiration;
 
     @PostMapping("/sign-in")
-    public ResponseEntity<APIResponse<SignInResponse>> signIn(@Valid @RequestBody SignInRequest dto, HttpServletResponse response) {
+    public ResponseEntity<APIResponse<SignInResponse>> signIn(@Valid @RequestBody SignInRequest dto, HttpServletResponse response) throws Exception {
         SignInResponse signInResponse = authService.signIn(dto);
-        ResponseCookie cookie = ResponseCookie
-                .from("X-Access-Token", signInResponse.getAccessToken())
+        
+        // Calculate access token expiration timestamp (seconds)
+        long accessTokenExpSeconds = Long.parseLong(accessTokenExpiration);
+        long accessTokenExpTimestamp = System.currentTimeMillis() / 1000 + accessTokenExpSeconds;
+        
+        ResponseCookie accessToken = ResponseCookie
+                .from(Constants.accessTokenCookieKey, signInResponse.getAccessToken())
                 .httpOnly(true)
                 .secure(true)
                 .path("/")
-                .maxAge(Duration.ofSeconds(Long.parseLong(expireIn)))
+                .maxAge(Duration.ofSeconds(accessTokenExpSeconds))
                 .sameSite("None")
                 .build();
 
-        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        ResponseCookie refreshToken = ResponseCookie
+                .from(Constants.refreshTokenCookieKey, signInResponse.getRefreshToken())
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(Duration.ofSeconds(Long.parseLong(refreshTokenExpiration)))
+                .sameSite("None")
+                .build();
+
+        // Non-HttpOnly cookie to expose access token expiration to JavaScript
+        ResponseCookie accessTokenExp = ResponseCookie
+                .from("accessTokenExp", String.valueOf(accessTokenExpTimestamp))
+                .httpOnly(false)
+                .secure(true)
+                .path("/")
+                .maxAge(Duration.ofSeconds(accessTokenExpSeconds))
+                .sameSite("None")
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, accessToken.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshToken.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, accessTokenExp.toString());
 
         return ResponseEntity.ok().body(APIResponse.success(
                 200,
@@ -75,5 +106,41 @@ public class AuthController {
                 "Role fetched successfully",
                 authService.getCurrentRole(userId, businessId))
         );
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<APIResponse<String>> refreshAccessToken(@RequestAttribute("refreshToken") String refreshToken, HttpServletResponse response) throws Exception {
+        String newToken = authService.refreshAccessToken(refreshToken);
+        // Calculate access token expiration timestamp (seconds)
+        long accessTokenExpSeconds = Long.parseLong(accessTokenExpiration);
+        long accessTokenExpTimestamp = System.currentTimeMillis() / 1000 + accessTokenExpSeconds;
+        
+        ResponseCookie accessToken = ResponseCookie
+                .from(Constants.accessTokenCookieKey, newToken)
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(Duration.ofSeconds(accessTokenExpSeconds))
+                .sameSite("None")
+                .build();
+
+        // Non-HttpOnly cookie to expose access token expiration to JavaScript
+        ResponseCookie accessTokenExp = ResponseCookie
+                .from(Constants.accessTokenExp, String.valueOf(accessTokenExpTimestamp))
+                .httpOnly(false)
+                .secure(true)
+                .path("/")
+                .maxAge(Duration.ofSeconds(accessTokenExpSeconds))
+                .sameSite("None")
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, accessToken.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, accessTokenExp.toString());
+
+        return ResponseEntity.status(200).body(APIResponse.success(
+            200,
+            AuthMessages.REFRESH_SUCCESS,
+            newToken
+        ));
     }
 }

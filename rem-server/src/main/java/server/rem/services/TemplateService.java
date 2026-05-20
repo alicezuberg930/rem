@@ -7,7 +7,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import server.rem.common.messages.*;
 import server.rem.dtos.CustomPageResponse;
 import server.rem.dtos.template.*;
 import server.rem.entities.*;
@@ -15,6 +14,7 @@ import server.rem.mappers.TemplateMapper;
 import server.rem.repositories.*;
 import server.rem.specifications.TemplateSpecification;
 import server.rem.utils.exceptions.ResourceNotFoundException;
+import server.rem.utils.messages.*;
 
 @Service
 @RequiredArgsConstructor

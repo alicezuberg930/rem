@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import server.rem.dtos.APIResponse;
-import server.rem.dtos.CustomPageResponse;
+import server.rem.dtos.CustomPageResponse; 
 import server.rem.dtos.contact.ContactResponse;
 import server.rem.dtos.contact.CreateContactRequest;
 import server.rem.dtos.contact.QueryContact;
@@ -25,10 +25,9 @@ import server.rem.views.Views;
 public class ContactController {
     private final ContactService contactService;
  
-    // @JsonView(Views.Public.class)
     @GetMapping
     // @PreAuthorize("hasAuthority('contact.read')")
-    public ResponseEntity<APIResponse<CustomPageResponse<ContactResponse>>> getContactList(
+    public ResponseEntity<APIResponse<CustomPageResponse<ContactResponse>>> getAll(
         @ModelAttribute QueryContact dto, 
         @RequestAttribute("businessId") String businessId
     ) {
@@ -36,15 +35,15 @@ public class ContactController {
             APIResponse.success(
                 200, 
                 "Contact list fetched successfully", 
-                contactService.getContactList(dto, businessId)
+                contactService.getAll(dto, businessId)
             )
         );
     }
  
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('contact.read')")
-    public ResponseEntity<APIResponse<Contact>> getById(@PathVariable String id) {
-        return ResponseEntity.ok(APIResponse.success(200, "Contact fetched", contactService.getById(id)));
+    public ResponseEntity<APIResponse<Contact>> getOne(@PathVariable String id) {
+        return ResponseEntity.ok(APIResponse.success(200, "Contact fetched", contactService.getOne(id)));
     }
  
     @PostMapping

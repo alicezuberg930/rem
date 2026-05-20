@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import server.rem.common.messages.*;
 import server.rem.dtos.CustomPageResponse;
 import server.rem.dtos.campaign.*;
 import server.rem.entities.*;
@@ -22,6 +21,7 @@ import server.rem.repositories.*;
 import server.rem.scheduler.CampaignScheduler;
 import server.rem.specifications.CampaignSpecification;
 import server.rem.utils.exceptions.ResourceNotFoundException;
+import server.rem.utils.messages.*;
 
 @Service
 @RequiredArgsConstructor

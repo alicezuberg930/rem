@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import server.rem.common.messages.CampaignMessages;
 import server.rem.dtos.*;
 import server.rem.dtos.campaign.*;
 import server.rem.services.CampaignService;
+import server.rem.utils.messages.CampaignMessages;
 
 @RestController
 @RequestMapping("/campaigns")

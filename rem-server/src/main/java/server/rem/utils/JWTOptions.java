@@ -4,6 +4,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
 public class JWTOptions {
     private Map<String, Object> headers;
     private long expiresIn = 3600;
@@ -13,6 +16,12 @@ public class JWTOptions {
     private Date notBefore;
     private boolean includeIssuedTimestamp;
     private String jwtId;
+
+    public JWTOptions(long expiresIn, String issuer, boolean includeIssuedTimestamp) {
+        this.expiresIn = expiresIn;
+        this.issuer = issuer;
+        this.includeIssuedTimestamp = includeIssuedTimestamp;
+    }
 
     // Getters and Setters
     public Map<String, Object> getHeaders() { return headers; }

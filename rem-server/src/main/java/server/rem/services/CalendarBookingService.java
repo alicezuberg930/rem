@@ -5,13 +5,13 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import lombok.AllArgsConstructor;
-import server.rem.common.messages.*;
 import server.rem.dtos.calendar_booking.CreateBookingRequest;
 import server.rem.dtos.calendar_booking.UpdateBookingRequest;
 import server.rem.entities.*;
 import server.rem.mappers.BookingMapper;
 import server.rem.repositories.*;
 import server.rem.utils.exceptions.ResourceNotFoundException;
+import server.rem.utils.messages.*;
 
 @Service
 @AllArgsConstructor
