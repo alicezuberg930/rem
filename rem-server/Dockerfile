@@ -1,13 +1,25 @@
+# Build stage
+FROM eclipse-temurin:21-jdk-alpine AS builder
+
+WORKDIR /app
+
+COPY . .
+
+RUN chmod +x mvnw
+
+RUN ./mvnw clean package -DskipTests
+
+# Runtime stage
 FROM eclipse-temurin:21-jre-alpine
-
-RUN addgroup -S spring && adduser -S spring -G spring
-
-COPY target/*.jar /opt/myApp.jar
-
-USER spring:spring
 
 WORKDIR /opt
 
-ENTRYPOINT [ "java", "-jar", "myApp.jar" ]
+RUN addgroup -S spring && adduser -S spring -G spring
+
+COPY --from=builder /app/target/*.jar rem-server.jar
+
+USER spring:spring
 
 EXPOSE 80
+
+ENTRYPOINT ["java", "-jar", "rem-server.jar"]

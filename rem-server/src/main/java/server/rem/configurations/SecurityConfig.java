@@ -20,6 +20,7 @@ public class SecurityConfig {
                         "/auth/sign-in",
                         "/auth/sign-up",
                         "/auth/refresh",
+                        "/health"
         };
 
         private final JwtAuthFilter jwtAuthFilter;

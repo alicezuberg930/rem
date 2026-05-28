@@ -87,15 +87,19 @@ public class AuthService {
         return authMapper.toSummaryResponse(user);
     }
 
-    public String refreshAccessToken(String refreshToken) throws Exception {
+    public String refreshAccessToken(String userId, String refreshToken) throws Exception {
         Map<String, Object> decoded = new JWT(refreshTokenSecret, JWTAlgorithm.HS256).verify(refreshToken);
         String accessToken = null;
         if(decoded.size() > 0) {
             JWTOptions options = new JWTOptions(Long.parseLong(accessTokenExpiration), "rem-app", true);
             JWT jwt = new JWT(accessTokenSecret, JWTAlgorithm.HS256);
-            Map<String, Object> claims = Map.of("userId", decoded.get("userId"));
+            Map<String, Object> claims = Map.of("userId", userId);
             accessToken = jwt.sign(claims, options);
         }
         return accessToken;
+    }
+
+    public String signOut(String userId) {
+        return "";
     }
 }

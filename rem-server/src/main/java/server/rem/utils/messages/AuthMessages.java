@@ -5,7 +5,7 @@ public class AuthMessages {
     public static String ACCESS_DENIED = "Access Denied";
     public static String UNAUTHORIZED = "User is not authorized to view this business";
     public static String EMAIL_EXISTS = "Email already existed";
-    public static String LOGOUT_SUCCESS = "Logged out successfully";
+    public static String SIGN_OUT_SUCCESS = "Logged out successfully";
     public static String REFRESH_SUCCESS = "Token refreshed successfully";
     public static String REFRESH_INVALID = "Refresh token is invalid";
 
