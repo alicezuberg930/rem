@@ -2,7 +2,7 @@ import * as React from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { Business, Role } from '@/@types'
 import { ChevronsUpDown, Plus } from 'lucide-react'
-import { getCookie, setCookie } from '@/lib/cookies'
+import { getCookie } from '@/lib/cookies'
 import { useAuth } from '@/context/auth-provider'
 import {
   DropdownMenu,
@@ -21,6 +21,7 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar'
 import { LazyLoadImage } from '../lazy-load-image'
+import { httpClient } from '@/lib/repository/http-client'
 
 export function TeamSwitcher() {
   const navigate = useNavigate()
@@ -78,9 +79,9 @@ export function TeamSwitcher() {
               {user?.businesses?.map((business, index) => (
                 <DropdownMenuItem
                   key={business.name}
-                  onClick={() => {
+                  onClick={async () => {
                     setActiveTeam(business)
-                    setCookie('X-Business-Id', business.id)
+                    await httpClient.post('/businesses/pick', { id: business.id })
                     window.dispatchEvent(new Event('business-id-change'))
                     navigate({ to: '/' })
                   }}

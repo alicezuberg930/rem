@@ -76,7 +76,7 @@ export function CampaignsTable() {
         const key = filter.id as keyof QueryCampaign
         if (validKeys.includes(key)) {
           if (Array.isArray(acc[key])) {
-            ;(acc[key] as unknown[]).push(filter.value)
+            ; (acc[key] as unknown[]).push(filter.value)
           } else {
             acc[key] = filter.value as string
           }
@@ -163,9 +163,9 @@ export function CampaignsTable() {
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                     </TableHead>
                   )
                 })}
@@ -216,7 +216,7 @@ export function CampaignsTable() {
           </TableBody>
         </Table>
       </div>
-      <DataTablePagination table={table} className='mt-auto' />
+      {!isLoading && <DataTablePagination table={table} className='mt-auto' />}
       <DataTableBulkActions table={table} />
     </div>
   )

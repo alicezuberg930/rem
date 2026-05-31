@@ -25,6 +25,7 @@ import {
   LayoutTemplate,
   Megaphone,
   BookImage,
+  Heart
 } from 'lucide-react'
 import { ClerkLogo } from '@/assets/clerk-logo'
 import { type SidebarData } from '../types'
@@ -114,6 +115,47 @@ export const sidebarData: SidebarData = {
           title: 'Bookings',
           url: '/bookings',
           icon: BookImage,
+        },
+        {
+          title: 'Customer Service',
+          icon: Heart,
+          items: [
+            {
+              title: 'Remind booking',
+              url: '/customer/remind',
+              icon: Lock,
+            },
+            {
+              title: 'No service',
+              url: '/customer/no-service',
+              icon: UserX,
+            },
+            {
+              title: 'Birthday',
+              url: '/customer/birthday',
+              icon: FileX,
+            },
+            {
+              title: 'Appointment unattended',
+              url: '/customer/appointment-unattended',
+              icon: ServerOff,
+            },
+            {
+              title: 'After service',
+              url: '/customer/after-service',
+              icon: Construction,
+            },
+            {
+              title: 'Complaints',
+              url: '/customer/complaints',
+              icon: Construction,
+            },
+            {
+              title: 'Canceled',
+              url: '/customer/appointment-canceled',
+              icon: Construction,
+            },
+          ],
         },
       ],
     },

@@ -1,6 +1,7 @@
 import { useAuth } from '@/context/auth-provider'
 import { UnauthorisedError } from '@/features/errors/unauthorized-error'
 import { Navigate, useLocation } from '@tanstack/react-router'
+import { Spinner } from './ui/spinner'
 
 type AuthGuardProps = {
     children: React.ReactNode
@@ -20,7 +21,11 @@ export function AuthGuard({ children }: AuthGuardProps) {
     }
 
     if (!isInitialized) {
-        return (<></>)
+        return (
+            <div className='w-full h-screen flex items-center justify-center'>
+                <Spinner className='size-20' />
+            </div>
+        )
     }
 
     if (!isAuthenticated) {

@@ -1,10 +1,11 @@
 package server.rem.controllers;
 
 import jakarta.annotation.Nullable;
-import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,9 +16,11 @@ import server.rem.dtos.APIResponse;
 import server.rem.dtos.business.*;
 import server.rem.entities.*;
 import server.rem.services.BusinessService;
+import server.rem.utils.Constants;
 import server.rem.utils.messages.BusinessMessages;
 import server.rem.views.Views;
 
+import java.time.Duration;
 import java.util.List;
 
 @RestController
@@ -27,44 +30,67 @@ public class BusinessController {
     final private BusinessService businessService;
 
     @PostMapping
-    public ResponseEntity<APIResponse<Business>> createBusiness(@RequestUser String userId, @Valid @RequestBody CreateBusinessRequest dto) {
+    public ResponseEntity<APIResponse<Business>> create(@RequestUser String userId, @Valid @RequestBody CreateBusinessRequest dto) {
         return ResponseEntity.ok().body(APIResponse.success(
                 200,
                 BusinessMessages.CREATED,
-                businessService.createBusinesses(userId, dto)
+                businessService.create(userId, dto)
         ));
     }
 
     @JsonView(Views.Business.class)  
     @GetMapping
-    public ResponseEntity<APIResponse<List<BusinessResponse>>> getAllBusinesses(@Nullable @RequestUser String userId) {
+    public ResponseEntity<APIResponse<List<BusinessResponse>>> getAll(@Nullable @RequestUser String userId) {
         return ResponseEntity.ok().body(APIResponse.success(
                 200,
                 BusinessMessages.LIST_RETRIEVED,
-                businessService.getAllBusinesses(userId)
+                businessService.getAll(userId)
         ));
     }
 
-    @PostMapping("/add/{businessId}")
-    public ResponseEntity<APIResponse<User>> addUserToBusiness(@RequestUser String invitorId, @Valid @RequestBody AddUserToBusinessRequest dto, @PathVariable String businessId) throws MessagingException {
+    @PostMapping("/add")
+    public ResponseEntity<APIResponse<User>> addToBusiness(
+        @RequestUser String invitorId, 
+        @Valid @RequestBody AddUserToBusinessRequest dto, 
+        @RequestAttribute("businessId") String businessId
+    ) {
         try {
-                return ResponseEntity.ok().body(APIResponse.success(
+            return ResponseEntity.ok().body(APIResponse.success(
                 200,
                 "User added to business successfully",
-                businessService.addUserToBusiness(invitorId, dto, businessId)
-        ));
+                businessService.addToBusiness(invitorId, dto, businessId)
+            ));
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             throw new RuntimeException(e.getMessage());
         }
     }
 
     @PutMapping("/{businessId}")
-    public ResponseEntity<APIResponse<Business>> updateBusiness(@PathVariable String businessId, @RequestBody UpdateBusinessRequest dto) {
+    public ResponseEntity<APIResponse<Business>> update(@PathVariable String businessId, @RequestBody UpdateBusinessRequest dto) {
         return ResponseEntity.ok().body(APIResponse.success(
                 200,
                 "Business updated successfully",
-                businessService.updateBusiness(businessId, dto)
+                businessService.update(businessId, dto)
+        ));
+    }
+
+    @PostMapping("/pick")
+    public ResponseEntity<APIResponse<String>> pickBusiness(@Valid @RequestBody PickBusinessRequest dto) {
+        ResponseCookie businessIdCookie = ResponseCookie
+                .from(Constants.businessIdCookieKey, dto.getId())
+                .httpOnly(false)
+                .secure(true)
+                .path("/")
+                .maxAge(Duration.ofSeconds(604800))
+                .sameSite("None")
+                .build();
+
+        return ResponseEntity.ok()
+            .header(HttpHeaders.SET_COOKIE, businessIdCookie.toString())
+            .body(APIResponse.success(
+                200,
+                BusinessMessages.BUSINESS_COOKIE,
+                dto.getId()
         ));
     }
 }

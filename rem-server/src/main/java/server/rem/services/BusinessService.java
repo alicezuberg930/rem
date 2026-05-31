@@ -34,19 +34,8 @@ public class BusinessService {
     private final AddUserToBusinessMapper addUserToBusinessMapper;
     private final RoleRepository roleRepository;
 
-    public List<BusinessResponse> getAllBusinesses(@Nullable String userId) {
-        List<Business> businesses = List.of();
-        if (userId != null) {
-            Optional<User> user = userRepository.findById(userId);
-            if (user.isPresent()) businesses = businessRepository.findAllByOwner(user.get());
-        } else {
-            businesses = businessRepository.findAll();
-        }
-        return businessMapper.toBusinessesResponse(businesses);
-    }
-
     @Transactional
-    public Business createBusinesses(String ownerId, CreateBusinessRequest dto) {
+    public Business create(String ownerId, CreateBusinessRequest dto) {
         User owner = userRepository.findById(ownerId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         // user cannot create more than 3 businesses
         List<BusinessUser> ownedBusinesses = owner.getBusinessUsers().stream().filter(b -> b.getRole().getName().equals("OWNER")).collect(Collectors.toList());
@@ -66,8 +55,19 @@ public class BusinessService {
         return business;
     }
 
+    public List<BusinessResponse> getAll(@Nullable String userId) {
+        List<Business> businesses = List.of();
+        if (userId != null) {
+            Optional<User> user = userRepository.findById(userId);
+            if (user.isPresent()) businesses = businessRepository.findAllByOwner(user.get());
+        } else {
+            businesses = businessRepository.findAll();
+        }
+        return businessMapper.toBusinessesResponse(businesses);
+    }
+
     @Transactional
-    public User addUserToBusiness(String invitorId, AddUserToBusinessRequest dto, String businessId) throws Exception {
+    public User addToBusiness(String invitorId, AddUserToBusinessRequest dto, String businessId) throws Exception {
         businessUserRepository.findByUserEmailAndBusinessId(dto.getEmail(), businessId).ifPresent((bu) -> {
             throw new ConflictException(BusinessMessages.ALREADY_INVITED);
         }); 
@@ -100,7 +100,7 @@ public class BusinessService {
         return user;
     }
 
-    public Business updateBusiness(String businessId, UpdateBusinessRequest dto) {
+    public Business update(String businessId, UpdateBusinessRequest dto) {
         Business business = businessRepository.findById(businessId).orElseThrow(() -> new ResourceNotFoundException("No business found"));
         businessMapper.updateEntity(dto, business);
         dynamicMail.updateMailStrategy(business);

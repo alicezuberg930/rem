@@ -1,6 +1,5 @@
 import { useNavigate } from '@tanstack/react-router'
 import { Plus } from 'lucide-react'
-import { setCookie } from '@/lib/cookies'
 import { useAuth } from '@/context/auth-provider'
 import useDialogState from '@/hooks/use-dialog-state'
 import { Badge } from '@/components/ui/badge'
@@ -15,6 +14,7 @@ import {
 import { Typography } from '@/components/ui/typography'
 import { LazyLoadImage } from '@/components/lazy-load-image'
 import { NewBusinessDialog } from './components/new-business-dialog'
+import { httpClient } from '@/lib/repository/http-client'
 
 const roleColors: Record<string, string> = {
   Owner: 'bg-blue-100 text-blue-800',
@@ -29,7 +29,7 @@ export function Businesses() {
   const [open, setOpen] = useDialogState<'add'>(null)
 
   const accessBusiness = async (businessId: string) => {
-    setCookie('X-Business-Id', businessId)
+    await httpClient.post('/businesses/pick', { id: businessId })
     window.dispatchEvent(new Event('business-id-change'))
     navigate({ to: '/' })
   }
