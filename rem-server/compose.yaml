@@ -11,5 +11,10 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
 
+  rem-server:
+    image: 'tien1411/rem-server:latest'
+    ports:
+      - '3002:8080'
+
 volumes:
   mysql_data:

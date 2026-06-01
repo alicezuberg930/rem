@@ -17,6 +17,7 @@ import { toast } from 'sonner'
 import { auth } from '@/lib/queries/auth'
 import { AuthValidators } from '@/lib/validators/auth'
 import { getCookie } from '@/lib/cookies'
+import { httpClient, ResponseWithHeaders } from '@/lib/repository/http-client'
 
 export type ActionMapType<M extends { [index: string]: any }> = {
     [Key in keyof M]: M[Key] extends undefined
@@ -147,19 +148,39 @@ const reducer = (state: AuthStateType, action: ActionsType) => {
 
 export const AuthContext = createContext<JWTContextType | null>(null)
 
-export function AuthProvider({
-    children,
-}: Readonly<{ children: React.ReactNode }>) {
+export function AuthProvider({ children, }: Readonly<{ children: React.ReactNode }>) {
     const [state, dispatch] = useReducer(reducer, initialState)
     const navigate = useNavigate()
     const refreshTimerRef = useRef<any>(null)
     const { mutateAsync: m1 } = useMutation(auth().signIn.mutationOptions())
     const { mutateAsync: m2 } = useMutation(auth().signUp.mutationOptions())
     const { mutateAsync: m3 } = useMutation(auth().signOut.mutationOptions())
-    const { mutateAsync: refreshAccessToken } = useMutation(auth().refresh.mutationOptions())
+    const { mutateAsync: m4 } = useMutation(auth().refresh.mutationOptions())
     const { data: profile, isError: profileError, refetch: refetchProfile } = useQuery(auth().profile.queryOptions())
     const { data: role, isError: roleError, refetch: refetchRole } = useQuery(auth().role.queryOptions())
     const [businessId, setBusinessId] = useState<string | undefined>(getCookie('X-Business-Id'))
+
+    // Register response interceptor to capture token expiration from headers
+    useEffect(() => {
+        // console.log(httpClient.interceptors.response.getHandlers().length)
+        httpClient.interceptors.response.use(
+            async (response) => {
+                console.log('Response interceptor called with headers:', (response as ResponseWithHeaders<any>).headers)
+                // Check for token expiration in response headers (from auto-refresh)
+                const expiration = (response as ResponseWithHeaders<any>).headers?.get?.('X-Access-Token-Expiration')
+                if (expiration) {
+                    localStorage.setItem('accessTokenExpiration', expiration)
+                }
+                return response
+            }
+        )
+
+        // Cleanup interceptor on unmount
+        return () => {
+            // Note: InterceptorManager doesn't have a remove method, so we leave it registered
+            // This is fine as it's a global interceptor for the auth flow
+        }
+    }, [])
 
     useEffect(() => {
         const handler = () => {
@@ -242,8 +263,8 @@ export function AuthProvider({
     const scheduleTokenRefresh = useCallback(async () => {
         if (refreshTimerRef.current) clearTimeout(refreshTimerRef.current)
 
-        const expiredIn = getCookie('accessTokenExp')
-        if(!expiredIn) return
+        const expiredIn = localStorage.getItem('accessTokenExpiration')
+        if (!expiredIn) return
         const expirationTime = Number(expiredIn) * 1000
         const now = Date.now()
         const timeUntilExpiration = Math.max(expirationTime - now, 0)
@@ -251,29 +272,40 @@ export function AuthProvider({
 
         // If token already expired or expires within buffer, refresh immediately
         if (timeUntilExpiration <= REFRESH_BUFFER) {
-            await refreshAccessToken()
-            // Schedule next refresh after getting new token
-            scheduleTokenRefresh()
-            return
-        }
-
-        // Schedule refresh for later
-        const timeUntilRefresh = timeUntilExpiration - REFRESH_BUFFER
-        refreshTimerRef.current = setTimeout(() => {
-            refreshAccessToken(undefined, {
+            await m4(undefined, {
                 onError(error) {
                     console.error('Token refresh failed:', error)
                     // If refresh fails, log out the user
                     dispatch({ type: Types.LOGOUT })
                     navigate({ replace: true, to: '/sign-in' })
                 },
-                onSuccess() {
+                onSuccess(response) {
+                    localStorage.setItem('accessTokenExpiration', response.data.accessTokenExpiration)
+                    // After successful refresh, schedule the next one
+                    scheduleTokenRefresh()
+                }
+            })
+            return
+        }
+
+        // Schedule refresh for later
+        const timeUntilRefresh = timeUntilExpiration - REFRESH_BUFFER
+        refreshTimerRef.current = setTimeout(() => {
+            m4(undefined, {
+                onError(error) {
+                    console.error('Token refresh failed:', error)
+                    // If refresh fails, log out the user
+                    dispatch({ type: Types.LOGOUT })
+                    navigate({ replace: true, to: '/sign-in' })
+                },
+                onSuccess(response) {
+                    localStorage.setItem('accessTokenExpiration', response.data.accessTokenExpiration)
                     // After successful refresh, schedule the next one
                     scheduleTokenRefresh()
                 }
             })
         }, timeUntilRefresh)
-    }, [refreshAccessToken, navigate])
+    }, [m4, navigate])
 
     // Schedule token refresh when user logs in
     useEffect(() => {
@@ -296,6 +328,7 @@ export function AuthProvider({
                         payload: { user: response.data.user },
                     })
                     toast.success(response.message)
+                    localStorage.setItem('accessTokenExpiration', response.data.accessTokenExpiration)
                     navigate({ replace: true, to: '/businesses' })
                 },
             })

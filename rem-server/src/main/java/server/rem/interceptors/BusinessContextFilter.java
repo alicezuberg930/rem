@@ -13,12 +13,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import server.rem.entities.BusinessUser;
 import server.rem.entities.User;
-import server.rem.entities.Role;
 import server.rem.entities.Permission;
 import server.rem.repositories.BusinessUserRepository;
 import server.rem.utils.Constants;
@@ -43,7 +43,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BusinessContextFilter extends OncePerRequestFilter {
     // structure: userId -> (businessId -> permissions)
-    private static final ConcurrentHashMap<String, Map<String, Set<Permission>>> permissionMap = new ConcurrentHashMap<>();
+    // a user can access multiple businesses, in each business a user can have multiple permissions
+    private static final ConcurrentHashMap<String, Map<String, Set<Permission>>> permissions = new ConcurrentHashMap<>();
     private final BusinessUserRepository businessUserRepository;
 
     private String extractBusinessId(HttpServletRequest request) {
@@ -63,9 +64,10 @@ public class BusinessContextFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(
-            @NonNull HttpServletRequest request,
-            @NonNull HttpServletResponse response,
-            @NonNull FilterChain filterChain) throws ServletException, IOException {
+        @NonNull HttpServletRequest request,
+        @NonNull HttpServletResponse response,
+        @NonNull FilterChain filterChain
+    ) throws ServletException, IOException {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             // Only run if user is already authenticated
@@ -74,16 +76,14 @@ public class BusinessContextFilter extends OncePerRequestFilter {
                 String userId = isUser ? ((User) authentication.getPrincipal()).getId() : null;
                 // Extract businessId from request header
                 String businessId = extractBusinessId(request);
-System.out.println(businessId);
 
                 if (userId != null && businessId != null && !businessId.isEmpty()) {
                     // Check cache first to avoid database queries on every request
-                    Set<Permission> cachedPermissions = permissionMap
+                    Set<Permission> cachedPermissions = permissions
                             .getOrDefault(userId, new ConcurrentHashMap<>())
                             .get(businessId);
 
                     if (cachedPermissions != null) {
-                        // Use cached permissions
                         setBusinessContextInRequest(request, businessId, cachedPermissions, userId);
                     } else {
                         // If permissions are not cached then query from database
@@ -91,15 +91,11 @@ System.out.println(businessId);
                                 .findByUserIdAndBusinessId(userId, businessId)
                                 .orElseThrow(() -> new UnauthorizedException("User does not have access to business: " + businessId));
 
-                        Role role = businessUser.getRole();
-                        Set<Permission> permissions = role.getPermissions();
+                        Set<Permission> newPermissions = businessUser.getRole().getPermissions();
 
                         // Update cache for future requests
-                        permissionMap
-                                .computeIfAbsent(userId, k -> new ConcurrentHashMap<>())
-                                .put(businessId, permissions);
-
-                        setBusinessContextInRequest(request, businessId, permissions, userId);
+                        permissions.computeIfAbsent(userId, k -> new ConcurrentHashMap<>()).put(businessId, newPermissions);
+                        setBusinessContextInRequest(request, businessId, newPermissions, userId);
                     }
                 }
             }
@@ -116,14 +112,19 @@ System.out.println(businessId);
      * Converts each permission to a GrantedAuthority with the permission name
      * (e.g., "attendance.view", "customer.edit")
      */
-    private void setBusinessContextInRequest(HttpServletRequest request, String businessId, Set<Permission> permissions,
-            String userId) {
+    private void setBusinessContextInRequest(
+        HttpServletRequest request, 
+        String businessId, 
+        Set<Permission> permissions, 
+        String userId
+    ) {
         // Store in request attributes for controller access
         request.setAttribute("businessId", businessId);
         request.setAttribute("permissions", permissions);
 
         // Convert permissions to GrantedAuthority objects
-        List<GrantedAuthority> authorities = permissions.stream()
+        List<GrantedAuthority> authorities = permissions
+                .stream()
                 .map(permission -> new SimpleGrantedAuthority(permission.getName()))
                 .collect(Collectors.toList());
 
@@ -131,10 +132,11 @@ System.out.println(businessId);
         Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();
 
         // Create new authentication with updated authorities
-        Authentication newAuth = new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
-                currentAuth.getPrincipal(),
-                currentAuth.getCredentials(),
-                authorities);
+        Authentication newAuth = new UsernamePasswordAuthenticationToken(
+            currentAuth.getPrincipal(),
+            currentAuth.getCredentials(),
+            authorities
+        );
 
         SecurityContextHolder.getContext().setAuthentication(newAuth);
     }
@@ -144,7 +146,7 @@ System.out.println(businessId);
      * Can be called from authentication service when needed.
      */
     public static void clearUserCache(String userId) {
-        permissionMap.remove(userId);
+        permissions.remove(userId);
     }
 
     /**
@@ -152,7 +154,7 @@ System.out.println(businessId);
      * Useful when permissions change for a specific business.
      */
     public static void clearUserBusinessCache(String userId, String businessId) {
-        Map<String, Set<Permission>> userCache = permissionMap.get(userId);
+        Map<String, Set<Permission>> userCache = permissions.get(userId);
         if (userCache != null) {
             userCache.remove(businessId);
         }
@@ -162,6 +164,6 @@ System.out.println(businessId);
      * Clears all caches. Useful for testing or when roles are updated globally.
      */
     public static void clearAllCaches() {
-        permissionMap.clear();
+        permissions.clear();
     }
 }

@@ -42,19 +42,22 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final UserRepository userRepository;
 
     @Autowired
-    public JwtAuthFilter(@Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver, UserRepository userRepository) {
+    public JwtAuthFilter(@Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver,
+            UserRepository userRepository) {
         this.resolver = resolver;
         this.userRepository = userRepository;
     }
 
     private String extractToken(HttpServletRequest request, String tokenType) {
-        if(tokenType.equals(Constants.accessTokenCookieKey)) {
+        if (tokenType.equals(Constants.accessTokenCookieKey)) {
             String authHeader = request.getHeader("Authorization");
-            if (authHeader != null && authHeader.startsWith("Bearer ")) return authHeader.substring(7);
+            if (authHeader != null && authHeader.startsWith("Bearer "))
+                return authHeader.substring(7);
         }
-        if(tokenType.equals(Constants.refreshTokenCookieKey)) {
+        if (tokenType.equals(Constants.refreshTokenCookieKey)) {
             String authHeader = request.getHeader(Constants.refreshTokenCookieKey);
-            if (authHeader != null && authHeader.startsWith("Bearer ")) return authHeader.substring(7);
+            if (authHeader != null && authHeader.startsWith("Bearer "))
+                return authHeader.substring(7);
         }
 
         Cookie[] cookies = request.getCookies();
@@ -68,21 +71,22 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         return null;
     }
 
-    private void refreshNewToken(String refreshToken, HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) {
+    private void refreshNewToken(String refreshToken, HttpServletRequest request, HttpServletResponse response,
+            FilterChain filterChain) {
         System.out.println("Access token invalid, attempting refresh...");
-        
+
         try {
             JWT refreshTokenJwt = new JWT(refreshTokenSecret, JWTAlgorithm.HS256);
             Map<String, Object> decoded = refreshTokenJwt.verify(refreshToken);
             String userId = decoded.get("userId").toString();
-            
+
             if (userId != null) {
                 System.out.println("Refresh token valid, generating new access token...");
                 JWTOptions accessTokenOptions = new JWTOptions(Long.parseLong(accessTokenExpiration), "rem-app", true);
                 JWT newAccessTokenJwt = new JWT(accessTokenSecret, JWTAlgorithm.HS256);
                 Map<String, Object> claims = Map.of("userId", userId);
                 String newAccessToken = newAccessTokenJwt.sign(claims, accessTokenOptions);
-                
+
                 // Set new access token in response cookie
                 long accessTokenExpSeconds = Long.parseLong(accessTokenExpiration);
                 long accessTokenExpTimestamp = System.currentTimeMillis() / 1000 + accessTokenExpSeconds;
@@ -95,26 +99,19 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                         .maxAge(Duration.ofSeconds(accessTokenExpSeconds))
                         .sameSite("None")
                         .build();
-                
-                ResponseCookie accessTokenExpCookie = ResponseCookie
-                        .from("accessTokenExp", String.valueOf(accessTokenExpTimestamp))
-                        .httpOnly(false)
-                        .secure(true)
-                        .path("/")
-                        .maxAge(Duration.ofSeconds(accessTokenExpSeconds))
-                        .sameSite("None")
-                        .build();
 
                 response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
-                response.addHeader(HttpHeaders.SET_COOKIE, accessTokenExpCookie.toString());
-                
+                // Add header for cross-domain access to expiration time
+                response.addHeader("X-Access-Token-Expiration", String.valueOf(accessTokenExpTimestamp));
+                response.addHeader("Access-Control-Expose-Headers", "X-Access-Token-Expiration");
+
                 // Set authentication context
                 request.setAttribute("userId", userId);
                 userRepository.findById(userId).ifPresent(user -> {
                     Authentication auth = new UsernamePasswordAuthenticationToken(user, null, List.of());
                     SecurityContextHolder.getContext().setAuthentication(auth);
                 });
-                
+
                 filterChain.doFilter(request, response);
             }
         } catch (Exception refreshError) {
@@ -124,19 +121,21 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) {
+    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
+            @NonNull FilterChain filterChain) {
         try {
             String refreshToken = extractToken(request, Constants.refreshTokenCookieKey);
-            if (refreshToken != null) request.setAttribute("refreshToken", refreshToken);
-            
+            if (refreshToken != null)
+                request.setAttribute("refreshToken", refreshToken);
+
             String accessToken = extractToken(request, Constants.accessTokenCookieKey);
-            
+
             // If no access token but refresh token exists, try to refresh
             if (accessToken == null && refreshToken != null) {
                 refreshNewToken(refreshToken, request, response, filterChain);
                 return;
             }
-            
+
             // If we have an access token, verify it
             if (accessToken != null) {
                 JWT accessTokenJwt = new JWT(accessTokenSecret, JWTAlgorithm.HS256);
@@ -153,17 +152,17 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     filterChain.doFilter(request, response);
                     return;
                 } catch (Exception tokenExpiredException) {
-                    if (refreshToken != null) { 
+                    if (refreshToken != null) {
                         refreshNewToken(refreshToken, request, response, filterChain);
                         return;
                     } else {
                         System.out.println("No refresh token available");
                         resolver.resolveException(request, response, null, tokenExpiredException);
-                        return; 
+                        return;
                     }
                 }
             }
-            
+
             // No access token and no refresh token, continue without authentication
             filterChain.doFilter(request, response);
         } catch (Exception e) {
@@ -171,7 +170,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             // try {
             resolver.resolveException(request, response, null, e);
             // } catch (Exception resolverException) {
-            //     System.out.println("Exception resolver failed: " + resolverException.getMessage());
+            // System.out.println("Exception resolver failed: " +
+            // resolverException.getMessage());
             // }
         }
     }

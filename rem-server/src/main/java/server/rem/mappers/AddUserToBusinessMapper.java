@@ -26,6 +26,8 @@ public interface AddUserToBusinessMapper {
     @Mapping(target = "verifyToken", ignore = true)
     @Mapping(target = "verifyTokenExpires", ignore = true)
     @Mapping(target = "avatar", ignore = true)
+    @Mapping(target = "businessesOwned", ignore = true)
+    @Mapping(target = "businessUsers", ignore = true)
     User toUserEntity(AddUserToBusinessRequest dto);
 
     // @Mapping(target = "id", ignore = true)

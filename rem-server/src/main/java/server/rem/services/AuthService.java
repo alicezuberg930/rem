@@ -46,22 +46,28 @@ public class AuthService {
     }
 
     public SignInResponse signIn(SignInRequest dto) throws Exception {
-        User user = userRepository.findByEmail(dto.getEmail()).orElseThrow(() -> new UnauthorizedException(AuthMessages.INVALID_CREDENTIALS));
+        User user = userRepository.findByEmail(dto.getEmail())
+                .orElseThrow(() -> new UnauthorizedException(AuthMessages.INVALID_CREDENTIALS));
 
         boolean isMatch = passwordEncoder.matches(dto.getPassword(), user.getPassword());
 
-        if (!isMatch) throw new UnauthorizedException(AuthMessages.INVALID_CREDENTIALS);
+        if (!isMatch)
+            throw new UnauthorizedException(AuthMessages.INVALID_CREDENTIALS);
+
+        // Calculate access token expiration timestamp in seconds
+        long accessTokenExpSeconds = Long.parseLong(accessTokenExpiration);
+        long accessTokenExpTimestamp = System.currentTimeMillis() / 1000 + accessTokenExpSeconds;
 
         // if password is correct we start signing access token and refresh token
         JWTOptions accessTokenOptions = new JWTOptions(Long.parseLong(accessTokenExpiration), "rem-app", true);
         JWTOptions refreshTokenOptions = new JWTOptions(Long.parseLong(refreshTokenExpiration), "rem-app", true);
         JWT accessTokenJwt = new JWT(accessTokenSecret, JWTAlgorithm.HS256);
         JWT refreshTokenJwt = new JWT(refreshTokenSecret, JWTAlgorithm.HS256);
-        
+
         Map<String, Object> claims = Map.of("userId", user.getId());
         String accessToken = accessTokenJwt.sign(claims, accessTokenOptions);
         String refreshToken = refreshTokenJwt.sign(claims, refreshTokenOptions);
-        return authMapper.toResponse(user, accessToken, refreshToken);
+        return authMapper.toResponse(user, accessToken, refreshToken, accessTokenExpTimestamp);
     }
 
     public UserProfileResponse signUp(SignUpRequest dto) {
@@ -87,19 +93,19 @@ public class AuthService {
         return authMapper.toSummaryResponse(user);
     }
 
-    public String refreshAccessToken(String userId, String refreshToken) throws Exception {
+    public RefreshResponse refreshAccessToken(String refreshToken) throws Exception {
         Map<String, Object> decoded = new JWT(refreshTokenSecret, JWTAlgorithm.HS256).verify(refreshToken);
+        // Calculate access token expiration timestamp in seconds
+        long accessTokenExpSeconds = Long.parseLong(accessTokenExpiration);
+        long accessTokenExpTimestamp = System.currentTimeMillis() / 1000 + accessTokenExpSeconds;
         String accessToken = null;
-        if(decoded.size() > 0) {
+        if (decoded.size() > 0) {
             JWTOptions options = new JWTOptions(Long.parseLong(accessTokenExpiration), "rem-app", true);
             JWT jwt = new JWT(accessTokenSecret, JWTAlgorithm.HS256);
-            Map<String, Object> claims = Map.of("userId", userId);
+            Map<String, Object> claims = Map.of("userId", decoded.get("userId"));
             accessToken = jwt.sign(claims, options);
         }
-        return accessToken;
-    }
+        return new RefreshResponse(accessToken, String.valueOf(accessTokenExpTimestamp));
+    } 
 
-    public String signOut(String userId) {
-        return "";
-    }
 }

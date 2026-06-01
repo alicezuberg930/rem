@@ -19,7 +19,11 @@ export const auth = () => ({
         mutationKey: keys.signIn(),
         mutationFn: async (input: AuthValidators.SignIn) => {
           return await httpClient.post<
-            ApiResponse<{ user: Profile; accessToken: string }>
+            ApiResponse<{
+              user: Profile
+              accessToken: string
+              accessTokenExpiration: string
+            }>
           >('/auth/sign-in', { ...input })
         },
       }),
@@ -74,7 +78,7 @@ export const auth = () => ({
       mutationOptions({
         mutationKey: keys.refresh(),
         mutationFn: async () => {
-          return await httpClient.post<ApiResponse<string>>('/auth/refresh')
+          return await httpClient.post<ApiResponse<{ accessToken: string; accessTokenExpiration: string }>>('/auth/refresh')
         },
       }),
   }

@@ -11,6 +11,8 @@ export function AuthGuard({ children }: AuthGuardProps) {
     const { isAuthenticated, role, isInitialized } = useAuth()
     const { pathname } = useLocation()
 
+    const unauthenticatedRoutes = ["/sign-in", "/sign-up", "/forgot-password"]
+
     const dashboardRoutes = ["/", "/apps", "/tasks", "/chats", "/users", "/campaigns", "/templates", "/bookings", "/attendances", "/settings", "/settings/account", "/settings/appearance", "/settings/notifications", "/settings/display"]
 
     const authenticatedRoutes = ["/businesses"].concat(dashboardRoutes)
@@ -19,6 +21,8 @@ export function AuthGuard({ children }: AuthGuardProps) {
         "OWNER": dashboardRoutes,
         "MEMBER": dashboardRoutes
     }
+
+    if (unauthenticatedRoutes) return <> {children} </>
 
     if (!isInitialized) {
         return (

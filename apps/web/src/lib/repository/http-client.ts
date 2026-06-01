@@ -4,10 +4,15 @@ import { InterceptorManager } from './interceptor'
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api/v1'
 
+export type ResponseWithHeaders<T> = {
+  data: T
+  headers: Headers
+}
+
 export class HttpClient {
   interceptors = {
     request: new InterceptorManager<RequestInit>(),
-    response: new InterceptorManager<Error | HttpError>(),
+    response: new InterceptorManager<Error | HttpError | ResponseWithHeaders<any>>(),
   }
 
   private async fetchJson<T>(
@@ -47,16 +52,23 @@ export class HttpClient {
         throw error
       }
       let data = await response.json()
+      console.log(response.headers)
+      // Call response interceptors with headers available
       for (const { onFulfilled } of this.interceptors.response.getHandlers()) {
-        if (onFulfilled) data = await onFulfilled(data)
+        if (onFulfilled) {
+          const result = await onFulfilled({ data, headers: response.headers })
+          // If interceptor returns data, use it; otherwise keep original
+          if (result && typeof result === 'object' && 'data' in result) {
+            data = result.data
+          }
+        }
       }
       return data as T
     } catch (error: unknown) {
       for (const { onRejected } of this.interceptors.response.getHandlers()) {
         if (onRejected) onRejected(error)
       }
-      if (!(error instanceof HttpError))
-        throw new HttpError(500, 'Internal Server Error')
+      if (!(error instanceof HttpError)) throw new HttpError(500, 'Internal Server Error')
       throw error
     }
   }
