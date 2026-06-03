@@ -10,6 +10,7 @@ import { UsersPrimaryButtons } from './components/users-primary-buttons'
 import { UsersProvider } from './components/users-provider'
 import { UsersTable } from './components/users-table'
 import { users } from './data/users'
+import { ClockInButton } from '@/components/layout/clock-in-button'
 
 const route = getRouteApi('/_authenticated/users/')
 
@@ -21,6 +22,7 @@ export function Users() {
     <UsersProvider>
       <Header fixed>
         <Search />
+        <ClockInButton />
         <div className='ms-auto flex items-center space-x-4'>
           <ThemeSwitch />
           <ConfigDrawer />

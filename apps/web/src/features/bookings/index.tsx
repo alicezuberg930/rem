@@ -31,6 +31,7 @@ import { ThemeSwitch } from '@/components/theme-switch'
 import { BookingsDialogs } from './components/bookings-dialogs'
 import { BookingsPrimaryButtons } from './components/bookings-primary-buttons'
 import { BookingsProvider } from './components/bookings-provider'
+import { ClockInButton } from '@/components/layout/clock-in-button'
 
 const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
 
@@ -100,6 +101,7 @@ export function Bookings() {
     <BookingsProvider>
       <Header fixed>
         <Search />
+        <ClockInButton />
         <div className='ms-auto flex items-center space-x-4'>
           <ThemeSwitch />
           <ConfigDrawer />

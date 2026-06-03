@@ -15,6 +15,7 @@ import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { SidebarNav } from './components/sidebar-nav'
+import { ClockInButton } from '@/components/layout/clock-in-button'
 
 const sidebarNavItems = [
   {
@@ -55,6 +56,7 @@ export function Settings() {
       {/* ===== Top Heading ===== */}
       <Header>
         <Search />
+        <ClockInButton />
         <div className='ms-auto flex items-center space-x-4'>
           <ThemeSwitch />
           <ConfigDrawer />

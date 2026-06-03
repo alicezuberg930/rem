@@ -8,12 +8,14 @@ import { TemplatesDialogs } from './components/templates-dialogs'
 import { TemplatesPrimaryButtons } from './components/templates-primary-buttons'
 import { TemplatesProvider } from './components/templates-provider'
 import { TemplatesTable } from './components/templates-table'
+import { ClockInButton } from '@/components/layout/clock-in-button'
 
 export function Templates() {
   return (
     <TemplatesProvider>
       <Header fixed>
         <Search />
+        <ClockInButton />
         <div className='ms-auto flex items-center space-x-4'>
           <ThemeSwitch />
           <ConfigDrawer />

@@ -8,12 +8,14 @@ import { CampaignsProvider } from './components/campaign-provider'
 import { CampaignsDialogs } from './components/campaigns-dialogs'
 import { CampaignsTable } from './components/campaigns-table'
 import { TemplatesPrimaryButtons } from './components/templates-primary-buttons'
+import { ClockInButton } from '@/components/layout/clock-in-button'
 
 export function Campaigns() {
   return (
     <CampaignsProvider>
       <Header fixed>
         <Search />
+        <ClockInButton />
         <div className='ms-auto flex items-center space-x-4'>
           <ThemeSwitch />
           <ConfigDrawer />

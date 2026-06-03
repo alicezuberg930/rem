@@ -17,6 +17,7 @@ import { ThemeSwitch } from '@/components/theme-switch'
 import { Analytics } from './components/analytics'
 import { Overview } from './components/overview'
 import { RecentSales } from './components/recent-sales'
+import { ClockInButton } from '@/components/layout/clock-in-button'
 
 export function Dashboard() {
   return (
@@ -26,6 +27,7 @@ export function Dashboard() {
         <TopNav links={topNav} />
         <div className='ms-auto flex items-center space-x-4'>
           <Search />
+          <ClockInButton />
           <ThemeSwitch />
           <ConfigDrawer />
           <ProfileDropdown />

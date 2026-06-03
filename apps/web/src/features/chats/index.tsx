@@ -29,6 +29,7 @@ import { NewChat } from './components/new-chat'
 import { type ChatUser, type Convo } from './data/chat-types'
 // Fake Data
 import { conversations } from './data/convo.json'
+import { ClockInButton } from '@/components/layout/clock-in-button'
 
 export function Chats() {
   const [search, setSearch] = useState('')
@@ -68,6 +69,7 @@ export function Chats() {
       {/* ===== Top Heading ===== */}
       <Header>
         <Search />
+        <ClockInButton />
         <div className='ms-auto flex items-center space-x-4'>
           <ThemeSwitch />
           <ConfigDrawer />
@@ -246,7 +248,7 @@ export function Chats() {
                                   className={cn(
                                     'mt-1 block text-xs font-light text-foreground/75 italic',
                                     msg.sender === 'You' &&
-                                      'text-end text-primary-foreground/85'
+                                    'text-end text-primary-foreground/85'
                                   )}
                                 >
                                   {format(msg.timestamp, 'h:mm a')}

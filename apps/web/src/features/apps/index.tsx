@@ -18,6 +18,7 @@ import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { apps } from './data/apps'
+import { ClockInButton } from '@/components/layout/clock-in-button'
 
 const route = getRouteApi('/_authenticated/apps/')
 
@@ -93,6 +94,7 @@ export function Apps() {
       {/* ===== Top Heading ===== */}
       <Header>
         <Search />
+        <ClockInButton />
         <div className='ms-auto flex items-center gap-4'>
           <ThemeSwitch />
           <ConfigDrawer />
