@@ -60,16 +60,22 @@ export function TemplatesActionDialog({
         },
   })
 
-  const { handleSubmit, reset } = form
+  const { handleSubmit, reset, setValue } = form
 
   const onSubmit = async (values: TemplateValidators.TemplateForm) => {
     const submit = async () => {
-      values = {
-        ...values,
-        header: inlineQuillStyles(values.header),
-        body: inlineQuillStyles(values.body),
-        footer: inlineQuillStyles(values.footer),
-      }
+      setValue('header', inlineQuillStyles(values.header))
+      setValue('body', inlineQuillStyles(values.body))
+      setValue('footer', inlineQuillStyles(values.footer))
+      // We need to inline the styles because Quill uses classes for styling,
+      // and we want to preserve the styles when sending the data to the server.
+      // The server will then store the inlined HTML, and we can render it without worrying about missing styles.
+      // values = {
+      //   ...values,
+      //   header: inlineQuillStyles(values.header),
+      //   body: inlineQuillStyles(values.body),
+      //   footer: inlineQuillStyles(values.footer),
+      // }
       const res =
         isEdit && currentRow?.id
           ? await update.mutateAsync(values)
@@ -82,7 +88,7 @@ export function TemplatesActionDialog({
       loading: 'Submitting data',
       error: (err) =>
         err instanceof HttpError ? err.message : 'Internal server error',
-      success: (response) => response.message,
+      success: (res) => res.message,
     })
   }
 

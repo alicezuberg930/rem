@@ -6,8 +6,8 @@ import server.rem.enums.CheckInStatus;
 import server.rem.enums.CheckInType;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "attendances")
@@ -26,10 +26,10 @@ public class Attendance extends Base {
     private User user;
 
     @Column(name = "check_in_time", nullable = false)
-    private LocalDateTime checkInTime;
+    private Instant checkInTime;
 
     @Column(name = "check_out_time")
-    private LocalDateTime checkOutTime;
+    private Instant checkOutTime;
 
     @Column(name = "date", nullable = false)
     private LocalDate date;

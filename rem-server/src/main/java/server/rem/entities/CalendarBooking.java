@@ -26,7 +26,6 @@ public class CalendarBooking extends Base {
     @JoinColumn(name = "correspondent_id", nullable = true)
     private User correspondent;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "contact_id", nullable = false)
     private Contact contact;
@@ -44,4 +43,10 @@ public class CalendarBooking extends Base {
 
     @Column(name = "cancel_reason", length = 255, nullable = true)
     private String cancelReason;
+
+    @Column(name = "not_attending_reason", length = 255, nullable = true)
+    private String notAttendingReason;
+
+    @Column(name = "complaint_reason", length = 255, nullable = true)
+    private String complaintReason;
 }

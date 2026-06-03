@@ -9,7 +9,7 @@ const keys = {
   signIn: () => ['auth', 'sign-in'],
   signUp: () => ['auth', 'sign-up'],
   signOut: () => ['auth', 'sign-out'],
-  refresh: () => ['auth', 'refresh']
+  refresh: () => ['auth', 'refresh'],
 }
 
 export const auth = () => ({
@@ -78,8 +78,10 @@ export const auth = () => ({
       mutationOptions({
         mutationKey: keys.refresh(),
         mutationFn: async () => {
-          return await httpClient.post<ApiResponse<{ accessToken: string; accessTokenExpiration: string }>>('/auth/refresh')
+          return await httpClient.post<
+            ApiResponse<{ accessToken: string; accessTokenExpiration: string }>
+          >('/auth/refresh')
         },
       }),
-  }
+  },
 })

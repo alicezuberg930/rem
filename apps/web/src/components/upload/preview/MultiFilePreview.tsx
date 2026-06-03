@@ -28,7 +28,7 @@ export default function MultiFilePreview({
             <div
               key={key}
               className='relative m-1 inline-flex h-20 w-20 items-center justify-center overflow-hidden rounded-xl border border-border'
-            // variants={varFade().inUp}
+              // variants={varFade().inUp}
             >
               <FileThumbnail
                 tooltip
@@ -56,7 +56,7 @@ export default function MultiFilePreview({
           <div
             key={key}
             className='my-2 inline-flex items-center rounded-lg border border-border px-2 py-1.5'
-          // variants={varFade().inUp}
+            // variants={varFade().inUp}
           >
             <FileThumbnail file={file} />
 

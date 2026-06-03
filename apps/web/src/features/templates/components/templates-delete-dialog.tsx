@@ -35,7 +35,7 @@ export function TemplatesDeleteDialog({
       loading: 'Deleting template',
       error: (err) =>
         err instanceof HttpError ? err.message : 'Internal server error',
-      success: (data) => data?.message,
+      success: (res) => res?.message,
     })
   }
 

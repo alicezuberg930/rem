@@ -51,7 +51,7 @@ export function BookingsActionDialog({
         }
       : {
           status: 'BOOKED',
-          contactId: "",
+          contactId: '',
           bookingStartDate: new Date(),
           bookingEndDate: new Date(),
           serviceStaffId: null,
@@ -83,7 +83,7 @@ export function BookingsActionDialog({
     toast.promise(submit, {
       loading: 'Submitting data',
       error: (err) => (err as HttpError).message,
-      success: (data) => data?.message,
+      success: (res) => res?.message,
     })
   }
 

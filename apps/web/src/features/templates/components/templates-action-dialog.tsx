@@ -82,7 +82,7 @@ export function TemplatesActionDialog({
       loading: 'Submitting data',
       error: (err) =>
         err instanceof HttpError ? err.message : 'Internal server error',
-      success: (response) => response.message,
+      success: (res) => res.message,
     })
   }
 

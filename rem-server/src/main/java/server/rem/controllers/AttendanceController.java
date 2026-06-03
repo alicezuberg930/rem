@@ -21,12 +21,12 @@ public class AttendanceController {
         this.attendanceService = attendanceService;
     }
 
-    @PostMapping()
-    public ResponseEntity<APIResponse<Attendance>> checkIn(@RequestUser String userId, @Valid @RequestBody CreateAttendanceRequest dto) {
+    @PostMapping("/check-in")
+    public ResponseEntity<APIResponse<Attendance>> checkIn(@RequestUser String userId, @Valid @RequestBody CreateAttendanceRequest dto, @RequestAttribute("businessId") String businessId) {
         return ResponseEntity.ok().body(APIResponse.success(
             201,
             "Check in successfully",
-            attendanceService.checkIn(userId, dto)
+            attendanceService.checkIn(userId, dto, businessId)
         ));
     }
 

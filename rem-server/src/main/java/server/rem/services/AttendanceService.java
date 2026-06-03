@@ -15,9 +15,11 @@ import server.rem.repositories.*;
 import server.rem.specifications.AttendanceSpecification;
 import server.rem.utils.exceptions.*;
 
+import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -26,9 +28,10 @@ public class AttendanceService {
     private final UserRepository userRepository;
     private final BusinessRepository businessRepository;
 
-    public Attendance checkIn(String userId, CreateAttendanceRequest dto) {
+    public Attendance checkIn(String userId, CreateAttendanceRequest dto, String businessId) {
+        System.out.println(dto.toString());
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        Business business = businessRepository.findById(dto.getBusinessId()).orElseThrow(() -> new ResourceNotFoundException("Business not found"));
+        Business business = businessRepository.findById(businessId).orElseThrow(() -> new ResourceNotFoundException("Business not found"));
         if (attendanceRepository.existsByBusinessAndUserAndDate(business, user, LocalDate.now())){
             throw new ConflictException("User already checked in today");
         }
@@ -41,9 +44,10 @@ public class AttendanceService {
 
 //    public Attendance checkOut
 
-    private CheckInStatus resolveStatus(LocalDateTime checkInTime, LocalTime workStartTime) {
+    private CheckInStatus resolveStatus(Instant checkInTime, LocalTime workStartTime) {
         if (workStartTime == null) return CheckInStatus.ON_TIME;
-        return checkInTime.toLocalTime().isAfter(workStartTime) ? CheckInStatus.LATE : CheckInStatus.ON_TIME;
+        ZonedDateTime gmt7Time = checkInTime.atZone(ZoneId.of("Asia/Ho_Chi_Minh"));
+        return gmt7Time.toLocalTime().isAfter(workStartTime) ? CheckInStatus.LATE : CheckInStatus.ON_TIME;
     }
 
     private Page<Attendance> getAttendanceList(QueryAttendance dto, String userId) {

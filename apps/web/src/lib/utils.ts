@@ -179,3 +179,30 @@ export const alpha = (color: string, opacity: number): string => {
   }
   return `rgba(0, 0, 0, ${opacity})`
 }
+
+export const getCurrentLocation = (): Promise<{
+  latitude: number
+  longitude: number
+}> => {
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) {
+      reject(new Error('Geolocation is not supported'))
+      return
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        resolve({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        })
+      },
+      (e) => reject(new Error(e.message)),
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0,
+      }
+    )
+  })
+}

@@ -76,7 +76,7 @@ export function TemplatesTable() {
         const key = filter.id as keyof QueryTemplate
         if (validKeys.includes(key)) {
           if (Array.isArray(acc[key])) {
-            ; (acc[key] as unknown[]).push(filter.value)
+            ;(acc[key] as unknown[]).push(filter.value)
           } else {
             acc[key] = filter.value as string
           }
@@ -163,9 +163,9 @@ export function TemplatesTable() {
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
                     </TableHead>
                   )
                 })}

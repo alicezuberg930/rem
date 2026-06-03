@@ -141,8 +141,8 @@ public class AuthController {
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString())
-                .header("X-Access-Token-Expiration", String.valueOf(response.getAccessTokenExpiration()))
-                .header("Access-Control-Expose-Headers", "X-Access-Token-Expiration")
+                .header(Constants.accessTokenHeaderKey, String.valueOf(response.getAccessTokenExpiration()))
+                .header("Access-Control-Expose-Headers", Constants.accessTokenHeaderKey)
                 .body(APIResponse.success(
                         200,
                         AuthMessages.REFRESH_SUCCESS,

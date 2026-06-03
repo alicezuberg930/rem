@@ -102,8 +102,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
                 response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
                 // Add header for cross-domain access to expiration time
-                response.addHeader("X-Access-Token-Expiration", String.valueOf(accessTokenExpTimestamp));
-                response.addHeader("Access-Control-Expose-Headers", "X-Access-Token-Expiration");
+                response.addHeader(Constants.accessTokenHeaderKey, String.valueOf(accessTokenExpTimestamp));
+                response.addHeader("Access-Control-Expose-Headers", Constants.accessTokenHeaderKey);
 
                 // Set authentication context
                 request.setAttribute("userId", userId);

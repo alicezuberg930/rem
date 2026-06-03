@@ -3,6 +3,7 @@ import { useNavigate } from '@tanstack/react-router'
 import { Business, Role } from '@/@types'
 import { ChevronsUpDown, Plus } from 'lucide-react'
 import { getCookie } from '@/lib/cookies'
+import { httpClient } from '@/lib/repository/http-client'
 import { useAuth } from '@/context/auth-provider'
 import {
   DropdownMenu,
@@ -21,16 +22,19 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar'
 import { LazyLoadImage } from '../lazy-load-image'
-import { httpClient } from '@/lib/repository/http-client'
 
 export function TeamSwitcher() {
   const navigate = useNavigate()
   const { user } = useAuth()
   const { isMobile } = useSidebar()
-  const [activeTeam, setActiveTeam] = React.useState<(Business & { role: Role }) | undefined>(undefined)
+  const [activeTeam, setActiveTeam] = React.useState<
+    (Business & { role: Role }) | undefined
+  >(undefined)
 
   React.useEffect(() => {
-    setActiveTeam(user?.businesses.find((b) => b.id === getCookie('X-Business-Id')))
+    setActiveTeam(
+      user?.businesses.find((b) => b.id === getCookie('X-Business-Id'))
+    )
   }, [user])
 
   return (
@@ -81,7 +85,9 @@ export function TeamSwitcher() {
                   key={business.name}
                   onClick={async () => {
                     setActiveTeam(business)
-                    await httpClient.post('/businesses/pick', { id: business.id })
+                    await httpClient.post('/businesses/pick', {
+                      id: business.id,
+                    })
                     window.dispatchEvent(new Event('business-id-change'))
                     navigate({ to: '/' })
                   }}

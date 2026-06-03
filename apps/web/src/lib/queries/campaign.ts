@@ -52,10 +52,9 @@ export const campaigns = () => ({
       mutationOptions({
         mutationKey: keys.create(),
         mutationFn: async (input: CampaignValidators.CampaignForm) => {
-          return await httpClient.post<ApiResponse<Campaign[]>>(
-            '/campaigns',
-            input
-          )
+          return await httpClient.post<ApiResponse<Campaign[]>>('/campaigns', {
+            ...input,
+          })
         },
         onSuccess: () => {
           queryClient().invalidateQueries({ queryKey: keys.all({}) })

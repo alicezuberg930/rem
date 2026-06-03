@@ -68,7 +68,7 @@ export default defineConfig({
         propertyReadSideEffects: false,
       },
     },
-    chunkSizeWarningLimit: 500
+    chunkSizeWarningLimit: 500,
   },
   resolve: {
     alias: {

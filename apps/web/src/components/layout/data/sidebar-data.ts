@@ -25,7 +25,7 @@ import {
   LayoutTemplate,
   Megaphone,
   BookImage,
-  Heart
+  Heart,
 } from 'lucide-react'
 import { ClerkLogo } from '@/assets/clerk-logo'
 import { type SidebarData } from '../types'
