@@ -1,11 +1,13 @@
 import { mutationOptions, queryOptions } from '@tanstack/react-query'
-import { ApiResponse, Attendance } from '@/@types'
+import { ApiResponse, Attendance, PaginatedApiResponse, QueryAttendance } from '@/@types'
 import { httpClient } from '../repository/http-client'
 import { AttendanceValidators } from '../validators/attendance'
 
 const keys = {
   checkIn: () => ['attendance', 'check-in'],
   me: () => ['attendance', 'me'],
+  all: (opts: QueryAttendance) => ['templates', opts],
+
 }
 
 export const attendance = () => ({
@@ -27,9 +29,22 @@ export const attendance = () => ({
       queryOptions({
         queryKey: keys.me(),
         queryFn: async () => {
-          return await httpClient.get<ApiResponse<Attendance[]>>(
+          return await httpClient.get<PaginatedApiResponse<Attendance[]>>(
             '/attendances/me'
           )
+        },
+      }),
+  },
+
+  all: {
+    queryOptions: (opts: QueryAttendance = {}) =>
+      queryOptions({
+        queryKey: keys.all(opts),
+        queryFn: async () => {
+          const { data } = await httpClient.get<
+            PaginatedApiResponse<Attendance[]>
+          >('/attendances/all', opts as Record<string, unknown>)
+          return data
         },
       }),
   },

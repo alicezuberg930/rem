@@ -55,5 +55,4 @@ public class Attendance extends Base {
 
     @Column(name = "longitude", precision = 10, scale = 7)
     private BigDecimal longitude;
-
 }

@@ -1,4 +1,4 @@
-import { User } from '.'
+import { QueryPaginate, User } from '.'
 
 export const CHECK_IN_TYPE = {
   OFFICE: 'Office',
@@ -21,12 +21,16 @@ export type Attendance = {
   user: User
   checkInTime: string
   checkOutTime: string | null
-  businessId: string
   date: string
-  checkInType: CheckInType
-  checkInStatus: CheckInStatus
+  type: CheckInType
+  status: CheckInStatus
   note: string | null
   address: string
   latitude: number
   longitude: number
+}
+
+export type QueryAttendance = QueryPaginate & {
+  from?: string
+  to?: string
 }

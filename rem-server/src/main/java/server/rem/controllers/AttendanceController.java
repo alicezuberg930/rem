@@ -7,9 +7,10 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import server.rem.annotations.RequestUser;
 import server.rem.dtos.APIResponse;
+import server.rem.dtos.CustomPageResponse;
+import server.rem.dtos.attendance.AttendanceResponse;
 import server.rem.dtos.attendance.CreateAttendanceRequest;
 import server.rem.dtos.attendance.QueryAttendance;
-import server.rem.entities.Attendance;
 import server.rem.services.AttendanceService;
 
 @RestController
@@ -22,7 +23,7 @@ public class AttendanceController {
     }
 
     @PostMapping("/check-in")
-    public ResponseEntity<APIResponse<Attendance>> checkIn(@RequestUser String userId, @Valid @RequestBody CreateAttendanceRequest dto, @RequestAttribute("businessId") String businessId) {
+    public ResponseEntity<APIResponse<AttendanceResponse>> checkIn(@RequestUser String userId, @Valid @RequestBody CreateAttendanceRequest dto, @RequestAttribute("businessId") String businessId) {
         return ResponseEntity.ok().body(APIResponse.success(
             201,
             "Check in successfully",
@@ -31,20 +32,20 @@ public class AttendanceController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<APIResponse<Page<Attendance>>> getMyAttendances(@ModelAttribute QueryAttendance dto, @RequestUser String userId) {
+    public ResponseEntity<APIResponse<CustomPageResponse<AttendanceResponse>>> getMe(@ModelAttribute QueryAttendance dto, @RequestUser String userId) {
         return ResponseEntity.ok().body(APIResponse.success(
             200,
             "Attendance list retrieved successfully",
-            attendanceService.getMyAttendances(dto, userId)
+            attendanceService.getMe(dto, userId)
         ));
     }
 
     @GetMapping("/all")
-    public ResponseEntity<APIResponse<Page<Attendance>>> getAllAttendances(@ModelAttribute QueryAttendance dto) {
+    public ResponseEntity<APIResponse<CustomPageResponse<AttendanceResponse>>> getAll(@ModelAttribute QueryAttendance dto) {
         return ResponseEntity.ok().body(APIResponse.success(
             200,
             "Attendance list retrieved successfully",
-            attendanceService.getAllAttendances(dto)
+            attendanceService.getAll(dto)
         ));
     }
 }

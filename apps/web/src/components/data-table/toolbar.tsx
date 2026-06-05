@@ -3,7 +3,11 @@ import { X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { DataTableFacetedFilter } from './faceted-filter'
+import { DataTableStringFilter } from './string-filter'
+import { DataTableDateFilter } from './date-filter'
 import { DataTableViewOptions } from './view-options'
+
+type DataTableFilterType = 'select' | 'string' | 'date'
 
 type DataTableToolbarProps<TData> = {
   table: Table<TData>
@@ -12,7 +16,9 @@ type DataTableToolbarProps<TData> = {
   filters?: {
     columnId: string
     title: string
-    options: {
+    type?: DataTableFilterType
+    placeholder?: string
+    options?: {
       label: string
       value: string
       icon?: React.ComponentType<{ className?: string }>
@@ -26,8 +32,7 @@ export function DataTableToolbar<TData>({
   searchKey,
   filters = [],
 }: DataTableToolbarProps<TData>) {
-  const isFiltered =
-    table.getState().columnFilters.length > 0 || table.getState().globalFilter
+  const isFiltered = table.getState().columnFilters.length > 0 || table.getState().globalFilter
 
   return (
     <div className='flex items-center justify-between'>
@@ -41,28 +46,51 @@ export function DataTableToolbar<TData>({
             onChange={(event) =>
               table.getColumn(searchKey)?.setFilterValue(event.target.value)
             }
-            className='h-8 w-37.5 lg:w-62.5'
+            className='w-37.5 lg:w-62.5'
           />
         ) : (
           <Input
             placeholder={searchPlaceholder}
             value={table.getState().globalFilter ?? ''}
             onChange={(event) => table.setGlobalFilter(event.target.value)}
-            className='h-8 w-37.5 lg:w-62.5'
+            className='w-37.5 lg:w-62.5'
           />
         )}
         <div className='flex gap-x-2'>
           {filters.map((filter) => {
             const column = table.getColumn(filter.columnId)
             if (!column) return null
-            return (
-              <DataTableFacetedFilter
-                key={filter.columnId}
-                column={column}
-                title={filter.title}
-                options={filter.options}
-              />
-            )
+
+            const filterType = filter.type ?? 'select'
+
+            switch (filterType) {
+              case 'string':
+                return (
+                  <DataTableStringFilter
+                    key={filter.columnId}
+                    column={column}
+                    title={filter.title}
+                    placeholder={filter.placeholder}
+                  />
+                )
+              case 'date':
+                return (
+                  <DataTableDateFilter
+                    key={filter.columnId}
+                    column={column}
+                  />
+                )
+              case 'select':
+              default:
+                return (
+                  <DataTableFacetedFilter
+                    key={filter.columnId}
+                    column={column}
+                    title={filter.title}
+                    options={filter.options ?? []}
+                  />
+                )
+            }
           })}
         </div>
         {isFiltered && (
@@ -72,7 +100,7 @@ export function DataTableToolbar<TData>({
               table.resetColumnFilters()
               table.setGlobalFilter('')
             }}
-            className='h-8 px-2 lg:px-3'
+            className='px-2 lg:px-3'
           >
             Reset
             <X className='ms-2 h-4 w-4' />
