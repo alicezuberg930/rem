@@ -9,8 +9,10 @@ spring.jpa.hibernate.ddl-auto=update
 # Global prefix
 server.servlet.context-path=/api/v1
 # jwt
-jwt.expiration=3600000
-jwt.secret=
+jwt.access_token_secret=
+jwt.refresh_token_secret=
+jwt.access_token_expiration=3600
+jwt.refresh_token_expiration=604800
 # Gmail variables
 spring.mail.host=
 spring.mail.port=

@@ -1,3 +1,0 @@
-docker build -t tien1411/rem-server:latest -f Dockerfile .
-
-docker push tien1411/rem-server:latest

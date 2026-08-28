@@ -154,6 +154,7 @@ export function AuthProvider({
   const navigate = useNavigate()
   // states
   const [state, dispatch] = useReducer(reducer, initialState)
+  const shouldRestoreSession = typeof window !== 'undefined' && Boolean(localStorage.getItem('accessTokenExpiration'))
   const [businessId, setBusinessId] = useState<string | undefined>(
     getCookie('X-Business-Id')
   )
@@ -168,13 +169,18 @@ export function AuthProvider({
   const {
     data: profile,
     isError: profileError,
-    refetch: refetchProfile,
-  } = useQuery(auth().profile.queryOptions())
+  } = useQuery({
+    ...auth().profile.queryOptions(),
+    enabled: shouldRestoreSession && !state.isAuthenticated,
+  })
   const {
     data: role,
     isError: roleError,
     refetch: refetchRole,
-  } = useQuery(auth().role.queryOptions())
+  } = useQuery({
+    ...auth().role.queryOptions(),
+    enabled: state.isAuthenticated && Boolean(businessId),
+  })
 
   // Register response interceptor to capture token expiration from headers only once
   useEffect(() => {
@@ -202,10 +208,23 @@ export function AuthProvider({
     }
   }, [])
 
-  // Re-fetch role when businessId changes
   useEffect(() => {
-    if (businessId) refetchRole()
-  }, [businessId, refetchRole])
+    if (state.isAuthenticated && businessId) refetchRole()
+  }, [state.isAuthenticated, businessId, refetchRole])
+
+  useEffect(() => {
+    if (shouldRestoreSession) return
+
+    dispatch({
+      type: Types.INITIAL,
+      payload: {
+        user: null,
+        isAuthenticated: false,
+        role: null,
+        isAuthorized: false,
+      },
+    })
+  }, [shouldRestoreSession])
 
   // Update auth state when role data arrives
   useEffect(() => {
@@ -238,10 +257,6 @@ export function AuthProvider({
   // const { lastTokenRefresh } = useSelector(state => state.app)
 
   useEffect(() => {
-    if (state.isAuthenticated) refetchProfile()
-  }, [state.isAuthenticated, refetchProfile])
-
-  useEffect(() => {
     if (profile) {
       dispatch({
         type: Types.INITIAL,
@@ -257,6 +272,7 @@ export function AuthProvider({
 
   useEffect(() => {
     if (profileError) {
+      localStorage.removeItem('accessTokenExpiration')
       dispatch({
         type: Types.INITIAL,
         payload: {
@@ -285,7 +301,7 @@ export function AuthProvider({
       await m4(undefined, {
         onError(error) {
           console.error('Token refresh failed:', error)
-          // If refresh fails, log out the user
+          localStorage.removeItem('accessTokenExpiration')
           dispatch({ type: Types.LOGOUT })
           navigate({ replace: true, to: '/sign-in' })
         },
@@ -307,7 +323,7 @@ export function AuthProvider({
       m4(undefined, {
         onError(error) {
           console.error('Token refresh failed:', error)
-          // If refresh fails, log out the user
+          localStorage.removeItem('accessTokenExpiration')
           dispatch({ type: Types.LOGOUT })
           navigate({ replace: true, to: '/sign-in' })
         },
@@ -370,6 +386,7 @@ export function AuthProvider({
   const signOut = useCallback(async () => {
     await m3(undefined, {
       onSuccess: (_) => {
+        localStorage.removeItem('accessTokenExpiration')
         dispatch({ type: Types.LOGOUT })
         navigate({ replace: true, to: '/sign-in' })
       },

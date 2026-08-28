@@ -10,7 +10,7 @@ type AuthGuardProps = {
 export function AuthGuard({ children }: AuthGuardProps) {
   const { isAuthenticated, role, isInitialized } = useAuth()
   const { pathname } = useLocation()
-
+  console.log(isAuthenticated)
   const unauthenticatedRoutes = ['/sign-in', '/sign-up', '/forgot-password']
 
   const dashboardRoutes = [
@@ -37,7 +37,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
     MEMBER: dashboardRoutes,
   }
 
-  if (unauthenticatedRoutes) return <> {children} </>
+  if (unauthenticatedRoutes.includes(pathname)) return <> {children} </>
 
   if (!isInitialized) {
     return (

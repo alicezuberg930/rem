@@ -185,6 +185,13 @@ Examples:
 
 Each role can have multiple permissions assigned, and users inherit permissions based on their role in a business.
 
+
+## To deploy on render
+
+```docker build -t tien1411/rem-server:latest -f Dockerfile .```
+
+```docker push tien1411/rem-server:latest```
+
 <!-- Cách tính lương theo tháng
 
 - Lương tháng = [(Lương cơ bản + Phụ cấp (nếu có)) / 26 (hoặc 22 nếu nghỉ t7 & cn)] × Số ngày làm việc thực tế + Thưởng – Phạt – Thuế TNCN (nếu có)
