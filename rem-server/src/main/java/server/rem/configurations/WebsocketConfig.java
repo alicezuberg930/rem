@@ -1,24 +1,27 @@
-// package server.rem.configurations;
+package server.rem.configurations;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.socket.config.annotation.EnableWebSocket;
+import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
-// import org.springframework.context.annotation.Configuration;
-// import org.springframework.messaging.simp.config.MessageBrokerRegistry;
-// import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
-// import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
-// import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+import lombok.RequiredArgsConstructor;
+import server.rem.websockets.ChatHandshakeInterceptor;
+import server.rem.websockets.ChatWebSocketHandler;
 
-// @Configuration
-// @EnableWebSocketMessageBroker
-// public class WebsocketConfig implements WebSocketMessageBrokerConfigurer {
-//     @Override
-//     public void configureMessageBroker(MessageBrokerRegistry registry) {
-//         registry.enableSimpleBroker("/topic");
-//         registry.setApplicationDestinationPrefixes("/app");
-//         // WebSocketMessageBrokerConfigurer.super.configureMessageBroker(registry);
-//     }
+@Configuration
+@EnableWebSocket
+@RequiredArgsConstructor
+public class WebsocketConfig implements WebSocketConfigurer {
+    private final ChatWebSocketHandler chatWebSocketHandler;
+    private final ChatHandshakeInterceptor chatHandshakeInterceptor;
 
-//     @Override
-//     public void registerStompEndpoints(StompEndpointRegistry registry) {
-//         registry.addEndpoint("/ws").setAllowedOrigins("*").withSockJS();
-//         // WebSocketMessageBrokerConfigurer.super.registerStompEndpoints(registry);
-//     }
-// }
+    @Override
+    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+        registry.addHandler(chatWebSocketHandler, "/ws/chat")
+                .addInterceptors(chatHandshakeInterceptor)
+                .setAllowedOriginPatterns(
+                        "http://localhost:*",
+                        "http://127.0.0.1:*",
+                        "https://yvonne-one.vercel.app");
+    }
+}

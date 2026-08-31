@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Check, X } from 'lucide-react'
-import { showSubmittedData } from '@/lib/show-submitted-data'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -17,36 +17,41 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { type ChatUser } from '../data/chat-types'
-
-type User = Omit<ChatUser, 'messages'>
+import { type ChatUser } from '@/@types'
 
 type NewChatProps = {
-  users: User[]
+  users: ChatUser[]
   open: boolean
   onOpenChange: (open: boolean) => void
+  onSelectUser: (user: ChatUser) => void
 }
-export function NewChat({ users, onOpenChange, open }: NewChatProps) {
-  const [selectedUsers, setSelectedUsers] = useState<User[]>([])
 
-  const handleSelectUser = (user: User) => {
-    if (!selectedUsers.find((u) => u.id === user.id)) {
-      setSelectedUsers([...selectedUsers, user])
-    } else {
-      handleRemoveUser(user.id)
-    }
-  }
+const getInitials = (name: string) =>
+  name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join('')
+    .toUpperCase()
 
-  const handleRemoveUser = (userId: string) => {
-    setSelectedUsers(selectedUsers.filter((user) => user.id !== userId))
-  }
+export function NewChat({
+  users,
+  onOpenChange,
+  onSelectUser,
+  open,
+}: NewChatProps) {
+  const [selectedUser, setSelectedUser] = useState<ChatUser | null>(null)
 
   const handleOpenChange = (newOpen: boolean) => {
     onOpenChange(newOpen)
-    // Reset selected users when dialog closes
-    if (!newOpen) {
-      setSelectedUsers([])
-    }
+    if (!newOpen) setSelectedUser(null)
+  }
+
+  const handleStartChat = () => {
+    if (!selectedUser) return
+    onSelectUser(selectedUser)
+    handleOpenChange(false)
   }
 
   return (
@@ -58,22 +63,18 @@ export function NewChat({ users, onOpenChange, open }: NewChatProps) {
         <div className='flex flex-col gap-4'>
           <div className='flex flex-wrap items-baseline-last gap-2'>
             <span className='min-h-6 text-sm text-muted-foreground'>To:</span>
-            {selectedUsers.map((user) => (
-              <Badge key={user.id} variant='default'>
-                {user.fullName}
+            {selectedUser && (
+              <Badge variant='default'>
+                {selectedUser.fullname}
                 <button
+                  type='button'
                   className='ms-1 rounded-full ring-offset-background outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2'
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      handleRemoveUser(user.id)
-                    }
-                  }}
-                  onClick={() => handleRemoveUser(user.id)}
+                  onClick={() => setSelectedUser(null)}
                 >
                   <X className='h-3 w-3 text-muted-foreground hover:text-foreground' />
                 </button>
               </Badge>
-            ))}
+            )}
           </div>
           <Command className='rounded-lg border'>
             <CommandInput
@@ -86,26 +87,35 @@ export function NewChat({ users, onOpenChange, open }: NewChatProps) {
                 {users.map((user) => (
                   <CommandItem
                     key={user.id}
-                    onSelect={() => handleSelectUser(user)}
+                    value={`${user.fullname} ${user.email}`}
+                    onSelect={() =>
+                      setSelectedUser((current) =>
+                        current?.id === user.id ? null : user
+                      )
+                    }
                     className='flex items-center justify-between gap-2 hover:bg-accent hover:text-accent-foreground'
                   >
                     <div className='flex items-center gap-2'>
-                      <img
-                        src={user.profile || '/placeholder.svg'}
-                        alt={user.fullName}
-                        className='h-8 w-8 rounded-full'
-                      />
+                      <Avatar className='size-8'>
+                        <AvatarImage
+                          src={user.avatar ?? undefined}
+                          alt={user.fullname}
+                        />
+                        <AvatarFallback>
+                          {getInitials(user.fullname)}
+                        </AvatarFallback>
+                      </Avatar>
                       <div className='flex flex-col'>
                         <span className='text-sm font-medium'>
-                          {user.fullName}
+                          {user.fullname}
                         </span>
                         <span className='text-xs text-accent-foreground/70'>
-                          {user.username}
+                          {user.email}
                         </span>
                       </div>
                     </div>
 
-                    {selectedUsers.find((u) => u.id === user.id) && (
+                    {selectedUser?.id === user.id && (
                       <Check className='h-4 w-4' />
                     )}
                   </CommandItem>
@@ -114,9 +124,10 @@ export function NewChat({ users, onOpenChange, open }: NewChatProps) {
             </CommandList>
           </Command>
           <Button
-            variant={'default'}
-            onClick={() => showSubmittedData(selectedUsers)}
-            disabled={selectedUsers.length === 0}
+            type='button'
+            variant='default'
+            onClick={handleStartChat}
+            disabled={!selectedUser}
           >
             Chat
           </Button>

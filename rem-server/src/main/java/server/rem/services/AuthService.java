@@ -1,26 +1,35 @@
 package server.rem.services;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import server.rem.dtos.auth.*;
-import server.rem.entities.*;
+import server.rem.dtos.auth.RefreshResponse;
+import server.rem.dtos.auth.RoleResponse;
+import server.rem.dtos.auth.SignInRequest;
+import server.rem.dtos.auth.SignInResponse;
+import server.rem.dtos.auth.SignUpRequest;
+import server.rem.dtos.auth.UserProfileResponse;
+import server.rem.entities.BusinessUser;
+import server.rem.entities.User;
 import server.rem.enums.JWTAlgorithm;
-import server.rem.mappers.*;
+import server.rem.mappers.AuthMapper;
+import server.rem.mappers.UserMapper;
 import server.rem.repositories.BusinessUserRepository;
 import server.rem.repositories.UserRepository;
-import server.rem.utils.*;
-import server.rem.utils.exceptions.*;
+import server.rem.utils.JWT;
+import server.rem.utils.JWTOptions;
+import server.rem.utils.exceptions.ResourceNotFoundException;
+import server.rem.utils.exceptions.UnauthorizedException;
 import server.rem.utils.messages.AuthMessages;
-
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
+
     @Value("${jwt.access_token_secret}")
     private String accessTokenSecret;
 
@@ -51,8 +60,9 @@ public class AuthService {
 
         boolean isMatch = passwordEncoder.matches(dto.getPassword(), user.getPassword());
 
-        if (!isMatch)
+        if (!isMatch) {
             throw new UnauthorizedException(AuthMessages.INVALID_CREDENTIALS);
+        }
 
         // Calculate access token expiration timestamp in seconds
         long accessTokenExpSeconds = Long.parseLong(accessTokenExpiration);
@@ -99,13 +109,13 @@ public class AuthService {
         long accessTokenExpSeconds = Long.parseLong(accessTokenExpiration);
         long accessTokenExpTimestamp = System.currentTimeMillis() / 1000 + accessTokenExpSeconds;
         String accessToken = null;
-        if (decoded.size() > 0) {
+        if (!decoded.isEmpty()) {
             JWTOptions options = new JWTOptions(Long.parseLong(accessTokenExpiration), "rem-app", true);
             JWT jwt = new JWT(accessTokenSecret, JWTAlgorithm.HS256);
             Map<String, Object> claims = Map.of("userId", decoded.get("userId"));
             accessToken = jwt.sign(claims, options);
         }
         return new RefreshResponse(accessToken, String.valueOf(accessTokenExpTimestamp));
-    } 
+    }
 
 }
