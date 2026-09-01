@@ -1,6 +1,6 @@
-import { BadgeCheck, CalendarCheck, CircleOff, LockKeyhole, Plus, SquareArrowLeft, SquareArrowRight } from "lucide-react";
-import { CalendarReloadProvider } from "../../contexts/CalendarReloadContext"
-import { useEffect, useState } from "react";
+import { CalendarCheck, SquareArrowLeft, SquareArrowRight } from "lucide-react";
+import { CalendarProvider } from "./calendar-provider"
+import { useState } from "react";
 import { addDays, addMonths, addWeeks, subDays, subMonths, subWeeks, startOfDay } from "date-fns";
 import { DayView } from "./views/day-view";
 import { WeekView } from "./views/week-view";
@@ -9,6 +9,7 @@ import { options, View } from "./types";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { CalendarDatePicker } from "./calendar-date-picker";
 import { Button } from "../ui/button";
+import { cn } from "@/lib/utils";
 
 function getCurrentWeek(weekStart = "monday") {
     const today = new Date()
@@ -73,9 +74,8 @@ export const CalendarScheduler = () => {
         }
     }
 
-    const getMode = (view: View) => String(view)
-
     const today = startOfDay(new Date());
+
     let isCurrentDateSelected = false;
 
     if (view === 'week') {
@@ -91,16 +91,18 @@ export const CalendarScheduler = () => {
 
     return (
         <div className="relative rounded-lg shadow-sm p-6">
-            {/* Thanh filter điều hướng và chế độ xem */}
+            {/* filter bar for modes */}
             <div className="bg-white p-4 border-b rounded-xl mb-5">
                 <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                    {/* Nhóm trái: Hôm nay, Date, Prev/Next, View */}
+                    {/* today, Date, Prev/Next, 3 Mode View */}
                     <div className="flex flex-wrap gap-3 items-center">
-                        {/* Nút Hôm nay */}
+                        {/* today */}
                         <Button
                             variant="outline"
-                            leftIcon={<CalendarCheck className="w-4 h-4" />}
-                            className={`h-[39px] ${isCurrentDateSelected ? ' !text-blue-500 !border-blue-300' : '!text-gray-600'}`}
+                            className={cn(
+                                "h-10",
+                                isCurrentDateSelected ? ' text-blue-500 border-blue-300' : 'text-gray-600'
+                            )}
                             onClick={() => {
                                 if (view === 'week') {
                                     setSelectDateWeek(getCurrentWeek('monday'));
@@ -109,12 +111,13 @@ export const CalendarScheduler = () => {
                                 }
                             }}
                         >
+                            <CalendarCheck className="w-4 h-4" />
                             Hôm nay
                         </Button>
 
                         {/* view mode */}
                         <Select
-                            value={options[0].value}
+                            value={view}
                             onValueChange={(value) => {
                                 if (value !== null) setView(value as View)
                             }}
@@ -123,9 +126,9 @@ export const CalendarScheduler = () => {
                                 <SelectValue placeholder='Select image size' />
                             </SelectTrigger>
                             <SelectContent align='start' className='max-h-72'>
-                                {options.map(option => (
-                                    <SelectItem key={option.value} value={option.value}>
-                                        {option.label}
+                                {Object.entries(options).map(([key, option]) => (
+                                    <SelectItem key={key} value={key}>
+                                        {option}
                                     </SelectItem>
                                 ))}
                             </SelectContent>
@@ -134,13 +137,13 @@ export const CalendarScheduler = () => {
                         {/* Date Picker */}
                         <div className="w-[170px] sm:w-[200px]">
                             {view !== 'week' ? (
-                                <CalendarDatePicker mode={getMode(view)} onChange={(e) => setSelectDate(e)} value={selectDate} />
+                                <CalendarDatePicker mode={view} onChange={(e) => setSelectDate(e as Date)} value={selectDate} />
                             ) : (
-                                <CalendarDatePicker mode="week" onChange={(e) => setSelectDateWeek(e)} value={selectDateWeek} />
+                                <CalendarDatePicker mode="week" onChange={(e) => setSelectDateWeek(e as { from: Date; to: Date })} value={selectDateWeek} />
                             )}
                         </div>
 
-                        {/* Điều hướng trái phải */}
+                        {/* next and previous navigation */}
                         <div className="flex gap-1 items-center">
                             <Button
                                 variant="outline"
@@ -162,19 +165,19 @@ export const CalendarScheduler = () => {
             </div>
 
             {/* calendar view */}
-            <CalendarReloadProvider>
+            <CalendarProvider>
                 <div className="overflow-x-auto w-full">
                     <div className="w-full">
                         {view === 'day' ? (
-                            <DayView date={selectDate} type={type} joinType={joinType} view={view} />
+                            <DayView date={selectDate} type={type} view={view} />
                         ) : view === 'week' ? (
-                            <WeekView fromDate={selectDateWeek.from} toDate={selectDateWeek.to} type={type} joinType={joinType} view={view} />
+                            <WeekView fromDate={selectDateWeek.from} toDate={selectDateWeek.to} type={type} view={view} />
                         ) : view === 'month' ? (
-                            <MonthView date={selectDate} type={type} joinType={joinType} view={view} />
+                            <MonthView date={selectDate} type={type} view={view} />
                         ) : null}
                     </div>
                 </div>
-            </CalendarReloadProvider>
+            </CalendarProvider>
         </div>
     );
 }

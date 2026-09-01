@@ -1,25 +1,20 @@
-"use client"
-
 import { useEffect, useState, useRef, useCallback, useContext, useMemo } from "react"
 import { getTopOffset, parseTimeToMinutes } from "@/helpers/numberHelpers"
 import { convertDateTimeToDate } from "@/helpers/stringHelpers"
-import { changeEventTime, changeEventTimeV2, getCalendarWeek, getCalendarWeekV2 } from "@/lib/api/calendarApi"
 import { useCalendar } from "../../../hooks/useCalendar"
-import { closestCenter, DndContext } from "@dnd-kit/core"
+import { closestCenter, DndContext, DragStartEvent } from "@dnd-kit/core"
 import { useToast } from "@/contexts/ToastContext"
 import { useCalendarReload } from "@/contexts/CalendarReloadContext"
-import { EventDetail } from "../event-detail"
-import { CalendarConstants } from "@/constants/calendarConstants"
 import LoadingContext from "@/contexts/LoadingContext"
 import ConfirmModalChangeTime from "./confirmModalChangeTime"
 import { isAfter, parseISO } from "date-fns"
 import ConfirmChangeTime from "../forms/confirm-change-time"
 import { useRedirect } from "@/contexts/RedirectContext"
-import { useSignalR } from "@/contexts/SignalRContext"
+import { CalendarEvent } from "../types"
 
 const MULTI_DAY_EVENT_HEIGHT = 28 // Chiều cao sự kiện cả ngày
 
-function getHeight(time) {
+function getHeight(time: string) {
     const [start, end] = time.split(" - ")
     const duration = parseTimeToMinutes(end) - parseTimeToMinutes(start)
     const ratio = 960 / (24 * 60)
@@ -27,7 +22,7 @@ function getHeight(time) {
     return Math.max(duration * ratio, minHeight)
 }
 
-function formatDate(d) {
+function formatDate(d: Date) {
     const year = d.getFullYear()
     const month = (d.getMonth() + 1).toString().padStart(2, "0")
     const day = d.getDate().toString().padStart(2, "0")
@@ -35,12 +30,12 @@ function formatDate(d) {
 }
 
 // Kiểm tra sự kiện cả ngày (all-day event)
-function isAllDayEvent(event) {
+function isAllDayEvent(event: CalendarEvent) {
     return event.time === "00:00 - 00:00"
 }
 
 // Hàm mới để xử lý các sự kiện dài ngày
-function handleMultiDayEvents(events, weekLabels) {
+function handleMultiDayEvents(events: CalendarEvent[], weekLabels: { value: string }[]) {
     const multiDayEvents = []
     const singleDayEvents = {}
     weekLabels.forEach(day => singleDayEvents[day.value] = []);
@@ -138,10 +133,10 @@ const getWeekLabels = (fromDate, toDate) => {
 }
 
 export const WeekView = ({ fromDate, toDate, type, joinType, view }) => {
-    const [events, setEvents] = useState([])
+    const [events, setEvents] = useState<CalendarEvent[]>([])
     const [showConfirmModal, setShowConfirmModal] = useState(false)
-    const [targetEvent, setTargetEvent] = useState(null)
-    const [eventOriginal, setEventOriginal] = useState(null)
+    const [targetEvent, setTargetEvent] = useState<CalendarEvent | null>(null)
+    const [eventOriginal, setEventOriginal] = useState<CalendarEvent | null>(null)
     const [changeConfirm, setChangeConfirm] = useState({
         dayFrom: "",
         dayTo: "",
@@ -153,16 +148,13 @@ export const WeekView = ({ fromDate, toDate, type, joinType, view }) => {
         timeOldTo: "",
         title: ""
     })
-
     const [isDragging, setIsDragging] = useState(false)
     const [dragOverColumn, setDragOverColumn] = useState(null)
-
-    const [draggedEventId, setDraggedEventId] = useState(null)
+    const [draggedEventId, setDraggedEventId] = useState<string | null>(null)
     const [draggedEventTime, setDraggedEventTime] = useState(null)
 
     // Thêm ref để throttle drag move
     const dragMoveTimeoutRef = useRef(null)
-    const { sendReloadCalendar } = useSignalR()
 
     const gridRef = useRef(null)
     const { convertToEvent, DraggableEvent, DroppableDay, sensors, formatToDateTime } = useCalendar()
@@ -175,19 +167,10 @@ export const WeekView = ({ fromDate, toDate, type, joinType, view }) => {
         if (calendarId && (typeNoti === 3 || typeNoti === 9)) handleOpenFormOutside(calendarId)
     }, [calendarId])
 
-    const handleOpenFormOutside = (calendarId) => {
+    const handleOpenFormOutside = (calendarId: string) => {
         setInfo({ ...info, id: calendarId })
         setIsOpenFormEventDetail(true)
     }
-    useEffect(() => {
-        const unSend = sendReloadCalendar(msg => {
-            if (msg) {
-                fetchDataCalendarByWeek()
-            }
-        })
-
-        return unSend
-    }, [])
 
     const [now, setNow] = useState(new Date())
 
@@ -203,11 +186,7 @@ export const WeekView = ({ fromDate, toDate, type, joinType, view }) => {
         return () => clearInterval(timer)
     }, [fromDate, toDate])
 
-    useEffect(() => {
-        fetchDataCalendarByWeek()
-    }, [fromDate, type, joinType, view, reloadKey.week])
-
-    const getYFromTime = (date) => {
+    const getYFromTime = (date: Date) => {
         const hours = date.getHours()
         const minutes = date.getMinutes()
         const totalMinutes = hours * 60 + minutes
@@ -240,10 +219,10 @@ export const WeekView = ({ fromDate, toDate, type, joinType, view }) => {
     const multiDayTimedEvents = multiDayEvents.filter(e => !isAllDayEvent(e));
 
 
-    const handleDragStart = ({ active }) => {
+    const handleDragStart = (e: DragStartEvent) => {
         setIsDragging(true)
-        setDraggedEventId(active.id)
-        const draggedEvent = events.find((e) => e.id === active.id)
+        setDraggedEventId(String(e.active.id))
+        const draggedEvent = events.find((e) => e.id === e.active.id)
         if (draggedEvent) {
             setDraggedEventTime({ originalTime: draggedEvent.time, currentTime: draggedEvent.time })
         }
@@ -436,7 +415,7 @@ export const WeekView = ({ fromDate, toDate, type, joinType, view }) => {
                                     className="relative flex border-b border-gray-200"
                                     style={{ minWidth: `calc(7 * 120px)`, height: `${MULTI_DAY_EVENT_HEIGHT + 10}px` }}
                                 >
-                                    <div className="w-12 flex-shrink-0"></div>
+                                    <div className="w-12 shrink-0"></div>
                                     <div className="flex-1 grid relative" style={{ gridTemplateColumns: gridColumnsStyle }}>
                                         {multiDayTimedEvents.map((event) => {
                                             const top = getTopOffset(event.time)
@@ -787,9 +766,6 @@ export const WeekView = ({ fromDate, toDate, type, joinType, view }) => {
                     />
                 )
             }
-            {isOpenFormEventDetail && (
-                <EventDetail isOpen={isOpenFormEventDetail} onClose={() => { clearId(); setIsOpenFormEventDetail(false); }} info={info} view={CalendarConstants.viewType[CalendarConstants.views.Week]} />
-            )}
         </>
     )
 }

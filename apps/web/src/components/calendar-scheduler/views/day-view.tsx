@@ -1,43 +1,33 @@
 import { Clock9, MapPin } from "lucide-react"
-import { getTopOffset, parseTimeToMinutes } from "@/helpers/numberHelpers"
-import { convertDateTimeToDate } from "@/helpers/stringHelpers"
-import { changeEventTime, changeEventTimeV2, getCalendarDay, getCalendarDayV2 } from "@/lib/api/calendarApi"
-import { useContext, useEffect, useState } from "react"
-import { DndContext, closestCenter } from "@dnd-kit/core"
-import { useCalendar } from "../../../hooks/useCalendar"
+import { convertDateTimeToDate, getTopOffset, parseTimeToMinutes } from "../utils"
+import { useEffect, useState } from "react"
+import { DndContext, DragEndEvent, DragOverEvent, DragStartEvent, closestCenter } from "@dnd-kit/core"
+import { useCalendar } from "../use-calendar"
 import { isAfter, isSameDay, parseISO } from "date-fns"
-import { useToast } from "@/contexts/ToastContext"
-import { useCalendarReload } from "@/contexts/CalendarReloadContext"
-import { EventDetail } from "../event-detail"
-import { CalendarConstants } from "@/constants/calendarConstants"
-import LoadingContext from "@/contexts/LoadingContext"
+import { useCalendar as useCalendarReload } from "../calendar-provider"
 import ConfirmModalChangeTime from "./confirmModalChangeTime"
 import ConfirmChangeTime from "../forms/confirm-change-time"
 import { useRedirect } from "@/contexts/RedirectContext"
-import { useSignalR } from "@/contexts/SignalRContext"
+import { CalendarEvent } from "../types"
 
-function getHeight(time) {
+function getHeight(time: string) {
     const [start, end] = time.split(" - ")
     const duration = parseTimeToMinutes(end) - parseTimeToMinutes(start)
     const ratio = 960 / (24 * 60)
     return duration * ratio
 }
 
-function groupOverlappingEvents(events) {
-    const sorted = [...events].sort(
-        (a, b) => parseTimeToMinutes(a.time.split(" - ")[0]) - parseTimeToMinutes(b.time.split(" - ")[0]),
-    )
-    const positioned = []
+const groupOverlappingEvents = (events: CalendarEvent[]): CalendarEvent[] => {
+    const sorted = [...events].sort((a, b) => parseTimeToMinutes(a.time.split(" - ")[0]) - parseTimeToMinutes(b.time.split(" - ")[0]))
+    const positioned: CalendarEvent[] = []
 
     sorted.forEach((event) => {
         const [startA, endA] = event.time.split(" - ").map(parseTimeToMinutes)
         let groupIndex = 0
         while (true) {
-            const overlap = positioned.some(
-                (e) =>
-                    e.group === groupIndex &&
-                    Math.max(startA, parseTimeToMinutes(e.time.split(" - ")[0])) <
-                    Math.min(endA, parseTimeToMinutes(e.time.split(" - ")[1])),
+            const overlap = positioned.some((e) =>
+                e.group === groupIndex &&
+                Math.max(startA, parseTimeToMinutes(e.time.split(" - ")[0])) < Math.min(endA, parseTimeToMinutes(e.time.split(" - ")[1])),
             )
             if (!overlap) break
             groupIndex++
@@ -53,12 +43,12 @@ function groupOverlappingEvents(events) {
     }))
 }
 
-export const DayView = ({ date, joinType, type, view }) => {
-    const [events, setEvents] = useState([])
+export const DayView = ({ date, type, view }) => {
+    const [events, setEvents] = useState<CalendarEvent[]>([])
     const [now, setNow] = useState(new Date())
     const [showConfirmModal, setShowConfirmModal] = useState(false)
-    const [targetEvent, setTargetEvent] = useState(null)
-    const [eventOriginal, setEventOriginal] = useState(null)
+    const [targetEvent, setTargetEvent] = useState<CalendarEvent | null>(null)
+    const [eventOriginal, setEventOriginal] = useState<CalendarEvent[]>([])
     const [changeConfirm, setChangeConfirm] = useState({
         dayFrom: "",
         dayTo: "",
@@ -73,7 +63,7 @@ export const DayView = ({ date, joinType, type, view }) => {
 
     const [isDragging, setIsDragging] = useState(false)
     const [dragOverArea, setDragOverArea] = useState(false)
-    const [draggedEventId, setDraggedEventId] = useState(null)
+    const [draggedEventId, setDraggedEventId] = useState<string | null>(null)
 
     const [isOpenFormEventDetail, setIsOpenFormEventDetail] = useState(false)
     const [info, setInfo] = useState({
@@ -81,30 +71,18 @@ export const DayView = ({ date, joinType, type, view }) => {
         title: null,
     })
 
-    const { convertToEvent, DroppableDay, DraggableEvent, sensors, formatToDateTime } = useCalendar()
-    const toast = useToast()
+    const { DroppableDay, DraggableEvent, sensors, formatToDateTime } = useCalendar()
     const { reloadKey } = useCalendarReload()
-    const loadingContext = useContext(LoadingContext);
     const { id: calendarId, clearId, type: typeNoti } = useRedirect()
-    const { sendReloadCalendar } = useSignalR()
+
     useEffect(() => {
         if (calendarId && (typeNoti === 3 || typeNoti === 9)) handleOpenFormOutside(calendarId)
     }, [calendarId])
 
-    const handleOpenFormOutside = (calendarId) => {
+    const handleOpenFormOutside = (calendarId: string) => {
         setInfo({ ...info, id: calendarId })
         setIsOpenFormEventDetail(true)
     }
-
-    useEffect(() => {
-        const unSend = sendReloadCalendar(msg => {
-            if (msg) {
-                fetchDataCalendarByDay()
-            }
-        })
-
-        return unSend
-    }, [])
 
     useEffect(() => {
         const timer = setInterval(() => {
@@ -115,9 +93,9 @@ export const DayView = ({ date, joinType, type, view }) => {
 
     useEffect(() => {
         fetchDataCalendarByDay()
-    }, [date, joinType, type, view, reloadKey.day])
+    }, [date, type, view, reloadKey.day])
 
-    const getYFromTime = (date) => {
+    const getYFromTime = (date: Date) => {
         const hours = date.getHours()
         const minutes = date.getMinutes()
         const totalMinutes = hours * 60 + minutes
@@ -131,12 +109,12 @@ export const DayView = ({ date, joinType, type, view }) => {
 
     const timeSlots = Array.from({ length: 12 }, (_, i) => `${(i * 2).toString().padStart(2, "0")}`)
 
-    const handleDragStart = ({ active }) => {
+    const handleDragStart = ({ active }: DragStartEvent) => {
         setIsDragging(true)
-        setDraggedEventId(active.id)
+        setDraggedEventId(String(active.id))
     }
 
-    const handleDragOver = ({ over }) => {
+    const handleDragOver = ({ over }: DragOverEvent) => {
         // Chỉ cho phép hover trên DroppableDay (ID là "day")
         if (over && over.id === "day") {
             setDragOverArea(true)
@@ -145,26 +123,17 @@ export const DayView = ({ date, joinType, type, view }) => {
         }
     }
 
-    const handleDragEnd = async ({ active, over, delta }) => {
+    const handleDragEnd = async ({ active, over, delta }: DragEndEvent) => {
         setIsDragging(false)
         setDragOverArea(false)
         setDraggedEventId(null)
-
         // Chỉ cho phép drop trong DroppableDay (ID là "day")
         if (!over || active.id === over.id || over.id !== "day") {
             return
         }
-
-        const draggedItem = events.find((e) => e.id === active.id)
-
+        const draggedItem = events.find((e) => e.id === active.id) as CalendarEvent | undefined
         if (!draggedItem) return
-
-        const isDisabled =
-            draggedItem.isCanceled ||
-            draggedItem.isLocked ||
-            draggedItem.typeUserJoin ||
-            (draggedItem.fromTime && isAfter(new Date(), parseISO(draggedItem.fromTime)));
-
+        const isDisabled = (draggedItem.fromTime && isAfter(new Date(), parseISO(draggedItem.fromTime)));
 
         // Lưu trạng thái trước khi cập nhật
         setEventOriginal([...events])
@@ -191,6 +160,7 @@ export const DayView = ({ date, joinType, type, view }) => {
             return e
         })
         const draggedItemAfter = updated.find((e) => e.id === active.id)
+        if (!draggedItemAfter) return
         const layoutEvents = groupOverlappingEvents(updated)
         const { dayFrom, dayTo, time, title } = draggedItemAfter
         const old = {
@@ -323,12 +293,7 @@ export const DayView = ({ date, joinType, type, view }) => {
                                             }}
                                         >
                                             {(() => {
-                                                const isDisabled =
-                                                    event.isCanceled ||
-                                                    event.isLocked ||
-                                                    event.typeUserJoin ||
-                                                    (event.fromTime && isAfter(new Date(), parseISO(event.fromTime)));
-
+                                                const isDisabled = (event.fromTime && isAfter(new Date(), parseISO(event.fromTime)));
                                                 return (
                                                     <div
                                                         onClick={() => {
@@ -417,10 +382,6 @@ export const DayView = ({ date, joinType, type, view }) => {
                     />
                 )
             }
-
-            {isOpenFormEventDetail && (
-                <EventDetail isOpen={isOpenFormEventDetail} onClose={() => { clearId(); setIsOpenFormEventDetail(false); }} info={info} view={CalendarConstants.viewType[CalendarConstants.views.Day]} />
-            )}
         </>
     )
 }

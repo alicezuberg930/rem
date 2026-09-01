@@ -1,9 +1,8 @@
-"use client"
-
 import { useState, useMemo, useRef, useEffect } from "react"
 import { Calendar, ChevronDown, X } from "lucide-react"
+import { DatePickerValue, View } from "./types"
 
-function getWeeksOfMonth(year, month, weekStart = "monday") {
+const getWeeksOfMonth = (year: number, month: number, weekStart: "monday" | "sunday" = "monday") => {
     const weeks = []
     const firstDay = new Date(year, month - 1, 1)
     const lastDay = new Date(year, month, 0)
@@ -21,12 +20,21 @@ function getWeeksOfMonth(year, month, weekStart = "monday") {
     return weeks
 }
 
-function pad(num) {
+const pad = (num: unknown) => {
     if (typeof num !== "number" || isNaN(num)) return "--"
     return num.toString().padStart(2, "0")
 }
 
-export const CalendarDatePicker = ({
+type CalendarDatePickerProps = {
+    mode?: View
+    value?: DatePickerValue
+    onChange?: (value: DatePickerValue) => void
+    minYear?: number
+    maxYear?: number
+    weekStart?: "monday" | "sunday"
+}
+
+export const CalendarDatePicker: React.FC<CalendarDatePickerProps> = ({
     mode = "month",
     value,
     onChange,
@@ -35,9 +43,9 @@ export const CalendarDatePicker = ({
     weekStart = "monday",
 }) => {
     const today = new Date()
-    const selectedWeekRef = useRef(null)
+    const selectedWeekRef = useRef<HTMLButtonElement>(null)
 
-    const defaultValue = useMemo(() => {
+    const defaultValue = useMemo<DatePickerValue>(() => {
         if (mode === "week") {
             const startOfWeek = new Date(today)
             const startDay = weekStart === "monday" ? 1 : 0
@@ -56,18 +64,11 @@ export const CalendarDatePicker = ({
         return today
     }, [mode, weekStart])
 
-    const [internalValue, setInternalValue] = useState(defaultValue)
+    const [internalValue, setInternalValue] = useState<DatePickerValue>(defaultValue)
 
     useEffect(() => {
-        const isValidWeek =
-            mode === "week" &&
-            value &&
-            typeof value === "object" &&
-            value.from instanceof Date &&
-            value.to instanceof Date
-
+        const isValidWeek = mode === "week" && value && typeof value === "object" && value.from instanceof Date && value.to instanceof Date
         const isValidDate = (mode === "day" || mode === "month") && value instanceof Date
-
         if (isValidWeek || isValidDate) {
             setInternalValue(value)
         } else {
@@ -76,18 +77,19 @@ export const CalendarDatePicker = ({
     }, [value, defaultValue, mode])
 
     const [open, setOpen] = useState(false)
+
     const [year, setYear] = useState(() => {
-        if (mode === "week" && defaultValue && defaultValue.from instanceof Date)
+        if (mode === "week" && defaultValue && 'from' in defaultValue && defaultValue.from instanceof Date)
             return defaultValue.from.getFullYear()
-        if (defaultValue instanceof Date)
+        if (defaultValue && defaultValue instanceof Date)
             return defaultValue.getFullYear()
         return today.getFullYear()
     })
 
     const [month, setMonth] = useState(() => {
-        if (mode === "week" && defaultValue && defaultValue.from instanceof Date)
+        if (mode === "week" && defaultValue && 'from' in defaultValue && defaultValue.from instanceof Date)
             return defaultValue.from.getMonth() + 1
-        if (defaultValue instanceof Date)
+        if (defaultValue && defaultValue instanceof Date)
             return defaultValue.getMonth() + 1
         return today.getMonth() + 1
     })
@@ -97,19 +99,15 @@ export const CalendarDatePicker = ({
 
     // Sau các useState year, month
     useEffect(() => {
-        if (
-            mode === "week" &&
-            value &&
-            value.from instanceof Date
-        ) {
+        if (mode === "week" && value && 'from' in value && value.from instanceof Date) {
             setYear(value.from.getFullYear())
             setMonth(value.from.getMonth() + 1)
         }
-    }, [mode, value?.from])
+    }, [mode, value])
 
     const [showYearDropdown, setShowYearDropdown] = useState(false)
     const [showMonthDropdown, setShowMonthDropdown] = useState(false)
-    const containerRef = useRef(null)
+    const containerRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
         if (!open && !showYearDropdown && !showMonthDropdown) return;

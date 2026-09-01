@@ -53,7 +53,11 @@ export function AuthGuard({ children }: AuthGuardProps) {
     }
   }
 
-  if (role && !authorizedRoutes[role.name]?.includes(pathname)) {
+  if (
+    role &&
+    dashboardRoutes.includes(pathname) &&
+    !authorizedRoutes[role.name]?.includes(pathname)
+  ) {
     return <UnauthorisedError />
   }
 

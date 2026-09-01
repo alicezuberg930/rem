@@ -1,7 +1,6 @@
 import { StrictMode } from 'react'
 import ReactDOM from 'react-dom/client'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
-import { AuthProvider } from './context/auth-provider'
 // providers
 import { DirectionProvider } from './context/direction-provider'
 import { FontProvider } from './context/font-provider'
@@ -27,15 +26,13 @@ if (!rootElement.innerHTML) {
   root.render(
     <StrictMode>
       <QueryClientProvider>
-        <AuthProvider>
-          <ThemeProvider>
-            <FontProvider>
-              <DirectionProvider>
-                <RouterProvider router={router} />
-              </DirectionProvider>
-            </FontProvider>
-          </ThemeProvider>
-        </AuthProvider>
+        <ThemeProvider>
+          <FontProvider>
+            <DirectionProvider>
+              <RouterProvider router={router} />
+            </DirectionProvider>
+          </FontProvider>
+        </ThemeProvider>
       </QueryClientProvider>
     </StrictMode>
   )
