@@ -20,6 +20,8 @@ import server.rem.utils.messages.AuthMessages;
 
 import java.io.IOException;
 
+import jakarta.servlet.DispatcherType;
+
 @Configuration
 @RequiredArgsConstructor
 @EnableMethodSecurity(prePostEnabled = true) // Enable method-level security with @PreAuthorize and @PostAuthorize
@@ -52,6 +54,8 @@ public class SecurityConfig {
                                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                                 .addFilterAfter(businessContextFilter, JwtAuthFilter.class)
                                 .authorizeHttpRequests(auth -> auth
+                                                .dispatcherTypeMatchers(DispatcherType.ASYNC, DispatcherType.ERROR)
+                                                .permitAll()
                                                 .requestMatchers(PUBLIC_ROUTES).permitAll()
                                                 .anyRequest().authenticated())
                                 .build();

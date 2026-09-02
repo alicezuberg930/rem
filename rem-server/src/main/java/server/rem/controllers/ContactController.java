@@ -1,23 +1,32 @@
 package server.rem.controllers;
 
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+import java.time.LocalDate;
 
-import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import com.fasterxml.jackson.annotation.JsonView;
-
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import server.rem.dtos.APIResponse;
-import server.rem.dtos.CustomPageResponse; 
+import server.rem.dtos.CustomPageResponse;
 import server.rem.dtos.contact.ContactResponse;
 import server.rem.dtos.contact.CreateContactRequest;
 import server.rem.dtos.contact.QueryContact;
 import server.rem.entities.Contact;
 import server.rem.services.ContactService;
-import server.rem.views.Views;
  
 @RestController
 @RequestMapping("/contacts")
@@ -26,7 +35,7 @@ public class ContactController {
     private final ContactService contactService;
  
     @GetMapping
-    // @PreAuthorize("hasAuthority('contact.read')")
+    @PreAuthorize("hasAuthority('contact.read')")
     public ResponseEntity<APIResponse<CustomPageResponse<ContactResponse>>> getAll(
         @ModelAttribute QueryContact dto, 
         @RequestAttribute("businessId") String businessId
@@ -38,6 +47,21 @@ public class ContactController {
                 contactService.getAll(dto, businessId)
             )
         );
+    }
+
+    @GetMapping("/export")
+    @PreAuthorize("hasAuthority('contact.read')")
+    public ResponseEntity<StreamingResponseBody> export(
+        @ModelAttribute QueryContact dto,
+        @RequestAttribute("businessId") String businessId
+    ) {
+        String filename = "customers-" + LocalDate.now() + ".xlsx";
+        StreamingResponseBody body = outputStream -> contactService.writeExcel(dto, businessId, outputStream);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                .body(body);
     }
  
     @GetMapping("/{id}")

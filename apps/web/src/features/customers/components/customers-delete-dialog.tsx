@@ -1,41 +1,42 @@
 import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
-import { Template } from '@/@types'
+import type { Contact } from '@/@types'
 import { AlertTriangle } from 'lucide-react'
 import { toast } from 'sonner'
-import { templates } from '@/lib/queries/template'
+import { contacts } from '@/lib/queries/contact'
 import { HttpError } from '@/lib/repository/http-error'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 
-type TemplateDeleteDialogProps = {
+type CustomersDeleteDialogProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
-  currentRow: Template
+  currentRow: Contact
 }
 
-export function TemplatesDeleteDialog({
+export function CustomersDeleteDialog({
   open,
   onOpenChange,
   currentRow,
-}: TemplateDeleteDialogProps) {
-  const [value, setValue] = useState<string>('')
-  const _delete = useMutation(templates().delete.mutationOptions())
+}: CustomersDeleteDialogProps) {
+  const [value, setValue] = useState('')
+  const remove = useMutation(contacts().delete.mutationOptions())
 
   const handleDelete = () => {
-    if (value.trim() !== currentRow.name) return
+    if (value.trim() !== currentRow.email) return
     const submit = async () => {
-      const res = await _delete.mutateAsync(currentRow.id)
+      const response = await remove.mutateAsync(currentRow.id)
+      setValue('')
       onOpenChange(false)
-      return res
+      return response
     }
     toast.promise(submit, {
-      loading: 'Deleting template',
-      error: (err) =>
-        err instanceof HttpError ? err.message : 'Internal server error',
-      success: (res) => res?.message,
+      loading: 'Deleting customer',
+      error: (error) =>
+        error instanceof HttpError ? error.message : 'Internal server error',
+      success: (response) => response.message,
     })
   }
 
@@ -44,39 +45,37 @@ export function TemplatesDeleteDialog({
       open={open}
       onOpenChange={onOpenChange}
       handleConfirm={handleDelete}
-      disabled={value.trim() !== currentRow.name}
+      disabled={value.trim() !== currentRow.email || remove.isPending}
       title={
         <span className='text-destructive'>
           <AlertTriangle
             className='me-1 inline-block stroke-destructive'
             size={18}
           />{' '}
-          Delete template
+          Delete customer
         </span>
       }
       desc={
         <div className='space-y-4'>
           <p className='mb-2'>
-            Are you sure you want to delete{' '}
-            <span className='font-bold'>{currentRow.name}</span>?
-            <br />
-            This action will permanently remove the template from the system.
-            This cannot be undone.
+            Delete{' '}
+            <span className='font-bold'>
+              {currentRow.firstName} {currentRow.lastName}
+            </span>
+            ? This action cannot be undone.
           </p>
-
           <Label className='my-2'>
-            Template name:
+            Customer email:
             <Input
               value={value}
-              onChange={(e) => setValue(e.target.value)}
-              placeholder='Enter template name to confirm deletion.'
+              onChange={(event) => setValue(event.target.value)}
+              placeholder='Enter customer email to confirm deletion.'
             />
           </Label>
-
           <Alert variant='destructive'>
             <AlertTitle>Warning!</AlertTitle>
             <AlertDescription>
-              Please be careful, this operation can not be rolled back.
+              This operation permanently removes the customer.
             </AlertDescription>
           </Alert>
         </div>

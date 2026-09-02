@@ -1,8 +1,9 @@
 package server.rem.interceptors;
 
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.http.*;
-import lombok.NonNull;
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -16,16 +17,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.NonNull;
 import server.rem.enums.JWTAlgorithm;
 import server.rem.repositories.UserRepository;
 import server.rem.utils.Constants;
 import server.rem.utils.JWT;
 import server.rem.utils.JWTOptions;
-
-import java.time.Duration;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
@@ -132,6 +133,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             // If no access token but refresh token exists, try to refresh
             if (accessToken == null && refreshToken != null) {
+                System.out.println(refreshToken);
                 refreshNewToken(refreshToken, request, response, filterChain);
                 return;
             }

@@ -13,7 +13,7 @@ export class HttpClient {
   interceptors = {
     request: new InterceptorManager<RequestInit>(),
     response: new InterceptorManager<
-      Error | HttpError | ResponseWithHeaders<any>
+      Error | HttpError | ResponseWithHeaders<unknown>
     >(),
   }
 
@@ -53,7 +53,7 @@ export class HttpClient {
         }
         throw error
       }
-      let data = await response.json()
+      const data = await response.json()
       // Call response interceptors with headers available
       for (const { onFulfilled } of this.interceptors.response.getHandlers()) {
         if (onFulfilled) {
@@ -61,6 +61,47 @@ export class HttpClient {
         }
       }
       return data as T
+    } catch (error: unknown) {
+      for (const { onRejected } of this.interceptors.response.getHandlers()) {
+        if (onRejected) onRejected(error)
+      }
+      if (!(error instanceof HttpError))
+        throw new HttpError(500, 'Internal Server Error')
+      throw error
+    }
+  }
+
+  private async fetchBlob(
+    url: string,
+    options: RequestInit = {}
+  ): Promise<ResponseWithHeaders<Blob>> {
+    let config: RequestInit = { ...options }
+    for (const { onFulfilled } of this.interceptors.request.getHandlers()) {
+      if (onFulfilled) config = await onFulfilled(config)
+    }
+
+    try {
+      const response = await fetch(url, config)
+      if (!response.ok) {
+        const text = await response.text()
+        let data: ApiResponse<null> | string | null
+        try {
+          data = text ? JSON.parse(text) : null
+        } catch {
+          data = text
+        }
+        throw new HttpError(
+          response.status,
+          data instanceof Object ? data.message : (data ?? response.statusText),
+          data
+        )
+      }
+
+      const result = { data: await response.blob(), headers: response.headers }
+      for (const { onFulfilled } of this.interceptors.response.getHandlers()) {
+        if (onFulfilled) await onFulfilled(result)
+      }
+      return result
     } catch (error: unknown) {
       for (const { onRejected } of this.interceptors.response.getHandlers()) {
         if (onRejected) onRejected(error)
@@ -95,6 +136,25 @@ export class HttpClient {
         ...options,
       }
     )
+  }
+
+  download(
+    endpoint: string,
+    params: Record<string, unknown> = {},
+    options?: RequestInit
+  ) {
+    const queryParams = new URLSearchParams()
+    for (const key in params) {
+      const value = params[key]
+      if (value !== undefined && value !== null) {
+        queryParams.append(key, String(value))
+      }
+    }
+    return this.fetchBlob(`${BASE_URL}${endpoint}?${queryParams.toString()}`, {
+      method: 'GET',
+      credentials: 'include',
+      ...options,
+    })
   }
 
   post<T>(endpoint: string, body?: unknown, options?: RequestInit) {

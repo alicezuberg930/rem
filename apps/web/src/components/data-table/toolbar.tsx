@@ -2,15 +2,16 @@ import { type Table } from '@tanstack/react-table'
 import { X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { DataTableDateFilter } from './date-filter'
 import { DataTableFacetedFilter } from './faceted-filter'
 import { DataTableStringFilter } from './string-filter'
-import { DataTableDateFilter } from './date-filter'
 import { DataTableViewOptions } from './view-options'
 
 type DataTableFilterType = 'select' | 'string' | 'date'
 
 type DataTableToolbarProps<TData> = {
   table: Table<TData>
+  showSearch?: boolean
   searchPlaceholder?: string
   searchKey?: string
   filters?: {
@@ -28,16 +29,18 @@ type DataTableToolbarProps<TData> = {
 
 export function DataTableToolbar<TData>({
   table,
+  showSearch = true,
   searchPlaceholder = 'Filter...',
   searchKey,
   filters = [],
 }: DataTableToolbarProps<TData>) {
-  const isFiltered = table.getState().columnFilters.length > 0 || table.getState().globalFilter
+  const isFiltered =
+    table.getState().columnFilters.length > 0 || table.getState().globalFilter
 
   return (
     <div className='flex items-center justify-between'>
       <div className='flex flex-1 flex-col-reverse items-start gap-y-2 sm:flex-row sm:items-center sm:space-x-2'>
-        {searchKey ? (
+        {showSearch && searchKey ? (
           <Input
             placeholder={searchPlaceholder}
             value={
@@ -48,14 +51,14 @@ export function DataTableToolbar<TData>({
             }
             className='w-37.5 lg:w-62.5'
           />
-        ) : (
+        ) : showSearch ? (
           <Input
             placeholder={searchPlaceholder}
             value={table.getState().globalFilter ?? ''}
             onChange={(event) => table.setGlobalFilter(event.target.value)}
             className='w-37.5 lg:w-62.5'
           />
-        )}
+        ) : null}
         <div className='flex gap-x-2'>
           {filters.map((filter) => {
             const column = table.getColumn(filter.columnId)
@@ -75,10 +78,7 @@ export function DataTableToolbar<TData>({
                 )
               case 'date':
                 return (
-                  <DataTableDateFilter
-                    key={filter.columnId}
-                    column={column}
-                  />
+                  <DataTableDateFilter key={filter.columnId} column={column} />
                 )
               case 'select':
               default:

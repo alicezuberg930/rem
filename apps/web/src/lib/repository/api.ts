@@ -1,12 +1,13 @@
-import {
+import type {
   Campaign,
   ApiResponse,
   PaginatedApiResponse,
   Contact,
+  QueryContact,
   Business,
   CalendarBooking,
 } from '@/@types'
-import {
+import type {
   BusinessValidators,
   CampaignValidators,
   BookingValidators,
@@ -69,10 +70,22 @@ export const deleteCampaign = async (
 }
 
 // contacts management
-export const getContacts = async (): Promise<
-  PaginatedApiResponse<Contact[]>
-> => {
-  return await httpClient.get<PaginatedApiResponse<Contact[]>>('/contacts')
+export const getContacts = async (
+  params: QueryContact = {}
+): Promise<PaginatedApiResponse<Contact[]>> => {
+  return await httpClient.get<PaginatedApiResponse<Contact[]>>(
+    '/contacts',
+    params as Record<string, unknown>
+  )
+}
+
+export const exportContacts = async (
+  params: Omit<QueryContact, 'page' | 'pageSize'> = {}
+) => {
+  return await httpClient.download(
+    '/contacts/export',
+    params as Record<string, unknown>
+  )
 }
 
 // business management

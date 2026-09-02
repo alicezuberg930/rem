@@ -155,9 +155,7 @@ export function AuthProvider({
   // states
   const [state, dispatch] = useReducer(reducer, initialState)
   const shouldRestoreSession = typeof window !== 'undefined' && Boolean(localStorage.getItem('accessTokenExpiration'))
-  const [businessId, setBusinessId] = useState<string | undefined>(
-    getCookie('X-Business-Id')
-  )
+  const [businessId, setBusinessId] = useState<string | undefined>(getCookie('X-Business-Id'))
   // refs
   const refreshTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const interceptorRegisteredRef = useRef<boolean>(false)
@@ -171,7 +169,7 @@ export function AuthProvider({
     isError: profileError,
   } = useQuery({
     ...auth().profile.queryOptions(),
-    enabled: shouldRestoreSession && !state.isAuthenticated,
+    // enabled: shouldRestoreSession && !state.isAuthenticated,
   })
   const {
     data: role,
@@ -188,9 +186,7 @@ export function AuthProvider({
 
     httpClient.interceptors.response.use(async (response) => {
       // Check for token expiration in response headers from auto-refresh
-      const expiration = (response as ResponseWithHeaders<any>).headers?.get?.(
-        'X-Access-Token-Expiration'
-      )
+      const expiration = (response as ResponseWithHeaders<unknown>).headers?.get?.('X-Access-Token-Expiration')
       if (expiration) localStorage.setItem('accessTokenExpiration', expiration)
       return response
     })

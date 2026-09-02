@@ -101,6 +101,11 @@ export const sidebarData: SidebarData = {
       title: 'CRM',
       items: [
         {
+          title: 'Customers',
+          url: '/customers',
+          icon: Users,
+        },
+        {
           title: 'Templates',
           url: '/templates',
           icon: LayoutTemplate,
