@@ -1,5 +1,5 @@
 import { Navigate, useLocation } from '@tanstack/react-router'
-import { useAuth } from '@/context/auth-provider'
+import { useAuth } from '@/providers/auth-provider'
 import { UnauthorisedError } from '@/features/errors/unauthorized-error'
 import { Spinner } from './ui/spinner'
 

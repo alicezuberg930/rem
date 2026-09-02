@@ -1,12 +1,34 @@
-import { Fragment, SubmitEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import {
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type SubmitEvent,
+} from 'react'
 import { format } from 'date-fns'
-import { useQuery } from '@tanstack/react-query'
-import { useChat, type ChatSocketStatus } from '@/context/chat-provider'
-import { ArrowLeft, Edit, ImagePlus, MessagesSquare, MoreVertical, Paperclip, Phone, Plus, Search, Send, Video } from 'lucide-react'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { type ChatGroup, type ChatMessage, type ChatUser } from '@/@types'
+import {
+  ArrowLeft,
+  Edit,
+  ImagePlus,
+  MessagesSquare,
+  MoreVertical,
+  Paperclip,
+  Phone,
+  Plus,
+  Search,
+  Send,
+  UsersRound,
+  Video,
+} from 'lucide-react'
 import { toast } from 'sonner'
-import { chatQueries } from '@/lib/queries/chat'
+import { chatKeys, chatQueries } from '@/lib/queries/chat'
 import { cn } from '@/lib/utils'
-import { useAuth } from '@/context/auth-provider'
+import { useAuth } from '@/providers/auth-provider'
+import { useChat, type ChatSocketStatus } from '@/providers/chat-provider'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -18,13 +40,17 @@ import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search as SearchBox } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
+import { CreateGroupDialog } from './components/create-group-dialog'
 import { NewChat } from './components/new-chat'
-import { type ChatMessage, type ChatUser } from '@/@types'
 
 type MessageGroup = {
   date: string
   messages: ChatMessage[]
 }
+
+type ChatConversation =
+  | { type: 'direct'; user: ChatUser }
+  | { type: 'group'; group: ChatGroup }
 
 const socketStatusLabel: Record<ChatSocketStatus, string> = {
   connected: 'Connected',
@@ -32,17 +58,20 @@ const socketStatusLabel: Record<ChatSocketStatus, string> = {
   disconnected: 'Disconnected',
 }
 
-const getInitials = (name: string) => name
-  .split(/\s+/)
-  .filter(Boolean)
-  .slice(0, 2)
-  .map((part) => part[0])
-  .join('')
-  .toUpperCase()
+const getInitials = (name: string) =>
+  name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join('')
+    .toUpperCase()
 
 const groupMessages = (messages: ChatMessage[]): MessageGroup[] => {
   const groups = new Map<string, ChatMessage[]>()
-  const sortedMessages = [...messages].sort((left, right) => left.createdAt.localeCompare(right.createdAt))
+  const sortedMessages = [...messages].sort((left, right) =>
+    left.createdAt.localeCompare(right.createdAt)
+  )
 
   for (const message of sortedMessages) {
     const date = format(new Date(message.createdAt), 'd MMM, yyyy')
@@ -58,15 +87,19 @@ const groupMessages = (messages: ChatMessage[]): MessageGroup[] => {
 }
 
 export function Chats() {
-  const { user } = useAuth()
+  const { role, user } = useAuth()
   const { businessId, status: socketStatus, sendMessage } = useChat()
+  const queryClient = useQueryClient()
   const currentUserId = user?.id
   const chatEnabled = Boolean(currentUserId && businessId)
   const [search, setSearch] = useState('')
   const [draft, setDraft] = useState('')
-  const [selectedUser, setSelectedUser] = useState<ChatUser | null>(null)
-  const [mobileSelectedUser, setMobileSelectedUser] = useState<ChatUser | null>(null)
-  const [createConversationDialogOpened, setCreateConversationDialog] = useState(false)
+  const [selectedConversation, setSelectedConversation] =
+    useState<ChatConversation | null>(null)
+  const [mobileConversationOpen, setMobileConversationOpen] = useState(false)
+  const [createConversationDialogOpened, setCreateConversationDialog] =
+    useState(false)
+  const [createGroupDialogOpened, setCreateGroupDialog] = useState(false)
   const messagesRef = useRef<HTMLDivElement | null>(null)
 
   const {
@@ -79,19 +112,58 @@ export function Chats() {
   })
 
   const {
+    data: groups = [],
+    isPending: groupsPending,
+    isError: groupsError,
+  } = useQuery({
+    ...chatQueries.groups(currentUserId, businessId),
+    enabled: chatEnabled,
+  })
+
+  const selectedConversationId =
+    selectedConversation?.type === 'group'
+      ? selectedConversation.group.id
+      : (selectedConversation?.user.id ?? '')
+  const messageQuery =
+    selectedConversation?.type === 'group'
+      ? chatQueries.groupMessages(
+          selectedConversation.group.id,
+          currentUserId,
+          businessId
+        )
+      : chatQueries.messages(
+          selectedConversation?.user.id ?? '',
+          currentUserId,
+          businessId
+        )
+  const {
     data: messages = [],
     isPending: messagesPending,
     isError: messagesError,
   } = useQuery({
-    ...chatQueries.messages(selectedUser?.id ?? '', currentUserId, businessId),
-    enabled: chatEnabled && Boolean(selectedUser),
+    ...messageQuery,
+    enabled: chatEnabled && Boolean(selectedConversation),
   })
 
-  const filteredUsers = useMemo(() => {
+  const filteredConversations = useMemo<ChatConversation[]>(() => {
     const query = search.trim().toLowerCase()
-    if (!query) return users
-    return users.filter(({ fullname, email }) => fullname.toLowerCase().includes(query) || email.toLowerCase().includes(query))
-  }, [search, users])
+    const matchingGroups = groups.filter(({ name }) =>
+      name.toLowerCase().includes(query)
+    )
+    const matchingUsers = users.filter(
+      ({ fullname, email }) =>
+        fullname.toLowerCase().includes(query) ||
+        email.toLowerCase().includes(query)
+    )
+
+    return [
+      ...matchingGroups.map((group) => ({ type: 'group' as const, group })),
+      ...matchingUsers.map((chatUser) => ({
+        type: 'direct' as const,
+        user: chatUser,
+      })),
+    ]
+  }, [groups, search, users])
 
   const messageGroups = useMemo(() => groupMessages(messages), [messages])
 
@@ -99,19 +171,45 @@ export function Chats() {
     const container = messagesRef.current
     if (!container) return
     container.scrollTo({ top: container.scrollHeight })
-  }, [messages.length, selectedUser?.id])
+  }, [messages.length, selectedConversationId])
 
-  const handleSelectUser = useCallback((chatUser: ChatUser) => {
-    setSelectedUser(chatUser)
-    setMobileSelectedUser(chatUser)
-    setDraft('')
-  }, [])
+  const handleSelectConversation = useCallback(
+    (conversation: ChatConversation) => {
+      setSelectedConversation(conversation)
+      setMobileConversationOpen(true)
+      setDraft('')
+    },
+    []
+  )
+
+  const handleSelectUser = useCallback(
+    (chatUser: ChatUser) =>
+      handleSelectConversation({ type: 'direct', user: chatUser }),
+    [handleSelectConversation]
+  )
+
+  const handleGroupCreated = useCallback(
+    (group: ChatGroup) => {
+      queryClient.setQueryData<ChatGroup[]>(
+        chatKeys.groups(currentUserId, businessId),
+        (currentGroups = []) => [
+          group,
+          ...currentGroups.filter(({ id }) => id !== group.id),
+        ]
+      )
+      handleSelectConversation({ type: 'group', group })
+    },
+    [businessId, currentUserId, handleSelectConversation, queryClient]
+  )
 
   const handleSubmit = (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault()
     const content = draft.trim()
-    if (!selectedUser || !content) return
-    const sent = sendMessage({ recipientId: selectedUser.id, content })
+    if (!selectedConversation || !content) return
+    const sent =
+      selectedConversation.type === 'group'
+        ? sendMessage({ groupId: selectedConversation.group.id, content })
+        : sendMessage({ recipientId: selectedConversation.user.id, content })
     if (!sent) {
       toast.error('Chat is reconnecting')
       return
@@ -143,15 +241,31 @@ export function Chats() {
                   <MessagesSquare size={20} />
                 </div>
 
-                <Button
-                  size='icon'
-                  variant='ghost'
-                  onClick={() => setCreateConversationDialog(true)}
-                  className='rounded-lg'
-                  aria-label='Start a new chat'
-                >
-                  <Edit size={24} className='stroke-muted-foreground' />
-                </Button>
+                <div>
+                  <Button
+                    size='icon'
+                    variant='ghost'
+                    onClick={() => setCreateConversationDialog(true)}
+                    className='rounded-lg'
+                    aria-label='Start a new chat'
+                  >
+                    <Edit size={24} className='stroke-muted-foreground' />
+                  </Button>
+                  {role?.name === 'OWNER' && (
+                    <Button
+                      size='icon'
+                      variant='ghost'
+                      onClick={() => setCreateGroupDialog(true)}
+                      className='rounded-lg'
+                      aria-label='Create group'
+                    >
+                      <UsersRound
+                        size={24}
+                        className='stroke-muted-foreground'
+                      />
+                    </Button>
+                  )}
+                </div>
               </div>
 
               <label
@@ -173,62 +287,80 @@ export function Chats() {
             </div>
 
             <ScrollArea className='-mx-3 h-full overflow-scroll p-3'>
-              {usersPending && (
+              {(usersPending || groupsPending) && (
                 <p className='px-2 py-4 text-sm text-muted-foreground'>
-                  Loading people…
+                  Loading conversations…
                 </p>
               )}
-              {usersError && (
+              {(usersError || groupsError) && (
                 <p className='px-2 py-4 text-sm text-destructive'>
-                  Unable to load people.
+                  Unable to load conversations.
                 </p>
               )}
-              {!usersPending && !usersError && filteredUsers.length === 0 && (
-                <p className='px-2 py-4 text-sm text-muted-foreground'>
-                  No people found.
-                </p>
-              )}
-              {filteredUsers.map((chatUser) => (
-                <Fragment key={chatUser.id}>
-                  <button
-                    type='button'
-                    className={cn(
-                      'group flex w-full rounded-md px-2 py-2 text-start text-sm hover:bg-accent hover:text-accent-foreground',
-                      selectedUser?.id === chatUser.id && 'sm:bg-muted'
-                    )}
-                    onClick={() => handleSelectUser(chatUser)}
-                  >
-                    <div className='flex min-w-0 gap-2'>
-                      <Avatar>
-                        <AvatarImage
-                          src={chatUser.avatar ?? undefined}
-                          alt={chatUser.fullname}
-                        />
-                        <AvatarFallback>
-                          {getInitials(chatUser.fullname)}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className='min-w-0'>
-                        <span className='block truncate font-medium'>
-                          {chatUser.fullname}
-                        </span>
-                        <span className='block truncate text-muted-foreground group-hover:text-accent-foreground/90'>
-                          {chatUser.email}
-                        </span>
+              {!usersPending &&
+                !groupsPending &&
+                !usersError &&
+                !groupsError &&
+                filteredConversations.length === 0 && (
+                  <p className='px-2 py-4 text-sm text-muted-foreground'>
+                    No conversations found.
+                  </p>
+                )}
+              {filteredConversations.map((conversation) => {
+                const isGroup = conversation.type === 'group'
+                const conversationId = isGroup
+                  ? conversation.group.id
+                  : conversation.user.id
+                const name = isGroup
+                  ? conversation.group.name
+                  : conversation.user.fullname
+                const avatar = isGroup
+                  ? conversation.group.avatar
+                  : conversation.user.avatar
+                const subtitle = isGroup
+                  ? `${conversation.group.members.length} members`
+                  : conversation.user.email
+                const selected =
+                  selectedConversation?.type === conversation.type &&
+                  selectedConversationId === conversationId
+
+                return (
+                  <Fragment key={`${conversation.type}:${conversationId}`}>
+                    <button
+                      type='button'
+                      className={cn(
+                        'group flex w-full rounded-md px-2 py-2 text-start text-sm hover:bg-accent hover:text-accent-foreground',
+                        selected && 'sm:bg-muted'
+                      )}
+                      onClick={() => handleSelectConversation(conversation)}
+                    >
+                      <div className='flex min-w-0 gap-2'>
+                        <Avatar>
+                          <AvatarImage src={avatar ?? undefined} alt={name} />
+                          <AvatarFallback>{getInitials(name)}</AvatarFallback>
+                        </Avatar>
+                        <div className='min-w-0'>
+                          <span className='block truncate font-medium'>
+                            {name}
+                          </span>
+                          <span className='block truncate text-muted-foreground group-hover:text-accent-foreground/90'>
+                            {subtitle}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  </button>
-                  <Separator className='my-1' />
-                </Fragment>
-              ))}
+                    </button>
+                    <Separator className='my-1' />
+                  </Fragment>
+                )
+              })}
             </ScrollArea>
           </div>
 
-          {selectedUser ? (
+          {selectedConversation ? (
             <div
               className={cn(
                 'absolute inset-0 inset-s-full z-50 hidden w-full flex-1 flex-col border bg-background shadow-xs sm:static sm:z-auto sm:flex sm:rounded-md',
-                mobileSelectedUser && 'inset-s-0 flex'
+                mobileConversationOpen && 'inset-s-0 flex'
               )}
             >
               <div className='mb-1 flex flex-none justify-between bg-card p-4 shadow-lg sm:rounded-t-md'>
@@ -237,7 +369,7 @@ export function Chats() {
                     size='icon'
                     variant='ghost'
                     className='-ms-2 h-full sm:hidden'
-                    onClick={() => setMobileSelectedUser(null)}
+                    onClick={() => setMobileConversationOpen(false)}
                     aria-label='Back to conversations'
                   >
                     <ArrowLeft className='rtl:rotate-180' />
@@ -245,19 +377,36 @@ export function Chats() {
                   <div className='flex items-center gap-2 lg:gap-4'>
                     <Avatar className='size-9 lg:size-11'>
                       <AvatarImage
-                        src={selectedUser.avatar ?? undefined}
-                        alt={selectedUser.fullname}
+                        src={
+                          (selectedConversation.type === 'group'
+                            ? selectedConversation.group.avatar
+                            : selectedConversation.user.avatar) ?? undefined
+                        }
+                        alt={
+                          selectedConversation.type === 'group'
+                            ? selectedConversation.group.name
+                            : selectedConversation.user.fullname
+                        }
                       />
                       <AvatarFallback>
-                        {getInitials(selectedUser.fullname)}
+                        {getInitials(
+                          selectedConversation.type === 'group'
+                            ? selectedConversation.group.name
+                            : selectedConversation.user.fullname
+                        )}
                       </AvatarFallback>
                     </Avatar>
                     <div className='min-w-0'>
                       <span className='block truncate text-sm font-medium lg:text-base'>
-                        {selectedUser.fullname}
+                        {selectedConversation.type === 'group'
+                          ? selectedConversation.group.name
+                          : selectedConversation.user.fullname}
                       </span>
                       <span className='block max-w-48 truncate text-xs text-muted-foreground lg:max-w-none lg:text-sm'>
-                        {selectedUser.email} · {socketStatusLabel[socketStatus]}
+                        {selectedConversation.type === 'group'
+                          ? `${selectedConversation.group.members.length} members`
+                          : selectedConversation.user.email}{' '}
+                        · {socketStatusLabel[socketStatus]}
                       </span>
                     </div>
                   </div>
@@ -309,11 +458,13 @@ export function Chats() {
                             Unable to load messages.
                           </p>
                         )}
-                        {!messagesPending && !messagesError && messageGroups.length === 0 && (
-                          <p className='text-center text-sm text-muted-foreground'>
-                            No messages yet.
-                          </p>
-                        )}
+                        {!messagesPending &&
+                          !messagesError &&
+                          messageGroups.length === 0 && (
+                            <p className='text-center text-sm text-muted-foreground'>
+                              No messages yet.
+                            </p>
+                          )}
                         {messageGroups.map((group) => (
                           <div key={group.date} className='flex flex-col gap-2'>
                             <div className='text-center text-xs'>
@@ -322,6 +473,12 @@ export function Chats() {
                             {group.messages.map((message) => {
                               const isOwnMessage =
                                 message.senderId === currentUserId
+                              const senderName =
+                                selectedConversation.type === 'group'
+                                  ? selectedConversation.group.members.find(
+                                      ({ id }) => id === message.senderId
+                                    )?.fullname
+                                  : undefined
 
                               return (
                                 <div
@@ -333,12 +490,17 @@ export function Chats() {
                                       : 'self-start rounded-[16px_16px_16px_0] bg-muted'
                                   )}
                                 >
+                                  {senderName && !isOwnMessage && (
+                                    <span className='mb-1 block text-xs font-medium text-foreground/70'>
+                                      {senderName}
+                                    </span>
+                                  )}
                                   {message.content}
                                   <span
                                     className={cn(
                                       'mt-1 block text-xs font-light text-foreground/75 italic',
                                       isOwnMessage &&
-                                      'text-end text-primary-foreground/85'
+                                        'text-end text-primary-foreground/85'
                                     )}
                                   >
                                     {format(
@@ -453,6 +615,14 @@ export function Chats() {
           onSelectUser={handleSelectUser}
           open={createConversationDialogOpened}
         />
+        {role?.name === 'OWNER' && (
+          <CreateGroupDialog
+            users={users}
+            open={createGroupDialogOpened}
+            onOpenChange={setCreateGroupDialog}
+            onCreated={handleGroupCreated}
+          />
+        )}
       </Main>
     </>
   )

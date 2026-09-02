@@ -1,4 +1,4 @@
-import { useLayout } from '@/context/layout-provider'
+import { useLayout } from '@/providers/layout-provider'
 import {
   Sidebar,
   SidebarContent,

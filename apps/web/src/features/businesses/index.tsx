@@ -1,7 +1,7 @@
 import { useNavigate } from '@tanstack/react-router'
 import { Plus } from 'lucide-react'
 import { httpClient } from '@/lib/repository/http-client'
-import { useAuth } from '@/context/auth-provider'
+import { useAuth } from '@/providers/auth-provider'
 import useDialogState from '@/hooks/use-dialog-state'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'

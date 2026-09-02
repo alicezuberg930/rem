@@ -24,4 +24,16 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, String
             @Param("currentUserId") String currentUserId,
             @Param("otherUserId") String otherUserId,
             Pageable pageable);
+
+    @Query("""
+            SELECT message
+            FROM ChatMessage message
+            WHERE message.business.id = :businessId
+              AND message.group.id = :groupId
+            ORDER BY message.createdAt DESC, message.id DESC
+            """)
+    List<ChatMessage> findGroupConversation(
+            @Param("businessId") String businessId,
+            @Param("groupId") String groupId,
+            Pageable pageable);
 }

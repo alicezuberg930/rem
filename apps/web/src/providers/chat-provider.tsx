@@ -1,14 +1,22 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
-import { getCookie } from '@/lib/cookies'
-import { chatKeys } from '@/lib/queries/chat'
-import { useAuth } from '@/context/auth-provider'
 import {
   type ChatMessage,
   type ChatSocketEvent,
   type SendChatMessage,
 } from '@/@types'
+import { toast } from 'sonner'
+import { getCookie } from '@/lib/cookies'
+import { chatKeys } from '@/lib/queries/chat'
+import { useAuth } from '@/providers/auth-provider'
 
 export type ChatSocketStatus = 'connecting' | 'connected' | 'disconnected'
 
@@ -20,13 +28,14 @@ type ChatContextValue = {
 
 const ChatContext = createContext<ChatContextValue | null>(null)
 
-const isRecord = (value: unknown): value is Record<string, unknown> => typeof value === 'object' && value !== null
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null
 
 const isChatMessage = (value: Record<string, unknown>): value is ChatMessage =>
   value.type === 'MESSAGE' &&
   typeof value.id === 'string' &&
   typeof value.senderId === 'string' &&
-  typeof value.recipientId === 'string' &&
+  (typeof value.recipientId === 'string' || typeof value.groupId === 'string') &&
   typeof value.content === 'string' &&
   typeof value.createdAt === 'string'
 
@@ -93,11 +102,35 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     let reconnectTimer: ReturnType<typeof setTimeout> | undefined
 
     const handleMessage = (message: ChatMessage) => {
+      if (message.groupId) {
+        const queryKey = chatKeys.groupMessages(
+          message.groupId,
+          currentUserId,
+          businessId
+        )
+        const cachedMessages = queryClient.getQueryData<ChatMessage[]>(queryKey)
+
+        if (cachedMessages === undefined) {
+          void queryClient.invalidateQueries({ queryKey })
+          return
+        }
+
+        queryClient.setQueryData(
+          queryKey,
+          mergeMessage(cachedMessages, message)
+        )
+        return
+      }
+
+      if (!message.recipientId) return
       if (message.senderId !== currentUserId && message.recipientId !== currentUserId) {
         return
       }
 
-      const otherUserId = message.senderId === currentUserId ? message.recipientId : message.senderId
+      const otherUserId =
+        message.senderId === currentUserId
+          ? message.recipientId
+          : message.senderId
       const queryKey = chatKeys.messages(otherUserId, currentUserId, businessId)
       const cachedMessages = queryClient.getQueryData<ChatMessage[]>(queryKey)
 
@@ -128,7 +161,10 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         reconnectAttempt = 0
         setStatus('connected')
         void queryClient.invalidateQueries({
-          queryKey: ['chats', currentUserId, businessId, 'messages'],
+          queryKey: chatKeys.groups(currentUserId, businessId),
+        })
+        void queryClient.invalidateQueries({
+          queryKey: chatKeys.allMessages(currentUserId, businessId),
         })
       }
 
@@ -137,6 +173,9 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         try {
           const chatEvent = parseSocketEvent(String(event.data))
           if (chatEvent.type === 'ERROR') {
+            void queryClient.invalidateQueries({
+              queryKey: chatKeys.allMessages(currentUserId, businessId),
+            })
             toast.error(chatEvent.message)
             return
           }
@@ -174,12 +213,39 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     }
   }, [businessId, currentUserId, queryClient])
 
-  const sendMessage = useCallback((message: SendChatMessage) => {
-    const socket = socketRef.current
-    if (!socket || socket.readyState !== WebSocket.OPEN) return false
-    socket.send(JSON.stringify(message))
-    return true
-  }, [])
+  const sendMessage = useCallback(
+    (message: SendChatMessage) => {
+      const socket = socketRef.current
+      if (!socket || socket.readyState !== WebSocket.OPEN) return false
+      try {
+        socket.send(JSON.stringify(message))
+      } catch {
+        return false
+      }
+
+      if (message.groupId && currentUserId && businessId) {
+        const optimisticMessage: ChatMessage = {
+          type: 'MESSAGE',
+          id: `pending:${crypto.randomUUID()}`,
+          senderId: currentUserId,
+          groupId: message.groupId,
+          content: message.content,
+          createdAt: new Date().toISOString(),
+        }
+        const queryKey = chatKeys.groupMessages(
+          message.groupId,
+          currentUserId,
+          businessId
+        )
+        queryClient.setQueryData<ChatMessage[]>(queryKey, (messages = []) =>
+          mergeMessage(messages, optimisticMessage)
+        )
+      }
+
+      return true
+    },
+    [businessId, currentUserId, queryClient]
+  )
 
   const value = useMemo<ChatContextValue>(
     () => ({

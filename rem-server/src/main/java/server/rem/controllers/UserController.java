@@ -4,7 +4,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import lombok.RequiredArgsConstructor;
+import server.rem.annotations.RequestUser;
 import server.rem.dtos.APIResponse;
+import server.rem.dtos.chat.ChatUserResponse;
 import server.rem.entities.User;
 import server.rem.repositories.UserRepository;
 import server.rem.services.UserService;
@@ -33,12 +35,15 @@ public class UserController {
         return ResponseEntity.ok(savedUser);
     }
 
-    @GetMapping
-    public ResponseEntity<APIResponse<List<User>>> getAllUsers() {
+    @GetMapping("/get")
+    public ResponseEntity<APIResponse<List<ChatUserResponse>>> getUsers(
+            @RequestUser String userId,
+            @RequestAttribute("businessId") String businessId,
+            @RequestParam(defaultValue = "false") boolean isChat) {
         return ResponseEntity.ok().body(APIResponse.success(
                 200,
                 "User list retrieved successfully",
-                userService.getAllUsers()));
+                userService.getUsers(userId, businessId, isChat)));
     }
 
     @GetMapping("/{id}")

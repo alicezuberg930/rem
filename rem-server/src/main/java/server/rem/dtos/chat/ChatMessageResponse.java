@@ -12,6 +12,7 @@ public class ChatMessageResponse {
     private final String id;
     private final String senderId;
     private final String recipientId;
+    private final String groupId;
     private final String content;
     private final LocalDateTime createdAt;
 }

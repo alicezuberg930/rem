@@ -5,7 +5,7 @@ import { Loader2, LogIn } from 'lucide-react'
 import { IconFacebook, IconGithub } from '@/assets/brand-icons'
 import { cn } from '@/lib/utils'
 import { AuthValidators } from '@/lib/validators/auth'
-import { useAuth } from '@/context/auth-provider'
+import { useAuth } from '@/providers/auth-provider'
 import { Button } from '@/components/ui/button'
 import { Field, FieldGroup } from '@/components/ui/field'
 import {

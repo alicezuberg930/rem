@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router'
-import { useAuth } from '@/context/auth-provider'
+import { useAuth } from '@/providers/auth-provider'
 import useDialogState from '@/hooks/use-dialog-state'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'

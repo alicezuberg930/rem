@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import server.rem.dtos.chat.ChatMessageRequest;
 import server.rem.dtos.chat.ChatMessageResponse;
 import server.rem.services.ChatService;
+import server.rem.services.ChatService.ChatMessageDelivery;
 import server.rem.utils.exceptions.ForbiddenException;
 import server.rem.utils.exceptions.ResourceNotFoundException;
 
@@ -52,11 +53,11 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
             ChatMessageRequest request = objectMapper.readValue(payload.getPayload(), ChatMessageRequest.class);
             String senderId = requiredAttribute(session, ChatHandshakeInterceptor.USER_ID_ATTRIBUTE);
             String businessId = requiredAttribute(session, ChatHandshakeInterceptor.BUSINESS_ID_ATTRIBUTE);
-            ChatMessageResponse message = chatService.sendMessage(senderId, businessId, request);
+            ChatMessageDelivery delivery = chatService.sendMessageForDelivery(senderId, businessId, request);
+            ChatMessageResponse message = delivery.message();
             TextMessage outbound = new TextMessage(objectMapper.writeValueAsString(message));
 
-            sendToUser(businessId, message.getSenderId(), outbound);
-            sendToUser(businessId, message.getRecipientId(), outbound);
+            delivery.recipientIds().forEach(userId -> sendToUser(businessId, userId, outbound));
         } catch (JsonProcessingException exception) {
             sendError(session, "Invalid message payload");
         } catch (IllegalArgumentException | ResourceNotFoundException | ForbiddenException exception) {

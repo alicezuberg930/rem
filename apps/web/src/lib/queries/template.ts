@@ -6,7 +6,7 @@ import {
   Template,
 } from '@/@types'
 import { TemplateValidators } from '@/lib/validators'
-import { queryClient } from '@/context/query-provider'
+import { queryClient } from '@/providers/query-provider'
 import { httpClient } from '../repository/http-client'
 
 const keys = {

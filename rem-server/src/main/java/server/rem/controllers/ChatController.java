@@ -42,4 +42,16 @@ public class ChatController {
                 "Chat messages retrieved successfully",
                 chatService.getConversation(userId, otherUserId, businessId, limit)));
     }
+
+    @GetMapping("/group/{groupId}/messages")
+    public ResponseEntity<APIResponse<List<ChatMessageResponse>>> getGroupConversation(
+            @RequestUser String userId,
+            @RequestAttribute("businessId") String businessId,
+            @PathVariable String groupId,
+            @RequestParam(defaultValue = "100") int limit) {
+        return ResponseEntity.ok(APIResponse.success(
+                200,
+                "Group chat messages retrieved successfully",
+                chatService.getGroupConversation(userId, groupId, businessId, limit)));
+    }
 }

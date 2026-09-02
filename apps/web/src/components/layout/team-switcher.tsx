@@ -4,7 +4,7 @@ import { Business, Role } from '@/@types'
 import { ChevronsUpDown, Plus } from 'lucide-react'
 import { getCookie } from '@/lib/cookies'
 import { httpClient } from '@/lib/repository/http-client'
-import { useAuth } from '@/context/auth-provider'
+import { useAuth } from '@/providers/auth-provider'
 import {
   DropdownMenu,
   DropdownMenuContent,

@@ -1,23 +1,11 @@
 import { memo } from 'react'
 //
-import BackgroundIllustration from './BackgroundIllustration'
+import BackgroundIllustration from './background-illustration'
 
-const PRIMARY_LIGHT = 'var(--primary-light)'
-const PRIMARY_MAIN = 'var(--primary)'
-const PRIMARY_DARK = 'var(--primary)'
-const PRIMARY_DARKER = 'var(--primary)'
-
-function PageNotFoundIllustration({
-  ...other
-}: React.HTMLAttributes<HTMLDivElement>) {
+function PageNotFoundIllustration({ ...other }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div {...other}>
-      <svg
-        width='100%'
-        height='100%'
-        viewBox='0 0 480 360'
-        xmlns='http://www.w3.org/2000/svg'
-      >
+      <svg width='100%' height='100%' viewBox='0 0 480 360' xmlns='http://www.w3.org/2000/svg'>
         <BackgroundIllustration />
 
         <image
@@ -28,17 +16,14 @@ function PageNotFoundIllustration({
         />
 
         <path
-          fill='var(--primary)'
+          className="fill-primary"
           d='M111.1 141.2c58.7-1 58.6-88.3 0-89.2-58.6 1-58.6 88.3 0 89.2z'
           opacity='0.12'
         />
 
+        <path className="fill-primary" d='M111.1 120c30.8-.5 30.8-46.3 0-46.8-30.8.5-30.8 46.3 0 46.8z' />
         <path
-          fill='var(--primary)'
-          d='M111.1 120c30.8-.5 30.8-46.3 0-46.8-30.8.5-30.8 46.3 0 46.8z'
-        />
-        <path
-          fill={PRIMARY_DARKER}
+          className="fill-primary/60"
           d='M244.9 182.5c82.3 1.4 82.2 123.8 0 125.2-82.3-1.5-82.3-123.8 0-125.2zm0 23.1c-51.8.9-51.8 77.9 0 78.8 51.8-.9 51.7-77.9 0-78.8z'
         />
 
@@ -48,7 +33,7 @@ function PageNotFoundIllustration({
         />
 
         <path
-          fill={PRIMARY_MAIN}
+          className="fill-primary"
           d='M425.6 118.2c0-5-4.6-9-9.6-8.2-2-3.7-6-6-10.2-5.9 4.3-21.4-30-21.4-25.7 0-8.7-.8-15.1 9.4-10.4 16.8 2.1 3.5 5.9 5.6 10 5.5h38.7v-.1c4.1-.4 7.2-3.9 7.2-8.1zM104.3 200c.1-4.2-4.1-7.8-8.2-7-1.7-3.2-5.1-5.1-8.8-5 3.8-18.4-25.8-18.4-22 0-7.4-.7-12.9 8.1-8.9 14.4 1.8 3 5.1 4.8 8.6 4.7h33.2v-.1c3.4-.4 6.1-3.4 6.1-7z'
           opacity='0.08'
         />
@@ -62,8 +47,8 @@ function PageNotFoundIllustration({
             y2='305.935'
             gradientUnits='userSpaceOnUse'
           >
-            <stop stopColor={PRIMARY_LIGHT} />
-            <stop offset='1' stopColor={PRIMARY_DARK} />
+            <stop stopColor="var(--primary)" />
+            <stop offset='1' stopColor="var(--primary)" />
           </linearGradient>
         </defs>
       </svg>

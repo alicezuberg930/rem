@@ -2,10 +2,10 @@ import { StrictMode } from 'react'
 import ReactDOM from 'react-dom/client'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 // providers
-import { DirectionProvider } from './context/direction-provider'
-import { FontProvider } from './context/font-provider'
-import { queryClient, QueryClientProvider } from './context/query-provider'
-import { ThemeProvider } from './context/theme-provider'
+import { DirectionProvider } from './providers/direction-provider'
+import { FontProvider } from './providers/font-provider'
+import { queryClient, QueryClientProvider } from './providers/query-provider'
+import { ThemeProvider } from './providers/theme-provider'
 // Generated Routes
 import { routeTree } from './routeTree.gen'
 // Styles

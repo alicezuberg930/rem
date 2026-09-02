@@ -22,7 +22,10 @@ import lombok.Setter;
                         columnList = "business_id,sender_id,recipient_id,created_at"),
                 @Index(
                         name = "idx_chat_business_recipient_sender_created",
-                        columnList = "business_id,recipient_id,sender_id,created_at")
+                        columnList = "business_id,recipient_id,sender_id,created_at"),
+                @Index(
+                        name = "idx_chat_business_group_created",
+                        columnList = "business_id,group_id,created_at")
         })
 @Getter
 @Setter
@@ -38,9 +41,13 @@ public class ChatMessage extends Base {
     @JoinColumn(name = "sender_id", nullable = false)
     private User sender;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "recipient_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "recipient_id")
     private User recipient;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "group_id")
+    private Group group;
 
     @Column(name = "content", nullable = false, length = 4000)
     private String content;

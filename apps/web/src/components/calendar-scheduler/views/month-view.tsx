@@ -1,11 +1,9 @@
-"use client"
-
 import {
   startOfMonth,
   startOfWeek,
   addDays,
   isSameMonth,
-  isToday, // Thêm isToday vào đây
+  isToday,
   parseISO,
   isWithinInterval,
   differenceInCalendarDays,
@@ -14,16 +12,12 @@ import {
   format,
   isAfter,
 } from "date-fns"
-
 import { useContext, useEffect, useMemo, useRef, useState } from "react"
-import { useCalendar } from "../../../hooks/useCalendar"
-import { changeEventTime, changeEventTimeV2, getCalendarMonth, getCalendarMonthV2 } from "@/lib/api/calendarApi"
+import { useCalendar } from "../use-calendar"
 import { DndContext, closestCenter, DragOverlay, useDraggable } from "@dnd-kit/core"
 import { cn } from "@/lib/utils"
-import { useToast } from "@/contexts/ToastContext"
 import { ChevronDown } from "lucide-react"
 import { useCalendarReload } from "@/contexts/CalendarReloadContext"
-import EventDetail from "../forms/event-detail"
 import ConfirmChangeTime from "../forms/confirm-change-time"
 import { convertDateTimeToDate } from "@/helpers/stringHelpers"
 import { CalendarConstants } from "@/constants/calendarConstants"
@@ -111,12 +105,10 @@ export const MonthView = ({ date, joinType, type, view }) => {
   const { calendar, month, year } = useMemo(() => generateCalendar(currentDate), [date])
   const { convertToEvent, DraggableEvent, DroppableDay, sensors, formatToDateTime, useDraggable } = useCalendar()
   const { reloadKey } = useCalendarReload()
-  const toast = useToast()
   const [activeId, setActiveId] = useState(null)
   const [draggedItem, setDraggedItem] = useState(null)
   const calendarRef = useRef(null)
   const loadingContext = useContext(LoadingContext)
-  const { sendReloadCalendar } = useSignalR()
 
   const params = useSearchParams()
   const idOutside = params.get("id");
@@ -128,7 +120,6 @@ export const MonthView = ({ date, joinType, type, view }) => {
   
   useEffect(() => {
     if (idOutside) {
-
       handleOpenFormOutside(idOutside)
       if (Number(typeOutside) === 3)
         route.push("/calendar")
@@ -144,21 +135,6 @@ export const MonthView = ({ date, joinType, type, view }) => {
   const handleOpenFormOutside = (calendarId) => {
     setInfo({ ...info, id: calendarId })
     setIsOpenFormEventDetail(true)
-  }
-
-  useEffect(() => {
-    const unSend = sendReloadCalendar(msg => {
-      if (msg) {
-        fetchDataCalendarByMonth()
-      }
-    })
-
-    return unSend
-  }, [])
-
-  useEffect(() => { fetchDataCalendarByMonth() }, [joinType, type, date, view, reloadKey.month])
-
-  const fetchDataCalendarByMonth = async () => {
   }
 
   const handleDragStart = ({ active }) => {
@@ -607,18 +583,6 @@ export const MonthView = ({ date, joinType, type, view }) => {
           />
         )
       }
-
-      {isOpenFormEventDetail && (
-        <EventDetail
-          isOpen={isOpenFormEventDetail}
-          onClose={() => {
-            clearId()
-            setIsOpenFormEventDetail(false)
-          }}
-          info={info}
-          view={CalendarConstants.viewType[CalendarConstants.views.Month]}
-        />
-      )}
     </>
   )
 }

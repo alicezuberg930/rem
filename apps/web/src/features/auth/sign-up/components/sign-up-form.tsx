@@ -3,7 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { IconFacebook, IconGithub } from '@/assets/brand-icons'
 import { cn } from '@/lib/utils'
 import { AuthValidators } from '@/lib/validators/auth'
-import { useAuth } from '@/context/auth-provider'
+import { useAuth } from '@/providers/auth-provider'
 import { Button } from '@/components/ui/button'
 import { FieldGroup } from '@/components/ui/field'
 import {
