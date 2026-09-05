@@ -26,7 +26,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { chatKeys, chatQueries } from '@/lib/queries/chat'
-import { cn } from '@/lib/utils'
+import { cn, getInitials } from '@/lib/utils'
 import { useAuth } from '@/providers/auth-provider'
 import { useChat, type ChatSocketStatus } from '@/providers/chat-provider'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -42,48 +42,24 @@ import { Search as SearchBox } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { CreateGroupDialog } from './components/create-group-dialog'
 import { NewChat } from './components/new-chat'
+import { Dot } from 'lucide-react'
 
 type MessageGroup = {
   date: string
   messages: ChatMessage[]
 }
 
-type ChatConversation =
-  | { type: 'direct'; user: ChatUser }
-  | { type: 'group'; group: ChatGroup }
-
-const socketStatusLabel: Record<ChatSocketStatus, string> = {
-  connected: 'Connected',
-  connecting: 'Connecting…',
-  disconnected: 'Disconnected',
+type ChatConversation = {
+  type: 'direct'
+  user: ChatUser
+} | {
+  type: 'group'
+  group: ChatGroup
 }
 
-const getInitials = (name: string) =>
-  name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0])
-    .join('')
-    .toUpperCase()
-
-const groupMessages = (messages: ChatMessage[]): MessageGroup[] => {
-  const groups = new Map<string, ChatMessage[]>()
-  const sortedMessages = [...messages].sort((left, right) =>
-    left.createdAt.localeCompare(right.createdAt)
-  )
-
-  for (const message of sortedMessages) {
-    const date = format(new Date(message.createdAt), 'd MMM, yyyy')
-    const group = groups.get(date)
-    if (group) group.push(message)
-    else groups.set(date, [message])
-  }
-
-  return Array.from(groups, ([date, groupedMessages]) => ({
-    date,
-    messages: groupedMessages,
-  }))
+const socketStatusLabel: Record<ChatSocketStatus, React.ReactNode> = {
+  connected: <Dot className='h-2 w-2 fill-green-500' />,
+  disconnected: <Dot className='h-2 w-2 fill-red-500' />,
 }
 
 export function Chats() {
@@ -94,14 +70,11 @@ export function Chats() {
   const chatEnabled = Boolean(currentUserId && businessId)
   const [search, setSearch] = useState('')
   const [draft, setDraft] = useState('')
-  const [selectedConversation, setSelectedConversation] =
-    useState<ChatConversation | null>(null)
+  const [selectedConversation, setSelectedConversation] = useState<ChatConversation | null>(null)
   const [mobileConversationOpen, setMobileConversationOpen] = useState(false)
-  const [createConversationDialogOpened, setCreateConversationDialog] =
-    useState(false)
+  const [createConversationDialogOpened, setCreateConversationDialog] = useState(false)
   const [createGroupDialogOpened, setCreateGroupDialog] = useState(false)
   const messagesRef = useRef<HTMLDivElement | null>(null)
-
   const {
     data: users = [],
     isPending: usersPending,
@@ -110,7 +83,6 @@ export function Chats() {
     ...chatQueries.users(currentUserId, businessId),
     enabled: chatEnabled,
   })
-
   const {
     data: groups = [],
     isPending: groupsPending,
@@ -119,23 +91,19 @@ export function Chats() {
     ...chatQueries.groups(currentUserId, businessId),
     enabled: chatEnabled,
   })
-
-  const selectedConversationId =
-    selectedConversation?.type === 'group'
-      ? selectedConversation.group.id
-      : (selectedConversation?.user.id ?? '')
-  const messageQuery =
-    selectedConversation?.type === 'group'
-      ? chatQueries.groupMessages(
-          selectedConversation.group.id,
-          currentUserId,
-          businessId
-        )
-      : chatQueries.messages(
-          selectedConversation?.user.id ?? '',
-          currentUserId,
-          businessId
-        )
+  const selectedConversationId = selectedConversation?.type === 'group'
+    ? selectedConversation.group.id
+    : (selectedConversation?.user.id ?? '')
+  const messageQuery = selectedConversation?.type === 'group'
+    ? chatQueries.groupMessages(
+      selectedConversation.group.id,
+      currentUserId,
+      businessId
+    ) : chatQueries.messages(
+      selectedConversation?.user.id ?? '',
+      currentUserId,
+      businessId
+    )
   const {
     data: messages = [],
     isPending: messagesPending,
@@ -147,14 +115,8 @@ export function Chats() {
 
   const filteredConversations = useMemo<ChatConversation[]>(() => {
     const query = search.trim().toLowerCase()
-    const matchingGroups = groups.filter(({ name }) =>
-      name.toLowerCase().includes(query)
-    )
-    const matchingUsers = users.filter(
-      ({ fullname, email }) =>
-        fullname.toLowerCase().includes(query) ||
-        email.toLowerCase().includes(query)
-    )
+    const matchingGroups = groups.filter(({ name }) => name.toLowerCase().includes(query))
+    const matchingUsers = users.filter(({ fullname, email }) => fullname.toLowerCase().includes(query) || email.toLowerCase().includes(query))
 
     return [
       ...matchingGroups.map((group) => ({ type: 'group' as const, group })),
@@ -165,7 +127,22 @@ export function Chats() {
     ]
   }, [groups, search, users])
 
-  const messageGroups = useMemo(() => groupMessages(messages), [messages])
+  const messageGroups = useMemo<MessageGroup[]>(() => {
+    const groups = new Map<string, ChatMessage[]>()
+    const sortedMessages = [...messages].sort((left, right) => left.createdAt.localeCompare(right.createdAt))
+
+    for (const message of sortedMessages) {
+      const date = format(new Date(message.createdAt), 'd MMM, yyyy')
+      const group = groups.get(date)
+      if (group) group.push(message)
+      else groups.set(date, [message])
+    }
+
+    return Array.from(groups, ([date, groupedMessages]) => ({
+      date,
+      messages: groupedMessages,
+    }))
+  }, [messages])
 
   useEffect(() => {
     const container = messagesRef.current
@@ -173,43 +150,32 @@ export function Chats() {
     container.scrollTo({ top: container.scrollHeight })
   }, [messages.length, selectedConversationId])
 
-  const handleSelectConversation = useCallback(
-    (conversation: ChatConversation) => {
-      setSelectedConversation(conversation)
-      setMobileConversationOpen(true)
-      setDraft('')
-    },
-    []
-  )
+  const handleSelectConversation = useCallback((conversation: ChatConversation) => {
+    setSelectedConversation(conversation)
+    setMobileConversationOpen(true)
+    setDraft('')
+  }, [])
 
-  const handleSelectUser = useCallback(
-    (chatUser: ChatUser) =>
-      handleSelectConversation({ type: 'direct', user: chatUser }),
-    [handleSelectConversation]
-  )
+  const handleSelectUser = useCallback((chatUser: ChatUser) => handleSelectConversation({ type: 'direct', user: chatUser }), [handleSelectConversation])
 
-  const handleGroupCreated = useCallback(
-    (group: ChatGroup) => {
-      queryClient.setQueryData<ChatGroup[]>(
-        chatKeys.groups(currentUserId, businessId),
-        (currentGroups = []) => [
-          group,
-          ...currentGroups.filter(({ id }) => id !== group.id),
-        ]
-      )
-      handleSelectConversation({ type: 'group', group })
-    },
-    [businessId, currentUserId, handleSelectConversation, queryClient]
-  )
+  const handleGroupCreated = useCallback((group: ChatGroup) => {
+    queryClient.setQueryData<ChatGroup[]>(
+      chatKeys.groups(currentUserId, businessId),
+      (currentGroups = []) => [
+        group,
+        ...currentGroups.filter(({ id }) => id !== group.id),
+      ]
+    )
+    handleSelectConversation({ type: 'group', group })
+  }, [businessId, currentUserId, handleSelectConversation, queryClient])
 
   const handleSubmit = (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault()
     const content = draft.trim()
     if (!selectedConversation || !content) return
-    const sent =
-      selectedConversation.type === 'group'
-        ? sendMessage({ groupId: selectedConversation.group.id, content })
-        : sendMessage({ recipientId: selectedConversation.user.id, content })
+    const sent = selectedConversation.type === 'group'
+      ? sendMessage({ groupId: selectedConversation.group.id, content })
+      : sendMessage({ recipientId: selectedConversation.user.id, content })
     if (!sent) {
       toast.error('Chat is reconnecting')
       return
@@ -238,7 +204,6 @@ export function Chats() {
               <div className='flex items-center justify-between py-2'>
                 <div className='flex gap-2'>
                   <h1 className='text-2xl font-bold'>Inbox</h1>
-                  <MessagesSquare size={20} />
                 </div>
 
                 <div>
@@ -458,8 +423,7 @@ export function Chats() {
                             Unable to load messages.
                           </p>
                         )}
-                        {!messagesPending &&
-                          !messagesError &&
+                        {!messagesPending && !messagesError &&
                           messageGroups.length === 0 && (
                             <p className='text-center text-sm text-muted-foreground'>
                               No messages yet.
@@ -471,15 +435,10 @@ export function Chats() {
                               {group.date}
                             </div>
                             {group.messages.map((message) => {
-                              const isOwnMessage =
-                                message.senderId === currentUserId
-                              const senderName =
-                                selectedConversation.type === 'group'
-                                  ? selectedConversation.group.members.find(
-                                      ({ id }) => id === message.senderId
-                                    )?.fullname
-                                  : undefined
-
+                              const isOwnMessage = message.senderId === currentUserId
+                              const senderName = selectedConversation.type === 'group'
+                                ? selectedConversation.group.members.find(({ id }) => id === message.senderId)?.fullname
+                                : undefined
                               return (
                                 <div
                                   key={message.id}
@@ -500,13 +459,10 @@ export function Chats() {
                                     className={cn(
                                       'mt-1 block text-xs font-light text-foreground/75 italic',
                                       isOwnMessage &&
-                                        'text-end text-primary-foreground/85'
+                                      'text-end text-primary-foreground/85'
                                     )}
                                   >
-                                    {format(
-                                      new Date(message.createdAt),
-                                      'h:mm a'
-                                    )}
+                                    {format(new Date(message.createdAt), 'h:mm a')}
                                   </span>
                                 </div>
                               )

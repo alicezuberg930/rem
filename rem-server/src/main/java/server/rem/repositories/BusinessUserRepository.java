@@ -1,5 +1,9 @@
 package server.rem.repositories;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -9,11 +13,8 @@ import server.rem.entities.BusinessUser;
 import server.rem.entities.BusinessUserId;
 import server.rem.entities.User;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-
 public interface BusinessUserRepository extends JpaRepository<BusinessUser, BusinessUserId> {
+
     List<BusinessUser> findByBusiness(Business business);
 
     List<BusinessUser> findByUser(User user);
@@ -57,6 +58,16 @@ public interface BusinessUserRepository extends JpaRepository<BusinessUser, Busi
             ORDER BY bu.user.fullname
             """)
     List<User> findActiveUsersByBusinessId(@Param("businessId") String businessId);
+
+    @Query("""
+            SELECT bu
+            FROM BusinessUser bu
+            JOIN FETCH bu.user
+            JOIN FETCH bu.role
+            WHERE bu.id.businessId = :businessId
+            ORDER BY bu.user.fullname
+            """)
+    List<BusinessUser> findUsersByBusinessId(@Param("businessId") String businessId);
 
     @Query("""
             SELECT bu.user

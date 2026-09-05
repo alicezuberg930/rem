@@ -1,9 +1,10 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { CALENDAR_BOOKING_STATUS, CalendarBooking } from '@/@types'
+import { useMutation } from '@tanstack/react-query'
+import { CALENDAR_BOOKING_STATUS, type CalendarBooking } from '@/@types'
 import { toast } from 'sonner'
-import { createBooking, updateBooking } from '@/lib/repository/api'
-import { HttpError } from '@/lib/repository/http-error'
+import { bookings } from '@/lib/queries/booking'
+import type { HttpError } from '@/lib/repository/http-error'
 import { BookingValidators } from '@/lib/validators/booking'
 import { Button } from '@/components/ui/button'
 import {
@@ -36,6 +37,8 @@ export function BookingsActionDialog({
 }: BookingActionDialogProps) {
   const { contacts } = useBookings()
   const isEdit = !!currentRow
+  const createBooking = useMutation(bookings().create.mutationOptions())
+  const updateBooking = useMutation(bookings().update.mutationOptions())
   const form = useForm<BookingValidators.BookingForm>({
     resolver: zodResolver(BookingValidators.formSchema),
     defaultValues: isEdit
@@ -65,16 +68,13 @@ export function BookingsActionDialog({
 
   const onSubmit = async (values: BookingValidators.BookingForm) => {
     const submit = async () => {
-      let response
       try {
-        if (values.isEdit) {
-          response = await updateBooking(values, currentRow?.id!)
-        } else {
-          response = await createBooking(values)
-        }
-        return response
-      } catch (error) {
-        throw error
+        return values.isEdit
+          ? await updateBooking.mutateAsync({
+              ...values,
+              id: currentRow!.id,
+            })
+          : await createBooking.mutateAsync(values)
       } finally {
         form.reset()
         onOpenChange(false)

@@ -4,10 +4,10 @@ import type {
   Contact,
   ContactTag,
   CustomerGroup,
+  PaginatedApiResponse,
   QueryContact,
 } from '@/@types'
 import { queryClient } from '@/providers/query-provider'
-import { getContacts } from '@/lib/repository/api'
 import { httpClient } from '@/lib/repository/http-client'
 import type { ContactForm } from '@/lib/validators/contact'
 
@@ -27,7 +27,7 @@ export const contacts = () => ({
       queryOptions({
         queryKey: keys.all(options),
         queryFn: async () => {
-          const { data } = await getContacts(options)
+          const { data } = await httpClient.get<PaginatedApiResponse<Contact[]>>('/contacts')
           return data
         },
       }),

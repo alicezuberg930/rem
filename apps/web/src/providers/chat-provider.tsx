@@ -18,7 +18,7 @@ import { getCookie } from '@/lib/cookies'
 import { chatKeys } from '@/lib/queries/chat'
 import { useAuth } from '@/providers/auth-provider'
 
-export type ChatSocketStatus = 'connecting' | 'connected' | 'disconnected'
+export type ChatSocketStatus = 'connected' | 'disconnected'
 
 type ChatContextValue = {
   businessId?: string
@@ -82,7 +82,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   const queryClient = useQueryClient()
   const currentUserId = user?.id
   const [businessId, setBusinessId] = useState(() => getCookie('X-Business-Id'))
-  const [status, setStatus] = useState<ChatSocketStatus>('connecting')
+  const [status, setStatus] = useState<ChatSocketStatus>('disconnected')
   const socketRef = useRef<WebSocket | null>(null)
   const enabled = Boolean(currentUserId && businessId)
 
@@ -193,14 +193,14 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         const delay = Math.min(1_000 * 2 ** reconnectAttempt, 15_000)
         reconnectAttempt += 1
         reconnectTimer = setTimeout(() => {
-          setStatus('connecting')
+          setStatus('disconnected')
           connect()
         }, delay)
       }
     }
 
     queueMicrotask(() => {
-      if (active) setStatus('connecting')
+      if (active) setStatus('disconnected')
     })
     connect()
 

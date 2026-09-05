@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react'
-import { CalendarBooking, Contact } from '@/@types'
-import { getContacts } from '@/lib/repository/api'
+import React, { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import type { CalendarBooking, Contact } from '@/@types'
+import { bookings } from '@/lib/queries/booking'
 import useDialogState from '@/hooks/use-dialog-state'
 
 type BookingsDialogType = 'add'
@@ -18,11 +19,7 @@ const BookingsContext = React.createContext<BookingsContextType | null>(null)
 export function BookingsProvider({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useDialogState<BookingsDialogType>(null)
   const [currentRow, setCurrentRow] = useState<CalendarBooking | null>(null)
-  const [contacts, setContacts] = useState<Contact[]>([])
-
-  useEffect(() => {
-    getContacts().then((res) => setContacts(res.data.content))
-  }, [])
+  const { data: contacts = [] } = useQuery(bookings().contacts.queryOptions())
 
   return (
     <BookingsContext

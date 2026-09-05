@@ -2,11 +2,11 @@ import { type ClassValue, clsx } from 'clsx'
 import juice from 'juice'
 import { twMerge } from 'tailwind-merge'
 
-export function cn(...inputs: ClassValue[]) {
+const cn = (...inputs: ClassValue[]) => {
   return twMerge(clsx(inputs))
 }
 
-export function sleep(ms: number = 1000) {
+const sleep = (ms: number = 1000) => {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
@@ -130,7 +130,7 @@ const quillCss = `
   ol { list-style-type: decimal; }
 `
 
-export function inlineQuillStyles(html: string): string {
+const inlineQuillStyles = (html: string): string => {
   const wrapped = `<div>${html}</div>`
   const inlined = juice.inlineContent(wrapped, quillCss, {
     inlinePseudoElements: true,
@@ -140,28 +140,22 @@ export function inlineQuillStyles(html: string): string {
   return inlined
 }
 
-export function getBaseUrl() {
-  if (typeof window !== 'undefined') return window.location.origin
-  if (import.meta.env.VITE_PRODUCTION_URL)
-    return import.meta.env.VITE_PRODUCTION_URL
-  return `http://localhost:5173`
-}
+const getBaseUrl = () => import.meta.env.VITE_API_URL
 
-export function slugify(str: string): string {
+const slugify = (str: string): string => {
   if (!str) return ''
-  return (
-    str
-      .trim()
-      .normalize('NFD') // Normalize to decompose combined letters (e.g., ấ → a + ̂)
-      .replace(/[\u0300-\u036f]/g, '') // Remove diacritics (accents)
-      .replace(/[^A-Za-z0-9\s-đ]/g, '') // Allow Vietnamese characters, numbers, spaces, and hyphens
-      // .replace(/[^A-Za-z0-9\s-]/g, '') // Remove special characters except spaces and hyphens
-      .replace(/\s+/g, '-') // Replace spaces with hyphens
-      .replace(/-+/g, '-')
-  ) // Collapse multiple hyphens into one
+  return str
+    .trim()
+    .normalize('NFD') // Normalize to decompose combined letters (e.g., ấ → a + ̂)
+    .replace(/[\u0300-\u036f]/g, '') // Remove diacritics (accents)
+    .replace(/[^A-Za-z0-9\s-đ]/g, '') // Allow Vietnamese characters, numbers, spaces, and hyphens
+    // .replace(/[^A-Za-z0-9\s-]/g, '') // Remove special characters except spaces and hyphens
+    .replace(/\s+/g, '-') // Replace spaces with hyphens
+    // Collapse multiple hyphens into one
+    .replace(/-+/g, '-')
 }
 
-export const alpha = (color: string, opacity: number): string => {
+const alpha = (color: string, opacity: number): string => {
   // Handle hex colors
   if (color.startsWith('#')) {
     const hex = color.replace('#', '')
@@ -180,10 +174,7 @@ export const alpha = (color: string, opacity: number): string => {
   return `rgba(0, 0, 0, ${opacity})`
 }
 
-export const getCurrentLocation = (): Promise<{
-  latitude: number
-  longitude: number
-}> => {
+const getCurrentLocation = (): Promise<{ latitude: number, longitude: number }> => {
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation) {
       reject(new Error('Geolocation is not supported'))
@@ -206,3 +197,14 @@ export const getCurrentLocation = (): Promise<{
     )
   })
 }
+
+const getInitials = (name: string) =>
+  name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join('')
+    .toUpperCase()
+
+export { getInitials, getCurrentLocation, alpha, slugify, getBaseUrl, inlineQuillStyles, sleep, cn }

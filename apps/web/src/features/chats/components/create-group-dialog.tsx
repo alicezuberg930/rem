@@ -36,6 +36,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { type CustomFile, UploadAvatar } from '@/components/upload'
+import { getInitials } from '@/lib/utils'
 
 const groupSchema = z.object({
   name: z
@@ -65,15 +66,6 @@ type CreateGroupDialogProps = {
   onCreated: (group: ChatGroup) => void
 }
 
-const getInitials = (name: string) =>
-  name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0])
-    .join('')
-    .toUpperCase()
-
 export function CreateGroupDialog({
   users,
   open,
@@ -90,27 +82,21 @@ export function CreateGroupDialog({
   })
   const avatar = useWatch({ control: form.control, name: 'avatar' })
 
-  useEffect(
-    () => () => {
-      if (avatar?.preview) URL.revokeObjectURL(avatar.preview)
-    },
-    [avatar]
-  )
+  useEffect(() => () => {
+    if (avatar?.preview) URL.revokeObjectURL(avatar.preview)
+  }, [avatar])
 
-  const handleAvatarDrop = useCallback(
-    (files: File[]) => {
-      const file = files[0]
-      if (!file) return
-      const avatarFile = Object.assign(file, {
-        preview: URL.createObjectURL(file),
-      })
-      form.setValue('avatar', avatarFile, {
-        shouldDirty: true,
-        shouldValidate: true,
-      })
-    },
-    [form]
-  )
+  const handleAvatarDrop = useCallback((files: File[]) => {
+    const file = files[0]
+    if (!file) return
+    const avatarFile = Object.assign(file, {
+      preview: URL.createObjectURL(file),
+    })
+    form.setValue('avatar', avatarFile, {
+      shouldDirty: true,
+      shouldValidate: true,
+    })
+  }, [form])
 
   const handleOpenChange = (state: boolean) => {
     if (!state && form.formState.isSubmitting) return
@@ -131,8 +117,7 @@ export function CreateGroupDialog({
     toast.promise(request, {
       loading: 'Creating group…',
       success: (response) => response.message,
-      error: (error) =>
-        error instanceof HttpError ? error.message : 'Unable to create group',
+      error: (error) => error instanceof HttpError ? error.message : 'Unable to create group',
     })
 
     try {

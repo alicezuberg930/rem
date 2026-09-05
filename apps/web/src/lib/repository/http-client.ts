@@ -1,8 +1,9 @@
 import { ApiResponse } from '@/@types'
 import { HttpError } from './http-error'
 import { InterceptorManager } from './interceptor'
+import { getBaseUrl } from '../utils'
 
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api/v1'
+const BASE_URL = getBaseUrl()
 
 export type ResponseWithHeaders<T> = {
   data: T
@@ -32,6 +33,8 @@ export class HttpClient {
     for (const { onFulfilled } of this.interceptors.request.getHandlers()) {
       if (onFulfilled) config = await onFulfilled(config)
     }
+    const isAbsoluteUrl = (url: string) => /^https?:\/\/[^\/]+/i.test(url)
+    url = isAbsoluteUrl(url) ? url : `${BASE_URL}${url}`
     try {
       const response = await fetch(url, config)
       if (!response.ok) {
@@ -79,7 +82,8 @@ export class HttpClient {
     for (const { onFulfilled } of this.interceptors.request.getHandlers()) {
       if (onFulfilled) config = await onFulfilled(config)
     }
-
+    const isAbsoluteUrl = (url: string) => /^https?:\/\/[^\/]+/i.test(url)
+    url = isAbsoluteUrl(url) ? url : `${BASE_URL}${url}`
     try {
       const response = await fetch(url, config)
       if (!response.ok) {
@@ -129,7 +133,7 @@ export class HttpClient {
       }
     }
     return this.fetchJson<T>(
-      `${BASE_URL}${endpoint}?${queryParams.toString()}`,
+      `${endpoint}?${queryParams.toString()}`,
       {
         method: 'GET',
         credentials: 'include',
@@ -150,7 +154,7 @@ export class HttpClient {
         queryParams.append(key, String(value))
       }
     }
-    return this.fetchBlob(`${BASE_URL}${endpoint}?${queryParams.toString()}`, {
+    return this.fetchBlob(`${endpoint}?${queryParams.toString()}`, {
       method: 'GET',
       credentials: 'include',
       ...options,
@@ -158,7 +162,7 @@ export class HttpClient {
   }
 
   post<T>(endpoint: string, body?: unknown, options?: RequestInit) {
-    return this.fetchJson<T>(`${BASE_URL}${endpoint}`, {
+    return this.fetchJson<T>(`${endpoint}`, {
       method: 'POST',
       credentials: 'include',
       body: body
@@ -171,7 +175,7 @@ export class HttpClient {
   }
 
   put<T>(endpoint: string, body?: unknown, options?: RequestInit) {
-    return this.fetchJson<T>(`${BASE_URL}${endpoint}`, {
+    return this.fetchJson<T>(`${endpoint}`, {
       method: 'PUT',
       credentials: 'include',
       body: body
@@ -184,7 +188,7 @@ export class HttpClient {
   }
 
   patch<T>(endpoint: string, body?: unknown, options?: RequestInit) {
-    return this.fetchJson<T>(`${BASE_URL}${endpoint}`, {
+    return this.fetchJson<T>(`${endpoint}`, {
       method: 'PATCH',
       credentials: 'include',
       body: body
@@ -197,7 +201,7 @@ export class HttpClient {
   }
 
   delete<T>(endpoint: string, options?: RequestInit) {
-    return this.fetchJson<T>(`${BASE_URL}${endpoint}`, {
+    return this.fetchJson<T>(`${endpoint}`, {
       method: 'DELETE',
       credentials: 'include',
       ...options,

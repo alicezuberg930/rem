@@ -18,6 +18,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { type ChatUser } from '@/@types'
+import { getInitials } from '@/lib/utils'
 
 type NewChatProps = {
   users: ChatUser[]
@@ -25,15 +26,6 @@ type NewChatProps = {
   onOpenChange: (open: boolean) => void
   onSelectUser: (user: ChatUser) => void
 }
-
-const getInitials = (name: string) =>
-  name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0])
-    .join('')
-    .toUpperCase()
 
 export function NewChat({
   users,

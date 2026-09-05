@@ -2,28 +2,30 @@ import { useEffect, useState } from 'react'
 import {
   CALENDAR_BOOKING_STATUS,
   CALENDAR_BOOKING_STATUS_COLOR,
-  CalendarBooking,
-  CalendarBookingStatus,
+  type CalendarBooking,
+  type CalendarBookingStatus,
 } from '@/@types'
 import {
+  type CalendarEventExternal,
   createViewDay,
   createViewWeekAgenda,
   createViewMonthAgenda,
   createViewMonthGrid,
   createViewWeek,
   createViewList,
-  CalendarEventExternal,
 } from '@schedule-x/calendar'
 import { createEventModalPlugin } from '@schedule-x/event-modal'
 import { createEventsServicePlugin } from '@schedule-x/events-service'
 import { ScheduleXCalendar, useCalendarApp } from '@schedule-x/react'
+import { useQuery } from '@tanstack/react-query'
 import '@schedule-x/theme-default/dist/index.css'
 import 'temporal-polyfill/global'
-import { getBookings } from '@/lib/repository/api'
+import { bookings } from '@/lib/queries/booking'
 import { useTheme } from '@/providers/theme-provider'
 import { Button } from '@/components/ui/button'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { Header } from '@/components/layout/header'
+import { ClockInButton } from '@/components/layout/clock-in-button'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
@@ -31,14 +33,29 @@ import { ThemeSwitch } from '@/components/theme-switch'
 import { BookingsDialogs } from './components/bookings-dialogs'
 import { BookingsPrimaryButtons } from './components/bookings-primary-buttons'
 import { BookingsProvider } from './components/bookings-provider'
-import { ClockInButton } from '@/components/layout/clock-in-button'
 
 const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+
+const mapToEvents = (
+  bookings: CalendarBooking[]
+): CalendarEventExternal[] => {
+  return bookings.map((b) => ({
+    id: String(b.id),
+    title: b.contact.firstName,
+    start: Temporal.Instant.from(b.bookingStartDate).toZonedDateTimeISO(
+      timezone
+    ),
+    end: Temporal.Instant.from(b.bookingEndDate).toZonedDateTimeISO(timezone),
+  }))
+}
 
 export function Bookings() {
   const eventsService = useState(() => createEventsServicePlugin())[0]
   const eventModal = useState(() => createEventModalPlugin())[0]
   const { theme } = useTheme()
+  const { data: bookingResponses = [] } = useQuery(
+    bookings().all.queryOptions()
+  )
 
   const calendar = useCalendarApp({
     defaultView: 'month-grid',
@@ -73,29 +90,13 @@ export function Bookings() {
     },
   })
 
-  const mapToEvents = (
-    bookings: CalendarBooking[]
-  ): CalendarEventExternal[] => {
-    return bookings.map((b) => ({
-      id: String(b.id),
-      title: b.contact.firstName,
-      start: Temporal.Instant.from(b.bookingStartDate).toZonedDateTimeISO(
-        timezone
-      ),
-      end: Temporal.Instant.from(b.bookingEndDate).toZonedDateTimeISO(timezone),
-    }))
-  }
-
   useEffect(() => {
-    getBookings().then((res) => {
-      const events = mapToEvents(res.data)
-      eventsService.set(events)
-    })
-  }, [])
+    eventsService.set(mapToEvents(bookingResponses))
+  }, [bookingResponses, eventsService])
 
   useEffect(() => {
     calendar?.setTheme(theme as 'light' | 'dark')
-  }, [theme])
+  }, [calendar, theme])
 
   return (
     <BookingsProvider>

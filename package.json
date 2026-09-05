@@ -52,7 +52,8 @@
     "lint": "turbo run lint",
     "format:check": "prettier --check .",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "check-types": "turbo run check-types"
+    "check-types": "turbo run check-types",
+    "db:seed": "cd rem-server && ./mvnw spring-boot:run -Dspring-boot.run.profiles=seed"
   },
   "workspaces": [
     "apps/*",

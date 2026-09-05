@@ -8,66 +8,68 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 @Getter
+@Setter
 @AllArgsConstructor
+@NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CloudinaryUploadResponse {
     @JsonProperty("original_filename")
-    private final String originalFilename;
+    private String originalFilename;
 
     @JsonProperty("display_name")
-    private final String displayName;
+    private String displayName;
     
     @JsonProperty("asset_folder")
-    private final String assetFolder;
+    private String assetFolder;
     
     @JsonProperty("url")
-    private final String url;
+    private String url;
 
     @JsonProperty("placeholder")
-    private final String placeholder;
+    private String placeholder;
     
     @JsonProperty("etag")
-    private final String etag;
+    private String etag;
     
     @JsonProperty("type")
-    private final String type;
+    private String type;
 
     @JsonProperty("bytes")
-    private final Integer bytes;
+    private Integer bytes;
 
     @JsonProperty("tags")
-    private final List<String> tags;
+    private List<String> tags;
 
     @JsonProperty("created_at")
-    private final String created_at;
+    private String created_at;
     
     @JsonProperty("format")
-    private final String format;
+    private String format;
 
     @JsonProperty("height")
-    private final String height;
+    private String height;
     
     @JsonProperty("width")
-    private final String width;
+    private String width;
 
     @JsonProperty("signature")
-    private final String signature;
+    private String signature;
 
     @JsonProperty("version_id")
-    private final String versionId;
+    private String versionId;
 
     @JsonProperty("asset_id")
-    private final String assetId;
+    private String assetId;
 
     @JsonProperty("version")
-    private final String version;
+    private String version;
 
     @JsonProperty("secure_url")
-    private final String secureUrl;
+    private String secureUrl;
 
     @JsonProperty("public_id")
-    private final String publicId;
+    private String publicId;
 
     @JsonProperty("resource_type")
-    private final String resourceType;
+    private String resourceType;
 }

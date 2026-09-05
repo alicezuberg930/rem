@@ -1,0 +1,2 @@
+switch apps/web/src/features/chats/components/create-group-dialog.tsx form to use components from hook-form component
+user mapstruct to build entity and dto for user in rem-server/src/main/java/server/rem/services/UserService.java

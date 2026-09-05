@@ -33,7 +33,7 @@ import { type SidebarData } from '../types'
 export const sidebarData: SidebarData = {
   teams: [
     {
-      name: 'Shadcn Admin',
+      name: 'Rem',
       logo: Command,
       plan: 'Vite + ShadcnUI',
     },

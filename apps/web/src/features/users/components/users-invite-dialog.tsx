@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useQuery } from '@tanstack/react-query'
 import { MailPlus, Send } from 'lucide-react'
 import { showSubmittedData } from '@/lib/show-submitted-data'
 import { Button } from '@/components/ui/button'
@@ -24,7 +25,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { SelectDropdown } from '@/components/select-dropdown'
-import { roles } from '../data/data'
+import { users } from '@/lib/queries/user'
 
 const formSchema = z.object({
   email: z.email({
@@ -46,6 +47,10 @@ export function UsersInviteDialog({
   open,
   onOpenChange,
 }: UserInviteDialogProps) {
+  const { data: roles = [] } = useQuery({
+    ...users().roles.queryOptions(),
+    enabled: open,
+  })
   const form = useForm<UserInviteForm>({
     resolver: zodResolver(formSchema),
     defaultValues: { email: '', role: '', desc: '' },
@@ -108,9 +113,9 @@ export function UsersInviteDialog({
                     defaultValue={field.value}
                     onValueChange={field.onChange}
                     placeholder='Select a role'
-                    items={roles.map(({ label, value }) => ({
-                      label,
-                      value,
+                    items={roles.map(({ name, id }) => ({
+                      label: name,
+                      value: id,
                     }))}
                   />
                   <FormMessage />

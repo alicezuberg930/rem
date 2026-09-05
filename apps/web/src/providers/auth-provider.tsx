@@ -21,8 +21,8 @@ import { AuthValidators } from '@/lib/validators/auth'
 
 export type ActionMapType<M extends { [index: string]: any }> = {
   [Key in keyof M]: M[Key] extends undefined
-    ? { type: Key }
-    : { type: Key; payload: M[Key] }
+  ? { type: Key }
+  : { type: Key; payload: M[Key] }
 }
 
 export type AuthStateType = {
@@ -148,9 +148,7 @@ const reducer = (state: AuthStateType, action: ActionsType) => {
 
 export const AuthContext = createContext<JWTContextType | null>(null)
 
-export function AuthProvider({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
+export function AuthProvider({ children }: Readonly<{ children: React.ReactNode }>) {
   const navigate = useNavigate()
   // states
   const [state, dispatch] = useReducer(reducer, initialState)

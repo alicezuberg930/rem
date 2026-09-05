@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import server.rem.dtos.file.CloudinaryUploadResponse;
+
 class CloudinaryServiceTests {
     private final CloudinaryService cloudinaryService = new CloudinaryService(new ObjectMapper());
 
@@ -25,5 +27,16 @@ class CloudinaryServiceTests {
     @Test
     void rejectsUploadWhenCredentialsAreMissing() {
         assertThrows(IllegalArgumentException.class, () -> cloudinaryService.uploadFiles(List.of(), null, null));
+    }
+
+    @Test
+    void deserializesCloudinaryUploadResponse() throws Exception {
+        CloudinaryUploadResponse response = new ObjectMapper().readValue(
+                "{\"secure_url\":\"https://res.cloudinary.com/demo/image/upload/avatar.png\"}",
+                CloudinaryUploadResponse.class);
+
+        assertEquals(
+                "https://res.cloudinary.com/demo/image/upload/avatar.png",
+                response.getSecureUrl());
     }
 }
