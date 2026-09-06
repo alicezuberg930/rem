@@ -1,12 +1,12 @@
 import { mutationOptions, queryOptions } from '@tanstack/react-query'
-import {
+import type {
   ApiResponse,
+  Campaign,
   PaginatedApiResponse,
   QueryCampaign,
-  Campaign,
 } from '@/@types'
-import { CampaignValidators } from '@/lib/validators'
 import { queryClient } from '@/providers/query-provider'
+import type { CampaignValidators } from '@/lib/validators'
 import { httpClient } from '../repository/http-client'
 
 const keys = {
@@ -15,6 +15,7 @@ const keys = {
   create: () => ['campaigns', 'create'],
   update: () => ['campaigns', 'update'],
   delete: () => ['campaigns', 'delete'],
+  export: (opts: QueryCampaign) => ['campaigns', 'export', opts],
 }
 
 export const campaigns = () => ({
@@ -96,5 +97,10 @@ export const campaigns = () => ({
           queryClient().invalidateQueries({ queryKey: keys.all({}) })
         },
       }),
+  },
+
+  export: {
+    queryKey: keys.export,
+    download: (opts: QueryCampaign = {}) => httpClient.download('/campaigns/export', opts as Record<string, unknown>),
   },
 })

@@ -27,7 +27,7 @@ public interface ContactRepository extends JpaRepository<Contact, String>, JpaSp
     Optional<Contact> findById(String id);
 
     @EntityGraph(attributePaths = {"business", "tag"})
-    Optional<Contact> findByIdAndBusiness_Id(String id, String businessId);
+    Optional<Contact> findByIdAndBusinessId(String id, String businessId);
 
     @Query("""
             SELECT contact

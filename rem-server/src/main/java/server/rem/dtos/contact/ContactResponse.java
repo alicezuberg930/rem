@@ -79,4 +79,7 @@ public class ContactResponse {
 
     @JsonView(Views.Public.class)
     private final String zipCode;
+
+    @JsonView(Views.Public.class)
+    private final ContactTagResponse tag;
 }

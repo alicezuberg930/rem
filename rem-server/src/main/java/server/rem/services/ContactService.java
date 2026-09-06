@@ -153,7 +153,7 @@ public class ContactService {
     }
 
     private SXSSFSheet createExportSheet(SXSSFWorkbook workbook, int sheetNumber, CellStyle headerStyle) {
-        String name = sheetNumber == 1 ? "Customers" : "Customers " + sheetNumber;
+        String name = sheetNumber == 1 ? "Contacts" : "Contacts " + sheetNumber;
         return ExportExcel.createSheet(
                 workbook,
                 name,

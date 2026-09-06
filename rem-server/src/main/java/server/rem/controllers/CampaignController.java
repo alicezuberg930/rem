@@ -1,8 +1,13 @@
 package server.rem.controllers;
 
+import java.time.LocalDate;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -55,5 +60,20 @@ public class CampaignController {
             CampaignMessages.LIST_RETRIEVED,
             campaignService.getAll(dto, businessId))
         );
+    }
+
+    @GetMapping("/export")
+    @PreAuthorize("hasAuthority('campaign.view')")
+    public ResponseEntity<StreamingResponseBody> export(
+        @ModelAttribute QueryCampaign dto,
+        @RequestAttribute("businessId") String businessId
+    ) {
+        String filename = "campaigns-" + LocalDate.now() + ".xlsx";
+        StreamingResponseBody body = outputStream -> campaignService.writeExcel(dto, businessId, outputStream);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                .body(body);
     }
 }

@@ -27,6 +27,7 @@ const keys = {
   update: ['leads', 'update'] as const,
   delete: ['leads', 'delete'] as const,
   convert: ['leads', 'convert'] as const,
+  export: (options: QueryLead) => ['leads', 'export', options],
 }
 
 type PageResponse<T> = PaginatedApiResponse<T[]>['data']
@@ -37,11 +38,9 @@ export const leads = () => ({
       queryOptions({
         queryKey: keys.all(options),
         queryFn: async () => {
-          const { data } =
-            await httpClient.get<ApiResponse<PageResponse<Lead>>>(
-              '/leads',
-              options as Record<string, unknown>
-            )
+          const { data } = await httpClient.get<
+            ApiResponse<PageResponse<Lead>>
+          >('/leads', options as Record<string, unknown>)
           return data
         },
       }),
@@ -106,5 +105,11 @@ export const leads = () => ({
           queryClient().invalidateQueries({ queryKey: ['customers'] })
         },
       }),
+  },
+
+  export: {
+    queryKey: keys.export,
+    download: (options: QueryLead = {}) =>
+      httpClient.download('/leads/export', options as Record<string, unknown>),
   },
 })

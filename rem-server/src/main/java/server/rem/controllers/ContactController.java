@@ -55,7 +55,7 @@ public class ContactController {
         @ModelAttribute QueryContact dto,
         @RequestAttribute("businessId") String businessId
     ) {
-        String filename = "customers-" + LocalDate.now() + ".xlsx";
+        String filename = "contacts-" + LocalDate.now() + ".xlsx";
         StreamingResponseBody body = outputStream -> contactService.writeExcel(dto, businessId, outputStream);
 
         return ResponseEntity.ok()

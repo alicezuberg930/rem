@@ -1,7 +1,12 @@
 package server.rem.controllers;
 
+import java.time.LocalDate;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +29,20 @@ public class CustomerController {
             @RequestAttribute("businessId") String businessId
     ) {
         return ResponseEntity.ok(APIResponse.success(200, "Customers fetched successfully", customerService.getAll(dto, businessId)));
+    }
+
+    @GetMapping("/export")
+    public ResponseEntity<StreamingResponseBody> export(
+            @ModelAttribute QueryCustomer dto,
+            @RequestAttribute("businessId") String businessId
+    ) {
+        String filename = "customers-" + LocalDate.now() + ".xlsx";
+        StreamingResponseBody body = outputStream -> customerService.writeExcel(dto, businessId, outputStream);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                .body(body);
     }
 
     @GetMapping("/{id}")

@@ -1,22 +1,37 @@
 package server.rem.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import jakarta.persistence.EntityManager;
+
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
+import server.rem.dtos.campaign.QueryCampaign;
+import server.rem.entities.Business;
 import server.rem.entities.Campaign;
 import server.rem.entities.Contact;
 import server.rem.entities.Template;
+import server.rem.enums.CampaignSendType;
 import server.rem.enums.CampaignStatus;
 import server.rem.mappers.CampaignMapper;
 import server.rem.repositories.BusinessRepository;
@@ -41,6 +56,8 @@ class CampaignServiceTests {
     private EmailService emailService;
     @Mock
     private CampaignScheduler campaignScheduler;
+    @Mock
+    private EntityManager entityManager;
 
     private CampaignService campaignService;
 
@@ -53,7 +70,8 @@ class CampaignServiceTests {
                 contactRepository,
                 campaignMapper,
                 emailService,
-                campaignScheduler
+                campaignScheduler,
+                entityManager
         );
     }
 
@@ -88,5 +106,56 @@ class CampaignServiceTests {
         );
         verify(campaignRepository, times(2)).save(campaign);
         assertEquals(CampaignStatus.SENT, campaign.getStatus());
+    }
+
+    @Test
+    void writesEveryCampaignFieldToAValidWorkbook() throws Exception {
+        Business business = Business.builder().name("REM").build();
+        business.setId("business-1");
+
+        Template template = Template.builder()
+                .business(business)
+                .name("Welcome")
+                .build();
+        template.setId("template-1");
+
+        Contact contact = Contact.builder().email("jane@example.com").build();
+        contact.setId("contact-1");
+
+        Campaign campaign = Campaign.builder()
+                .business(business)
+                .template(template)
+                .name("Launch")
+                .description("Launch campaign")
+                .sendType(CampaignSendType.SCHEDULED)
+                .scheduleAt(Instant.parse("2026-01-03T10:15:30Z"))
+                .status(CampaignStatus.PENDING)
+                .contacts(Set.of(contact))
+                .build();
+        campaign.setId("campaign-1");
+        campaign.setCreatedAt(LocalDateTime.of(2026, 1, 1, 10, 0));
+        campaign.setUpdatedAt(LocalDateTime.of(2026, 1, 2, 11, 30));
+
+        when(campaignRepository.findByBusinessId(eq("business-1"), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(campaign)));
+
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        campaignService.writeExcel(new QueryCampaign(null, null, null), "business-1", output);
+
+        try (XSSFWorkbook workbook = new XSSFWorkbook(new ByteArrayInputStream(output.toByteArray()))) {
+            assertEquals(1, workbook.getNumberOfSheets());
+            assertEquals(15, workbook.getSheetAt(0).getRow(0).getLastCellNum());
+            assertEquals("Campaigns", workbook.getSheetName(0));
+            assertEquals("campaign-1", workbook.getSheetAt(0).getRow(1).getCell(0).getStringCellValue());
+            assertEquals("business-1", workbook.getSheetAt(0).getRow(1).getCell(3).getStringCellValue());
+            assertEquals("template-1", workbook.getSheetAt(0).getRow(1).getCell(5).getStringCellValue());
+            assertEquals("Launch", workbook.getSheetAt(0).getRow(1).getCell(7).getStringCellValue());
+            assertEquals(1, workbook.getSheetAt(0).getRow(1).getCell(12).getNumericCellValue());
+            assertEquals("contact-1", workbook.getSheetAt(0).getRow(1).getCell(13).getStringCellValue());
+            assertEquals("jane@example.com", workbook.getSheetAt(0).getRow(1).getCell(14).getStringCellValue());
+        }
+
+        verify(campaignRepository).findByBusinessId(eq("business-1"), any(Pageable.class));
+        verify(entityManager).clear();
     }
 }

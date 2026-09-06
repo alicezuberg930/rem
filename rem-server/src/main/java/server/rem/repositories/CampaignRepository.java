@@ -1,5 +1,11 @@
 package server.rem.repositories;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -9,10 +15,6 @@ import org.springframework.stereotype.Repository;
 
 import server.rem.entities.Business;
 import server.rem.entities.Campaign;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface CampaignRepository extends JpaRepository<Campaign, String>, JpaSpecificationExecutor<Campaign> {
@@ -33,4 +35,7 @@ public interface CampaignRepository extends JpaRepository<Campaign, String>, Jpa
     
     @Query("SELECT c FROM Campaign c LEFT JOIN FETCH c.contacts LEFT JOIN FETCH c.template WHERE c.id = :id")
     Optional<Campaign> findByIdWithContactsAndTemplate(@Param("id") String id);
+
+    @EntityGraph(attributePaths = {"business", "template"})
+    Slice<Campaign> findByBusinessId(String businessId, Pageable pageable);
 }

@@ -25,6 +25,7 @@ const keys = {
   create: ['customers', 'create'] as const,
   update: ['customers', 'update'] as const,
   delete: ['customers', 'delete'] as const,
+  export: (options: QueryCustomer) => ['customers', 'export', options],
 }
 
 type PageResponse<T> = PaginatedApiResponse<T[]>['data']
@@ -101,5 +102,14 @@ export const customers = () => ({
         onSuccess: () =>
           queryClient().invalidateQueries({ queryKey: keys.root }),
       }),
+  },
+
+  export: {
+    queryKey: keys.export,
+    download: (options: QueryCustomer = {}) =>
+      httpClient.download(
+        '/customers/export',
+        options as Record<string, unknown>
+      ),
   },
 })

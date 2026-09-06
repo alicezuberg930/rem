@@ -1,20 +1,20 @@
 import { UserPlus } from 'lucide-react'
-import { leads } from '@/lib/queries/lead'
+import { contacts } from '@/lib/queries/contact'
 import { Button } from '@/components/ui/button'
 import { ExportExcelButton } from '@/components/export-excel-button'
-import { useLeads } from './leads-provider'
+import { useContacts } from './contacts-provider'
 
-export function LeadsPrimaryButtons() {
-  const { setOpen } = useLeads()
+export function ContactsPrimaryButtons() {
+  const { setOpen } = useContacts()
 
   return (
     <div className='flex gap-2'>
       <ExportExcelButton
-        filename='leads.xlsx'
-        download={() => leads().export.download()}
+        filename='contacts.xlsx'
+        download={() => contacts().export.download()}
       />
       <Button className='space-x-1' onClick={() => setOpen('add')}>
-        <span>Add lead</span>
+        <span>Add contact</span>
         <UserPlus size={18} />
       </Button>
     </div>

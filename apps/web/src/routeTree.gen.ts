@@ -29,6 +29,7 @@ import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authen
 import { Route as AuthenticatedLeadsIndexRouteImport } from './routes/_authenticated/leads/index'
 import { Route as AuthenticatedHelpCenterIndexRouteImport } from './routes/_authenticated/help-center/index'
 import { Route as AuthenticatedCustomersIndexRouteImport } from './routes/_authenticated/customers/index'
+import { Route as AuthenticatedContactsIndexRouteImport } from './routes/_authenticated/contacts/index'
 import { Route as AuthenticatedChatsIndexRouteImport } from './routes/_authenticated/chats/index'
 import { Route as AuthenticatedCampaignsIndexRouteImport } from './routes/_authenticated/campaigns/index'
 import { Route as AuthenticatedBookingsIndexRouteImport } from './routes/_authenticated/bookings/index'
@@ -144,6 +145,12 @@ const AuthenticatedCustomersIndexRoute =
     path: '/customers/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedContactsIndexRoute =
+  AuthenticatedContactsIndexRouteImport.update({
+    id: '/contacts/',
+    path: '/contacts/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedChatsIndexRoute = AuthenticatedChatsIndexRouteImport.update({
   id: '/chats/',
   path: '/chats/',
@@ -226,6 +233,7 @@ export interface FileRoutesByFullPath {
   '/bookings/': typeof AuthenticatedBookingsIndexRoute
   '/campaigns/': typeof AuthenticatedCampaignsIndexRoute
   '/chats/': typeof AuthenticatedChatsIndexRoute
+  '/contacts/': typeof AuthenticatedContactsIndexRoute
   '/customers/': typeof AuthenticatedCustomersIndexRoute
   '/help-center/': typeof AuthenticatedHelpCenterIndexRoute
   '/leads/': typeof AuthenticatedLeadsIndexRoute
@@ -256,6 +264,7 @@ export interface FileRoutesByTo {
   '/bookings': typeof AuthenticatedBookingsIndexRoute
   '/campaigns': typeof AuthenticatedCampaignsIndexRoute
   '/chats': typeof AuthenticatedChatsIndexRoute
+  '/contacts': typeof AuthenticatedContactsIndexRoute
   '/customers': typeof AuthenticatedCustomersIndexRoute
   '/help-center': typeof AuthenticatedHelpCenterIndexRoute
   '/leads': typeof AuthenticatedLeadsIndexRoute
@@ -289,6 +298,7 @@ export interface FileRoutesById {
   '/_authenticated/bookings/': typeof AuthenticatedBookingsIndexRoute
   '/_authenticated/campaigns/': typeof AuthenticatedCampaignsIndexRoute
   '/_authenticated/chats/': typeof AuthenticatedChatsIndexRoute
+  '/_authenticated/contacts/': typeof AuthenticatedContactsIndexRoute
   '/_authenticated/customers/': typeof AuthenticatedCustomersIndexRoute
   '/_authenticated/help-center/': typeof AuthenticatedHelpCenterIndexRoute
   '/_authenticated/leads/': typeof AuthenticatedLeadsIndexRoute
@@ -322,6 +332,7 @@ export interface FileRouteTypes {
     | '/bookings/'
     | '/campaigns/'
     | '/chats/'
+    | '/contacts/'
     | '/customers/'
     | '/help-center/'
     | '/leads/'
@@ -352,6 +363,7 @@ export interface FileRouteTypes {
     | '/bookings'
     | '/campaigns'
     | '/chats'
+    | '/contacts'
     | '/customers'
     | '/help-center'
     | '/leads'
@@ -384,6 +396,7 @@ export interface FileRouteTypes {
     | '/_authenticated/bookings/'
     | '/_authenticated/campaigns/'
     | '/_authenticated/chats/'
+    | '/_authenticated/contacts/'
     | '/_authenticated/customers/'
     | '/_authenticated/help-center/'
     | '/_authenticated/leads/'
@@ -549,6 +562,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCustomersIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/contacts/': {
+      id: '/_authenticated/contacts/'
+      path: '/contacts'
+      fullPath: '/contacts/'
+      preLoaderRoute: typeof AuthenticatedContactsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/chats/': {
       id: '/_authenticated/chats/'
       path: '/chats'
@@ -654,6 +674,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedBookingsIndexRoute: typeof AuthenticatedBookingsIndexRoute
   AuthenticatedCampaignsIndexRoute: typeof AuthenticatedCampaignsIndexRoute
   AuthenticatedChatsIndexRoute: typeof AuthenticatedChatsIndexRoute
+  AuthenticatedContactsIndexRoute: typeof AuthenticatedContactsIndexRoute
   AuthenticatedCustomersIndexRoute: typeof AuthenticatedCustomersIndexRoute
   AuthenticatedHelpCenterIndexRoute: typeof AuthenticatedHelpCenterIndexRoute
   AuthenticatedLeadsIndexRoute: typeof AuthenticatedLeadsIndexRoute
@@ -671,6 +692,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedBookingsIndexRoute: AuthenticatedBookingsIndexRoute,
   AuthenticatedCampaignsIndexRoute: AuthenticatedCampaignsIndexRoute,
   AuthenticatedChatsIndexRoute: AuthenticatedChatsIndexRoute,
+  AuthenticatedContactsIndexRoute: AuthenticatedContactsIndexRoute,
   AuthenticatedCustomersIndexRoute: AuthenticatedCustomersIndexRoute,
   AuthenticatedHelpCenterIndexRoute: AuthenticatedHelpCenterIndexRoute,
   AuthenticatedLeadsIndexRoute: AuthenticatedLeadsIndexRoute,

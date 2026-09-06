@@ -19,6 +19,7 @@ const keys = {
   create: ['contacts', 'create'] as const,
   update: ['contacts', 'update'] as const,
   delete: ['contacts', 'delete'] as const,
+  export: (options: QueryContact) => ['contacts', 'export', options],
 }
 
 type PageResponse<T> = PaginatedApiResponse<T[]>['data']
@@ -29,11 +30,9 @@ export const contacts = () => ({
       queryOptions({
         queryKey: keys.all(options),
         queryFn: async () => {
-          const { data } =
-            await httpClient.get<ApiResponse<PageResponse<Contact>>>(
-              '/contacts',
-              options as Record<string, unknown>
-            )
+          const { data } = await httpClient.get<
+            ApiResponse<PageResponse<Contact>>
+          >('/contacts', options as Record<string, unknown>)
           return data
         },
       }),
@@ -91,5 +90,13 @@ export const contacts = () => ({
         onSuccess: () =>
           queryClient().invalidateQueries({ queryKey: keys.root }),
       }),
+  },
+  export: {
+    queryKey: keys.export,
+    download: (options: QueryContact = {}) =>
+      httpClient.download(
+        '/contacts/export',
+        options as Record<string, unknown>
+      ),
   },
 })
