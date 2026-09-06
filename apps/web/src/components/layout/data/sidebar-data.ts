@@ -27,6 +27,7 @@ import {
   BookImage,
   Heart,
   ContactRound,
+  ReceiptText,
 } from 'lucide-react'
 import { ClerkLogo } from '@/assets/clerk-logo'
 import { type SidebarData } from '../types'
@@ -181,6 +182,11 @@ export const sidebarData: SidebarData = {
           title: 'Attendances',
           url: '/attendances',
           icon: Clock,
+        },
+        {
+          title: 'Payroll',
+          url: '/payroll',
+          icon: ReceiptText,
         },
       ],
     },

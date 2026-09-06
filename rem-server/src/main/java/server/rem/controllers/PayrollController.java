@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,7 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import server.rem.annotations.RequestUser;
 import server.rem.dtos.APIResponse;
+import server.rem.dtos.CustomPageResponse;
+import server.rem.dtos.QueryPaginate;
 import server.rem.dtos.payroll.CreatePayrollPeriodRequest;
+import server.rem.dtos.payroll.PayrollItemResponse;
 import server.rem.entities.PayrollItem;
 import server.rem.entities.PayrollPeriod;
 import server.rem.services.PayrollService;
@@ -26,6 +31,17 @@ public class PayrollController {
 
     public PayrollController(PayrollService payrollService) {
         this.payrollService = payrollService;
+    }
+
+    @GetMapping("/items")
+    public ResponseEntity<APIResponse<CustomPageResponse<PayrollItemResponse>>> getItems(
+            @ModelAttribute QueryPaginate dto,
+            @RequestAttribute("businessId") String businessId) {
+        return ResponseEntity.ok().body(APIResponse.success(
+            200,
+            "Payroll items fetched successfully",
+            payrollService.getItems(businessId, dto)
+        ));
     }
 
     @PostMapping("/period")

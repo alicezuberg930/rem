@@ -22,6 +22,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
     '/templates',
     '/bookings',
     '/attendances',
+    '/payroll',
     '/settings',
     '/settings/account',
     '/settings/appearance',

@@ -4,10 +4,16 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import lombok.AllArgsConstructor;
+import server.rem.dtos.CustomPageResponse;
+import server.rem.dtos.QueryPaginate;
 import server.rem.dtos.payroll.CreatePayrollPeriodRequest;
+import server.rem.dtos.payroll.PayrollItemResponse;
 import server.rem.entities.Allowance;
 import server.rem.entities.Attendance;
 import server.rem.entities.Business;
@@ -50,6 +56,13 @@ public class PayrollService {
     private final HolidayRepository holidayRepository;
     private final WorkingDaysCalculator workingDaysCalculator;
     private final TaxCalculator taxCalculator;
+
+    public CustomPageResponse<PayrollItemResponse> getItems(String businessId, QueryPaginate dto) {
+        Pageable pageable = PageRequest.of(dto.getPage(), dto.getPageSize());
+        Page<PayrollItemResponse> result = payrollItemRepository.findByBusinessId(businessId, pageable)
+                .map(this::toPayrollItemResponse);
+        return new CustomPageResponse<>(result);
+    }
 
     public PayrollPeriod createPeriod(CreatePayrollPeriodRequest dto) {
         Business business = businessRepository.findById(dto.getBusinessId())
@@ -233,5 +246,42 @@ public class PayrollService {
         return employees.stream()
                 .map(e -> generateEmployeePayroll(e.getUser().getId(), periodId))
                 .toList();
+    }
+
+    private PayrollItemResponse toPayrollItemResponse(PayrollItem payrollItem) {
+        PayrollPeriod period = payrollItem.getPayrollPeriod();
+        User user = payrollItem.getUser();
+        User approver = payrollItem.getApprover();
+
+        return PayrollItemResponse.builder()
+                .id(payrollItem.getId())
+                .createdAt(payrollItem.getCreatedAt())
+                .updatedAt(payrollItem.getUpdatedAt())
+                .businessId(payrollItem.getBusiness().getId())
+                .payrollPeriodId(period.getId())
+                .payrollPeriodName(period.getName())
+                .payrollPeriodStartDate(period.getStartDate())
+                .payrollPeriodEndDate(period.getEndDate())
+                .payrollPeriodStatus(period.getStatus())
+                .userId(user.getId())
+                .userFullname(user.getFullname())
+                .userEmail(user.getEmail())
+                .userPhone(user.getPhone())
+                .baseSalary(payrollItem.getBaseSalary())
+                .totalAllowances(payrollItem.getTotalAllowances())
+                .totalBonuses(payrollItem.getTotalBonuses())
+                .totalDeductions(payrollItem.getTotalDeductions())
+                .taxAmount(payrollItem.getTaxAmount())
+                .insuranceAmount(payrollItem.getInsuranceAmount())
+                .netSalary(payrollItem.getNetSalary())
+                .workedDays(payrollItem.getWorkedDays())
+                .absentDays(payrollItem.getAbsentDays())
+                .lateDays(payrollItem.getLateDays())
+                .unpaidLeaveDays(payrollItem.getUnpaidLeaveDays())
+                .status(payrollItem.getStatus())
+                .approverId(approver != null ? approver.getId() : null)
+                .approverFullname(approver != null ? approver.getFullname() : null)
+                .paidAt(payrollItem.getPaidAt())
+                .build();
     }
 }
