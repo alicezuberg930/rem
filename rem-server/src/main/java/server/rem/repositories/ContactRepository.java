@@ -19,27 +19,27 @@ import server.rem.enums.ContactType;
 @Repository
 public interface ContactRepository extends JpaRepository<Contact, String>, JpaSpecificationExecutor<Contact> {
     @Override
-    @EntityGraph(attributePaths = {"business", "tag", "customerGroup"})
+    @EntityGraph(attributePaths = {"business", "tag"})
     Page<Contact> findAll(Specification<Contact> spec, Pageable pageable);
 
     @Override
-    @EntityGraph(attributePaths = {"business", "tag", "customerGroup"})
+    @EntityGraph(attributePaths = {"business", "tag"})
     Optional<Contact> findById(String id);
+
+    @EntityGraph(attributePaths = {"business", "tag"})
+    Optional<Contact> findByIdAndBusiness_Id(String id, String businessId);
 
     @Query("""
             SELECT contact
             FROM Contact contact
             JOIN FETCH contact.business business
             JOIN FETCH contact.tag tag
-            LEFT JOIN FETCH contact.customerGroup customerGroup
             WHERE business.id = :businessId
               AND (:type IS NULL OR contact.type = :type)
-              AND (:customerGroupId IS NULL OR customerGroup.id = :customerGroupId)
             """)
     Slice<Contact> findAllForExport(
             @Param("businessId") String businessId,
             @Param("type") ContactType type,
-            @Param("customerGroupId") String customerGroupId,
             Pageable pageable
     );
 

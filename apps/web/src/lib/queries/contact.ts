@@ -8,8 +8,8 @@ import type {
   QueryContact,
 } from '@/@types'
 import { queryClient } from '@/providers/query-provider'
-import { httpClient } from '@/lib/repository/http-client'
 import type { ContactForm } from '@/lib/validators/contact'
+import { httpClient } from '../repository/http-client'
 
 const keys = {
   root: ['contacts'] as const,
@@ -21,13 +21,19 @@ const keys = {
   delete: ['contacts', 'delete'] as const,
 }
 
+type PageResponse<T> = PaginatedApiResponse<T[]>['data']
+
 export const contacts = () => ({
   all: {
     queryOptions: (options: QueryContact = {}) =>
       queryOptions({
         queryKey: keys.all(options),
         queryFn: async () => {
-          const { data } = await httpClient.get<PaginatedApiResponse<Contact[]>>('/contacts')
+          const { data } =
+            await httpClient.get<ApiResponse<PageResponse<Contact>>>(
+              '/contacts',
+              options as Record<string, unknown>
+            )
           return data
         },
       }),

@@ -13,8 +13,8 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import type { QueryContact } from '@/@types'
-import { contacts } from '@/lib/queries/contact'
+import type { QueryCustomer } from '@/@types'
+import { customers } from '@/lib/queries/customer'
 import { cn } from '@/lib/utils'
 import { useTableUrlState } from '@/hooks/use-table-url-state'
 import { Spinner } from '@/components/ui/spinner'
@@ -27,7 +27,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { CustomersBulkActions } from './customers-bulk-actions'
+import { useCustomers } from './customer-provider'
 import { customersColumns as columns } from './customers-columns'
 
 const route = getRouteApi('/_authenticated/customers/')
@@ -35,6 +35,7 @@ const route = getRouteApi('/_authenticated/customers/')
 export function CustomersTable() {
   const search = route.useSearch()
   const navigate = route.useNavigate()
+  const { customerGroups } = useCustomers()
   const [rowSelection, setRowSelection] = useState({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [sorting, setSorting] = useState<SortingState>([])
@@ -49,18 +50,22 @@ export function CustomersTable() {
     navigate,
     pagination: { defaultPage: 1, defaultPageSize: 10 },
     globalFilter: { enabled: false },
-    columnFilters: [{ columnId: 'type', searchKey: 'type', type: 'array' }],
+    columnFilters: [
+      {
+        columnId: 'customerGroupId',
+        searchKey: 'customerGroupId',
+        type: 'array',
+      },
+    ],
   })
 
   const queryParams = useMemo(
     () =>
-      columnFilters.reduce<QueryContact>(
+      columnFilters.reduce<QueryCustomer>(
         (params, filter: ColumnFilter) => {
-          if (filter.id === 'type' && Array.isArray(filter.value)) {
-            params.type =
-              filter.value.length === 1
-                ? (filter.value[0] as QueryContact['type'])
-                : undefined
+          if (filter.id === 'customerGroupId' && Array.isArray(filter.value)) {
+            params.customerGroupId =
+              filter.value.length === 1 ? String(filter.value[0]) : undefined
           }
           return params
         },
@@ -69,7 +74,9 @@ export function CustomersTable() {
     [columnFilters, pagination.pageIndex, pagination.pageSize]
   )
 
-  const { data, isLoading } = useQuery(contacts().all.queryOptions(queryParams))
+  const { data, isLoading } = useQuery(
+    customers().all.queryOptions(queryParams)
+  )
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
@@ -110,11 +117,14 @@ export function CustomersTable() {
         showSearch={false}
         filters={[
           {
-            columnId: 'type',
-            title: 'Type',
+            columnId: 'customerGroupId',
+            title: 'Customer Group',
             options: [
-              { label: 'Personal', value: 'PERSONAL' },
-              { label: 'Company', value: 'COMPANY' },
+              { label: 'No group', value: 'none' },
+              ...customerGroups.map((group) => ({
+                label: group.name,
+                value: group.id,
+              })),
             ],
           },
         ]}
@@ -186,7 +196,6 @@ export function CustomersTable() {
         </Table>
       </div>
       {!isLoading && <DataTablePagination table={table} className='mt-auto' />}
-      <CustomersBulkActions table={table} />
     </div>
   )
 }

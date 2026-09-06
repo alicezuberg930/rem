@@ -50,14 +50,11 @@ export type Contact = {
   country: string | null
   zipCode: string | null
 
-  customerGroup?: CustomerGroup | null
-
   tag?: ContactTag
 }
 
 export type QueryContact = {
   page?: number
   pageSize?: number
-  customerGroupId?: string
   type?: ContactType
 }

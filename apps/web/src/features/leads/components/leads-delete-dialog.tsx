@@ -1,51 +1,43 @@
 import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
-import type { Table } from '@tanstack/react-table'
-import type { Contact } from '@/@types'
+import type { Lead } from '@/@types'
 import { AlertTriangle } from 'lucide-react'
 import { toast } from 'sonner'
-import { contacts } from '@/lib/queries/contact'
+import { leads } from '@/lib/queries/lead'
 import { HttpError } from '@/lib/repository/http-error'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 
-type CustomersMultiDeleteDialogProps<TData> = {
+type LeadsDeleteDialogProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
-  table: Table<TData>
+  currentRow: Lead
 }
 
-const CONFIRM_WORD = 'DELETE'
-
-export function CustomersMultiDeleteDialog<TData>({
+export function LeadsDeleteDialog({
   open,
   onOpenChange,
-  table,
-}: CustomersMultiDeleteDialogProps<TData>) {
+  currentRow,
+}: LeadsDeleteDialogProps) {
   const [value, setValue] = useState('')
-  const remove = useMutation(contacts().delete.mutationOptions())
-  const selectedRows = table.getFilteredSelectedRowModel().rows
+  const remove = useMutation(leads().delete.mutationOptions())
+  const email = currentRow.contact.email
 
   const handleDelete = () => {
-    if (value.trim() !== CONFIRM_WORD) return
+    if (value.trim() !== email) return
     const submit = async () => {
-      await Promise.all(
-        selectedRows.map((row) =>
-          remove.mutateAsync((row.original as Contact).id)
-        )
-      )
+      const response = await remove.mutateAsync(currentRow.id)
       setValue('')
-      table.resetRowSelection()
       onOpenChange(false)
-      return selectedRows.length
+      return response
     }
     toast.promise(submit, {
-      loading: 'Deleting customers',
+      loading: 'Deleting lead',
       error: (error) =>
         error instanceof HttpError ? error.message : 'Internal server error',
-      success: (count) => `Deleted ${count} customer${count === 1 ? '' : 's'}`,
+      success: (response) => response.message,
     })
   }
 
@@ -54,34 +46,37 @@ export function CustomersMultiDeleteDialog<TData>({
       open={open}
       onOpenChange={onOpenChange}
       handleConfirm={handleDelete}
-      disabled={value.trim() !== CONFIRM_WORD || remove.isPending}
+      disabled={value.trim() !== email || remove.isPending}
       title={
         <span className='text-destructive'>
           <AlertTriangle
             className='me-1 inline-block stroke-destructive'
             size={18}
           />{' '}
-          Delete {selectedRows.length} customer
-          {selectedRows.length === 1 ? '' : 's'}
+          Delete lead
         </span>
       }
       desc={
         <div className='space-y-4'>
           <p className='mb-2'>
-            Delete the selected customers? This action cannot be undone.
+            Delete lead for{' '}
+            <span className='font-bold'>
+              {currentRow.contact.firstName} {currentRow.contact.lastName}
+            </span>
+            ? This action cannot be undone.
           </p>
-          <Label className='my-4 flex flex-col items-start gap-1.5'>
-            <span>Confirm by typing &quot;{CONFIRM_WORD}&quot;:</span>
+          <Label className='my-2'>
+            Contact email:
             <Input
               value={value}
               onChange={(event) => setValue(event.target.value)}
-              placeholder={`Type "${CONFIRM_WORD}" to confirm.`}
+              placeholder='Enter contact email to confirm deletion.'
             />
           </Label>
           <Alert variant='destructive'>
             <AlertTitle>Warning!</AlertTitle>
             <AlertDescription>
-              This operation permanently removes the selected customers.
+              This operation permanently removes the lead.
             </AlertDescription>
           </Alert>
         </div>

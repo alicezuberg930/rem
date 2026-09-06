@@ -28,14 +28,12 @@ import server.rem.dtos.contact.QueryContact;
 import server.rem.entities.Business;
 import server.rem.entities.Contact;
 import server.rem.entities.ContactTag;
-import server.rem.entities.CustomerGroup;
 import server.rem.enums.Color;
 import server.rem.enums.ContactType;
 import server.rem.mappers.ContactMapper;
 import server.rem.repositories.BusinessRepository;
 import server.rem.repositories.ContactRepository;
 import server.rem.repositories.ContactTagRepository;
-import server.rem.repositories.CustomerGroupRepository;
 
 @ExtendWith(MockitoExtension.class)
 class ContactServiceExportTests {
@@ -47,9 +45,6 @@ class ContactServiceExportTests {
 
     @Mock
     private ContactTagRepository contactTagRepository;
-
-    @Mock
-    private CustomerGroupRepository customerGroupRepository;
 
     @Mock
     private ContactMapper contactMapper;
@@ -65,7 +60,6 @@ class ContactServiceExportTests {
                 contactRepository,
                 businessRepository,
                 contactTagRepository,
-                customerGroupRepository,
                 contactMapper,
                 entityManager
         );
@@ -75,13 +69,6 @@ class ContactServiceExportTests {
     void writesEveryCustomerFieldToAValidWorkbook() throws Exception {
         Business business = Business.builder().name("REM").build();
         business.setId("business-1");
-
-        CustomerGroup customerGroup = CustomerGroup.builder()
-                .name("VIP")
-                .percentage(15.5)
-                .business(business)
-                .build();
-        customerGroup.setId("group-1");
 
         ContactTag tag = ContactTag.builder()
                 .name("Returning")
@@ -93,7 +80,6 @@ class ContactServiceExportTests {
 
         Contact contact = Contact.builder()
                 .business(business)
-                .customerGroup(customerGroup)
                 .tag(tag)
                 .type(ContactType.PERSONAL)
                 .firstName("Jane")
@@ -126,29 +112,26 @@ class ContactServiceExportTests {
         when(contactRepository.findAllForExport(
                 eq("business-1"),
                 isNull(),
-                isNull(),
                 any(Pageable.class)
         ))
                 .thenReturn(new PageImpl<>(List.of(contact)));
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
-        contactService.writeExcel(new QueryContact(null, null, null, null), "business-1", output);
+        contactService.writeExcel(new QueryContact(null, null, null), "business-1", output);
 
         try (XSSFWorkbook workbook = new XSSFWorkbook(new ByteArrayInputStream(output.toByteArray()))) {
             assertEquals(1, workbook.getNumberOfSheets());
-            assertEquals(35, workbook.getSheetAt(0).getRow(0).getLastCellNum());
+            assertEquals(32, workbook.getSheetAt(0).getRow(0).getLastCellNum());
             assertEquals("ID", workbook.getSheetAt(0).getRow(0).getCell(0).getStringCellValue());
             assertEquals("contact-1", workbook.getSheetAt(0).getRow(1).getCell(0).getStringCellValue());
             assertEquals("REM", workbook.getSheetAt(0).getRow(1).getCell(4).getStringCellValue());
-            assertEquals("VIP", workbook.getSheetAt(0).getRow(1).getCell(6).getStringCellValue());
-            assertEquals("Returning", workbook.getSheetAt(0).getRow(1).getCell(9).getStringCellValue());
-            assertEquals("Jane", workbook.getSheetAt(0).getRow(1).getCell(13).getStringCellValue());
-            assertEquals("100000", workbook.getSheetAt(0).getRow(1).getCell(34).getStringCellValue());
+            assertEquals("Returning", workbook.getSheetAt(0).getRow(1).getCell(6).getStringCellValue());
+            assertEquals("Jane", workbook.getSheetAt(0).getRow(1).getCell(10).getStringCellValue());
+            assertEquals("100000", workbook.getSheetAt(0).getRow(1).getCell(31).getStringCellValue());
         }
 
         verify(contactRepository).findAllForExport(
                 eq("business-1"),
-                isNull(),
                 isNull(),
                 any(Pageable.class)
         );

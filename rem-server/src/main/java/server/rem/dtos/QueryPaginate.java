@@ -3,6 +3,7 @@ package server.rem.dtos;
 import lombok.*;
 
 @Getter
+@Setter
 @NoArgsConstructor
 public class QueryPaginate {
     private Integer pageSize = 10;

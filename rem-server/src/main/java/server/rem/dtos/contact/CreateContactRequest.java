@@ -14,8 +14,6 @@ public class CreateContactRequest {
     @NotNull(message = "Business ID is required")
     private final String businessId;
 
-    private final String customerGroupId;
-
     @NotNull(message = "Tag ID is required")
     private final String tagId;
 

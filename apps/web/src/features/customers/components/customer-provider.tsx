@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import type { Contact, ContactTag, CustomerGroup } from '@/@types'
-import { contacts } from '@/lib/queries/contact'
+import type { Contact, Customer, CustomerGroup } from '@/@types'
+import { customers } from '@/lib/queries/customer'
 import useDialogState from '@/hooks/use-dialog-state'
 
 type CustomersDialogType = 'add' | 'edit' | 'delete'
@@ -9,9 +9,9 @@ type CustomersDialogType = 'add' | 'edit' | 'delete'
 type CustomersContextType = {
   open: CustomersDialogType | null
   setOpen: (dialog: CustomersDialogType | null) => void
-  currentRow: Contact | null
-  setCurrentRow: React.Dispatch<React.SetStateAction<Contact | null>>
-  tags: ContactTag[]
+  currentRow: Customer | null
+  setCurrentRow: React.Dispatch<React.SetStateAction<Customer | null>>
+  contacts: Contact[]
   customerGroups: CustomerGroup[]
 }
 
@@ -19,9 +19,11 @@ const CustomersContext = React.createContext<CustomersContextType | null>(null)
 
 export function CustomersProvider({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useDialogState<CustomersDialogType>(null)
-  const [currentRow, setCurrentRow] = useState<Contact | null>(null)
-  const { data: tags = [] } = useQuery(contacts().tags.queryOptions())
-  const { data: customerGroups = [] } = useQuery(contacts().customerGroups.queryOptions())
+  const [currentRow, setCurrentRow] = useState<Customer | null>(null)
+  const { data: contacts = [] } = useQuery(customers().contacts.queryOptions())
+  const { data: customerGroups = [] } = useQuery(
+    customers().customerGroups.queryOptions()
+  )
 
   return (
     <CustomersContext
@@ -30,7 +32,7 @@ export function CustomersProvider({ children }: { children: React.ReactNode }) {
         setOpen,
         currentRow,
         setCurrentRow,
-        tags,
+        contacts,
         customerGroups,
       }}
     >

@@ -26,6 +26,7 @@ import {
   Megaphone,
   BookImage,
   Heart,
+  ContactRound,
 } from 'lucide-react'
 import { ClerkLogo } from '@/assets/clerk-logo'
 import { type SidebarData } from '../types'
@@ -104,6 +105,11 @@ export const sidebarData: SidebarData = {
           title: 'Customers',
           url: '/customers',
           icon: Users,
+        },
+        {
+          title: 'Leads',
+          url: '/leads',
+          icon: ContactRound,
         },
         {
           title: 'Templates',

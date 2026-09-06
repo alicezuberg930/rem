@@ -6,6 +6,8 @@ export type QueryPaginate = {
 export * from './business'
 export * from './campaign'
 export * from './contact'
+export * from './customer'
+export * from './lead'
 export * from './permission'
 export * from './response'
 export * from './role'

@@ -25,22 +25,19 @@ import server.rem.dtos.contact.QueryContact;
 import server.rem.entities.Business;
 import server.rem.entities.Contact;
 import server.rem.entities.ContactTag;
-import server.rem.entities.CustomerGroup;
 import server.rem.mappers.ContactMapper;
 import server.rem.repositories.BusinessRepository;
 import server.rem.repositories.ContactRepository;
 import server.rem.repositories.ContactTagRepository;
-import server.rem.repositories.CustomerGroupRepository;
 import server.rem.specifications.ContactSpecification;
 import server.rem.utils.ExportExcel;
-import server.rem.utils.exceptions.ResourceNotFoundException;
 
 @Service
 @AllArgsConstructor
 public class ContactService {
     private static final int EXPORT_PAGE_SIZE = 1_000;
     private static final int DEFAULT_COLUMN_WIDTH = 5_000;
-    private static final int NOTE_COLUMN_INDEX = 30;
+    private static final int NOTE_COLUMN_INDEX = 27;
     private static final int NOTE_COLUMN_WIDTH = 12_000;
     private static final String[] EXPORT_HEADERS = {
             "ID",
@@ -48,9 +45,6 @@ public class ContactService {
             "Updated At",
             "Business ID",
             "Business Name",
-            "Customer Group ID",
-            "Customer Group Name",
-            "Customer Group Percentage",
             "Tag ID",
             "Tag Name",
             "Tag Color",
@@ -83,7 +77,6 @@ public class ContactService {
     private final ContactRepository contactRepository;
     private final BusinessRepository businessRepository;
     private final ContactTagRepository contactTagRepository;
-    private final CustomerGroupRepository customerGroupRepository;
     private final ContactMapper contactMapper;
     private final EntityManager entityManager;
 
@@ -105,13 +98,12 @@ public class ContactService {
                 .orElseThrow(() -> new RuntimeException("Business not found"));
         ContactTag tag = contactTagRepository.findById(dto.getTagId())
                 .orElseThrow(() -> new RuntimeException("Tag not found"));
-        CustomerGroup customerGroup = resolveCustomerGroup(dto.getCustomerGroupId());
 
         if (contactRepository.existsByEmailAndBusinessId(dto.getEmail(), dto.getBusinessId())) {
             throw new RuntimeException("Contact with email '" + dto.getEmail() + "' already exists in this business");
         }
 
-        Contact contact = contactMapper.toEntity(dto, business, tag, customerGroup);
+        Contact contact = contactMapper.toEntity(dto, business, tag);
         return contactRepository.save(contact);
     }
 
@@ -119,20 +111,13 @@ public class ContactService {
         Contact contact = getOne(id);
         ContactTag tag = contactTagRepository.findById(dto.getTagId())
                 .orElseThrow(() -> new RuntimeException("Tag not found"));
-        CustomerGroup customerGroup = resolveCustomerGroup(dto.getCustomerGroupId());
 
-        contactMapper.updateEntity(dto, tag, customerGroup, contact);
+        contactMapper.updateEntity(dto, tag, contact);
         return contactRepository.save(contact);
     }
 
     public void delete(String id) {
         contactRepository.delete(getOne(id));
-    }
-
-    private CustomerGroup resolveCustomerGroup(String customerGroupId) {
-        if (customerGroupId == null) return null;
-        return customerGroupRepository.findById(customerGroupId)
-                .orElseThrow(() -> new ResourceNotFoundException("Customer group not found"));
     }
 
     @Transactional(readOnly = true)
@@ -150,7 +135,6 @@ public class ContactService {
                 page = contactRepository.findAllForExport(
                         businessId,
                         query.getType(),
-                        query.getCustomerGroupId(),
                         PageRequest.of(pageNumber, EXPORT_PAGE_SIZE, Sort.by(Sort.Direction.ASC, "id"))
                 );
                 for (Contact contact : page.getContent()) {
@@ -180,7 +164,6 @@ public class ContactService {
     }
 
     private void writeContact(Row row, Contact contact) {
-        CustomerGroup customerGroup = contact.getCustomerGroup();
         ContactTag tag = contact.getTag();
         int columnIndex = 0;
 
@@ -189,9 +172,6 @@ public class ContactService {
         ExportExcel.setCellValue(row, columnIndex++, contact.getUpdatedAt());
         ExportExcel.setCellValue(row, columnIndex++, contact.getBusiness().getId());
         ExportExcel.setCellValue(row, columnIndex++, contact.getBusiness().getName());
-        ExportExcel.setCellValue(row, columnIndex++, customerGroup == null ? null : customerGroup.getId());
-        ExportExcel.setCellValue(row, columnIndex++, customerGroup == null ? null : customerGroup.getName());
-        ExportExcel.setCellValue(row, columnIndex++, customerGroup == null ? null : customerGroup.getPercentage());
         ExportExcel.setCellValue(row, columnIndex++, tag == null ? null : tag.getId());
         ExportExcel.setCellValue(row, columnIndex++, tag == null ? null : tag.getName());
         ExportExcel.setCellValue(row, columnIndex++, tag == null ? null : tag.getColor());

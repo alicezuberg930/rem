@@ -32,6 +32,7 @@ import server.rem.entities.BusinessUserId;
 import server.rem.entities.CalendarBooking;
 import server.rem.entities.Contact;
 import server.rem.entities.ContactTag;
+import server.rem.entities.Customer;
 import server.rem.entities.CustomerGroup;
 import server.rem.entities.Permission;
 import server.rem.entities.Role;
@@ -43,6 +44,7 @@ import server.rem.repositories.CalendarBookingRepository;
 import server.rem.repositories.ContactRepository;
 import server.rem.repositories.ContactTagRepository;
 import server.rem.repositories.CustomerGroupRepository;
+import server.rem.repositories.CustomerRepository;
 import server.rem.repositories.PermissionRepository;
 import server.rem.repositories.RoleRepository;
 import server.rem.repositories.UserRepository;
@@ -62,6 +64,8 @@ class DataSeederTests {
     @Mock
     private CustomerGroupRepository customerGroupRepository;
     @Mock
+    private CustomerRepository customerRepository;
+    @Mock
     private ContactTagRepository contactTagRepository;
     @Mock
     private ContactRepository contactRepository;
@@ -74,6 +78,7 @@ class DataSeederTests {
     private final Map<String, Business> businesses = new LinkedHashMap<>();
     private final Map<BusinessUserId, BusinessUser> businessUsers = new LinkedHashMap<>();
     private final Map<String, CustomerGroup> customerGroups = new LinkedHashMap<>();
+    private final Map<String, Customer> customers = new LinkedHashMap<>();
     private final Map<String, ContactTag> contactTags = new LinkedHashMap<>();
     private final Map<String, Contact> contacts = new LinkedHashMap<>();
     private final Map<String, CalendarBooking> bookings = new LinkedHashMap<>();
@@ -90,6 +95,7 @@ class DataSeederTests {
                 businessRepository,
                 businessUserRepository,
                 customerGroupRepository,
+                customerRepository,
                 contactTagRepository,
                 contactRepository,
                 calendarBookingRepository);
@@ -108,6 +114,7 @@ class DataSeederTests {
         assertEquals(1, businesses.size());
         assertEquals(2, businessUsers.size());
         assertEquals(5, customerGroups.size());
+        assertEquals(10, customers.size());
         assertEquals(5, contactTags.size());
         assertEquals(10, contacts.size());
         assertEquals(20, bookings.size());
@@ -130,9 +137,12 @@ class DataSeederTests {
 
         Contact linh = contacts.get("ct_linh_seed_000000001");
         assertSame(business, linh.getBusiness());
-        assertSame(customerGroups.get("grp_vip_seed_0000000001"), linh.getCustomerGroup());
         assertSame(contactTags.get("tag_hot_seed_0000000001"), linh.getTag());
         assertEquals("Prefers morning appointments", linh.getNote());
+
+        Customer linhCustomer = customers.get("cust_linh_seed_000000001");
+        assertSame(linh, linhCustomer.getContact());
+        assertSame(customerGroups.get("grp_vip_seed_0000000001"), linhCustomer.getCustomerGroup());
 
         CalendarBooking firstBooking = bookings.get("book_seed_000000000001");
         assertSame(linh, firstBooking.getContact());
@@ -163,6 +173,7 @@ class DataSeederTests {
         verify(businessRepository, never()).save(any(Business.class));
         verify(businessUserRepository, never()).save(any(BusinessUser.class));
         verify(customerGroupRepository, never()).save(any(CustomerGroup.class));
+        verify(customerRepository, never()).save(any(Customer.class));
         verify(contactTagRepository, never()).save(any(ContactTag.class));
         verify(contactRepository, never()).save(any(Contact.class));
         verify(calendarBookingRepository, never()).save(any(CalendarBooking.class));
@@ -224,6 +235,14 @@ class DataSeederTests {
             return customerGroup;
         });
 
+        when(customerRepository.findById(anyString()))
+                .thenAnswer(invocation -> Optional.ofNullable(customers.get(invocation.getArgument(0))));
+        when(customerRepository.save(any(Customer.class))).thenAnswer(invocation -> {
+            Customer customer = invocation.getArgument(0);
+            customers.put(customer.getId(), customer);
+            return customer;
+        });
+
         when(contactTagRepository.findById(anyString()))
                 .thenAnswer(invocation -> Optional.ofNullable(contactTags.get(invocation.getArgument(0))));
         when(contactTagRepository.save(any(ContactTag.class))).thenAnswer(invocation -> {
@@ -257,6 +276,7 @@ class DataSeederTests {
                 businessRepository,
                 businessUserRepository,
                 customerGroupRepository,
+                customerRepository,
                 contactTagRepository,
                 contactRepository,
                 calendarBookingRepository);

@@ -10,7 +10,11 @@ interface Props extends Omit<UploadProps, 'file'> {
   fieldLabel: string
 }
 
-export function RHFUploadAvatar({ name, ...other }: Readonly<Props>) {
+export function RHFUploadAvatar({
+  name,
+  fieldLabel,
+  ...other
+}: Readonly<Props>) {
   const { control } = useFormContext()
 
   return (
@@ -19,7 +23,9 @@ export function RHFUploadAvatar({ name, ...other }: Readonly<Props>) {
       control={control}
       render={({ field, fieldState: { error } }) => (
         <Field data-invalid={!!error}>
-          {/* <FieldLabel htmlFor={field.name}>{fieldLabel}</FieldLabel> */}
+          <FieldLabel htmlFor={field.name} className='sr-only'>
+            {fieldLabel}
+          </FieldLabel>
           <UploadAvatar
             accept={{ 'image/*': [] }}
             error={!!error}

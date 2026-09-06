@@ -15,6 +15,7 @@ import server.rem.dtos.auth.RoleResponse;
 import server.rem.entities.BusinessUser;
 import server.rem.entities.Role;
 import server.rem.mappers.AuthMapper;
+import server.rem.mappers.UserMapper;
 import server.rem.repositories.BusinessUserRepository;
 import server.rem.repositories.UserRepository;
 
@@ -26,12 +27,14 @@ class AuthServiceTests {
     private UserRepository userRepository;
     @Mock
     private AuthMapper authMapper;
+    @Mock
+    private UserMapper userMapper;
 
     private AuthService authService;
 
     @BeforeEach
     void setUp() {
-        authService = new AuthService(businessUserRepository, userRepository, authMapper);
+        authService = new AuthService(businessUserRepository, userRepository, authMapper, userMapper);
     }
 
     @Test

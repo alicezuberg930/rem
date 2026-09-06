@@ -10,8 +10,7 @@ public class ContactSpecification {
     public static Specification<Contact> withFilters(QueryContact dto, String businessId) {
         return Specification
                 .where(hasBusinessId(businessId))
-                .and(hasType(dto.getType()))
-                .and(hasCustomerGroup(dto.getCustomerGroupId()));
+                .and(hasType(dto.getType()));
     }
 
     private static Specification<Contact> hasBusinessId(String businessId) {
@@ -20,11 +19,6 @@ public class ContactSpecification {
 
     private static Specification<Contact> hasType(ContactType type) {
         return (root, query, cb) -> type == null ? null : cb.equal(root.get("type"), type);
-    }
-
-    private static Specification<Contact> hasCustomerGroup(String customerGroupId) {
-        return (root, query, cb) -> customerGroupId == null ? null
-                : cb.equal(root.get("customerGroup").get("id"), customerGroupId);
     }
 
 }

@@ -1,0 +1,81 @@
+package server.rem.enums;
+
+public enum LeadSource {
+  // Website / owned channels
+  WEBSITE,
+  LANDING_PAGE,
+  CONTACT_FORM,
+  LIVE_CHAT,
+  CHATBOT,
+  MOBILE_APP,
+
+  // Direct communication
+  PHONE_CALL,
+  EMAIL,
+  SMS,
+  WHATSAPP,
+
+  // Social media
+  FACEBOOK,
+  INSTAGRAM,
+  LINKEDIN,
+  TIKTOK,
+  YOUTUBE,
+  X_TWITTER,
+  ZALO,
+
+  // Organic search
+  GOOGLE_ORGANIC,
+  BING_ORGANIC,
+  OTHER_SEARCH_ENGINE,
+
+  // Paid advertising
+  GOOGLE_ADS,
+  FACEBOOK_ADS,
+  INSTAGRAM_ADS,
+  LINKEDIN_ADS,
+  TIKTOK_ADS,
+  YOUTUBE_ADS,
+  DISPLAY_ADS,
+  RETARGETING_ADS,
+
+  // Referrals
+  REFERRAL,
+  CUSTOMER_REFERRAL,
+  PARTNER_REFERRAL,
+  EMPLOYEE_REFERRAL,
+
+  // Partners
+  PARTNER,
+  AFFILIATE,
+  RESELLER,
+  DISTRIBUTOR,
+
+  // Offline / events
+  EVENT,
+  TRADE_SHOW,
+  CONFERENCE,
+  SEMINAR,
+  WEBINAR,
+  NETWORKING,
+  WALK_IN,
+  STORE_VISIT,
+  QR_CODE,
+  DIRECT_MAIL,
+
+  // Outbound sales
+  COLD_CALL,
+  COLD_EMAIL,
+  OUTBOUND_SALES,
+
+  // External systems
+  MARKETPLACE,
+  API,
+  THIRD_PARTY_INTEGRATION,
+  IMPORT,
+  CSV_IMPORT,
+
+  // Fallback
+  OTHER,
+  UNKNOWN,
+}

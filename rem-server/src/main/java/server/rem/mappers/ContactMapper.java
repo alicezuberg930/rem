@@ -7,14 +7,12 @@ import server.rem.dtos.contact.CreateContactRequest;
 import server.rem.entities.Business;
 import server.rem.entities.Contact;
 import server.rem.entities.ContactTag;
-import server.rem.entities.CustomerGroup;
 
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface ContactMapper {
 
     @Mapping(target = "business", source = "business")
     @Mapping(target = "tag", source = "tag")
-    @Mapping(target = "customerGroup", source = "customerGroup")
     @Mapping(target = "type", source = "dto.type")
     @Mapping(target = "firstName", source = "dto.firstName")
     @Mapping(target = "lastName", source = "dto.lastName")
@@ -39,11 +37,10 @@ public interface ContactMapper {
     @Mapping(target = "country", source = "dto.country")
     @Mapping(target = "zipCode", source = "dto.zipCode")
     @Mapping(target = "campaigns", ignore = true)
-    Contact toEntity(CreateContactRequest dto, Business business, ContactTag tag, CustomerGroup customerGroup);
+    Contact toEntity(CreateContactRequest dto, Business business, ContactTag tag);
 
     @Mapping(target = "business", ignore = true)
     @Mapping(target = "tag", source = "tag")
-    @Mapping(target = "customerGroup", source = "customerGroup")
     @Mapping(target = "type", source = "dto.type")
     @Mapping(target = "firstName", source = "dto.firstName")
     @Mapping(target = "lastName", source = "dto.lastName")
@@ -71,7 +68,7 @@ public interface ContactMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "campaigns", ignore = true)
-    void updateEntity(CreateContactRequest dto, ContactTag tag, CustomerGroup customerGroup, @MappingTarget Contact contact);
+    void updateEntity(CreateContactRequest dto, ContactTag tag, @MappingTarget Contact contact);
 
     ContactResponse toContactResponse(Contact contact);
 }

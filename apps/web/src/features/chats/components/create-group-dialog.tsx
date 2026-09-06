@@ -1,11 +1,12 @@
 import { useCallback, useEffect } from 'react'
 import { z } from 'zod'
-import { useForm, useWatch } from 'react-hook-form'
+import { Controller, useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation } from '@tanstack/react-query'
 import { type ApiResponse, type ChatGroup, type ChatUser } from '@/@types'
 import { Check } from 'lucide-react'
 import { toast } from 'sonner'
-import { uploadFile } from '@/lib/repository/api'
+import { files } from '@/lib/queries/file'
 import { httpClient } from '@/lib/repository/http-client'
 import { HttpError } from '@/lib/repository/http-error'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -27,15 +28,12 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { type CustomFile, UploadAvatar } from '@/components/upload'
+  FormProvider,
+  RHFTextField,
+  RHFUploadAvatar,
+} from '@/components/hook-form'
+import { Field, FieldError, FieldLabel } from '@/components/ui/field'
+import { type CustomFile } from '@/components/upload'
 import { getInitials } from '@/lib/utils'
 
 const groupSchema = z.object({
@@ -80,23 +78,29 @@ export function CreateGroupDialog({
       members: [],
     },
   })
+  const { mutateAsync: uploadFile } = useMutation(
+    files().upload.mutationOptions()
+  )
   const avatar = useWatch({ control: form.control, name: 'avatar' })
 
   useEffect(() => () => {
     if (avatar?.preview) URL.revokeObjectURL(avatar.preview)
   }, [avatar])
 
-  const handleAvatarDrop = useCallback((files: File[]) => {
-    const file = files[0]
-    if (!file) return
-    const avatarFile = Object.assign(file, {
-      preview: URL.createObjectURL(file),
-    })
-    form.setValue('avatar', avatarFile, {
-      shouldDirty: true,
-      shouldValidate: true,
-    })
-  }, [form])
+  const handleAvatarDrop = useCallback(
+    (files: File[]) => {
+      const file = files[0]
+      if (!file) return
+      const avatarFile = Object.assign(file, {
+        preview: URL.createObjectURL(file),
+      })
+      form.setValue('avatar', avatarFile, {
+        shouldDirty: true,
+        shouldValidate: true,
+      })
+    },
+    [form]
+  )
 
   const handleOpenChange = (state: boolean) => {
     if (!state && form.formState.isSubmitting) return
@@ -106,7 +110,10 @@ export function CreateGroupDialog({
 
   const onSubmit = async (values: GroupForm) => {
     const request = (async () => {
-      const uploadResponse = await uploadFile(values.avatar, '/groups')
+      const uploadResponse = await uploadFile({
+        file: values.avatar,
+        subFolder: '/groups',
+      })
       return httpClient.post<ApiResponse<ChatGroup>>('/group', {
         name: values.name,
         avatar: uploadResponse.data,
@@ -117,7 +124,8 @@ export function CreateGroupDialog({
     toast.promise(request, {
       loading: 'Creating group…',
       success: (response) => response.message,
-      error: (error) => error instanceof HttpError ? error.message : 'Unable to create group',
+      error: (error) =>
+        error instanceof HttpError ? error.message : 'Unable to create group',
     })
 
     try {
@@ -140,58 +148,36 @@ export function CreateGroupDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <Form {...form}>
-          <form
-            id='create-group-form'
-            className='space-y-5'
-            onSubmit={form.handleSubmit(onSubmit)}
-          >
-            <FormField
-              control={form.control}
+        <FormProvider
+          id='create-group-form'
+          methods={form}
+          onSubmit={form.handleSubmit(onSubmit)}
+        >
+          <div className='space-y-5'>
+            <RHFUploadAvatar
               name='avatar'
-              render={({ fieldState }) => (
-                <FormItem>
-                  <FormLabel className='sr-only'>Group avatar</FormLabel>
-                  <UploadAvatar
-                    accept={{ 'image/*': [] }}
-                    maxSize={3 * 1024 * 1024}
-                    file={avatar}
-                    error={fieldState.invalid}
-                    disabled={form.formState.isSubmitting}
-                    onDrop={handleAvatarDrop}
-                  />
-                  <FormMessage className='text-center' />
-                </FormItem>
-              )}
+              fieldLabel='Group avatar'
+              accept={{ 'image/*': [] }}
+              maxSize={3 * 1024 * 1024}
+              disabled={form.formState.isSubmitting}
+              onDrop={handleAvatarDrop}
             />
 
-            <FormField
-              control={form.control}
+            <RHFTextField
               name='name'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Group name</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder='Design team'
-                      autoComplete='off'
-                      maxLength={100}
-                      disabled={form.formState.isSubmitting}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              fieldLabel='Group name'
+              placeholder='Design team'
+              maxLength={100}
+              disabled={form.formState.isSubmitting}
             />
 
-            <FormField
+            <Controller
               control={form.control}
               name='members'
-              render={({ field }) => (
-                <FormItem>
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
                   <div className='flex items-center justify-between gap-4'>
-                    <FormLabel>Members</FormLabel>
+                    <FieldLabel>Members</FieldLabel>
                     <span className='text-xs text-muted-foreground'>
                       {field.value.length} selected
                     </span>
@@ -242,12 +228,14 @@ export function CreateGroupDialog({
                       </CommandGroup>
                     </CommandList>
                   </Command>
-                  <FormMessage />
-                </FormItem>
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
               )}
             />
-          </form>
-        </Form>
+          </div>
+        </FormProvider>
 
         <DialogFooter>
           <Button

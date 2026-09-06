@@ -1,5 +1,5 @@
 import type { Row } from '@tanstack/react-table'
-import type { Contact } from '@/@types'
+import type { Customer } from '@/@types'
 import { EllipsisVertical, Trash2, UserPen } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -13,7 +13,7 @@ import {
 import { useCustomers } from './customer-provider'
 
 type CustomersRowActionsProps = {
-  row: Row<Contact>
+  row: Row<Customer>
 }
 
 export function CustomersRowActions({ row }: CustomersRowActionsProps) {

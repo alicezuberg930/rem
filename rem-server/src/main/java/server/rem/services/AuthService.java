@@ -46,6 +46,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final AuthMapper authMapper;
+    private final UserMapper userMapper;
     // private final EmailService emailService;
 
     public RoleResponse getCurrentRole(String userId, String businessId) {
@@ -81,7 +82,7 @@ public class AuthService {
     }
 
     public UserProfileResponse signUp(SignUpRequest dto) {
-        User user = UserMapper.toEntity(dto);
+        User user = userMapper.toEntity(dto);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         // send email to user with verify token

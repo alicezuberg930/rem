@@ -13,6 +13,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mapstruct.factory.Mappers;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -27,6 +28,7 @@ import server.rem.entities.BusinessUser;
 import server.rem.entities.Role;
 import server.rem.entities.User;
 import server.rem.mappers.ChatMapper;
+import server.rem.mappers.UserMapper;
 import server.rem.repositories.BusinessRepository;
 import server.rem.repositories.BusinessUserRepository;
 import server.rem.repositories.RoleRepository;
@@ -44,6 +46,7 @@ class UserServiceTests {
     private BusinessRepository businessRepository;
     @Mock
     private RoleRepository roleRepository;
+    private final UserMapper userMapper = Mappers.getMapper(UserMapper.class);
 
     private UserService userService;
 
@@ -53,6 +56,7 @@ class UserServiceTests {
                 userRepository,
                 businessUserRepository,
                 chatMapper,
+                userMapper,
                 businessRepository,
                 roleRepository);
     }

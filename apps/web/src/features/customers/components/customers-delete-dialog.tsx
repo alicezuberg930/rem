@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
-import type { Contact } from '@/@types'
+import type { Customer } from '@/@types'
 import { AlertTriangle } from 'lucide-react'
 import { toast } from 'sonner'
-import { contacts } from '@/lib/queries/contact'
+import { customers } from '@/lib/queries/customer'
 import { HttpError } from '@/lib/repository/http-error'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Input } from '@/components/ui/input'
@@ -13,7 +13,7 @@ import { ConfirmDialog } from '@/components/confirm-dialog'
 type CustomersDeleteDialogProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
-  currentRow: Contact
+  currentRow: Customer
 }
 
 export function CustomersDeleteDialog({
@@ -22,10 +22,11 @@ export function CustomersDeleteDialog({
   currentRow,
 }: CustomersDeleteDialogProps) {
   const [value, setValue] = useState('')
-  const remove = useMutation(contacts().delete.mutationOptions())
+  const remove = useMutation(customers().delete.mutationOptions())
+  const email = currentRow.contact.email
 
   const handleDelete = () => {
-    if (value.trim() !== currentRow.email) return
+    if (value.trim() !== email) return
     const submit = async () => {
       const response = await remove.mutateAsync(currentRow.id)
       setValue('')
@@ -45,7 +46,7 @@ export function CustomersDeleteDialog({
       open={open}
       onOpenChange={onOpenChange}
       handleConfirm={handleDelete}
-      disabled={value.trim() !== currentRow.email || remove.isPending}
+      disabled={value.trim() !== email || remove.isPending}
       title={
         <span className='text-destructive'>
           <AlertTriangle
@@ -60,7 +61,7 @@ export function CustomersDeleteDialog({
           <p className='mb-2'>
             Delete{' '}
             <span className='font-bold'>
-              {currentRow.firstName} {currentRow.lastName}
+              {currentRow.contact.firstName} {currentRow.contact.lastName}
             </span>
             ? This action cannot be undone.
           </p>

@@ -2,6 +2,9 @@ import { mutationOptions, queryOptions } from '@tanstack/react-query'
 import type {
   ApiResponse,
   CalendarBooking,
+  Contact,
+  PaginatedApiResponse,
+  QueryContact,
 } from '@/@types'
 import { queryClient } from '@/providers/query-provider'
 import type { BookingValidators } from '@/lib/validators'
@@ -10,9 +13,12 @@ import { httpClient } from '../repository/http-client'
 const keys = {
   root: ['bookings'] as const,
   all: ['bookings', 'list'] as const,
+  contacts: (options: QueryContact) => ['bookings', 'contacts', options],
   create: ['bookings', 'create'] as const,
   update: ['bookings', 'update'] as const,
 }
+
+type PageResponse<T> = PaginatedApiResponse<T[]>['data']
 
 export const bookings = () => ({
   all: {
@@ -25,6 +31,19 @@ export const bookings = () => ({
               '/calendar-bookings'
             )
           return data
+        },
+      }),
+  },
+
+  contacts: {
+    queryOptions: (options: QueryContact = { pageSize: 1_000 }) =>
+      queryOptions({
+        queryKey: keys.contacts(options),
+        queryFn: async () => {
+          const { data } = await httpClient.get<
+            ApiResponse<PageResponse<Contact>>
+          >('/contacts', options as Record<string, unknown>)
+          return data.content
         },
       }),
   },

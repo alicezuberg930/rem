@@ -1,12 +1,12 @@
 import { type ColumnDef } from '@tanstack/react-table'
-import type { Contact } from '@/@types'
+import type { Customer } from '@/@types'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
 import { CustomersRowActions } from './customers-row-actions'
 
-export const customersColumns: ColumnDef<Contact>[] = [
+export const customersColumns: ColumnDef<Customer>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -35,7 +35,8 @@ export const customersColumns: ColumnDef<Contact>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'firstName',
+    accessorFn: (row) => row.contact.firstName,
+    id: 'firstName',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='First Name' />
     ),
@@ -46,7 +47,8 @@ export const customersColumns: ColumnDef<Contact>[] = [
     enableSorting: false,
   },
   {
-    accessorKey: 'lastName',
+    accessorFn: (row) => row.contact.lastName,
+    id: 'lastName',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Last Name' />
     ),
@@ -56,29 +58,8 @@ export const customersColumns: ColumnDef<Contact>[] = [
     enableSorting: false,
   },
   {
-    accessorKey: 'surname',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Surname' />
-    ),
-    cell: ({ row }) => (
-      <LongText className='max-w-40'>{row.getValue('surname')}</LongText>
-    ),
-    enableSorting: false,
-  },
-  {
-    accessorKey: 'type',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Type' />
-    ),
-    cell: ({ row }) => (
-      <span className='capitalize'>
-        {String(row.getValue('type')).toLowerCase()}
-      </span>
-    ),
-    enableSorting: false,
-  },
-  {
-    accessorKey: 'phone',
+    accessorFn: (row) => row.contact.phone,
+    id: 'phone',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Phone' />
     ),
@@ -88,17 +69,8 @@ export const customersColumns: ColumnDef<Contact>[] = [
     enableSorting: false,
   },
   {
-    accessorKey: 'mobilePhone',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Mobile Phone' />
-    ),
-    cell: ({ row }) => (
-      <LongText className='max-w-40'>{row.getValue('mobilePhone')}</LongText>
-    ),
-    enableSorting: false,
-  },
-  {
-    accessorKey: 'email',
+    accessorFn: (row) => row.contact.email,
+    id: 'email',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Email' />
     ),
@@ -108,22 +80,25 @@ export const customersColumns: ColumnDef<Contact>[] = [
     enableSorting: false,
   },
   {
-    accessorKey: 'birthday',
+    accessorFn: (row) => row.customerGroup?.id ?? 'none',
+    id: 'customerGroupId',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Birthday' />
+      <DataTableColumnHeader column={column} title='Customer Group' />
     ),
     cell: ({ row }) => (
-      <LongText className='max-w-40'>{row.getValue('birthday')}</LongText>
+      <LongText className='max-w-48'>
+        {row.original.customerGroup?.name ?? 'No group'}
+      </LongText>
     ),
     enableSorting: false,
   },
   {
-    accessorKey: 'occupation',
+    accessorKey: 'customerSince',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Occupation' />
+      <DataTableColumnHeader column={column} title='Customer Since' />
     ),
     cell: ({ row }) => (
-      <LongText className='max-w-48'>{row.getValue('occupation')}</LongText>
+      <LongText className='max-w-40'>{row.getValue('customerSince')}</LongText>
     ),
     enableSorting: false,
   },

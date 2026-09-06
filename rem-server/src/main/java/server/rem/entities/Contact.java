@@ -23,11 +23,6 @@ public class Contact extends Base {
     private Business business;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_group_id", nullable = true)
-    @JsonIgnoreProperties("customerGroup")
-    private CustomerGroup customerGroup;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tag_id", nullable = false)
     @JsonIgnoreProperties("tag")
     private ContactTag tag;

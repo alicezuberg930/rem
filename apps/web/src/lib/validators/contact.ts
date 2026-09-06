@@ -4,7 +4,6 @@ const optionalText = z.string().nullable()
 
 export const contactFormSchema = z.object({
   businessId: z.string().min(1, 'Business is required.'),
-  customerGroupId: z.string().nullable(),
   tagId: z.string().min(1, 'Tag is required.'),
   type: z.enum(['PERSONAL', 'COMPANY']),
   firstName: z.string().min(1, 'First name is required.'),

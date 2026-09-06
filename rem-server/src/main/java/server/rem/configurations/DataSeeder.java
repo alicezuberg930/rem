@@ -26,6 +26,7 @@ import server.rem.entities.BusinessUserId;
 import server.rem.entities.CalendarBooking;
 import server.rem.entities.Contact;
 import server.rem.entities.ContactTag;
+import server.rem.entities.Customer;
 import server.rem.entities.CustomerGroup;
 import server.rem.entities.Permission;
 import server.rem.entities.Role;
@@ -42,6 +43,7 @@ import server.rem.repositories.CalendarBookingRepository;
 import server.rem.repositories.ContactRepository;
 import server.rem.repositories.ContactTagRepository;
 import server.rem.repositories.CustomerGroupRepository;
+import server.rem.repositories.CustomerRepository;
 import server.rem.repositories.PermissionRepository;
 import server.rem.repositories.RoleRepository;
 import server.rem.repositories.UserRepository;
@@ -220,6 +222,7 @@ public class DataSeeder implements CommandLineRunner {
     private final BusinessRepository businessRepository;
     private final BusinessUserRepository businessUserRepository;
     private final CustomerGroupRepository customerGroupRepository;
+    private final CustomerRepository customerRepository;
     private final ContactTagRepository contactTagRepository;
     private final ContactRepository contactRepository;
     private final CalendarBookingRepository calendarBookingRepository;
@@ -237,7 +240,8 @@ public class DataSeeder implements CommandLineRunner {
 
         Map<String, CustomerGroup> customerGroups = seedCustomerGroups(business);
         Map<String, ContactTag> contactTags = seedContactTags(business);
-        Map<String, Contact> contacts = seedContacts(business, customerGroups, contactTags);
+        Map<String, Contact> contacts = seedContacts(business, contactTags);
+        seedCustomers(customerGroups, contacts);
         seedCalendarBookings(business, users, contacts);
     }
 
@@ -390,13 +394,11 @@ public class DataSeeder implements CommandLineRunner {
         return contactTags;
     }
 
-    private Map<String, Contact> seedContacts(Business business, Map<String, CustomerGroup> customerGroups,
-            Map<String, ContactTag> contactTags) {
+    private Map<String, Contact> seedContacts(Business business, Map<String, ContactTag> contactTags) {
         Map<String, Contact> contacts = new LinkedHashMap<>();
         for (ContactSeed seed : CONTACT_SEEDS) {
             Contact contact = findOrCreate(contactRepository, seed.id(), () -> withId(Contact.builder()
                     .business(business)
-                    .customerGroup(customerGroups.get(seed.customerGroupId()))
                     .tag(contactTags.get(seed.contactTagId()))
                     .type(ContactType.PERSONAL)
                     .firstName(seed.firstName())
@@ -415,6 +417,20 @@ public class DataSeeder implements CommandLineRunner {
             contacts.put(seed.id(), contact);
         }
         return contacts;
+    }
+
+    private Map<String, Customer> seedCustomers(Map<String, CustomerGroup> customerGroups, Map<String, Contact> contacts) {
+        Map<String, Customer> customers = new LinkedHashMap<>();
+        for (ContactSeed seed : CONTACT_SEEDS) {
+            String id = customerId(seed.id());
+            Customer customer = findOrCreate(customerRepository, id, () -> withId(Customer.builder()
+                    .contact(contacts.get(seed.id()))
+                    .customerGroup(customerGroups.get(seed.customerGroupId()))
+                    .customerSince(LocalDate.of(2026, 1, 1))
+                    .build(), id));
+            customers.put(id, customer);
+        }
+        return customers;
     }
 
     private void seedCalendarBookings(Business business, Map<String, User> users, Map<String, Contact> contacts) {
@@ -447,6 +463,10 @@ public class DataSeeder implements CommandLineRunner {
 
     private static String permissionId(int number) {
         return "perm_seed_%012d".formatted(number);
+    }
+
+    private static String customerId(String contactId) {
+        return "cust_" + contactId.substring(3);
     }
 
     private record RoleSeed(String id, String name, String description) {

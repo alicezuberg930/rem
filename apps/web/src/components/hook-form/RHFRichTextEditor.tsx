@@ -1,9 +1,10 @@
-import { useMemo, useRef } from 'react'
+import { useCallback, useMemo, useRef } from 'react'
 import { useFormContext, Controller } from 'react-hook-form'
+import { useMutation } from '@tanstack/react-query'
 import '@/styles/custom-quill.css'
 import ReactQuill from 'react-quill-new'
 import 'react-quill-new/dist/quill.snow.css'
-import { uploadFile } from '@/lib/repository/api'
+import { files } from '@/lib/queries/file'
 import { cn } from '@/lib/utils'
 import { Field, FieldError, FieldLabel } from '../ui/field'
 
@@ -19,8 +20,11 @@ export const RHFRichTextEditor = ({
 }: RHFRichTextEditorProps) => {
   const { control } = useFormContext()
   const quillRef = useRef<ReactQuill | null>(null)
+  const { mutateAsync: uploadFile } = useMutation(
+    files().upload.mutationOptions()
+  )
 
-  const imageHandler = async () => {
+  const imageHandler = useCallback(async () => {
     const input = document.createElement('input')
     input.setAttribute('type', 'file')
     input.setAttribute('accept', 'image/*')
@@ -28,17 +32,20 @@ export const RHFRichTextEditor = ({
     input.onchange = async () => {
       const file = input.files?.[0]
       if (!file) return
-      const imageUrl = await uploadFile(file, '/templates')
+      const imageUrl = await uploadFile({
+        file,
+        subFolder: '/templates',
+      })
       // Insert the URL into the editor at cursor position
       const editor = quillRef.current?.getEditor()
       const range = editor?.getSelection(true)
       if (editor && range) {
-        editor.insertEmbed(range.index, 'image', imageUrl)
+        editor.insertEmbed(range.index, 'image', imageUrl.data)
         // move cursor after image
         editor.setSelection(range.index + 1, 0)
       }
     }
-  }
+  }, [uploadFile])
 
   const modules = useMemo(
     () => ({
@@ -70,7 +77,7 @@ export const RHFRichTextEditor = ({
         },
       },
     }),
-    []
+    [imageHandler]
   )
 
   const formats = [
