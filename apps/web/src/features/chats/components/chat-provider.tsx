@@ -12,24 +12,22 @@ import {
   type ChatMessage,
   type ChatSocketEvent,
   type SendChatMessage,
+  type ChatUserStatus
 } from '@/@types'
 import { toast } from 'sonner'
 import { getCookie } from '@/lib/cookies'
 import { chatKeys } from '@/lib/queries/chat'
 import { useAuth } from '@/providers/auth-provider'
 
-export type ChatSocketStatus = 'connected' | 'disconnected'
-
 type ChatContextValue = {
   businessId?: string
-  status: ChatSocketStatus
+  status: ChatUserStatus
   sendMessage: (message: SendChatMessage) => boolean
 }
 
 const ChatContext = createContext<ChatContextValue | null>(null)
 
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === 'object' && value !== null
+const isRecord = (value: unknown): value is Record<string, unknown> => typeof value === 'object' && value !== null
 
 const isChatMessage = (value: Record<string, unknown>): value is ChatMessage =>
   value.type === 'MESSAGE' &&
@@ -82,7 +80,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   const queryClient = useQueryClient()
   const currentUserId = user?.id
   const [businessId, setBusinessId] = useState(() => getCookie('X-Business-Id'))
-  const [status, setStatus] = useState<ChatSocketStatus>('disconnected')
+  const [status, setStatus] = useState<ChatUserStatus>('disconnected')
   const socketRef = useRef<WebSocket | null>(null)
   const enabled = Boolean(currentUserId && businessId)
 
@@ -127,10 +125,9 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         return
       }
 
-      const otherUserId =
-        message.senderId === currentUserId
-          ? message.recipientId
-          : message.senderId
+      const otherUserId = message.senderId === currentUserId
+        ? message.recipientId
+        : message.senderId
       const queryKey = chatKeys.messages(otherUserId, currentUserId, businessId)
       const cachedMessages = queryClient.getQueryData<ChatMessage[]>(queryKey)
 

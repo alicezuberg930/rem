@@ -1,0 +1,23 @@
+CREATE TABLE `business_user` (
+    `business_id` VARCHAR(24) NOT NULL,
+    `user_id` VARCHAR(24) NOT NULL,
+    `invited_user_id` VARCHAR(24) NULL,
+    `is_active` BIT(1) NOT NULL,
+    `is_verified` BIT(1) NOT NULL,
+    `role_id` VARCHAR(24) NOT NULL,
+    `salary` INT NULL,
+    `bank_owner` VARCHAR(255) NULL,
+    `bank_account` VARCHAR(255) NULL,
+    `bank_name` VARCHAR(255) NULL,
+    `bank_code` VARCHAR(255) NULL,
+    `bank_branch` VARCHAR(255) NULL,
+    `dependants` INT NOT NULL,
+    PRIMARY KEY (`business_id`, `user_id`),
+    KEY `idx_business_user_user_id` (`user_id`),
+    KEY `idx_business_user_invited_user_id` (`invited_user_id`),
+    KEY `idx_business_user_role_id` (`role_id`),
+    CONSTRAINT `fk_business_user_business` FOREIGN KEY (`business_id`) REFERENCES `businesses` (`id`),
+    CONSTRAINT `fk_business_user_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+    CONSTRAINT `fk_business_user_invited_user` FOREIGN KEY (`invited_user_id`) REFERENCES `users` (`id`),
+    CONSTRAINT `fk_business_user_role` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

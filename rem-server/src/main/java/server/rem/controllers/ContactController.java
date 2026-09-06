@@ -50,7 +50,7 @@ public class ContactController {
     }
 
     @GetMapping("/export")
-    @PreAuthorize("hasAuthority('contact.read')")
+    @PreAuthorize("hasAuthority('contact.export')")
     public ResponseEntity<StreamingResponseBody> export(
         @ModelAttribute QueryContact dto,
         @RequestAttribute("businessId") String businessId

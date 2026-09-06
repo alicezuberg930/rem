@@ -108,8 +108,8 @@ class DataSeederTests {
         assertTrue(CommandLineRunner.class.isAssignableFrom(DataSeeder.class));
         Profile profile = DataSeeder.class.getAnnotation(Profile.class);
         assertArrayEquals(new String[] { "seed" }, profile.value());
-        assertEquals(3, roles.size());
-        assertEquals(54, permissions.size());
+        assertEquals(10, roles.size());
+        assertEquals(66, permissions.size());
         assertEquals(2, users.size());
         assertEquals(1, businesses.size());
         assertEquals(2, businessUsers.size());
@@ -119,9 +119,42 @@ class DataSeederTests {
         assertEquals(10, contacts.size());
         assertEquals(20, bookings.size());
 
-        assertPermissionCount("role_owner_seed_00000001", 54);
-        assertPermissionCount("role_hr_seed_00000000001", 26);
+        assertPermissionCount("role_owner_seed_00000001", 66);
+        assertPermissionCount("role_hr_seed_00000000001", 37);
         assertPermissionCount("role_acct_seed_000000001", 13);
+        assertPermissionCount("role_admin_seed_0000001", 63);
+        assertPermissionCount("role_mgr_seed_000000001", 43);
+        assertPermissionCount("role_sales_seed_0000001", 24);
+        assertPermissionCount("role_mkt_seed_000000001", 27);
+        assertPermissionCount("role_cs_seed_0000000001", 21);
+        assertPermissionCount("role_recep_seed_000001", 16);
+        assertPermissionCount("role_staff_seed_0000001", 10);
+        assertRoleName("role_admin_seed_0000001", "ADMIN");
+        assertRoleName("role_mgr_seed_000000001", "MANAGER");
+        assertRoleName("role_sales_seed_0000001", "SALES");
+        assertRoleName("role_mkt_seed_000000001", "MARKETING");
+        assertRoleName("role_cs_seed_0000000001", "CUSTOMER_SERVICE");
+        assertRoleName("role_recep_seed_000001", "RECEPTIONIST");
+        assertRoleName("role_staff_seed_0000001", "STAFF");
+        assertRoleHasPermissions("role_admin_seed_0000001", "user.create", "security.edit", "campaign.export");
+        assertRoleHasPermissions("role_mgr_seed_000000001", "calendar.delete", "payroll.approve", "customer.export");
+        assertRoleHasPermissions("role_sales_seed_0000001", "lead.create", "customer.edit", "contact.export");
+        assertRoleHasPermissions("role_mkt_seed_000000001", "campaign.create", "template.edit", "lead.export");
+        assertRoleHasPermissions("role_cs_seed_0000000001", "calendar.edit", "customer.edit", "lead.export");
+        assertRoleHasPermissions("role_recep_seed_000001", "calendar.create", "contact.create", "lead.read");
+        assertRoleHasPermissions("role_staff_seed_0000001", "attendance.create", "leave.create", "customer.read");
+        assertPermissionSeeded("customer.create");
+        assertPermissionSeeded("customer.read");
+        assertPermissionSeeded("customer.edit");
+        assertPermissionSeeded("customer.delete");
+        assertPermissionSeeded("lead.create");
+        assertPermissionSeeded("lead.read");
+        assertPermissionSeeded("lead.edit");
+        assertPermissionSeeded("lead.delete");
+        assertPermissionSeeded("customer.export");
+        assertPermissionSeeded("lead.export");
+        assertPermissionSeeded("contact.export");
+        assertPermissionSeeded("campaign.export");
 
         User alice = users.get("user_alice_seed_0000001");
         User brian = users.get("user_brian_seed_0000001");
@@ -184,6 +217,23 @@ class DataSeederTests {
                 .map(Permission::getId)
                 .collect(Collectors.toSet());
         assertEquals(expectedCount, permissionIds.size());
+    }
+
+    private void assertRoleName(String roleId, String expectedName) {
+        assertEquals(expectedName, roles.get(roleId).getName());
+    }
+
+    private void assertRoleHasPermissions(String roleId, String... expectedPermissionNames) {
+        Set<String> permissionNames = roles.get(roleId).getPermissions().stream()
+                .map(Permission::getName)
+                .collect(Collectors.toSet());
+        for (String expectedPermissionName : expectedPermissionNames) {
+            assertTrue(permissionNames.contains(expectedPermissionName));
+        }
+    }
+
+    private void assertPermissionSeeded(String permissionName) {
+        assertTrue(permissions.values().stream().anyMatch(permission -> permissionName.equals(permission.getName())));
     }
 
     private void stubRepositories() {

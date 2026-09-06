@@ -1,5 +1,5 @@
 import { Outlet } from '@tanstack/react-router'
-import { ChatProvider } from '@/providers/chat-provider'
+import { ChatProvider } from '@/features/chats/components/chat-provider'
 import { getCookie } from '@/lib/cookies'
 import { cn } from '@/lib/utils'
 import { LayoutProvider } from '@/providers/layout-provider'

@@ -1,0 +1,21 @@
+CREATE TABLE `chat_messages` (
+    `id` VARCHAR(24) NOT NULL,
+    `created_at` DATETIME(6) NULL,
+    `updated_at` DATETIME(6) NULL,
+    `business_id` VARCHAR(24) NOT NULL,
+    `sender_id` VARCHAR(24) NOT NULL,
+    `recipient_id` VARCHAR(24) NULL,
+    `group_id` VARCHAR(24) NULL,
+    `content` VARCHAR(4000) NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `idx_chat_business_sender_recipient_created` (`business_id`, `sender_id`, `recipient_id`, `created_at`),
+    KEY `idx_chat_business_recipient_sender_created` (`business_id`, `recipient_id`, `sender_id`, `created_at`),
+    KEY `idx_chat_business_group_created` (`business_id`, `group_id`, `created_at`),
+    KEY `idx_chat_messages_sender_id` (`sender_id`),
+    KEY `idx_chat_messages_recipient_id` (`recipient_id`),
+    KEY `idx_chat_messages_group_id` (`group_id`),
+    CONSTRAINT `fk_chat_messages_business` FOREIGN KEY (`business_id`) REFERENCES `businesses` (`id`),
+    CONSTRAINT `fk_chat_messages_sender` FOREIGN KEY (`sender_id`) REFERENCES `users` (`id`),
+    CONSTRAINT `fk_chat_messages_recipient` FOREIGN KEY (`recipient_id`) REFERENCES `users` (`id`),
+    CONSTRAINT `fk_chat_messages_group` FOREIGN KEY (`group_id`) REFERENCES `groups` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

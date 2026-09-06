@@ -1,0 +1,21 @@
+CREATE TABLE `attendances` (
+    `id` VARCHAR(24) NOT NULL,
+    `created_at` DATETIME(6) NULL,
+    `updated_at` DATETIME(6) NULL,
+    `business_id` VARCHAR(24) NOT NULL,
+    `user_id` VARCHAR(24) NOT NULL,
+    `check_in_time` DATETIME(6) NOT NULL,
+    `check_out_time` DATETIME(6) NULL,
+    `date` DATE NOT NULL,
+    `type` ENUM('OFFICE','REMOTE','HYBRID') NOT NULL,
+    `status` ENUM('ON_TIME','LATE','HALF_DAY') NOT NULL,
+    `note` VARCHAR(500) NULL,
+    `address` VARCHAR(255) NOT NULL,
+    `latitude` DECIMAL(10,7) NULL,
+    `longitude` DECIMAL(10,7) NULL,
+    PRIMARY KEY (`id`),
+    KEY `idx_attendances_business_id` (`business_id`),
+    KEY `idx_attendances_user_id` (`user_id`),
+    CONSTRAINT `fk_attendances_business` FOREIGN KEY (`business_id`) REFERENCES `businesses` (`id`),
+    CONSTRAINT `fk_attendances_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

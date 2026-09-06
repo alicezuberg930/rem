@@ -9,7 +9,8 @@ import {
 } from 'react'
 import { format } from 'date-fns'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { type ChatGroup, type ChatMessage, type ChatUser } from '@/@types'
+import type { ChatGroup, ChatMessage, ChatUser, ChatUserStatus } from '@/@types'
+import { useAuth } from '@/providers/auth-provider'
 import {
   ArrowLeft,
   Edit,
@@ -27,8 +28,6 @@ import {
 import { toast } from 'sonner'
 import { chatKeys, chatQueries } from '@/lib/queries/chat'
 import { cn, getInitials } from '@/lib/utils'
-import { useAuth } from '@/providers/auth-provider'
-import { useChat, type ChatSocketStatus } from '@/providers/chat-provider'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -40,26 +39,31 @@ import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search as SearchBox } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
+import { useChat } from '@/features/chats/components/chat-provider'
 import { CreateGroupDialog } from './components/create-group-dialog'
 import { NewChat } from './components/new-chat'
-import { Dot } from 'lucide-react'
 
 type MessageGroup = {
   date: string
   messages: ChatMessage[]
 }
 
-type ChatConversation = {
-  type: 'direct'
-  user: ChatUser
-} | {
-  type: 'group'
-  group: ChatGroup
-}
+type ChatConversation =
+  | {
+    type: 'direct'
+    user: ChatUser
+  }
+  | {
+    type: 'group'
+    group: ChatGroup
+  }
 
-const socketStatusLabel: Record<ChatSocketStatus, React.ReactNode> = {
-  connected: <Dot className='h-2 w-2 fill-green-500' />,
-  disconnected: <Dot className='h-2 w-2 fill-red-500' />,
+const socketStatusLabel: Record<
+  ChatUserStatus,
+  { label: string; className: string }
+> = {
+  connected: { label: 'Connected', className: 'bg-green-500' },
+  disconnected: { label: 'Disconnected', className: 'bg-red-500' },
 }
 
 export function Chats() {
@@ -70,9 +74,11 @@ export function Chats() {
   const chatEnabled = Boolean(currentUserId && businessId)
   const [search, setSearch] = useState('')
   const [draft, setDraft] = useState('')
-  const [selectedConversation, setSelectedConversation] = useState<ChatConversation | null>(null)
+  const [selectedConversation, setSelectedConversation] =
+    useState<ChatConversation | null>(null)
   const [mobileConversationOpen, setMobileConversationOpen] = useState(false)
-  const [createConversationDialogOpened, setCreateConversationDialog] = useState(false)
+  const [createConversationDialogOpened, setCreateConversationDialog] =
+    useState(false)
   const [createGroupDialogOpened, setCreateGroupDialog] = useState(false)
   const messagesRef = useRef<HTMLDivElement | null>(null)
   const {
@@ -91,19 +97,22 @@ export function Chats() {
     ...chatQueries.groups(currentUserId, businessId),
     enabled: chatEnabled,
   })
-  const selectedConversationId = selectedConversation?.type === 'group'
-    ? selectedConversation.group.id
-    : (selectedConversation?.user.id ?? '')
-  const messageQuery = selectedConversation?.type === 'group'
-    ? chatQueries.groupMessages(
-      selectedConversation.group.id,
-      currentUserId,
-      businessId
-    ) : chatQueries.messages(
-      selectedConversation?.user.id ?? '',
-      currentUserId,
-      businessId
-    )
+  const selectedConversationId =
+    selectedConversation?.type === 'group'
+      ? selectedConversation.group.id
+      : (selectedConversation?.user.id ?? '')
+  const messageQuery =
+    selectedConversation?.type === 'group'
+      ? chatQueries.groupMessages(
+        selectedConversation.group.id,
+        currentUserId,
+        businessId
+      )
+      : chatQueries.messages(
+        selectedConversation?.user.id ?? '',
+        currentUserId,
+        businessId
+      )
   const {
     data: messages = [],
     isPending: messagesPending,
@@ -115,8 +124,14 @@ export function Chats() {
 
   const filteredConversations = useMemo<ChatConversation[]>(() => {
     const query = search.trim().toLowerCase()
-    const matchingGroups = groups.filter(({ name }) => name.toLowerCase().includes(query))
-    const matchingUsers = users.filter(({ fullname, email }) => fullname.toLowerCase().includes(query) || email.toLowerCase().includes(query))
+    const matchingGroups = groups.filter(({ name }) =>
+      name.toLowerCase().includes(query)
+    )
+    const matchingUsers = users.filter(
+      ({ fullname, email }) =>
+        fullname.toLowerCase().includes(query) ||
+        email.toLowerCase().includes(query)
+    )
 
     return [
       ...matchingGroups.map((group) => ({ type: 'group' as const, group })),
@@ -129,7 +144,9 @@ export function Chats() {
 
   const messageGroups = useMemo<MessageGroup[]>(() => {
     const groups = new Map<string, ChatMessage[]>()
-    const sortedMessages = [...messages].sort((left, right) => left.createdAt.localeCompare(right.createdAt))
+    const sortedMessages = [...messages].sort((left, right) =>
+      left.createdAt.localeCompare(right.createdAt)
+    )
 
     for (const message of sortedMessages) {
       const date = format(new Date(message.createdAt), 'd MMM, yyyy')
@@ -150,32 +167,43 @@ export function Chats() {
     container.scrollTo({ top: container.scrollHeight })
   }, [messages.length, selectedConversationId])
 
-  const handleSelectConversation = useCallback((conversation: ChatConversation) => {
-    setSelectedConversation(conversation)
-    setMobileConversationOpen(true)
-    setDraft('')
-  }, [])
+  const handleSelectConversation = useCallback(
+    (conversation: ChatConversation) => {
+      setSelectedConversation(conversation)
+      setMobileConversationOpen(true)
+      setDraft('')
+    },
+    []
+  )
 
-  const handleSelectUser = useCallback((chatUser: ChatUser) => handleSelectConversation({ type: 'direct', user: chatUser }), [handleSelectConversation])
+  const handleSelectUser = useCallback(
+    (chatUser: ChatUser) =>
+      handleSelectConversation({ type: 'direct', user: chatUser }),
+    [handleSelectConversation]
+  )
 
-  const handleGroupCreated = useCallback((group: ChatGroup) => {
-    queryClient.setQueryData<ChatGroup[]>(
-      chatKeys.groups(currentUserId, businessId),
-      (currentGroups = []) => [
-        group,
-        ...currentGroups.filter(({ id }) => id !== group.id),
-      ]
-    )
-    handleSelectConversation({ type: 'group', group })
-  }, [businessId, currentUserId, handleSelectConversation, queryClient])
+  const handleGroupCreated = useCallback(
+    (group: ChatGroup) => {
+      queryClient.setQueryData<ChatGroup[]>(
+        chatKeys.groups(currentUserId, businessId),
+        (currentGroups = []) => [
+          group,
+          ...currentGroups.filter(({ id }) => id !== group.id),
+        ]
+      )
+      handleSelectConversation({ type: 'group', group })
+    },
+    [businessId, currentUserId, handleSelectConversation, queryClient]
+  )
 
   const handleSubmit = (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault()
     const content = draft.trim()
     if (!selectedConversation || !content) return
-    const sent = selectedConversation.type === 'group'
-      ? sendMessage({ groupId: selectedConversation.group.id, content })
-      : sendMessage({ recipientId: selectedConversation.user.id, content })
+    const sent =
+      selectedConversation.type === 'group'
+        ? sendMessage({ groupId: selectedConversation.group.id, content })
+        : sendMessage({ recipientId: selectedConversation.user.id, content })
     if (!sent) {
       toast.error('Chat is reconnecting')
       return
@@ -340,26 +368,31 @@ export function Chats() {
                     <ArrowLeft className='rtl:rotate-180' />
                   </Button>
                   <div className='flex items-center gap-2 lg:gap-4'>
-                    <Avatar className='size-9 lg:size-11'>
+                    <Avatar className='size-9 lg:size-11 relative'>
                       <AvatarImage
-                        src={
-                          (selectedConversation.type === 'group'
-                            ? selectedConversation.group.avatar
-                            : selectedConversation.user.avatar) ?? undefined
+                        src={(selectedConversation.type === 'group'
+                          ? selectedConversation.group.avatar
+                          : selectedConversation.user.avatar) ?? undefined
                         }
-                        alt={
-                          selectedConversation.type === 'group'
-                            ? selectedConversation.group.name
-                            : selectedConversation.user.fullname
+                        alt={selectedConversation.type === 'group'
+                          ? selectedConversation.group.name
+                          : selectedConversation.user.fullname
                         }
                       />
                       <AvatarFallback>
-                        {getInitials(
-                          selectedConversation.type === 'group'
-                            ? selectedConversation.group.name
-                            : selectedConversation.user.fullname
+                        {getInitials(selectedConversation.type === 'group'
+                          ? selectedConversation.group.name
+                          : selectedConversation.user.fullname
                         )}
                       </AvatarFallback>
+                      {selectedConversation.type === 'direct' && (
+                        <span
+                          className={cn(
+                            'size-3 rounded-full absolute top-0 right-0 ',
+                            socketStatusLabel[socketStatus].className
+                          )}
+                        />
+                      )}
                     </Avatar>
                     <div className='min-w-0'>
                       <span className='block truncate text-sm font-medium lg:text-base'>
@@ -367,11 +400,12 @@ export function Chats() {
                           ? selectedConversation.group.name
                           : selectedConversation.user.fullname}
                       </span>
-                      <span className='block max-w-48 truncate text-xs text-muted-foreground lg:max-w-none lg:text-sm'>
-                        {selectedConversation.type === 'group'
-                          ? `${selectedConversation.group.members.length} members`
-                          : selectedConversation.user.email}{' '}
-                        · {socketStatusLabel[socketStatus]}
+                      <span className='flex max-w-48 min-w-0 items-center gap-1.5 text-xs text-muted-foreground lg:max-w-none lg:text-sm'>
+                        <span className='truncate'>
+                          {selectedConversation.type === 'group'
+                            ? `${selectedConversation.group.members.length} members`
+                            : selectedConversation.user.email}
+                        </span>
                       </span>
                     </div>
                   </div>
@@ -423,7 +457,8 @@ export function Chats() {
                             Unable to load messages.
                           </p>
                         )}
-                        {!messagesPending && !messagesError &&
+                        {!messagesPending &&
+                          !messagesError &&
                           messageGroups.length === 0 && (
                             <p className='text-center text-sm text-muted-foreground'>
                               No messages yet.
@@ -435,10 +470,14 @@ export function Chats() {
                               {group.date}
                             </div>
                             {group.messages.map((message) => {
-                              const isOwnMessage = message.senderId === currentUserId
-                              const senderName = selectedConversation.type === 'group'
-                                ? selectedConversation.group.members.find(({ id }) => id === message.senderId)?.fullname
-                                : undefined
+                              const isOwnMessage =
+                                message.senderId === currentUserId
+                              const senderName =
+                                selectedConversation.type === 'group'
+                                  ? selectedConversation.group.members.find(
+                                    ({ id }) => id === message.senderId
+                                  )?.fullname
+                                  : undefined
                               return (
                                 <div
                                   key={message.id}
@@ -462,7 +501,10 @@ export function Chats() {
                                       'text-end text-primary-foreground/85'
                                     )}
                                   >
-                                    {format(new Date(message.createdAt), 'h:mm a')}
+                                    {format(
+                                      new Date(message.createdAt),
+                                      'h:mm a'
+                                    )}
                                   </span>
                                 </div>
                               )

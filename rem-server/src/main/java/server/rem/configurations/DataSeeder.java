@@ -55,6 +55,13 @@ public class DataSeeder implements CommandLineRunner {
     private static final String OWNER_ROLE_ID = "role_owner_seed_00000001";
     private static final String HR_ROLE_ID = "role_hr_seed_00000000001";
     private static final String ACCOUNTANT_ROLE_ID = "role_acct_seed_000000001";
+    private static final String ADMIN_ROLE_ID = "role_admin_seed_0000001";
+    private static final String MANAGER_ROLE_ID = "role_mgr_seed_000000001";
+    private static final String SALES_ROLE_ID = "role_sales_seed_0000001";
+    private static final String MARKETING_ROLE_ID = "role_mkt_seed_000000001";
+    private static final String CUSTOMER_SERVICE_ROLE_ID = "role_cs_seed_0000000001";
+    private static final String RECEPTIONIST_ROLE_ID = "role_recep_seed_000001";
+    private static final String STAFF_ROLE_ID = "role_staff_seed_0000001";
     private static final String ALICE_ID = "user_alice_seed_0000001";
     private static final String BRIAN_ID = "user_brian_seed_0000001";
     private static final String BUSINESS_ID = "biz_rem_seed_0000000001";
@@ -64,7 +71,14 @@ public class DataSeeder implements CommandLineRunner {
     private static final List<RoleSeed> ROLE_SEEDS = List.of(
             new RoleSeed(OWNER_ROLE_ID, "OWNER", "Business owner"),
             new RoleSeed(HR_ROLE_ID, "HR", "Human resources"),
-            new RoleSeed(ACCOUNTANT_ROLE_ID, "ACCOUNTANT", "Accountant"));
+            new RoleSeed(ACCOUNTANT_ROLE_ID, "ACCOUNTANT", "Accountant"),
+            new RoleSeed(ADMIN_ROLE_ID, "ADMIN", "Business administrator"),
+            new RoleSeed(MANAGER_ROLE_ID, "MANAGER", "Operations manager"),
+            new RoleSeed(SALES_ROLE_ID, "SALES", "Sales representative"),
+            new RoleSeed(MARKETING_ROLE_ID, "MARKETING", "Marketing specialist"),
+            new RoleSeed(CUSTOMER_SERVICE_ROLE_ID, "CUSTOMER_SERVICE", "Customer service"),
+            new RoleSeed(RECEPTIONIST_ROLE_ID, "RECEPTIONIST", "Receptionist"),
+            new RoleSeed(STAFF_ROLE_ID, "STAFF", "General staff"));
 
     private static final List<PermissionSeed> PERMISSION_SEEDS = List.of(
             new PermissionSeed(1, "attendance.create", "Create attendance records"),
@@ -120,13 +134,43 @@ public class DataSeeder implements CommandLineRunner {
             new PermissionSeed(56, "user.create", "Create users"),
             new PermissionSeed(57, "user.read", "Read users"),
             new PermissionSeed(58, "user.edit", "Edit users"),
-            new PermissionSeed(59, "user.delete", "Delete users"));
+            new PermissionSeed(59, "user.delete", "Delete users"),
+            new PermissionSeed(60, "customer.create", "Create customers"),
+            new PermissionSeed(61, "customer.read", "Read customers"),
+            new PermissionSeed(62, "customer.edit", "Edit customers"),
+            new PermissionSeed(63, "customer.delete", "Delete customers"),
+            new PermissionSeed(64, "lead.create", "Create leads"),
+            new PermissionSeed(65, "lead.read", "Read leads"),
+            new PermissionSeed(66, "lead.edit", "Edit leads"),
+            new PermissionSeed(67, "lead.delete", "Delete leads"),
+            new PermissionSeed(68, "customer.export", "Export customers"),
+            new PermissionSeed(69, "lead.export", "Export leads"),
+            new PermissionSeed(70, "contact.export", "Export contacts"),
+            new PermissionSeed(71, "campaign.export", "Export campaigns"));
 
     private static final List<Integer> HR_PERMISSION_IDS = List.of(
             1, 2, 3, 6, 9, 10, 11, 18, 19, 20, 22, 23, 24, 26, 27, 28, 30, 31, 32, 35, 48, 49, 52, 56, 57,
-            58);
+            58, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70);
     private static final List<Integer> ACCOUNTANT_PERMISSION_IDS = List.of(
             2, 6, 10, 19, 31, 34, 35, 36, 38, 39, 40, 41, 57);
+    private static final List<Integer> ADMIN_PERMISSION_IDS = List.of(
+            1, 2, 3, 4, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 71, 18, 19, 20, 21, 70, 22, 23, 24, 25,
+            26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 42, 43, 44, 45, 48, 49, 50, 51, 52,
+            56, 57, 58, 59, 60, 61, 62, 63, 68, 64, 65, 66, 67, 69);
+    private static final List<Integer> MANAGER_PERMISSION_IDS = List.of(
+            2, 3, 6, 9, 10, 11, 12, 13, 14, 15, 17, 71, 18, 19, 20, 21, 70, 22, 23, 24, 26, 27, 28, 30, 31,
+            32, 35, 40, 48, 49, 50, 52, 57, 60, 61, 62, 63, 68, 64, 65, 66, 67, 69);
+    private static final List<Integer> SALES_PERMISSION_IDS = List.of(
+            6, 9, 10, 11, 18, 19, 20, 21, 70, 22, 23, 26, 27, 57, 60, 61, 62, 63, 68, 64, 65, 66, 67, 69);
+    private static final List<Integer> MARKETING_PERMISSION_IDS = List.of(
+            6, 13, 14, 15, 16, 17, 71, 18, 19, 70, 22, 23, 26, 27, 28, 48, 49, 50, 51, 52, 57, 61, 68, 64,
+            65, 66, 69);
+    private static final List<Integer> CUSTOMER_SERVICE_PERMISSION_IDS = List.of(
+            6, 9, 10, 11, 18, 19, 20, 70, 22, 23, 26, 27, 57, 60, 61, 62, 68, 64, 65, 66, 69);
+    private static final List<Integer> RECEPTIONIST_PERMISSION_IDS = List.of(
+            6, 9, 10, 11, 18, 19, 20, 22, 23, 26, 27, 57, 60, 61, 64, 65);
+    private static final List<Integer> STAFF_PERMISSION_IDS = List.of(
+            1, 2, 6, 10, 19, 30, 31, 57, 61, 65);
 
     private static final List<CustomerGroupSeed> CUSTOMER_GROUP_SEEDS = List.of(
             new CustomerGroupSeed("grp_vip_seed_0000000001", "VIP", 15.0),
@@ -275,6 +319,13 @@ public class DataSeeder implements CommandLineRunner {
         addPermissions(roles.get(OWNER_ROLE_ID), permissions, permissions.keySet());
         addPermissions(roles.get(HR_ROLE_ID), permissions, HR_PERMISSION_IDS);
         addPermissions(roles.get(ACCOUNTANT_ROLE_ID), permissions, ACCOUNTANT_PERMISSION_IDS);
+        addPermissions(roles.get(ADMIN_ROLE_ID), permissions, ADMIN_PERMISSION_IDS);
+        addPermissions(roles.get(MANAGER_ROLE_ID), permissions, MANAGER_PERMISSION_IDS);
+        addPermissions(roles.get(SALES_ROLE_ID), permissions, SALES_PERMISSION_IDS);
+        addPermissions(roles.get(MARKETING_ROLE_ID), permissions, MARKETING_PERMISSION_IDS);
+        addPermissions(roles.get(CUSTOMER_SERVICE_ROLE_ID), permissions, CUSTOMER_SERVICE_PERMISSION_IDS);
+        addPermissions(roles.get(RECEPTIONIST_ROLE_ID), permissions, RECEPTIONIST_PERMISSION_IDS);
+        addPermissions(roles.get(STAFF_ROLE_ID), permissions, STAFF_PERMISSION_IDS);
     }
 
     private void addPermissions(Role role, Map<Integer, Permission> permissions, Iterable<Integer> permissionIds) {

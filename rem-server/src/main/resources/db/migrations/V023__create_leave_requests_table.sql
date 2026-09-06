@@ -1,0 +1,22 @@
+CREATE TABLE `leave_requests` (
+    `id` VARCHAR(24) NOT NULL,
+    `created_at` DATETIME(6) NULL,
+    `updated_at` DATETIME(6) NULL,
+    `business_id` VARCHAR(24) NOT NULL,
+    `user_id` VARCHAR(24) NOT NULL,
+    `start_date` DATE NOT NULL,
+    `end_date` DATE NOT NULL,
+    `days` DOUBLE NOT NULL,
+    `type` ENUM('ANNUAL','SICK','MATERNITY','PATERNITY','UNPAID','BEREAVEMENT','MARRIAGE','COMPENSATORY','EMERGENCY','STUDY','OTHER') NOT NULL,
+    `reason` VARCHAR(500) NULL,
+    `status` ENUM('PENDING','APPROVED','REJECTED','CANCELLED','EXPIRED') NOT NULL,
+    `approver_id` VARCHAR(24) NULL,
+    `approver_note` VARCHAR(500) NULL,
+    PRIMARY KEY (`id`),
+    KEY `idx_leave_requests_business_id` (`business_id`),
+    KEY `idx_leave_requests_user_id` (`user_id`),
+    KEY `idx_leave_requests_approver_id` (`approver_id`),
+    CONSTRAINT `fk_leave_requests_business` FOREIGN KEY (`business_id`) REFERENCES `businesses` (`id`),
+    CONSTRAINT `fk_leave_requests_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+    CONSTRAINT `fk_leave_requests_approver` FOREIGN KEY (`approver_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

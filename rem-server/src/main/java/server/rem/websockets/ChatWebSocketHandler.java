@@ -64,7 +64,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
             sendError(session, exception.getMessage());
         } catch (RuntimeException exception) {
             log.error("Failed to process chat message for session {}", session.getId(), exception);
-            sendError(session, "Unable to send message");
+            sendError(session, exception.getMessage());
         }
     }
 

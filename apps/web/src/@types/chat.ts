@@ -29,14 +29,14 @@ export type ChatSocketError = {
 
 export type ChatSocketEvent = ChatMessage | ChatSocketError
 
-export type SendChatMessage =
-  | {
-      recipientId: string
-      groupId?: never
-      content: string
-    }
-  | {
-      recipientId?: never
-      groupId: string
-      content: string
-    }
+export type SendChatMessage = {
+  recipientId: string
+  groupId?: never
+  content: string
+} | {
+  recipientId?: never
+  groupId: string
+  content: string
+}
+
+export type ChatUserStatus = 'connected' | 'disconnected'

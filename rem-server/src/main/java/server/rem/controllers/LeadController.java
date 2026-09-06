@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
@@ -27,6 +28,7 @@ public class LeadController {
     private final LeadService leadService;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('lead.read')")
     public ResponseEntity<APIResponse<CustomPageResponse<LeadResponse>>> getAll(
             @ModelAttribute QueryLead dto,
             @RequestAttribute("businessId") String businessId
@@ -35,6 +37,7 @@ public class LeadController {
     }
 
     @GetMapping("/export")
+    @PreAuthorize("hasAuthority('lead.export')")
     public ResponseEntity<StreamingResponseBody> export(
             @ModelAttribute QueryLead dto,
             @RequestAttribute("businessId") String businessId
@@ -49,6 +52,7 @@ public class LeadController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('lead.read')")
     public ResponseEntity<APIResponse<LeadResponse>> getOne(
             @PathVariable String id,
             @RequestAttribute("businessId") String businessId
@@ -57,6 +61,7 @@ public class LeadController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('lead.create')")
     public ResponseEntity<APIResponse<LeadResponse>> create(
             @Valid @RequestBody CreateLeadRequest dto,
             @RequestAttribute("businessId") String businessId
@@ -65,6 +70,7 @@ public class LeadController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('lead.edit')")
     public ResponseEntity<APIResponse<LeadResponse>> update(
             @PathVariable String id,
             @Valid @RequestBody CreateLeadRequest dto,
@@ -74,6 +80,7 @@ public class LeadController {
     }
 
     @PutMapping("/convert")
+    @PreAuthorize("hasAuthority('lead.edit')")
     public ResponseEntity<APIResponse<List<CustomerResponse>>> convert(
             @Valid @RequestBody ConvertLeadsRequest dto,
             @RequestAttribute("businessId") String businessId
@@ -82,6 +89,7 @@ public class LeadController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('lead.delete')")
     public ResponseEntity<APIResponse<Void>> delete(
             @PathVariable String id,
             @RequestAttribute("businessId") String businessId

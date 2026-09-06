@@ -3,9 +3,12 @@ spring.application.name=rem
 spring.datasource.url=jdbc:mysql://localhost:3306/rem_db
 spring.datasource.username=rem123
 spring.datasource.password=123456
-# Enable migration automatically
+# Database schema management
 spring.jpa.show-sql=true
-spring.jpa.hibernate.ddl-auto=update
+spring.jpa.hibernate.ddl-auto=validate
+spring.flyway.enabled=true
+spring.flyway.locations=classpath:db/migrations
+spring.flyway.validate-on-migrate=true
 # Global prefix
 server.servlet.context-path=/api/v1
 # jwt

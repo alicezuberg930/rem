@@ -63,7 +63,7 @@ public class CampaignController {
     }
 
     @GetMapping("/export")
-    @PreAuthorize("hasAuthority('campaign.view')")
+    @PreAuthorize("hasAuthority('campaign.export')")
     public ResponseEntity<StreamingResponseBody> export(
         @ModelAttribute QueryCampaign dto,
         @RequestAttribute("businessId") String businessId

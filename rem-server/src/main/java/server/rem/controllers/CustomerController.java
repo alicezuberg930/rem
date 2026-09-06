@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
@@ -24,6 +25,7 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('customer.read')")
     public ResponseEntity<APIResponse<CustomPageResponse<CustomerResponse>>> getAll(
             @ModelAttribute QueryCustomer dto,
             @RequestAttribute("businessId") String businessId
@@ -32,6 +34,7 @@ public class CustomerController {
     }
 
     @GetMapping("/export")
+    @PreAuthorize("hasAuthority('customer.export')")
     public ResponseEntity<StreamingResponseBody> export(
             @ModelAttribute QueryCustomer dto,
             @RequestAttribute("businessId") String businessId
@@ -46,6 +49,7 @@ public class CustomerController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('customer.read')")
     public ResponseEntity<APIResponse<CustomerResponse>> getOne(
             @PathVariable String id,
             @RequestAttribute("businessId") String businessId
@@ -54,6 +58,7 @@ public class CustomerController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('customer.create')")
     public ResponseEntity<APIResponse<CustomerResponse>> create(
             @Valid @RequestBody CreateCustomerRequest dto,
             @RequestAttribute("businessId") String businessId
@@ -62,6 +67,7 @@ public class CustomerController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('customer.edit')")
     public ResponseEntity<APIResponse<CustomerResponse>> update(
             @PathVariable String id,
             @Valid @RequestBody CreateCustomerRequest dto,
@@ -71,6 +77,7 @@ public class CustomerController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('customer.delete')")
     public ResponseEntity<APIResponse<Void>> delete(
             @PathVariable String id,
             @RequestAttribute("businessId") String businessId
