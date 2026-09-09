@@ -1,19 +1,25 @@
 package server.rem.controllers;
 
+import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import server.rem.annotations.RequestUser;
 import server.rem.dtos.APIResponse;
 import server.rem.dtos.CustomPageResponse;
@@ -26,12 +32,9 @@ import server.rem.services.PayrollService;
 
 @RestController
 @RequestMapping("/payrolls")
+@RequiredArgsConstructor
 public class PayrollController {
     private final PayrollService payrollService;
-
-    public PayrollController(PayrollService payrollService) {
-        this.payrollService = payrollService;
-    }
 
     @GetMapping("/items")
     public ResponseEntity<APIResponse<CustomPageResponse<PayrollItemResponse>>> getItems(
@@ -42,6 +45,18 @@ public class PayrollController {
             "Payroll items fetched successfully",
             payrollService.getItems(businessId, dto)
         ));
+    }
+
+    @GetMapping("/export")
+    @PreAuthorize("hasAuthority('payroll.export')")
+    public ResponseEntity<StreamingResponseBody> export(@RequestAttribute("businessId") String businessId) {
+        String filename = "payroll-" + LocalDate.now() + ".xlsx";
+        StreamingResponseBody body = outputStream -> payrollService.writeExcel(businessId, outputStream);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                .body(body);
     }
 
     @PostMapping("/period")

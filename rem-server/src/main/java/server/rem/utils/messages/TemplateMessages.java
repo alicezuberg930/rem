@@ -1,6 +1,7 @@
 package server.rem.utils.messages;
 
 public class TemplateMessages {
+
     public static String NOT_FOUND = "Template not found";
     public static String CREATED = "Template created successfully";
     public static String UPDATED = "Template updated successfully";

@@ -1,39 +1,38 @@
 package server.rem.utils;
 
-import jakarta.servlet.http.HttpServletRequest;
+import java.util.Collection;
+import java.util.Set;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import jakarta.servlet.http.HttpServletRequest;
 import server.rem.entities.Permission;
 import server.rem.entities.User;
 import server.rem.interceptors.BusinessContextFilter;
 
-import java.util.Collection;
-import java.util.Set;
-
 /**
- * Utility class to access current business context and permissions in controllers and services.
- * 
+ * Utility class to access current business context and permissions in
+ * controllers and services.
+ *
  * Usage in controllers:
  * <pre>
  * @GetMapping("/data")
- * public ResponseEntity<?> getData() {
- *     String businessId = BusinessContextUtil.getCurrentBusinessId();
- *     Set<Permission> permissions = BusinessContextUtil.getCurrentPermissions();
- *     if (BusinessContextUtil.hasPermission("attendance.view")) {
- *         // Show attendance data
- *     }
- * }
+ * public ResponseEntity<?> getData() { String businessId =
+ * BusinessContextUtil.getCurrentBusinessId(); Set<Permission> permissions =
+ * BusinessContextUtil.getCurrentPermissions(); if
+ * (BusinessContextUtil.hasPermission("attendance.view")) { // Show attendance
+ * data } }
  * </pre>
  */
 public class BusinessContextUtil {
 
     /**
-     * Get the current business ID from the request context.
-     * Returns null if no business context is set.
+     * Get the current business ID from the request context. Returns null if no
+     * business context is set.
      */
     public static String getCurrentBusinessId() {
         HttpServletRequest request = getRequest();
@@ -45,8 +44,8 @@ public class BusinessContextUtil {
     }
 
     /**
-     * Get the current user's permissions in the business.
-     * Returns empty set if no permissions are set.
+     * Get the current user's permissions in the business. Returns empty set if
+     * no permissions are set.
      */
     @SuppressWarnings("unchecked")
     public static Set<Permission> getCurrentPermissions() {
@@ -61,28 +60,23 @@ public class BusinessContextUtil {
     }
 
     /**
-     * Check if the current user has a specific permission.
-     * Checks both:
-     * 1. Request attributes (permissions set by BusinessContextFilter)
-     * 2. Spring Security authorities (GrantedAuthority names)
-     * 
-     * Usage examples:
-     * - hasPermission("attendance.view")
-     * - hasPermission("customer.create")
-     * - hasPermission("payroll.edit")
+     * Check if the current user has a specific permission. Checks both: 1.
+     * Request attributes (permissions set by BusinessContextFilter) 2. Spring
+     * Security authorities (GrantedAuthority names)
+     *
+     * Usage examples: - hasPermission("attendance.view") -
+     * hasPermission("customer.create") - hasPermission("payroll.edit")
      */
     public static boolean hasPermission(String permissionName) {
         if (permissionName == null || permissionName.isEmpty()) {
             return false;
         }
-
         // Check in request attributes first (from BusinessContextFilter)
         Set<Permission> permissions = getCurrentPermissions();
         if (!permissions.isEmpty()) {
             return permissions.stream()
                     .anyMatch(p -> p.getName().equals(permissionName));
         }
-
         // Fallback: check in Spring Security authorities
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null) {
@@ -90,7 +84,6 @@ public class BusinessContextUtil {
             return authorities.stream()
                     .anyMatch(a -> a.getAuthority().equals(permissionName));
         }
-
         return false;
     }
 
@@ -119,24 +112,30 @@ public class BusinessContextUtil {
     }
 
     /**
-     * Get the current user ID from the security context.
-     * Returns null if no user is authenticated.
+     * Get the current user ID from the security context. Returns null if no
+     * user is authenticated.
      */
     public static String getCurrentUserId() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null && auth.isAuthenticated()) {
             Object principal = auth.getPrincipal();
-            if (principal instanceof User) {
-                return ((User) principal).getId();
-            } else if (principal instanceof String) {
-                return (String) principal;
+            switch (principal) {
+                case User user -> {
+                    return user.getId();
+                }
+                case String string -> {
+                    return string;
+                }
+                default -> {
+                }
             }
         }
         return null;
     }
 
     /**
-     * Get the current user ID from the request attributes (set by JwtAuthMiddleware).
+     * Get the current user ID from the request attributes (set by
+     * JwtAuthMiddleware).
      */
     public static String getCurrentUserIdFromRequest() {
         HttpServletRequest request = getRequest();
@@ -148,8 +147,9 @@ public class BusinessContextUtil {
     }
 
     /**
-     * Invalidate the cached permissions for the current user when their roles/permissions change.
-     * Call this after updating a user's permissions in a business.
+     * Invalidate the cached permissions for the current user when their
+     * roles/permissions change. Call this after updating a user's permissions
+     * in a business.
      */
     public static void invalidateCurrentUserCache() {
         String userId = getCurrentUserId();
@@ -159,8 +159,8 @@ public class BusinessContextUtil {
     }
 
     /**
-     * Invalidate the cached permissions for a specific user and business.
-     * Call this when updating a user's permissions in a specific business.
+     * Invalidate the cached permissions for a specific user and business. Call
+     * this when updating a user's permissions in a specific business.
      */
     public static void invalidateUserBusinessCache(String userId, String businessId) {
         if (userId != null && businessId != null) {
@@ -169,8 +169,8 @@ public class BusinessContextUtil {
     }
 
     /**
-     * Clear all cached permissions globally.
-     * Use with caution - typically only for testing or during maintenance.
+     * Clear all cached permissions globally. Use with caution - typically only
+     * for testing or during maintenance.
      */
     public static void clearAllCaches() {
         BusinessContextFilter.clearAllCaches();

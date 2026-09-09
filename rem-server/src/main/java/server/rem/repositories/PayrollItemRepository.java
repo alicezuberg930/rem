@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -16,6 +17,9 @@ import server.rem.entities.User;
 public interface PayrollItemRepository extends JpaRepository<PayrollItem, String>, JpaSpecificationExecutor<PayrollItem> {
     @EntityGraph(attributePaths = { "payrollPeriod", "user", "approver" })
     Page<PayrollItem> findByBusinessId(String businessId, Pageable pageable);
+
+    @EntityGraph(attributePaths = { "business", "payrollPeriod", "user", "approver" })
+    Slice<PayrollItem> findAllByBusinessId(String businessId, Pageable pageable);
 
     List<PayrollItem> findByPayrollPeriod(PayrollPeriod period);
     

@@ -1,31 +1,22 @@
-import { useEffect, useState } from 'react'
+import { format } from 'date-fns'
+import { useQuery } from '@tanstack/react-query'
 import {
   CALENDAR_BOOKING_STATUS,
   CALENDAR_BOOKING_STATUS_COLOR,
   type CalendarBooking,
   type CalendarBookingStatus,
 } from '@/@types'
-import {
-  type CalendarEventExternal,
-  createViewDay,
-  createViewWeekAgenda,
-  createViewMonthAgenda,
-  createViewMonthGrid,
-  createViewWeek,
-  createViewList,
-} from '@schedule-x/calendar'
-import { createEventModalPlugin } from '@schedule-x/event-modal'
-import { createEventsServicePlugin } from '@schedule-x/events-service'
-import { ScheduleXCalendar, useCalendarApp } from '@schedule-x/react'
-import { useQuery } from '@tanstack/react-query'
-import '@schedule-x/theme-default/dist/index.css'
-import 'temporal-polyfill/global'
 import { bookings } from '@/lib/queries/booking'
-import { useTheme } from '@/providers/theme-provider'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import {
+  CalendarScheduler,
+  type CalendarEvent,
+  type CalendarEventRenderProps,
+} from '@/components/calendar-scheduler'
 import { ConfigDrawer } from '@/components/config-drawer'
-import { Header } from '@/components/layout/header'
 import { ClockInButton } from '@/components/layout/clock-in-button'
+import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
@@ -34,69 +25,24 @@ import { BookingsDialogs } from './components/bookings-dialogs'
 import { BookingsPrimaryButtons } from './components/bookings-primary-buttons'
 import { BookingsProvider } from './components/bookings-provider'
 
-const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+type BookingCalendarEvent = CalendarEvent<CalendarBooking>
 
-const mapToEvents = (
-  bookings: CalendarBooking[]
-): CalendarEventExternal[] => {
-  return bookings.map((b) => ({
-    id: String(b.id),
-    title: b.contact.firstName,
-    start: Temporal.Instant.from(b.bookingStartDate).toZonedDateTimeISO(
-      timezone
-    ),
-    end: Temporal.Instant.from(b.bookingEndDate).toZonedDateTimeISO(timezone),
+const mapToEvents = (items: CalendarBooking[]): BookingCalendarEvent[] => {
+  return items.map((booking) => ({
+    id: booking.id,
+    title: getContactName(booking),
+    start: booking.bookingStartDate,
+    end: booking.bookingEndDate,
+    color: CALENDAR_BOOKING_STATUS_COLOR[booking.status],
+    data: booking,
   }))
 }
 
 export function Bookings() {
-  const eventsService = useState(() => createEventsServicePlugin())[0]
-  const eventModal = useState(() => createEventModalPlugin())[0]
-  const { theme } = useTheme()
   const { data: bookingResponses = [] } = useQuery(
     bookings().all.queryOptions()
   )
-
-  const calendar = useCalendarApp({
-    defaultView: 'month-grid',
-    timezone,
-    views: [
-      createViewMonthGrid(),
-      createViewDay(),
-      createViewMonthAgenda(),
-      createViewList(),
-      createViewWeekAgenda(),
-      createViewWeek(),
-    ],
-    // events: [
-    //     {
-    //         id: '8',
-    //         title: 'Event 8',
-    //         start: Temporal.PlainDate.from('2026-04-25'),
-    //         end: Temporal.PlainDate.from('2026-04-27'),
-    //         description: "qeuigfuihqfioqfqi",
-    //         location: "483 Ohio Avn",
-    //         people: ["AAA", "BBB", "ccc"],
-    //         _customContent: {
-    //             type: "MEETING",
-    //         }
-    //     },
-    // ],
-    plugins: [eventsService, eventModal],
-    callbacks: {
-      onRender: () => {
-        eventsService.getAll()
-      },
-    },
-  })
-
-  useEffect(() => {
-    eventsService.set(mapToEvents(bookingResponses))
-  }, [bookingResponses, eventsService])
-
-  useEffect(() => {
-    calendar?.setTheme(theme as 'light' | 'dark')
-  }, [calendar, theme])
+  const calendarEvents = mapToEvents(bookingResponses)
 
   return (
     <BookingsProvider>
@@ -114,19 +60,132 @@ export function Bookings() {
         <div className='flex-none space-y-6'>
           <BookingsPrimaryButtons />
           <div className='flex flex-col gap-2'>
-            {Object.entries(CALENDAR_BOOKING_STATUS_COLOR).map((i) => (
-              <Button style={{ backgroundColor: i[1] }} key={i[0]}>
-                {CALENDAR_BOOKING_STATUS[i[0] as CalendarBookingStatus]}
-              </Button>
-            ))}
+            {Object.entries(CALENDAR_BOOKING_STATUS_COLOR).map(
+              ([status, color]) => (
+                <Button style={{ backgroundColor: color }} key={status}>
+                  {CALENDAR_BOOKING_STATUS[status as CalendarBookingStatus]}
+                </Button>
+              )
+            )}
           </div>
         </div>
-        <div className='flex-1'>
-          <ScheduleXCalendar calendarApp={calendar} />
+        <div className='min-w-0 flex-1'>
+          <CalendarScheduler
+            events={calendarEvents}
+            initialView='month'
+            emptyMessage='No bookings scheduled.'
+            renderEventTooltip={BookingEventTooltip}
+            renderEventDialog={BookingEventDialog}
+          />
         </div>
       </Main>
 
       <BookingsDialogs />
     </BookingsProvider>
   )
+}
+
+function BookingEventTooltip({
+  event,
+  startsAt,
+  endsAt,
+}: CalendarEventRenderProps<BookingCalendarEvent>) {
+  const booking = event.data
+
+  return (
+    <div className='space-y-1.5'>
+      <div className='flex items-center gap-2'>
+        <span
+          className='size-2 rounded-full'
+          style={{ backgroundColor: event.color }}
+        />
+        <p className='font-medium'>{event.title}</p>
+      </div>
+      <p className='text-muted-foreground'>
+        {format(startsAt, 'dd/MM/yyyy HH:mm')} - {format(endsAt, 'HH:mm')}
+      </p>
+      {booking?.contact.phone && (
+        <p className='text-muted-foreground'>{booking.contact.phone}</p>
+      )}
+    </div>
+  )
+}
+
+function BookingEventDialog({
+  event,
+  startsAt,
+  endsAt,
+}: CalendarEventRenderProps<BookingCalendarEvent>) {
+  const booking = event.data
+  const status = booking?.status ?? 'BOOKED'
+
+  return (
+    <div className='space-y-5'>
+      <div className='space-y-2'>
+        <div className='flex items-start justify-between gap-3'>
+          <div>
+            <h2 className='font-heading text-lg leading-none font-medium'>
+              {event.title}
+            </h2>
+            <p className='mt-1 text-sm text-muted-foreground'>
+              {format(startsAt, 'dd/MM/yyyy HH:mm')} -{' '}
+              {format(endsAt, 'dd/MM/yyyy HH:mm')}
+            </p>
+          </div>
+          <Badge
+            variant='outline'
+            style={{
+              borderColor: event.color,
+              color: event.color,
+            }}
+          >
+            {CALENDAR_BOOKING_STATUS[status]}
+          </Badge>
+        </div>
+      </div>
+
+      {booking && (
+        <div className='grid gap-3 text-sm'>
+          <DetailRow label='Phone' value={booking.contact.phone} />
+          <DetailRow label='Email' value={booking.contact.email} />
+          <DetailRow
+            label='Service staff'
+            value={booking.serviceStaff?.fullname ?? 'Unassigned'}
+          />
+          <DetailRow
+            label='Correspondent'
+            value={booking.correspondent?.fullname ?? 'Unassigned'}
+          />
+          {booking.cancelReason && (
+            <DetailRow label='Cancel reason' value={booking.cancelReason} />
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function DetailRow({
+  label,
+  value,
+}: {
+  label: string
+  value: string | null | undefined
+}) {
+  return (
+    <div className='grid grid-cols-[7rem_1fr] gap-3'>
+      <span className='text-muted-foreground'>{label}</span>
+      <span className='min-w-0 truncate font-medium'>{value || '-'}</span>
+    </div>
+  )
+}
+
+function getContactName(booking: CalendarBooking) {
+  return [
+    booking.contact.surname,
+    booking.contact.lastName,
+    booking.contact.firstName,
+  ]
+    .filter(Boolean)
+    .join(' ')
 }

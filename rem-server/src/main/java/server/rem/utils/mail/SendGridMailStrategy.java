@@ -1,16 +1,23 @@
 package server.rem.utils.mail;
 
-import com.sendgrid.*;
-import com.sendgrid.helpers.mail.Mail;
-import com.sendgrid.helpers.mail.objects.*;
-import lombok.RequiredArgsConstructor;
-import server.rem.entities.Business;
-
 import java.nio.file.Files;
 import java.util.Base64;
 
+import com.sendgrid.Method;
+import com.sendgrid.Request;
+import com.sendgrid.Response;
+import com.sendgrid.SendGrid;
+import com.sendgrid.helpers.mail.Mail;
+import com.sendgrid.helpers.mail.objects.Attachments;
+import com.sendgrid.helpers.mail.objects.Content;
+import com.sendgrid.helpers.mail.objects.Email;
+
+import lombok.RequiredArgsConstructor;
+import server.rem.entities.Business;
+
 @RequiredArgsConstructor
 public class SendGridMailStrategy implements MailStrategy {
+
     private final Business business;
 
     @Override

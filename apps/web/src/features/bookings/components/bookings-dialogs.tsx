@@ -8,7 +8,7 @@ export function BookingsDialogs() {
       <BookingsActionDialog
         key='campaign-add'
         open={open === 'add'}
-        onOpenChange={() => setOpen('add')}
+        onOpenChange={(state) => setOpen(state ? 'add' : null)}
       />
 
       {/* {currentRow && (

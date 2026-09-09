@@ -1,6 +1,7 @@
 package server.rem.utils.messages;
 
 public class ContactMessages {
+
     public static String NOT_FOUND = "Contact not found";
     public static String CREATED = "Contact created successfully";
     public static String UPDATED = "Contact updated successfully";

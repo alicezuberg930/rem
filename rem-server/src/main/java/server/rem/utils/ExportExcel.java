@@ -17,11 +17,12 @@ import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
 public final class ExportExcel {
-    public static final int MAX_ROWS_PER_SHEET = SpreadsheetVersion.EXCEL2007.getMaxRows();
 
+    public static final int MAX_ROWS_PER_SHEET = SpreadsheetVersion.EXCEL2007.getMaxRows();
     private static final int DEFAULT_WINDOW_SIZE = 100;
 
     private ExportExcel() {
+        // Private constructor to prevent instantiation
     }
 
     public static SXSSFWorkbook createWorkbook() {
@@ -34,7 +35,6 @@ public final class ExportExcel {
         Font font = workbook.createFont();
         font.setBold(true);
         font.setColor(IndexedColors.WHITE.getIndex());
-
         CellStyle style = workbook.createCellStyle();
         style.setFont(font);
         style.setFillForegroundColor(IndexedColors.DARK_BLUE.getIndex());
@@ -42,23 +42,15 @@ public final class ExportExcel {
         return style;
     }
 
-    public static SXSSFSheet createSheet(
-            SXSSFWorkbook workbook,
-            String name,
-            String[] headers,
-            CellStyle headerStyle,
-            IntUnaryOperator columnWidth
-    ) {
+    public static SXSSFSheet createSheet(SXSSFWorkbook workbook, String name, String[] headers, CellStyle headerStyle, IntUnaryOperator columnWidth) {
         SXSSFSheet sheet = workbook.createSheet(name);
         Row header = sheet.createRow(0);
-
         for (int columnIndex = 0; columnIndex < headers.length; columnIndex++) {
             Cell cell = header.createCell(columnIndex);
             cell.setCellValue(headers[columnIndex]);
             cell.setCellStyle(headerStyle);
             sheet.setColumnWidth(columnIndex, columnWidth.applyAsInt(columnIndex));
         }
-
         sheet.createFreezePane(0, 1);
         sheet.setAutoFilter(new CellRangeAddress(0, 0, 0, headers.length - 1));
         return sheet;

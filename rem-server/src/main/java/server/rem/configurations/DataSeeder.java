@@ -52,6 +52,7 @@ import server.rem.repositories.UserRepository;
 @Profile("seed")
 @RequiredArgsConstructor
 public class DataSeeder implements CommandLineRunner {
+
     private static final String OWNER_ROLE_ID = "role_owner_seed_00000001";
     private static final String HR_ROLE_ID = "role_hr_seed_00000000001";
     private static final String ACCOUNTANT_ROLE_ID = "role_acct_seed_000000001";
@@ -146,20 +147,21 @@ public class DataSeeder implements CommandLineRunner {
             new PermissionSeed(68, "customer.export", "Export customers"),
             new PermissionSeed(69, "lead.export", "Export leads"),
             new PermissionSeed(70, "contact.export", "Export contacts"),
-            new PermissionSeed(71, "campaign.export", "Export campaigns"));
+            new PermissionSeed(71, "campaign.export", "Export campaigns"),
+            new PermissionSeed(72, "payroll.export", "Export payroll records"));
 
     private static final List<Integer> HR_PERMISSION_IDS = List.of(
             1, 2, 3, 6, 9, 10, 11, 18, 19, 20, 22, 23, 24, 26, 27, 28, 30, 31, 32, 35, 48, 49, 52, 56, 57,
-            58, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70);
+            58, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 72);
     private static final List<Integer> ACCOUNTANT_PERMISSION_IDS = List.of(
-            2, 6, 10, 19, 31, 34, 35, 36, 38, 39, 40, 41, 57);
+            2, 6, 10, 19, 31, 34, 35, 36, 38, 39, 40, 41, 57, 72);
     private static final List<Integer> ADMIN_PERMISSION_IDS = List.of(
             1, 2, 3, 4, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 71, 18, 19, 20, 21, 70, 22, 23, 24, 25,
             26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 42, 43, 44, 45, 48, 49, 50, 51, 52,
-            56, 57, 58, 59, 60, 61, 62, 63, 68, 64, 65, 66, 67, 69);
+            56, 57, 58, 59, 60, 61, 62, 63, 68, 64, 65, 66, 67, 69, 72);
     private static final List<Integer> MANAGER_PERMISSION_IDS = List.of(
             2, 3, 6, 9, 10, 11, 12, 13, 14, 15, 17, 71, 18, 19, 20, 21, 70, 22, 23, 24, 26, 27, 28, 30, 31,
-            32, 35, 40, 48, 49, 50, 52, 57, 60, 61, 62, 63, 68, 64, 65, 66, 67, 69);
+            32, 35, 40, 48, 49, 50, 52, 57, 60, 61, 62, 63, 68, 64, 65, 66, 67, 69, 72);
     private static final List<Integer> SALES_PERMISSION_IDS = List.of(
             6, 9, 10, 11, 18, 19, 20, 21, 70, 22, 23, 26, 27, 57, 60, 61, 62, 63, 68, 64, 65, 66, 67, 69);
     private static final List<Integer> MARKETING_PERMISSION_IDS = List.of(
@@ -521,23 +523,29 @@ public class DataSeeder implements CommandLineRunner {
     }
 
     private record RoleSeed(String id, String name, String description) {
+
     }
 
     private record PermissionSeed(int number, String name, String description) {
+
     }
 
     private record CustomerGroupSeed(String id, String name, double percentage) {
+
     }
 
     private record ContactTagSeed(String id, String name, Color color) {
+
     }
 
     private record ContactSeed(String id, String customerGroupId, String contactTagId, String firstName,
             String lastName, String surname, String phone, String email, String birthday, String occupation,
             String note, String address, String zipCode) {
+
     }
 
     private record CalendarBookingSeed(String id, String serviceStaffId, String correspondentId, String contactId,
             String start, CalendarBookingStatus status, String cancelReason, String notAttendingReason) {
+
     }
 }

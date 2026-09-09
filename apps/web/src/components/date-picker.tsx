@@ -21,9 +21,11 @@ export function DatePicker({
   value,
   onChange,
   placeholder = 'Pick a date',
-  withTime = true
+  withTime = true,
 }: DatePickerProps) {
-  const [date, setDate] = useState<Date | undefined>(value)
+  const [month, setMonth] = useState<Date>(value ?? new Date())
+  const [open, setOpen] = useState(false)
+  const date = value
 
   const handleDateChange = (selectedDate: Date | undefined) => {
     if (!selectedDate) return
@@ -33,8 +35,9 @@ export function DatePicker({
       updated.setHours(date.getHours())
       updated.setMinutes(date.getMinutes())
     }
-    setDate(updated)
+    setMonth(updated)
     onChange(updated)
+    if (!withTime) setOpen(false)
   }
 
   const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -42,18 +45,23 @@ export function DatePicker({
     const updated = new Date(date ?? new Date())
     updated.setHours(hours)
     updated.setMinutes(minutes)
-    setDate(updated)
     onChange(updated)
   }
 
   return (
-    <Popover>
+    <Popover
+      open={open}
+      onOpenChange={(nextOpen) => {
+        setOpen(nextOpen)
+        if (nextOpen) setMonth(value ?? new Date())
+      }}
+    >
       <PopoverTrigger
         render={
           <Button
             variant='outline'
             data-empty={!date}
-            className='w-37.5 lg:w-62.5 justify-start text-start font-normal data-[empty=true]:text-muted-foreground'
+            className='w-37.5 justify-start text-start font-normal data-[empty=true]:text-muted-foreground lg:w-62.5'
           >
             {date ? format(date, 'dd/MM/yyyy') : <span>{placeholder}</span>}
             <CalendarIcon className='ms-auto h-4 w-4 opacity-50' />
@@ -64,7 +72,9 @@ export function DatePicker({
         <Calendar
           mode='single'
           captionLayout='dropdown'
+          month={month}
           selected={date}
+          onMonthChange={setMonth}
           onSelect={handleDateChange}
           disabled={(date: Date) =>
             date > new Date('2100-01-01') || date < new Date('1900-01-01')

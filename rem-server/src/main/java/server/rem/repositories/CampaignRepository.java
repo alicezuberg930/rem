@@ -19,6 +19,7 @@ import server.rem.entities.Campaign;
 @Repository
 public interface CampaignRepository extends JpaRepository<Campaign, String>, JpaSpecificationExecutor<Campaign> {
     @EntityGraph(attributePaths = { "business" })
+    @Override
     Optional<Campaign> findById(String id);
 
     @EntityGraph(attributePaths = { "business" })

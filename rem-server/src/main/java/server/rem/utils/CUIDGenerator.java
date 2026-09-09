@@ -3,6 +3,7 @@ package server.rem.utils;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
 
@@ -28,8 +29,8 @@ public class CUIDGenerator {
             MessageDigest digest = MessageDigest.getInstance("SHA3-512");
             byte[] hashBytes = digest.digest(input.getBytes(StandardCharsets.UTF_8));
             return new BigInteger(1, hashBytes).toString(36);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e.getMessage());
         }
     }
 

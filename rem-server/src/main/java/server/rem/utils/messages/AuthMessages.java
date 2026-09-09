@@ -1,6 +1,7 @@
 package server.rem.utils.messages;
 
 public class AuthMessages {
+
     public static String INVALID_CREDENTIALS = "Invalid credentials";
     public static String ACCESS_DENIED = "Access Denied";
     public static String UNAUTHORIZED = "User is not authorized to view this business";

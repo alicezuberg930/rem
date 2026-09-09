@@ -1,6 +1,7 @@
 package server.rem.utils.messages;
 
 public class BookingMessages {
+
     public static String NOT_FOUND = "Booking not found";
     public static String CREATED = "Booking created successfully";
     public static String UPDATED = "Booking updated successfully";

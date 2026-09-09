@@ -12,6 +12,7 @@ import server.rem.entities.Attendance;
 
 @Component
 public class WorkingDaysCalculator {
+
     // Calculate total working days in a period (exclude Sundays and holidays)
     public int calculateWorkingDays(LocalDate startDate, LocalDate endDate, List<LocalDate> holidays) {
         int workingDays = 0;
@@ -28,10 +29,11 @@ public class WorkingDaysCalculator {
     // Check if a date is a working day
     public boolean isWorkingDay(LocalDate date, List<LocalDate> holidays) {
         // Exclude Sundays
-        if (date.getDayOfWeek() == DayOfWeek.SUNDAY) return false;
+        if (date.getDayOfWeek() == DayOfWeek.SUNDAY) {
+            return false;
+        }
         // Exclude holidays
-        if (holidays != null && holidays.contains(date)) return false;
-        return true;
+        return !(holidays != null && holidays.contains(date));
     }
 
     // Calculate actual days worked by employee

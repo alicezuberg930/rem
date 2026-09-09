@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class TaxCalculator {
+
     private static final Map<Double, Double> TAX_MAP = new LinkedHashMap<>() {
         {
             put(10_000_000.0, 0.05);
@@ -18,15 +19,17 @@ public class TaxCalculator {
     };
 
     public double calculate(double taxableIncome) {
-        if (taxableIncome <= 0) return 0;
-
+        if (taxableIncome <= 0) {
+            return 0;
+        }
         double tax = 0;
         double previousCeiling = 0;
-
         for (Map.Entry<Double, Double> bracket : TAX_MAP.entrySet()) {
             double ceiling = bracket.getKey();
             double rate = bracket.getValue();
-            if (taxableIncome <= previousCeiling) break;
+            if (taxableIncome <= previousCeiling) {
+                break;
+            }
             double taxableInBracket = Math.min(taxableIncome, ceiling) - previousCeiling;
             tax += taxableInBracket * rate;
             previousCeiling = ceiling;

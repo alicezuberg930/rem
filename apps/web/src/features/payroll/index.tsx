@@ -5,6 +5,7 @@ import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
+import { PayrollPrimaryButtons } from './components/payroll-primary-buttons'
 import { PayrollTable } from './components/payroll-table'
 
 export function Payroll() {
@@ -28,6 +29,7 @@ export function Payroll() {
               Review payroll records for all employees in the current business.
             </p>
           </div>
+          <PayrollPrimaryButtons />
         </div>
         <PayrollTable />
       </Main>

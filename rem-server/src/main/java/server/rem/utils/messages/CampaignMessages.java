@@ -1,6 +1,7 @@
 package server.rem.utils.messages;
 
 public class CampaignMessages {
+
     public static String NOT_FOUND = "Campaign not found";
     public static String CREATED = "Campaign created successfully";
     public static String UPDATED = "Campaign updated successfully";

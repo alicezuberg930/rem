@@ -1,6 +1,6 @@
-import { Business } from './business'
-import { Contact } from './contact'
-import { User } from './user'
+import type { Business } from './business'
+import type { Contact } from './contact'
+import type { User } from './user'
 
 export const CALENDAR_BOOKING_STATUS = {
   WAITING: 'Waiting',
@@ -31,6 +31,7 @@ export const CALENDAR_BOOKING_STATUS_COLOR: Record<
 
 export type CalendarBooking = {
   id: string
+  createdAt: string
   business: Business
   serviceStaff: User | null
   correspondent: User | null

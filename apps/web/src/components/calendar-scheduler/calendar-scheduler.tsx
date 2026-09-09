@@ -1,183 +1,267 @@
-// import { CalendarCheck, SquareArrowLeft, SquareArrowRight } from "lucide-react";
-// import { CalendarProvider } from "./calendar-provider"
-// import { useState } from "react";
-// import { addDays, addMonths, addWeeks, subDays, subMonths, subWeeks, startOfDay } from "date-fns";
-// import { DayView } from "./views/day-view";
-// import { WeekView } from "./views/week-view";
-// import { MonthView } from "./views/month-view";
-// import { options, View } from "./types";
-// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-// import { CalendarDatePicker } from "./calendar-date-picker";
-// import { Button } from "../ui/button";
-// import { cn } from "@/lib/utils";
+import { useEffect, useRef, useState } from 'react'
+import {
+    addDays,
+    addMonths,
+    addWeeks,
+    format,
+    isSameDay,
+    isSameMonth,
+    isSameYear,
+} from 'date-fns'
+import { CalendarCheck, ChevronLeft, ChevronRight } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog'
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select'
+import { TooltipProvider } from '@/components/ui/tooltip'
+import { CalendarDatePicker } from './calendar-date-picker'
+import {
+    options,
+    type CalendarDateRange,
+    type CalendarEvent,
+    type CalendarSchedulerProps,
+    type DatePickerValue,
+    type ResolvedCalendarEvent,
+    type View,
+} from './types'
+import { formatEventRange, getEventRange, getWeekRange } from './utils'
+import { DayView } from './views/day-view'
+import { ListView } from './views/list-view'
+import { MonthView } from './views/month-view'
+import { WeekView } from './views/week-view'
 
-// function getCurrentWeek(weekStart = "monday") {
-//     const today = new Date()
-//     const startDay = weekStart === "monday" ? 1 : 0
-//     const startOfWeek = new Date(today)
-//     while (startOfWeek.getDay() !== startDay) {
-//         startOfWeek.setDate(startOfWeek.getDate() - 1)
-//     }
-//     startOfWeek.setHours(0, 0, 0, 0)
-//     const endOfWeek = new Date(startOfWeek)
-//     endOfWeek.setDate(startOfWeek.getDate() + 6)
-//     endOfWeek.setHours(23, 59, 59, 999)
-//     return { from: startOfWeek, to: endOfWeek }
-// }
+export const CalendarScheduler = <
+    TEvent extends CalendarEvent = CalendarEvent,
+>({
+    events = [],
+    initialDate = new Date(),
+    initialView = 'month',
+    className,
+    emptyMessage,
+    onEventClick,
+    renderEventTooltip,
+    renderEventDialog,
+}: CalendarSchedulerProps<TEvent>) => {
+    const [view, setView] = useState<View>(initialView)
+    const [selectedDate, setSelectedDate] = useState(initialDate)
+    const [selectedEvent, setSelectedEvent] = useState<TEvent | null>(null)
+    const [isNarrow, setIsNarrow] = useState(false)
+    const containerRef = useRef<HTMLDivElement>(null)
+    const weekRange = getWeekRange(selectedDate)
+    const today = new Date()
+    const isTodaySelected =
+        view === 'week'
+            ? today >= weekRange.from && today <= weekRange.to
+            : isSameDay(today, selectedDate)
 
-// export const CalendarScheduler = () => {
-//     const [view, setView] = useState<View>('month');
-//     const [selectDate, setSelectDate] = useState(new Date());
-//     const [selectDateWeek, setSelectDateWeek] = useState(getCurrentWeek('monday'));
+    useEffect(() => {
+        const container = containerRef.current
+        if (!container) return
 
-//     const handlePrev = () => {
-//         switch (view) {
-//             case 'day':
-//                 setSelectDate(prev => subDays(prev, 1))
-//                 break;
-//             case 'week':
-//                 setSelectDateWeek(prev => {
-//                     if (!prev.from || !prev.to) return prev;
-//                     const newFrom = subWeeks(prev.from, 1)
-//                     newFrom.setHours(0, 0, 0, 0)
-//                     const newTo = new Date(newFrom)
-//                     newTo.setDate(newFrom.getDate() + 6)
-//                     newTo.setHours(23, 59, 59, 999)
-//                     return { from: newFrom, to: newTo }
-//                 })
-//                 break;
-//             case 'month':
-//                 setSelectDate(prev => subMonths(prev, 1))
-//                 break;
-//         }
-//     }
+        const updateSize = (width: number) => {
+            const nextIsNarrow = width < 700
+            setIsNarrow(nextIsNarrow)
+            if (nextIsNarrow) {
+                setView((current) => (current === 'list' ? current : 'day'))
+            }
+        }
 
-//     const handleNext = () => {
-//         switch (view) {
-//             case 'day':
-//                 setSelectDate(prev => addDays(prev, 1))
-//                 break;
-//             case 'week':
-//                 setSelectDateWeek(prev => {
-//                     if (!prev.from || !prev.to) return prev;
-//                     const newFrom = addWeeks(prev.from, 1)
-//                     newFrom.setHours(0, 0, 0, 0)
-//                     const newTo = new Date(newFrom)
-//                     newTo.setDate(newFrom.getDate() + 6)
-//                     newTo.setHours(23, 59, 59, 999)
-//                     return { from: newFrom, to: newTo }
-//                 })
-//                 break;
-//             case 'month':
-//                 setSelectDate(prev => addMonths(prev, 1))
-//                 break;
-//         }
-//     }
+        updateSize(container.clientWidth)
+        const resizeObserver = new ResizeObserver(([entry]) => {
+            updateSize(entry.contentRect.width)
+        })
+        resizeObserver.observe(container)
 
-//     const today = startOfDay(new Date());
+        return () => resizeObserver.disconnect()
+    }, [])
 
-//     let isCurrentDateSelected = false;
+    const navigate = (amount: -1 | 1) => {
+        setSelectedDate((current) => {
+            if (view === 'day') return addDays(current, amount)
+            if (view === 'week') return addWeeks(current, amount)
+            return addMonths(current, amount)
+        })
+    }
 
-//     if (view === 'week') {
-//         if (selectDateWeek.from && selectDateWeek.to) {
-//             const fromTime = selectDateWeek.from.getTime();
-//             const toTime = selectDateWeek.to.getTime();
-//             const todayTime = today.getTime();
-//             isCurrentDateSelected = todayTime >= fromTime && todayTime <= toTime;
-//         }
-//     } else {
-//         isCurrentDateSelected = selectDate && startOfDay(selectDate).getTime() === today.getTime();
-//     }
+    const handleDateChange = (value: DatePickerValue) => {
+        setSelectedDate(value instanceof Date ? value : value.from)
+    }
 
-//     return (
-//         <div className="relative rounded-lg shadow-sm p-6">
-//             {/* filter bar for modes */}
-//             <div className="bg-white p-4 border-b rounded-xl mb-5">
-//                 <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-//                     {/* today, Date, Prev/Next, 3 Mode View */}
-//                     <div className="flex flex-wrap gap-3 items-center">
-//                         {/* today */}
-//                         <Button
-//                             variant="outline"
-//                             className={cn(
-//                                 "h-10",
-//                                 isCurrentDateSelected ? ' text-blue-500 border-blue-300' : 'text-gray-600'
-//                             )}
-//                             onClick={() => {
-//                                 if (view === 'week') {
-//                                     setSelectDateWeek(getCurrentWeek('monday'));
-//                                 } else {
-//                                     setSelectDate(new Date());
-//                                 }
-//                             }}
-//                         >
-//                             <CalendarCheck className="w-4 h-4" />
-//                             Hôm nay
-//                         </Button>
+    const handleEventClick = (event: TEvent) => {
+        onEventClick?.(event)
+        setSelectedEvent(event)
+    }
 
-//                         {/* view mode */}
-//                         <Select
-//                             value={view}
-//                             onValueChange={(value) => {
-//                                 if (value !== null) setView(value as View)
-//                             }}
-//                         >
-//                             <SelectTrigger className='w-full'>
-//                                 <SelectValue placeholder='Select image size' />
-//                             </SelectTrigger>
-//                             <SelectContent align='start' className='max-h-72'>
-//                                 {Object.entries(options).map(([key, option]) => (
-//                                     <SelectItem key={key} value={key}>
-//                                         {option}
-//                                     </SelectItem>
-//                                 ))}
-//                             </SelectContent>
-//                         </Select>
+    const handleSelectDate = (date: Date, nextView?: View) => {
+        setSelectedDate(date)
+        if (nextView) setView(nextView)
+    }
 
-//                         {/* Date Picker */}
-//                         <div className="w-[170px] sm:w-[200px]">
-//                             {view !== 'week' ? (
-//                                 <CalendarDatePicker mode={view} onChange={(e) => setSelectDate(e as Date)} value={selectDate} />
-//                             ) : (
-//                                 <CalendarDatePicker mode="week" onChange={(e) => setSelectDateWeek(e as { from: Date; to: Date })} value={selectDateWeek} />
-//                             )}
-//                         </div>
+    const viewProps = {
+        date: selectedDate,
+        events,
+        view,
+        emptyMessage,
+        onEventClick: handleEventClick,
+        onSelectDate: handleSelectDate,
+        renderEventTooltip,
+    }
+    const selectedEventDetails = selectedEvent
+        ? { event: selectedEvent, ...getEventRange(selectedEvent) }
+        : null
+    const rangeHeading = getRangeHeading(view, selectedDate, weekRange)
 
-//                         {/* next and previous navigation */}
-//                         <div className="flex gap-1 items-center">
-//                             <Button
-//                                 variant="outline"
-//                                 onClick={handlePrev}
-//                                 className="bg-gray-100 px-2 rounded hover:bg-blue-50"
-//                             >
-//                                 <SquareArrowLeft className="text-gray-600" size={24} />
-//                             </Button>
-//                             <Button
-//                                 variant="outline"
-//                                 onClick={handleNext}
-//                                 className="bg-gray-100 px-2 rounded hover:bg-blue-50"
-//                             >
-//                                 <SquareArrowRight className="text-gray-600" size={24} />
-//                             </Button>
-//                         </div>
-//                     </div>
-//                 </div>
-//             </div>
+    return (
+        <TooltipProvider delay={100}>
+            <div
+                ref={containerRef}
+                className={cn('flex min-h-0 flex-col gap-4', className)}
+            >
+                <div className='flex flex-col gap-3 rounded-md border bg-background p-3 shadow-xs lg:flex-row lg:items-center lg:justify-between'>
+                    <div className='flex flex-wrap items-center gap-2'>
+                        {!isNarrow && (
+                            <Button
+                                variant='outline'
+                                className={cn(
+                                    'gap-2',
+                                    isTodaySelected && 'border-primary text-primary'
+                                )}
+                                onClick={() => setSelectedDate(new Date())}
+                            >
+                                <CalendarCheck className='size-4' />
+                                Today
+                            </Button>
+                        )}
+                        {!isNarrow && view !== 'list' && (
+                            <div className='flex items-center gap-1'>
+                                <Button
+                                    variant='ghost'
+                                    size='icon'
+                                    aria-label='Previous'
+                                    onClick={() => navigate(-1)}
+                                >
+                                    <ChevronLeft className='size-4' />
+                                </Button>
+                                <Button
+                                    variant='ghost'
+                                    size='icon'
+                                    aria-label='Next'
+                                    onClick={() => navigate(1)}
+                                >
+                                    <ChevronRight className='size-4' />
+                                </Button>
+                            </div>
+                        )}
+                        {view !== 'list' && (
+                            <h2 className='max-w-52 truncate text-xl font-medium'>
+                                {rangeHeading}
+                            </h2>
+                        )}
+                    </div>
+                    <div className='flex flex-wrap items-center gap-2'>
+                        <Select
+                            value={view}
+                            onValueChange={(value) => setView(value as View)}
+                        >
+                            <SelectTrigger className='w-28'>
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent align='start'>
+                                {Object.entries(options)
+                                    .filter(
+                                        ([value]) =>
+                                            !isNarrow || value === 'day' || value === 'list'
+                                    )
+                                    .map(([value, label]) => (
+                                        <SelectItem key={value} value={value}>
+                                            {label}
+                                        </SelectItem>
+                                    ))}
+                            </SelectContent>
+                        </Select>
+                        <div className='w-56'>
+                            <CalendarDatePicker
+                                mode={view}
+                                value={selectedDate}
+                                onChange={handleDateChange}
+                            />
+                        </div>
+                    </div>
+                </div>
 
-//             {/* calendar view */}
-//             <CalendarProvider>
-//                 <div className="overflow-x-auto w-full">
-//                     <div className="w-full">
-//                         {view === 'day' ? (
-//                             <DayView date={selectDate} type={type} view={view} />
-//                         ) : view === 'week' ? (
-//                             <WeekView fromDate={selectDateWeek.from} toDate={selectDateWeek.to} type={type} view={view} />
-//                         ) : view === 'month' ? (
-//                             <MonthView date={selectDate} type={type} view={view} />
-//                         ) : null}
-//                     </div>
-//                 </div>
-//             </CalendarProvider>
-//         </div>
-//     );
-// }
+                <div className='min-h-0 flex-1 overflow-auto'>
+                    {view === 'day' && <DayView {...viewProps} />}
+                    {view === 'week' && <WeekView {...viewProps} />}
+                    {view === 'month' && <MonthView {...viewProps} />}
+                    {view === 'list' && <ListView {...viewProps} />}
+                </div>
+
+                <Dialog
+                    open={!!selectedEvent}
+                    onOpenChange={(open) => {
+                        if (!open) setSelectedEvent(null)
+                    }}
+                >
+                    <DialogContent className='sm:max-w-lg'>
+                        {selectedEventDetails ? (
+                            renderEventDialog ? (
+                                renderEventDialog({
+                                    ...selectedEventDetails,
+                                    view,
+                                })
+                            ) : (
+                                <DefaultEventDialog {...selectedEventDetails} />
+                            )
+                        ) : null}
+                    </DialogContent>
+                </Dialog>
+            </div>
+        </TooltipProvider>
+    )
+}
+
+const getRangeHeading = (
+    view: View,
+    selectedDate: Date,
+    weekRange: CalendarDateRange
+) => {
+    if (view !== 'week') return format(selectedDate, 'MMMM yyyy')
+
+    if (isSameMonth(weekRange.from, weekRange.to)) {
+        return format(weekRange.from, 'MMMM yyyy')
+    }
+
+    if (isSameYear(weekRange.from, weekRange.to)) {
+        return `${format(weekRange.from, 'MMMM')} – ${format(weekRange.to, 'MMMM yyyy')}`
+    }
+
+    return `${format(weekRange.from, 'MMMM yyyy')} – ${format(weekRange.to, 'MMMM yyyy')}`
+}
+
+const DefaultEventDialog = ({ event, startsAt, endsAt }: ResolvedCalendarEvent) => {
+    return (
+        <>
+            <DialogHeader>
+                <DialogTitle>{event.title}</DialogTitle>
+                <DialogDescription>
+                    {formatEventRange(startsAt, endsAt)}
+                </DialogDescription>
+            </DialogHeader>
+            {event.description && (
+                <div className='text-sm text-muted-foreground'>{event.description}</div>
+            )}
+        </>
+    )
+}

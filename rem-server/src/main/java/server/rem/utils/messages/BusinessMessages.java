@@ -1,6 +1,7 @@
 package server.rem.utils.messages;
 
 public class BusinessMessages {
+
     public static String NOT_FOUND = "Business not found";
     public static String CREATED = "Business created successfully";
     public static String UPDATED = "Business updated successfully";

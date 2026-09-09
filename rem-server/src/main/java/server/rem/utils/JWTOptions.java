@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 public class JWTOptions {
+
     private Map<String, Object> headers;
     private long expiresIn = 3600;
     private String issuer;
@@ -24,27 +25,67 @@ public class JWTOptions {
     }
 
     // Getters and Setters
-    public Map<String, Object> getHeaders() { return headers; }
-    public void setHeaders(Map<String, Object> headers) { this.headers = headers; }
+    public Map<String, Object> getHeaders() {
+        return headers;
+    }
 
-    public long getExpiresIn() { return expiresIn; }
-    public void setExpiresIn(long expiresIn) { this.expiresIn = expiresIn; }
+    public void setHeaders(Map<String, Object> headers) {
+        this.headers = headers;
+    }
 
-    public String getIssuer() { return issuer; }
-    public void setIssuer(String issuer) { this.issuer = issuer; }
+    public long getExpiresIn() {
+        return expiresIn;
+    }
 
-    public String getSubject() { return subject; }
-    public void setSubject(String subject) { this.subject = subject; }
+    public void setExpiresIn(long expiresIn) {
+        this.expiresIn = expiresIn;
+    }
 
-    public List<String> getAudiences() { return audiences; }
-    public void setAudiences(List<String> audiences) { this.audiences = audiences; }
+    public String getIssuer() {
+        return issuer;
+    }
 
-    public Date getNotBefore() { return notBefore; }
-    public void setNotBefore(Date notBefore) { this.notBefore = notBefore; }
+    public void setIssuer(String issuer) {
+        this.issuer = issuer;
+    }
 
-    public boolean isIncludeIssuedTimestamp() { return includeIssuedTimestamp; }
-    public void setIncludeIssuedTimestamp(boolean includeIssuedTimestamp) { this.includeIssuedTimestamp = includeIssuedTimestamp; }
+    public String getSubject() {
+        return subject;
+    }
 
-    public String getJwtId() { return jwtId; }
-    public void setJwtId(String jwtId) { this.jwtId = jwtId; }
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public List<String> getAudiences() {
+        return audiences;
+    }
+
+    public void setAudiences(List<String> audiences) {
+        this.audiences = audiences;
+    }
+
+    public Date getNotBefore() {
+        return notBefore;
+    }
+
+    public void setNotBefore(Date notBefore) {
+        this.notBefore = notBefore;
+    }
+
+    public boolean isIncludeIssuedTimestamp() {
+        return includeIssuedTimestamp;
+    }
+
+    public void setIncludeIssuedTimestamp(boolean includeIssuedTimestamp) {
+        this.includeIssuedTimestamp = includeIssuedTimestamp;
+    }
+
+    public String getJwtId() {
+        return jwtId;
+    }
+
+    public void setJwtId(String jwtId) {
+        this.jwtId = jwtId;
+    }
 }

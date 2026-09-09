@@ -1,18 +1,19 @@
 package server.rem.utils.mail;
 
-import jakarta.mail.internet.MimeMessage;
-import lombok.RequiredArgsConstructor;
-import server.rem.entities.Business;
+import java.io.File;
+import java.util.Properties;
 
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
-import java.io.File;
-import java.util.Properties;
+import jakarta.mail.internet.MimeMessage;
+import lombok.RequiredArgsConstructor;
+import server.rem.entities.Business;
 
 @RequiredArgsConstructor
 public class SmtpMailStrategy implements MailStrategy {
+
     private final Business business;
 
     @Override
@@ -38,7 +39,9 @@ public class SmtpMailStrategy implements MailStrategy {
 
         if (message.getAttachmentPath() != null && !message.getAttachmentPath().isBlank()) {
             FileSystemResource file = new FileSystemResource(new File(message.getAttachmentPath()));
-            if (file.exists()) helper.addAttachment(file.getFilename(), file);
+            if (file.exists()) {
+                helper.addAttachment(file.getFilename(), file);
+            }
         }
 
         sender.send(mime);

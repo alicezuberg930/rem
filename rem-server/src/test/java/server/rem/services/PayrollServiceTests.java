@@ -6,6 +6,8 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
+import jakarta.persistence.EntityManager;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -50,6 +52,8 @@ class PayrollServiceTests {
     private WorkingDaysCalculator workingDaysCalculator;
     @Mock
     private TaxCalculator taxCalculator;
+    @Mock
+    private EntityManager entityManager;
 
     private PayrollService payrollService;
 
@@ -66,7 +70,8 @@ class PayrollServiceTests {
                 businessRepository,
                 holidayRepository,
                 workingDaysCalculator,
-                taxCalculator
+                taxCalculator,
+                entityManager
         );
     }
 

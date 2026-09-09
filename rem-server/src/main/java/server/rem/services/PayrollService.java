@@ -1,14 +1,24 @@
 package server.rem.services;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import jakarta.persistence.EntityManager;
 import lombok.AllArgsConstructor;
 import server.rem.dtos.CustomPageResponse;
 import server.rem.dtos.QueryPaginate;
@@ -36,6 +46,7 @@ import server.rem.repositories.LeaveRequestRepository;
 import server.rem.repositories.PayrollItemRepository;
 import server.rem.repositories.PayrollPeriodRepository;
 import server.rem.repositories.UserRepository;
+import server.rem.utils.ExportExcel;
 import server.rem.utils.RemConstants;
 import server.rem.utils.TaxCalculator;
 import server.rem.utils.WorkingDaysCalculator;
@@ -45,6 +56,39 @@ import server.rem.utils.exceptions.ResourceNotFoundException;
 @Service
 @AllArgsConstructor
 public class PayrollService {
+    private static final int EXPORT_PAGE_SIZE = 1_000;
+    private static final int DEFAULT_COLUMN_WIDTH = 5_000;
+    private static final String[] EXPORT_HEADERS = {
+            "ID",
+            "Created At",
+            "Updated At",
+            "Business ID",
+            "Payroll Period ID",
+            "Payroll Period Name",
+            "Payroll Period Start Date",
+            "Payroll Period End Date",
+            "Payroll Period Status",
+            "User ID",
+            "User Fullname",
+            "User Email",
+            "User Phone",
+            "Base Salary",
+            "Total Allowances",
+            "Total Bonuses",
+            "Total Deductions",
+            "Tax Amount",
+            "Insurance Amount",
+            "Net Salary",
+            "Worked Days",
+            "Absent Days",
+            "Late Days",
+            "Unpaid Leave Days",
+            "Status",
+            "Approver ID",
+            "Approver Fullname",
+            "Paid At"
+    };
+
     private final BusinessUserRepository businessUserRepository;
     private final PayrollPeriodRepository payrollPeriodRepository;
     private final UserRepository userRepository;
@@ -56,6 +100,7 @@ public class PayrollService {
     private final HolidayRepository holidayRepository;
     private final WorkingDaysCalculator workingDaysCalculator;
     private final TaxCalculator taxCalculator;
+    private final EntityManager entityManager;
 
     public CustomPageResponse<PayrollItemResponse> getItems(String businessId, QueryPaginate dto) {
         Pageable pageable = PageRequest.of(dto.getPage(), dto.getPageSize());
@@ -248,6 +293,37 @@ public class PayrollService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public void writeExcel(String businessId, OutputStream outputStream) throws IOException {
+        SXSSFWorkbook workbook = ExportExcel.createWorkbook();
+        try (workbook) {
+            CellStyle headerStyle = ExportExcel.createHeaderStyle(workbook);
+            int sheetNumber = 1;
+            SXSSFSheet sheet = createExportSheet(workbook, sheetNumber, headerStyle);
+            int rowIndex = 1;
+            int pageNumber = 0;
+            Slice<PayrollItem> page;
+
+            do {
+                page = payrollItemRepository.findAllByBusinessId(
+                        businessId,
+                        PageRequest.of(pageNumber, EXPORT_PAGE_SIZE, Sort.by(Sort.Direction.ASC, "id"))
+                );
+                for (PayrollItem payrollItem : page.getContent()) {
+                    if (rowIndex == ExportExcel.MAX_ROWS_PER_SHEET) {
+                        sheet = createExportSheet(workbook, ++sheetNumber, headerStyle);
+                        rowIndex = 1;
+                    }
+                    writePayrollItem(sheet.createRow(rowIndex++), payrollItem);
+                }
+                entityManager.clear();
+                pageNumber++;
+            } while (page.hasNext());
+
+            ExportExcel.write(workbook, outputStream);
+        }
+    }
+
     private PayrollItemResponse toPayrollItemResponse(PayrollItem payrollItem) {
         PayrollPeriod period = payrollItem.getPayrollPeriod();
         User user = payrollItem.getUser();
@@ -283,5 +359,52 @@ public class PayrollService {
                 .approverFullname(approver != null ? approver.getFullname() : null)
                 .paidAt(payrollItem.getPaidAt())
                 .build();
+    }
+
+    private SXSSFSheet createExportSheet(SXSSFWorkbook workbook, int sheetNumber, CellStyle headerStyle) {
+        String name = sheetNumber == 1 ? "Payroll" : "Payroll " + sheetNumber;
+        return ExportExcel.createSheet(
+                workbook,
+                name,
+                EXPORT_HEADERS,
+                headerStyle,
+                columnIndex -> DEFAULT_COLUMN_WIDTH
+        );
+    }
+
+    private void writePayrollItem(Row row, PayrollItem payrollItem) {
+        PayrollPeriod period = payrollItem.getPayrollPeriod();
+        User user = payrollItem.getUser();
+        User approver = payrollItem.getApprover();
+        int columnIndex = 0;
+
+        ExportExcel.setCellValue(row, columnIndex++, payrollItem.getId());
+        ExportExcel.setCellValue(row, columnIndex++, payrollItem.getCreatedAt());
+        ExportExcel.setCellValue(row, columnIndex++, payrollItem.getUpdatedAt());
+        ExportExcel.setCellValue(row, columnIndex++, payrollItem.getBusiness().getId());
+        ExportExcel.setCellValue(row, columnIndex++, period.getId());
+        ExportExcel.setCellValue(row, columnIndex++, period.getName());
+        ExportExcel.setCellValue(row, columnIndex++, period.getStartDate());
+        ExportExcel.setCellValue(row, columnIndex++, period.getEndDate());
+        ExportExcel.setCellValue(row, columnIndex++, period.getStatus());
+        ExportExcel.setCellValue(row, columnIndex++, user.getId());
+        ExportExcel.setCellValue(row, columnIndex++, user.getFullname());
+        ExportExcel.setCellValue(row, columnIndex++, user.getEmail());
+        ExportExcel.setCellValue(row, columnIndex++, user.getPhone());
+        ExportExcel.setCellValue(row, columnIndex++, payrollItem.getBaseSalary());
+        ExportExcel.setCellValue(row, columnIndex++, payrollItem.getTotalAllowances());
+        ExportExcel.setCellValue(row, columnIndex++, payrollItem.getTotalBonuses());
+        ExportExcel.setCellValue(row, columnIndex++, payrollItem.getTotalDeductions());
+        ExportExcel.setCellValue(row, columnIndex++, payrollItem.getTaxAmount());
+        ExportExcel.setCellValue(row, columnIndex++, payrollItem.getInsuranceAmount());
+        ExportExcel.setCellValue(row, columnIndex++, payrollItem.getNetSalary());
+        ExportExcel.setCellValue(row, columnIndex++, payrollItem.getWorkedDays());
+        ExportExcel.setCellValue(row, columnIndex++, payrollItem.getAbsentDays());
+        ExportExcel.setCellValue(row, columnIndex++, payrollItem.getLateDays());
+        ExportExcel.setCellValue(row, columnIndex++, payrollItem.getUnpaidLeaveDays());
+        ExportExcel.setCellValue(row, columnIndex++, payrollItem.getStatus());
+        ExportExcel.setCellValue(row, columnIndex++, approver == null ? null : approver.getId());
+        ExportExcel.setCellValue(row, columnIndex++, approver == null ? null : approver.getFullname());
+        ExportExcel.setCellValue(row, columnIndex, payrollItem.getPaidAt());
     }
 }

@@ -1,6 +1,7 @@
 package server.rem.utils.messages;
 
 public class AttendanceMessages {
+
     public static String ALREADY_CHECKED_IN = "User already checked in today";
     public static String ACCESS_DENIED = "Access Denied";
     public static String UNAUTHORIZED = "User is not authorized to view this business";

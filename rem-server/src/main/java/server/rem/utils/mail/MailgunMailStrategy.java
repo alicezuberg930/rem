@@ -1,16 +1,18 @@
 package server.rem.utils.mail;
 
+import java.io.File;
+
 import com.mailgun.api.v3.MailgunMessagesApi;
 import com.mailgun.client.MailgunClient;
 import com.mailgun.model.message.Message;
 import com.mailgun.model.message.MessageResponse;
+
 import lombok.RequiredArgsConstructor;
 import server.rem.entities.Business;
 
-import java.io.File;
-
 @RequiredArgsConstructor
 public class MailgunMailStrategy implements MailStrategy {
+
     private final Business business;
 
     @Override
@@ -25,12 +27,14 @@ public class MailgunMailStrategy implements MailStrategy {
 
         if (mailMessage.getAttachmentPath() != null && !mailMessage.getAttachmentPath().isBlank()) {
             File file = new File(mailMessage.getAttachmentPath());
-            if (file.exists())
+            if (file.exists()) {
                 builder.attachment(file);
+            }
         }
 
         MessageResponse response = api.sendMessage(business.getMailgunDomain(), builder.build());
-        if (response == null)
+        if (response == null) {
             throw new RuntimeException("Mailgun: empty response");
+        }
     }
 }

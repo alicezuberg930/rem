@@ -1,5 +1,10 @@
 package server.rem.utils.mail;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.util.Base64;
+import java.util.List;
+
 import com.resend.Resend;
 import com.resend.services.emails.model.Attachment;
 import com.resend.services.emails.model.CreateEmailOptions;
@@ -8,13 +13,9 @@ import com.resend.services.emails.model.CreateEmailResponse;
 import lombok.RequiredArgsConstructor;
 import server.rem.entities.Business;
 
-import java.io.File;
-import java.nio.file.Files;
-import java.util.Base64;
-import java.util.List;
-
 @RequiredArgsConstructor
 public class ResendMailStrategy implements MailStrategy {
+
     private final Business business;
 
     @Override
