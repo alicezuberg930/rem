@@ -1,0 +1,803 @@
+Enum "users_provider_enum" {
+  "LOCAL"
+  "FACEBOOK"
+  "GOOGLE"
+}
+
+Enum "businesses_mail_provider_enum" {
+  "SMTP"
+  "EXCHANGE"
+  "SENDGRID"
+  "RESEND"
+  "MAILGUN"
+  "AMAZON_SES"
+  "POSTMARK"
+  "OTHER"
+}
+
+Enum "businesses_phone_provider_enum" {
+  "TWILIO"
+  "VONAGE"
+  "OTHER"
+}
+
+Enum "contact_tags_color_enum" {
+  "RED"
+  "GREEN"
+  "BLUE"
+  "YELLOW"
+  "ORANGE"
+  "PURPLE"
+  "PINK"
+  "BROWN"
+  "GRAY"
+}
+
+Enum "contacts_type_enum" {
+  "PERSONAL"
+  "COMPANY"
+}
+
+Enum "leads_source_enum" {
+  "WEBSITE"
+  "LANDING_PAGE"
+  "CONTACT_FORM"
+  "LIVE_CHAT"
+  "CHATBOT"
+  "MOBILE_APP"
+  "PHONE_CALL"
+  "EMAIL"
+  "SMS"
+  "WHATSAPP"
+  "FACEBOOK"
+  "INSTAGRAM"
+  "LINKEDIN"
+  "TIKTOK"
+  "YOUTUBE"
+  "X_TWITTER"
+  "ZALO"
+  "GOOGLE_ORGANIC"
+  "BING_ORGANIC"
+  "OTHER_SEARCH_ENGINE"
+  "GOOGLE_ADS"
+  "FACEBOOK_ADS"
+  "INSTAGRAM_ADS"
+  "LINKEDIN_ADS"
+  "TIKTOK_ADS"
+  "YOUTUBE_ADS"
+  "DISPLAY_ADS"
+  "RETARGETING_ADS"
+  "REFERRAL"
+  "CUSTOMER_REFERRAL"
+  "PARTNER_REFERRAL"
+  "EMPLOYEE_REFERRAL"
+  "PARTNER"
+  "AFFILIATE"
+  "RESELLER"
+  "DISTRIBUTOR"
+  "EVENT"
+  "TRADE_SHOW"
+  "CONFERENCE"
+  "SEMINAR"
+  "WEBINAR"
+  "NETWORKING"
+  "WALK_IN"
+  "STORE_VISIT"
+  "QR_CODE"
+  "DIRECT_MAIL"
+  "COLD_CALL"
+  "COLD_EMAIL"
+  "OUTBOUND_SALES"
+  "MARKETPLACE"
+  "API"
+  "THIRD_PARTY_INTEGRATION"
+  "IMPORT"
+  "CSV_IMPORT"
+  "OTHER"
+  "UNKNOWN"
+}
+
+Enum "leads_status_enum" {
+  "NEW"
+  "ASSIGNED"
+  "CONTACT_ATTEMPTED"
+  "CONTACTED"
+  "ENGAGED"
+  "QUALIFIED"
+  "NURTURING"
+  "ON_HOLD"
+  "UNQUALIFIED"
+  "DISQUALIFIED"
+  "CONVERTED"
+  "LOST"
+  "DUPLICATE"
+  "INVALID"
+  "DO_NOT_CONTACT"
+}
+
+Enum "campaigns_send_type_enum" {
+  "IMMEDIATE"
+  "SCHEDULED"
+}
+
+Enum "campaigns_status_enum" {
+  "PENDING"
+  "PROCESSING"
+  "SENT"
+  "FAILED"
+}
+
+Enum "calendar_bookings_status_enum" {
+  "WAITING"
+  "BOOKED"
+  "COMPLETED"
+  "CANCELLED"
+  "ABSENT"
+  "ARRIVED"
+  "IN_ROOM"
+  "BOUGHT_SERVICE"
+}
+
+Enum "calendar_events_type_enum" {
+  "HOLIDAY"
+  "MEETING"
+  "LEAVE"
+  "ANNOUNCEMENT"
+}
+
+Enum "attendances_type_enum" {
+  "OFFICE"
+  "REMOTE"
+  "HYBRID"
+}
+
+Enum "attendances_status_enum" {
+  "ON_TIME"
+  "LATE"
+  "HALF_DAY"
+}
+
+Enum "leave_requests_type_enum" {
+  "ANNUAL"
+  "SICK"
+  "MATERNITY"
+  "PATERNITY"
+  "UNPAID"
+  "BEREAVEMENT"
+  "MARRIAGE"
+  "COMPENSATORY"
+  "EMERGENCY"
+  "STUDY"
+  "OTHER"
+}
+
+Enum "leave_requests_status_enum" {
+  "PENDING"
+  "APPROVED"
+  "REJECTED"
+  "CANCELLED"
+  "EXPIRED"
+}
+
+Enum "allowances_type_enum" {
+  "MEAL"
+  "TRANSPORT"
+  "HOUSING"
+  "PHONE"
+  "OTHER"
+}
+
+Enum "payroll_periods_status_enum" {
+  "DRAFT"
+  "PROCESSING"
+  "APPROVED"
+  "PAID"
+  "CANCELLED"
+}
+
+Enum "payroll_items_status_enum" {
+  "DRAFT"
+  "PROCESSING"
+  "APPROVED"
+  "PAID"
+  "CANCELLED"
+}
+
+Enum "payroll_bonuses_type_enum" {
+  "PERFORMANCE"
+  "HOLIDAY"
+  "PROJECT"
+  "OTHER"
+}
+
+Enum "payroll_deductions_type_enum" {
+  "TAX"
+  "INSURANCE"
+  "LATE"
+  "ABSENT"
+  "UNPAID_LEAVE"
+  "OTHER"
+}
+
+Table "users" {
+  "id" VARCHAR(24) [pk, not null]
+  "created_at" DATETIME(6)
+  "updated_at" DATETIME(6)
+  "fullname" VARCHAR(100) [not null]
+  "phone" VARCHAR(20)
+  "avatar" VARCHAR(255)
+  "provider" users_provider_enum [not null]
+  "birthday" DATE
+  "email" VARCHAR(100) [not null]
+  "password" VARCHAR(255)
+  "is_verified" BIT(1) [not null]
+  "verify_token" VARCHAR(255)
+  "verify_token_expires" DATETIME(6)
+  "reset_password_token" VARCHAR(255)
+  "reset_password_expires" DATETIME(6)
+
+  Indexes {
+    phone [unique, name: "uk_users_phone"]
+  }
+}
+
+Table "roles" {
+  "id" VARCHAR(24) [pk, not null]
+  "created_at" DATETIME(6)
+  "updated_at" DATETIME(6)
+  "name" VARCHAR(100) [not null]
+  "description" VARCHAR(255)
+}
+
+Table "permissions" {
+  "id" VARCHAR(24) [pk, not null]
+  "created_at" DATETIME(6)
+  "updated_at" DATETIME(6)
+  "name" VARCHAR(100) [not null]
+  "description" VARCHAR(255)
+}
+
+Table "role_permission" {
+  "role_id" VARCHAR(24) [not null]
+  "permission_id" VARCHAR(24) [not null]
+
+  Indexes {
+    (role_id, permission_id) [pk]
+    permission_id [name: "idx_role_permission_permission_id"]
+  }
+}
+
+Table "businesses" {
+  "id" VARCHAR(24) [pk, not null]
+  "created_at" DATETIME(6)
+  "updated_at" DATETIME(6)
+  "owner_user_id" VARCHAR(24) [not null]
+  "description" VARCHAR(255)
+  "name" VARCHAR(100) [not null]
+  "slug" VARCHAR(100)
+  "logo_url" VARCHAR(255)
+  "work_start_time" TIME(6)
+  "insurance_contribution_salary" INT
+  "twilio_account_sid" VARCHAR(255)
+  "twilio_auth_token" VARCHAR(255)
+  "twilio_phone_number" VARCHAR(255)
+  "vonage_api_key" VARCHAR(255)
+  "vonage_api_secret" VARCHAR(255)
+  "cloudinary_cloud_name" VARCHAR(255)
+  "cloudinary_api_key" VARCHAR(255)
+  "cloudinary_api_secret" VARCHAR(255)
+  "resend_api_key" VARCHAR(255)
+  "resend_email" VARCHAR(255)
+  "mail_host" VARCHAR(255)
+  "mail_port" INT
+  "mail_username" VARCHAR(255)
+  "mail_password" VARCHAR(255)
+  "send_grid_api_key" VARCHAR(255)
+  "send_grid_username" VARCHAR(255)
+  "mailgun_api_key" VARCHAR(255)
+  "mailgun_domain" VARCHAR(255)
+  "mailgun_username" VARCHAR(255)
+  "mail_provider" businesses_mail_provider_enum
+  "phone_provider" businesses_phone_provider_enum
+
+  Indexes {
+    owner_user_id [name: "idx_businesses_owner_user_id"]
+  }
+}
+
+Table "business_user" {
+  "business_id" VARCHAR(24) [not null]
+  "user_id" VARCHAR(24) [not null]
+  "invited_user_id" VARCHAR(24)
+  "is_active" BIT(1) [not null]
+  "is_verified" BIT(1) [not null]
+  "role_id" VARCHAR(24) [not null]
+  "salary" INT
+  "bank_owner" VARCHAR(255)
+  "bank_account" VARCHAR(255)
+  "bank_name" VARCHAR(255)
+  "bank_code" VARCHAR(255)
+  "bank_branch" VARCHAR(255)
+  "dependants" INT [not null]
+
+  Indexes {
+    (business_id, user_id) [pk]
+    user_id [name: "idx_business_user_user_id"]
+    invited_user_id [name: "idx_business_user_invited_user_id"]
+    role_id [name: "idx_business_user_role_id"]
+  }
+}
+
+Table "branches" {
+  "id" VARCHAR(24) [pk, not null]
+  "created_at" DATETIME(6)
+  "updated_at" DATETIME(6)
+  "business_id" VARCHAR(24) [not null]
+  "name" VARCHAR(255)
+  "address" VARCHAR(255)
+
+  Indexes {
+    business_id [name: "idx_branches_business_id"]
+  }
+}
+
+Table "contact_tags" {
+  "id" VARCHAR(24) [pk, not null]
+  "created_at" DATETIME(6)
+  "updated_at" DATETIME(6)
+  "name" VARCHAR(255) [not null]
+  "business_id" VARCHAR(24) [not null]
+  "color" contact_tags_color_enum [not null]
+  "is_active" BIT(1)
+
+  Indexes {
+    business_id [name: "idx_contact_tags_business_id"]
+  }
+}
+
+Table "customer_groups" {
+  "id" VARCHAR(24) [pk, not null]
+  "created_at" DATETIME(6)
+  "updated_at" DATETIME(6)
+  "name" VARCHAR(100) [not null]
+  "business_id" VARCHAR(24) [not null]
+  "percentage" DOUBLE
+
+  Indexes {
+    business_id [name: "idx_customer_groups_business_id"]
+  }
+}
+
+Table "contacts" {
+  "id" VARCHAR(24) [pk, not null]
+  "created_at" DATETIME(6)
+  "updated_at" DATETIME(6)
+  "business_id" VARCHAR(24) [not null]
+  "tag_id" VARCHAR(24) [not null]
+  "type" contacts_type_enum [not null]
+  "first_name" VARCHAR(255) [not null]
+  "last_name" VARCHAR(255) [not null]
+  "surname" VARCHAR(255) [not null]
+  "phone" VARCHAR(255) [not null]
+  "mobile_phone" VARCHAR(255)
+  "email" VARCHAR(255) [not null]
+  "birthday" VARCHAR(255)
+  "occupation" VARCHAR(255)
+  "tax_code" VARCHAR(255)
+  "website" VARCHAR(255)
+  "facebook" VARCHAR(255)
+  "instagram" VARCHAR(255)
+  "zalo" VARCHAR(255)
+  "identity_card" VARCHAR(255)
+  "identity_issued_on" DATE
+  "identity_issued_at" VARCHAR(255)
+  "insurance_number" VARCHAR(255)
+  "note" VARCHAR(255)
+  "address_1" VARCHAR(255)
+  "address_2" VARCHAR(255)
+  "country" VARCHAR(255)
+  "zip_code" VARCHAR(255)
+
+  Indexes {
+    business_id [name: "idx_contacts_business_id"]
+    tag_id [name: "idx_contacts_tag_id"]
+  }
+}
+
+Table "customers" {
+  "id" VARCHAR(24) [pk, not null]
+  "created_at" DATETIME(6)
+  "updated_at" DATETIME(6)
+  "contact_id" VARCHAR(24) [not null]
+  "customer_group_id" VARCHAR(24)
+  "customer_since" DATE [not null]
+
+  Indexes {
+    contact_id [unique, name: "uk_customers_contact_id"]
+    customer_group_id [name: "idx_customers_customer_group_id"]
+  }
+}
+
+Table "leads" {
+  "id" VARCHAR(24) [pk, not null]
+  "created_at" DATETIME(6)
+  "updated_at" DATETIME(6)
+  "contact_id" VARCHAR(24) [not null]
+  "source" leads_source_enum [not null]
+  "status" leads_status_enum [not null]
+
+  Indexes {
+    contact_id [unique, name: "uk_leads_contact_id"]
+  }
+}
+
+Table "templates" {
+  "id" VARCHAR(24) [pk, not null]
+  "created_at" DATETIME(6)
+  "updated_at" DATETIME(6)
+  "business_id" VARCHAR(24) [not null]
+  "name" VARCHAR(255) [not null]
+  "header" LONGTEXT [not null]
+  "body" LONGTEXT [not null]
+  "footer" LONGTEXT
+  "contact_phone" VARCHAR(255)
+  "website_url" VARCHAR(255)
+
+  Indexes {
+    business_id [name: "idx_templates_business_id"]
+  }
+}
+
+Table "campaigns" {
+  "id" VARCHAR(24) [pk, not null]
+  "created_at" DATETIME(6)
+  "updated_at" DATETIME(6)
+  "business_id" VARCHAR(24) [not null]
+  "template_id" VARCHAR(24) [not null]
+  "name" VARCHAR(255) [not null]
+  "description" VARCHAR(255)
+  "send_type" campaigns_send_type_enum [not null]
+  "schedule_at" DATETIME(6)
+  "status" campaigns_status_enum [not null]
+
+  Indexes {
+    business_id [name: "idx_campaigns_business_id"]
+    template_id [name: "idx_campaigns_template_id"]
+  }
+}
+
+Table "campaign_contact" {
+  "campaign_id" VARCHAR(24) [not null]
+  "contact_id" VARCHAR(24) [not null]
+
+  Indexes {
+    (campaign_id, contact_id) [pk]
+    contact_id [name: "idx_campaign_contact_contact_id"]
+  }
+}
+
+Table "calendar_bookings" {
+  "id" VARCHAR(24) [pk, not null]
+  "created_at" DATETIME(6)
+  "updated_at" DATETIME(6)
+  "business_id" VARCHAR(24) [not null]
+  "service_staff_id" VARCHAR(24)
+  "correspondent_id" VARCHAR(24)
+  "contact_id" VARCHAR(24) [not null]
+  "booking_start_date" DATETIME(6) [not null]
+  "booking_end_date" DATETIME(6) [not null]
+  "status" calendar_bookings_status_enum [not null]
+  "cancel_reason" VARCHAR(255)
+  "not_attending_reason" VARCHAR(255)
+  "complaint_reason" VARCHAR(255)
+
+  Indexes {
+    business_id [name: "idx_calendar_bookings_business_id"]
+    service_staff_id [name: "idx_calendar_bookings_service_staff_id"]
+    correspondent_id [name: "idx_calendar_bookings_correspondent_id"]
+    contact_id [name: "idx_calendar_bookings_contact_id"]
+  }
+}
+
+Table "calendar_events" {
+  "id" VARCHAR(24) [pk, not null]
+  "created_at" DATETIME(6)
+  "updated_at" DATETIME(6)
+  "business_id" VARCHAR(24) [not null]
+  "title" VARCHAR(100) [not null]
+  "description" VARCHAR(500)
+  "start_date" DATE [not null]
+  "end_date" DATE [not null]
+  "start_time" TIME(6)
+  "end_time" TIME(6)
+  "type" calendar_events_type_enum [not null]
+  "created_by" VARCHAR(24) [not null]
+
+  Indexes {
+    business_id [name: "idx_calendar_events_business_id"]
+    created_by [name: "idx_calendar_events_created_by"]
+  }
+}
+
+Table "groups" {
+  "id" VARCHAR(24) [pk, not null]
+  "created_at" DATETIME(6)
+  "updated_at" DATETIME(6)
+  "name" VARCHAR(100) [not null]
+  "avatar" VARCHAR(255) [not null]
+  "business_id" VARCHAR(24) [not null]
+
+  Indexes {
+    business_id [name: "idx_groups_business_id"]
+  }
+}
+
+Table "group_user" {
+  "group_id" VARCHAR(24) [not null]
+  "user_id" VARCHAR(24) [not null]
+
+  Indexes {
+    (group_id, user_id) [unique, name: "uk_group_user_group_user"]
+    user_id [name: "idx_group_user_user_id"]
+  }
+}
+
+Table "chat_messages" {
+  "id" VARCHAR(24) [pk, not null]
+  "created_at" DATETIME(6)
+  "updated_at" DATETIME(6)
+  "business_id" VARCHAR(24) [not null]
+  "sender_id" VARCHAR(24) [not null]
+  "recipient_id" VARCHAR(24)
+  "group_id" VARCHAR(24)
+  "content" VARCHAR(4000) [not null]
+
+  Indexes {
+    (business_id, sender_id, recipient_id, created_at) [name: "idx_chat_business_sender_recipient_created"]
+    (business_id, recipient_id, sender_id, created_at) [name: "idx_chat_business_recipient_sender_created"]
+    (business_id, group_id, created_at) [name: "idx_chat_business_group_created"]
+    sender_id [name: "idx_chat_messages_sender_id"]
+    recipient_id [name: "idx_chat_messages_recipient_id"]
+    group_id [name: "idx_chat_messages_group_id"]
+  }
+}
+
+Table "attendances" {
+  "id" VARCHAR(24) [pk, not null]
+  "created_at" DATETIME(6)
+  "updated_at" DATETIME(6)
+  "business_id" VARCHAR(24) [not null]
+  "user_id" VARCHAR(24) [not null]
+  "check_in_time" DATETIME(6) [not null]
+  "check_out_time" DATETIME(6)
+  "date" DATE [not null]
+  "type" attendances_type_enum [not null]
+  "status" attendances_status_enum [not null]
+  "note" VARCHAR(500)
+  "address" VARCHAR(255) [not null]
+  "latitude" DECIMAL(10,7)
+  "longitude" DECIMAL(10,7)
+
+  Indexes {
+    business_id [name: "idx_attendances_business_id"]
+    user_id [name: "idx_attendances_user_id"]
+  }
+}
+
+Table "holidays" {
+  "id" VARCHAR(24) [pk, not null]
+  "created_at" DATETIME(6)
+  "updated_at" DATETIME(6)
+  "business_id" VARCHAR(24) [not null]
+  "name" VARCHAR(100) [not null]
+  "date" DATE [not null]
+  "description" VARCHAR(255)
+  "is_recurring" BIT(1) [not null]
+
+  Indexes {
+    business_id [name: "idx_holidays_business_id"]
+  }
+}
+
+Table "leave_requests" {
+  "id" VARCHAR(24) [pk, not null]
+  "created_at" DATETIME(6)
+  "updated_at" DATETIME(6)
+  "business_id" VARCHAR(24) [not null]
+  "user_id" VARCHAR(24) [not null]
+  "start_date" DATE [not null]
+  "end_date" DATE [not null]
+  "days" DOUBLE [not null]
+  "type" leave_requests_type_enum [not null]
+  "reason" VARCHAR(500)
+  "status" leave_requests_status_enum [not null]
+  "approver_id" VARCHAR(24)
+  "approver_note" VARCHAR(500)
+
+  Indexes {
+    business_id [name: "idx_leave_requests_business_id"]
+    user_id [name: "idx_leave_requests_user_id"]
+    approver_id [name: "idx_leave_requests_approver_id"]
+  }
+}
+
+Table "allowances" {
+  "id" VARCHAR(24) [pk, not null]
+  "created_at" DATETIME(6)
+  "updated_at" DATETIME(6)
+  "business_id" VARCHAR(24) [not null]
+  "amount" INT
+  "is_active" BIT(1)
+  "type" allowances_type_enum [not null]
+
+  Indexes {
+    business_id [name: "idx_allowances_business_id"]
+  }
+}
+
+Table "payroll_periods" {
+  "id" VARCHAR(24) [pk, not null]
+  "created_at" DATETIME(6)
+  "updated_at" DATETIME(6)
+  "business_id" VARCHAR(24) [not null]
+  "name" VARCHAR(100) [not null]
+  "start_date" DATE [not null]
+  "end_date" DATE [not null]
+  "status" payroll_periods_status_enum [not null]
+
+  Indexes {
+    business_id [name: "idx_payroll_periods_business_id"]
+  }
+}
+
+Table "payroll_items" {
+  "id" VARCHAR(24) [pk, not null]
+  "created_at" DATETIME(6)
+  "updated_at" DATETIME(6)
+  "payroll_period_id" VARCHAR(24) [not null]
+  "business_id" VARCHAR(24) [not null]
+  "user_id" VARCHAR(24) [not null]
+  "base_salary" INT [not null]
+  "total_allowances" DOUBLE [not null]
+  "total_bonuses" DOUBLE [not null]
+  "total_deductions" DOUBLE [not null]
+  "tax_amount" DOUBLE [not null]
+  "insurance_amount" DOUBLE [not null]
+  "net_salary" DOUBLE [not null]
+  "worked_days" INT
+  "absent_days" INT
+  "late_days" INT
+  "unpaid_leave_days" INT
+  "status" payroll_items_status_enum [not null]
+  "approver_id" VARCHAR(24)
+  "paid_at" DATETIME(6)
+
+  Indexes {
+    payroll_period_id [name: "idx_payroll_items_payroll_period_id"]
+    business_id [name: "idx_payroll_items_business_id"]
+    user_id [name: "idx_payroll_items_user_id"]
+    approver_id [name: "idx_payroll_items_approver_id"]
+  }
+}
+
+Table "payroll_bonuses" {
+  "id" VARCHAR(24) [pk, not null]
+  "created_at" DATETIME(6)
+  "updated_at" DATETIME(6)
+  "payroll_record_id" VARCHAR(24) [not null]
+  "type" payroll_bonuses_type_enum [not null]
+  "amount" DOUBLE [not null]
+  "note" VARCHAR(500)
+
+  Indexes {
+    payroll_record_id [name: "idx_payroll_bonuses_payroll_record_id"]
+  }
+}
+
+Table "payroll_deductions" {
+  "id" VARCHAR(24) [pk, not null]
+  "created_at" DATETIME(6)
+  "updated_at" DATETIME(6)
+  "payroll_record_id" VARCHAR(24) [not null]
+  "type" payroll_deductions_type_enum [not null]
+  "amount" DOUBLE [not null]
+  "note" VARCHAR(500)
+
+  Indexes {
+    payroll_record_id [name: "idx_payroll_deductions_payroll_record_id"]
+  }
+}
+
+Ref "fk_role_permission_role":"roles"."id" <? "role_permission"."role_id"
+
+Ref "fk_role_permission_permission":"permissions"."id" <? "role_permission"."permission_id"
+
+Ref "fk_businesses_owner":"users"."id" <? "businesses"."owner_user_id"
+
+Ref "fk_business_user_business":"businesses"."id" <? "business_user"."business_id"
+
+Ref "fk_business_user_user":"users"."id" <? "business_user"."user_id"
+
+Ref "fk_business_user_invited_user":"users"."id" ?<? "business_user"."invited_user_id"
+
+Ref "fk_business_user_role":"roles"."id" <? "business_user"."role_id"
+
+Ref "fk_branches_business":"businesses"."id" <? "branches"."business_id"
+
+Ref "fk_contact_tags_business":"businesses"."id" <? "contact_tags"."business_id"
+
+Ref "fk_customer_groups_business":"businesses"."id" <? "customer_groups"."business_id"
+
+Ref "fk_contacts_business":"businesses"."id" <? "contacts"."business_id"
+
+Ref "fk_contacts_tag":"contact_tags"."id" <? "contacts"."tag_id"
+
+Ref "fk_customers_contact":"contacts"."id" - "customers"."contact_id"
+
+Ref "fk_customers_customer_group":"customer_groups"."id" ?<? "customers"."customer_group_id"
+
+Ref "fk_leads_contact":"contacts"."id" - "leads"."contact_id"
+
+Ref "fk_templates_business":"businesses"."id" <? "templates"."business_id"
+
+Ref "fk_campaigns_business":"businesses"."id" <? "campaigns"."business_id"
+
+Ref "fk_campaigns_template":"templates"."id" <? "campaigns"."template_id"
+
+Ref "fk_campaign_contact_campaign":"campaigns"."id" <? "campaign_contact"."campaign_id"
+
+Ref "fk_campaign_contact_contact":"contacts"."id" <? "campaign_contact"."contact_id"
+
+Ref "fk_calendar_bookings_business":"businesses"."id" <? "calendar_bookings"."business_id"
+
+Ref "fk_calendar_bookings_service_staff":"users"."id" ?<? "calendar_bookings"."service_staff_id"
+
+Ref "fk_calendar_bookings_correspondent":"users"."id" ?<? "calendar_bookings"."correspondent_id"
+
+Ref "fk_calendar_bookings_contact":"contacts"."id" <? "calendar_bookings"."contact_id"
+
+Ref "fk_calendar_events_business":"businesses"."id" <? "calendar_events"."business_id"
+
+Ref "fk_calendar_events_created_by":"users"."id" <? "calendar_events"."created_by"
+
+Ref "fk_groups_business":"businesses"."id" <? "groups"."business_id"
+
+Ref "fk_group_user_group":"groups"."id" <? "group_user"."group_id"
+
+Ref "fk_group_user_user":"users"."id" <? "group_user"."user_id"
+
+Ref "fk_chat_messages_business":"businesses"."id" <? "chat_messages"."business_id"
+
+Ref "fk_chat_messages_sender":"users"."id" <? "chat_messages"."sender_id"
+
+Ref "fk_chat_messages_recipient":"users"."id" ?<? "chat_messages"."recipient_id"
+
+Ref "fk_chat_messages_group":"groups"."id" ?<? "chat_messages"."group_id"
+
+Ref "fk_attendances_business":"businesses"."id" <? "attendances"."business_id"
+
+Ref "fk_attendances_user":"users"."id" <? "attendances"."user_id"
+
+Ref "fk_holidays_business":"businesses"."id" <? "holidays"."business_id"
+
+Ref "fk_leave_requests_business":"businesses"."id" <? "leave_requests"."business_id"
+
+Ref "fk_leave_requests_user":"users"."id" <? "leave_requests"."user_id"
+
+Ref "fk_leave_requests_approver":"users"."id" ?<? "leave_requests"."approver_id"
+
+Ref "fk_allowances_business":"businesses"."id" <? "allowances"."business_id"
+
+Ref "fk_payroll_periods_business":"businesses"."id" <? "payroll_periods"."business_id"
+
+Ref "fk_payroll_items_payroll_period":"payroll_periods"."id" <? "payroll_items"."payroll_period_id"
+
+Ref "fk_payroll_items_business":"businesses"."id" <? "payroll_items"."business_id"
+
+Ref "fk_payroll_items_user":"users"."id" <? "payroll_items"."user_id"
+
+Ref "fk_payroll_items_approver":"users"."id" ?<? "payroll_items"."approver_id"
+
+Ref "fk_payroll_bonuses_payroll_item":"payroll_items"."id" <? "payroll_bonuses"."payroll_record_id"
+
+Ref "fk_payroll_deductions_payroll_item":"payroll_items"."id" <? "payroll_deductions"."payroll_record_id"

@@ -39,9 +39,7 @@ const mapToEvents = (items: CalendarBooking[]): BookingCalendarEvent[] => {
 }
 
 export function Bookings() {
-  const { data: bookingResponses = [] } = useQuery(
-    bookings().all.queryOptions()
-  )
+  const { data: bookingResponses = [] } = useQuery(bookings().all.queryOptions())
   const calendarEvents = mapToEvents(bookingResponses)
 
   return (
@@ -122,25 +120,14 @@ function BookingEventDialog({
   return (
     <div className='space-y-5'>
       <div className='space-y-2'>
-        <div className='flex items-start justify-between gap-3'>
-          <div>
-            <h2 className='font-heading text-lg leading-none font-medium'>
-              {event.title}
-            </h2>
-            <p className='mt-1 text-sm text-muted-foreground'>
-              {format(startsAt, 'dd/MM/yyyy HH:mm')} -{' '}
-              {format(endsAt, 'dd/MM/yyyy HH:mm')}
-            </p>
-          </div>
-          <Badge
-            variant='outline'
-            style={{
-              borderColor: event.color,
-              color: event.color,
-            }}
-          >
-            {CALENDAR_BOOKING_STATUS[status]}
-          </Badge>
+        <div>
+          <h2 className='font-heading text-lg leading-none font-medium'>
+            {event.title}
+          </h2>
+          <p className='mt-1 text-sm text-muted-foreground'>
+            {format(startsAt, 'dd/MM/yyyy HH:mm')} -{' '}
+            {format(endsAt, 'dd/MM/yyyy HH:mm')}
+          </p>
         </div>
       </div>
 
@@ -159,6 +146,14 @@ function BookingEventDialog({
           {booking.cancelReason && (
             <DetailRow label='Cancel reason' value={booking.cancelReason} />
           )}
+          <div className='grid grid-cols-[7rem_1fr] gap-3'>
+            <span className='text-muted-foreground'>Status</span>
+            <span className='min-w-0 truncate font-medium'>
+              <Badge style={{ backgroundColor: CALENDAR_BOOKING_STATUS_COLOR[status] }}>
+                {CALENDAR_BOOKING_STATUS[status]}
+              </Badge>
+            </span>
+          </div>
         </div>
       )}
     </div>

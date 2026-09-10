@@ -1,30 +1,9 @@
-import {
-  Fragment,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type SubmitEvent,
-} from 'react'
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState, type SubmitEvent } from 'react'
 import { format } from 'date-fns'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import type { ChatGroup, ChatMessage, ChatUser, ChatUserStatus } from '@/@types'
 import { useAuth } from '@/providers/auth-provider'
-import {
-  ArrowLeft,
-  Edit,
-  ImagePlus,
-  MessagesSquare,
-  MoreVertical,
-  Paperclip,
-  Phone,
-  Plus,
-  Search,
-  Send,
-  UsersRound,
-  Video,
-} from 'lucide-react'
+import { ArrowLeft, Edit, ImagePlus, MessagesSquare, MoreVertical, Paperclip, Phone, Plus, Search, Send, UsersRound, Video } from 'lucide-react'
 import { toast } from 'sonner'
 import { chatKeys, chatQueries } from '@/lib/queries/chat'
 import { cn, getInitials } from '@/lib/utils'
@@ -42,21 +21,20 @@ import { ThemeSwitch } from '@/components/theme-switch'
 import { useChat } from '@/features/chats/components/chat-provider'
 import { CreateGroupDialog } from './components/create-group-dialog'
 import { NewChat } from './components/new-chat'
+import { ChatListShimmer } from './components/chat-list-shimmer'
 
 type MessageGroup = {
   date: string
   messages: ChatMessage[]
 }
 
-type ChatConversation =
-  | {
-    type: 'direct'
-    user: ChatUser
-  }
-  | {
-    type: 'group'
-    group: ChatGroup
-  }
+type ChatConversation = {
+  type: 'direct'
+  user: ChatUser
+} | {
+  type: 'group'
+  group: ChatGroup
+}
 
 const socketStatusLabel: Record<
   ChatUserStatus,
@@ -74,11 +52,9 @@ export function Chats() {
   const chatEnabled = Boolean(currentUserId && businessId)
   const [search, setSearch] = useState('')
   const [draft, setDraft] = useState('')
-  const [selectedConversation, setSelectedConversation] =
-    useState<ChatConversation | null>(null)
+  const [selectedConversation, setSelectedConversation] = useState<ChatConversation | null>(null)
   const [mobileConversationOpen, setMobileConversationOpen] = useState(false)
-  const [createConversationDialogOpened, setCreateConversationDialog] =
-    useState(false)
+  const [createConversationDialogOpened, setCreateConversationDialog] = useState(false)
   const [createGroupDialogOpened, setCreateGroupDialog] = useState(false)
   const messagesRef = useRef<HTMLDivElement | null>(null)
   const {
@@ -280,43 +256,19 @@ export function Chats() {
             </div>
 
             <ScrollArea className='-mx-3 h-full overflow-scroll p-3'>
-              {(usersPending || groupsPending) && (
+              {(usersPending || groupsPending) && (<ChatListShimmer />)}
+              {!usersPending && !groupsPending && !usersError && !groupsError && filteredConversations.length === 0 && (
                 <p className='px-2 py-4 text-sm text-muted-foreground'>
-                  Loading conversations…
+                  No conversations found.
                 </p>
               )}
-              {(usersError || groupsError) && (
-                <p className='px-2 py-4 text-sm text-destructive'>
-                  Unable to load conversations.
-                </p>
-              )}
-              {!usersPending &&
-                !groupsPending &&
-                !usersError &&
-                !groupsError &&
-                filteredConversations.length === 0 && (
-                  <p className='px-2 py-4 text-sm text-muted-foreground'>
-                    No conversations found.
-                  </p>
-                )}
               {filteredConversations.map((conversation) => {
                 const isGroup = conversation.type === 'group'
-                const conversationId = isGroup
-                  ? conversation.group.id
-                  : conversation.user.id
-                const name = isGroup
-                  ? conversation.group.name
-                  : conversation.user.fullname
-                const avatar = isGroup
-                  ? conversation.group.avatar
-                  : conversation.user.avatar
-                const subtitle = isGroup
-                  ? `${conversation.group.members.length} members`
-                  : conversation.user.email
-                const selected =
-                  selectedConversation?.type === conversation.type &&
-                  selectedConversationId === conversationId
-
+                const conversationId = isGroup ? conversation.group.id : conversation.user.id
+                const name = isGroup ? conversation.group.name : conversation.user.fullname
+                const avatar = isGroup ? conversation.group.avatar : conversation.user.avatar
+                const subtitle = isGroup ? `${conversation.group.members.length} members` : conversation.user.email
+                const selected = selectedConversation?.type === conversation.type && selectedConversationId === conversationId
                 return (
                   <Fragment key={`${conversation.type}:${conversationId}`}>
                     <button
@@ -457,26 +409,21 @@ export function Chats() {
                             Unable to load messages.
                           </p>
                         )}
-                        {!messagesPending &&
-                          !messagesError &&
-                          messageGroups.length === 0 && (
-                            <p className='text-center text-sm text-muted-foreground'>
-                              No messages yet.
-                            </p>
-                          )}
+                        {!messagesPending && !messagesError && messageGroups.length === 0 && (
+                          <p className='text-center text-sm text-muted-foreground'>
+                            No messages yet.
+                          </p>
+                        )}
                         {messageGroups.map((group) => (
                           <div key={group.date} className='flex flex-col gap-2'>
                             <div className='text-center text-xs'>
                               {group.date}
                             </div>
                             {group.messages.map((message) => {
-                              const isOwnMessage =
-                                message.senderId === currentUserId
+                              const isOwnMessage = message.senderId === currentUserId
                               const senderName =
                                 selectedConversation.type === 'group'
-                                  ? selectedConversation.group.members.find(
-                                    ({ id }) => id === message.senderId
-                                  )?.fullname
+                                  ? selectedConversation.group.members.find(({ id }) => id === message.senderId)?.fullname
                                   : undefined
                               return (
                                 <div
@@ -501,10 +448,7 @@ export function Chats() {
                                       'text-end text-primary-foreground/85'
                                     )}
                                   >
-                                    {format(
-                                      new Date(message.createdAt),
-                                      'h:mm a'
-                                    )}
+                                    {format(new Date(message.createdAt), 'h:mm a')}
                                   </span>
                                 </div>
                               )

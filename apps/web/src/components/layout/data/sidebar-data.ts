@@ -76,11 +76,6 @@ export const sidebarData: SidebarData = {
           icon: MessagesSquare,
         },
         {
-          title: 'Users',
-          url: '/users',
-          icon: Users,
-        },
-        {
           title: 'Secured by Clerk',
           icon: ClerkLogo,
           items: [
@@ -132,16 +127,6 @@ export const sidebarData: SidebarData = {
           title: 'Bookings',
           url: '/bookings',
           icon: BookImage,
-        },
-        {
-          title: 'Bookings 2',
-          url: '/bookings-2',
-          icon: BookImage,
-        },
-        {
-          title: 'Shipment Order',
-          url: '/shipment-order',
-          icon: Truck,
         },
         {
           title: 'Customer Service',
@@ -199,7 +184,22 @@ export const sidebarData: SidebarData = {
           url: '/payroll',
           icon: ReceiptText,
         },
+        {
+          title: 'Users',
+          url: '/users',
+          icon: Users,
+        },
       ],
+    },
+    {
+      title: 'Logistics',
+      items: [
+        {
+          title: 'Shipment Order',
+          url: '/shipment-order',
+          icon: Truck,
+        },
+      ]
     },
     {
       title: 'Pages',
@@ -303,6 +303,6 @@ export const sidebarData: SidebarData = {
           icon: HelpCircle,
         },
       ],
-    },
+    }
   ],
 }

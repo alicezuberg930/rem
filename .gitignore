@@ -78,3 +78,5 @@ expo-env.d.ts
 
 # Turborepo
 .turbo
+
+univer-server-docker-compose-v0.9.1/
