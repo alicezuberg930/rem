@@ -18,6 +18,11 @@ RUN addgroup -S spring && adduser -S spring -G spring
 
 COPY --from=builder /app/target/*.jar rem-server.jar
 
+ENV SPRING_FLYWAY_ENABLED=true \
+    SPRING_FLYWAY_BASELINE_ON_MIGRATE=true \
+    SPRING_FLYWAY_BASELINE_VERSION=0 \
+    SPRING_PROFILES_INCLUDE=seed
+
 USER spring:spring
 
 EXPOSE 80
