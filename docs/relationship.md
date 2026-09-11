@@ -527,15 +527,14 @@ CREATE TABLE `groups` (
 
 #### `group_user`
 
-- Primary key: `none`
+- Primary key: `group_id, user_id`
 - Foreign keys: `fk_group_user_group`: `group_id` -> `groups(id)`; `fk_group_user_user`: `user_id` -> `users(id)`
-- Unique constraints: `uk_group_user_group_user`: `group_id, user_id`
 
 ```sql
 CREATE TABLE `group_user` (
     `group_id` VARCHAR(24) NOT NULL,
     `user_id` VARCHAR(24) NOT NULL,
-    CONSTRAINT `uk_group_user_group_user` UNIQUE (`group_id`, `user_id`),
+    PRIMARY KEY (`group_id`, `user_id`),
     KEY `idx_group_user_user_id` (`user_id`),
     CONSTRAINT `fk_group_user_group` FOREIGN KEY (`group_id`) REFERENCES `groups` (`id`),
     CONSTRAINT `fk_group_user_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)

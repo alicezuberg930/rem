@@ -537,7 +537,7 @@ Table "group_user" {
   "user_id" VARCHAR(24) [not null]
 
   Indexes {
-    (group_id, user_id) [unique, name: "uk_group_user_group_user"]
+    (group_id, user_id) [pk]
     user_id [name: "idx_group_user_user_id"]
   }
 }
