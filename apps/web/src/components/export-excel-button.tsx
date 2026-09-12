@@ -56,8 +56,7 @@ export function ExportExcelButton({
 
     toast.promise(submit, {
       loading: 'Exporting Excel',
-      error: (error) =>
-        error instanceof HttpError ? error.message : 'Internal server error',
+      error: (error) => error instanceof HttpError ? error.message : 'Internal server error',
       success: 'Excel export downloaded',
     })
   }

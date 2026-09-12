@@ -1,276 +1,121 @@
-import { type ChangeEvent, useEffect, useRef, useState } from 'react'
-import { useTheme } from '@/providers/theme-provider'
-import { downloadFile, UniverExchangeClientPlugin } from '@univerjs-pro/exchange-client'
-import '@univerjs-pro/exchange-client/facade'
-import '@univerjs-pro/exchange-client/lib/index.css'
-import ExchangeClientEnUS from '@univerjs-pro/exchange-client/locale/en-US'
-import { UniverLicensePlugin } from '@univerjs-pro/license'
-import { UniverSheetsCorePreset } from '@univerjs/preset-sheets-core'
-import '@univerjs/preset-sheets-core/lib/index.css'
-import UniverPresetSheetsCoreEnUS from '@univerjs/preset-sheets-core/locales/en-US'
-import { BooleanNumber, createUniver, LocaleType, mergeLocales, type IWorkbookData } from '@univerjs/presets'
-import { Download, Loader2, Upload } from 'lucide-react'
-import { toast } from '@/components/ui/toast'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Button } from '@/components/ui/button'
-import { ConfigDrawer } from '@/components/config-drawer'
+import { useEffect, useRef, useState, type ChangeEvent } from 'react'
+import { format } from 'date-fns'
+import { ShippingOrder } from '@/@types/shipping-order'
 import { ClockInButton } from '@/layout/clock-in-button'
 import { Header } from '@/layout/header'
 import { Main } from '@/layout/main'
+import { AgGridProvider, AgGridReact } from 'ag-grid-react'
+import { readSheet } from 'read-excel-file/browser'
+import { fNumber } from '@/lib/format-number'
+import { Input } from '@/components/ui/input'
+import { toast } from '@/components/ui/toast'
+import { ConfigDrawer } from '@/components/config-drawer'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
+import { columnDefs, defaultColDef, gridTheme, importColumns, modules, createEmptyRows, MAX_IMPORT_SIZE, MAX_IMPORT_ROWS } from './components/const'
+import { ShipmentOrderPrimaryButtons } from './components/shipment-order-primary-buttons'
 
-const editableRowCount = 100
-const sheetId = 'shipment-orders'
-const univerServerUrl = import.meta.env.VITE_UNIVER_SERVER_URL?.trim().replace(/\/+$/, '')
-const univerLicense = import.meta.env.VITE_UNIVER_LICENSE?.trim()
+const isPopulatedCell = (value: unknown) =>
+  value !== null && value !== undefined && String(value).trim() !== ''
 
-const shipmentOrderFields = [
-  { name: 'Order Code', width: 160 },
-  { name: 'Recipient Name', width: 180 },
-  { name: 'Recipient Phone Number', width: 210 },
-  { name: 'Recipient Address', width: 260 },
-  { name: 'Item Name', width: 180 },
-  { name: 'Quantity', width: 120 },
-  { name: 'Weight (grams)', width: 160 },
-  { name: 'Item Value (VND)', width: 180 },
-  { name: 'COD Amount (VND)', width: 190 },
-  { name: 'Item Type', width: 160 },
-  { name: 'Special Item Characteristics', width: 250 },
-  { name: 'Service', width: 160 },
-  { name: 'Additional Services', width: 200 },
-  { name: 'Collect Payment on Inspection', width: 250 },
-  { name: 'Length (cm)', width: 140 },
-  { name: 'Width (cm)', width: 140 },
-  { name: 'Height (cm)', width: 140 },
-  { name: 'Shipping Fee Payer', width: 190 },
-  { name: 'Other Requests', width: 210 },
-  { name: 'Pickup Appointment Time', width: 220 },
-  { name: 'Delivery Time', width: 180 },
-] as const
+const parseImportedRows = (sheetRows: unknown[][]): ShippingOrder[] => {
+  if (sheetRows.length === 0) throw new Error('The selected workbook is empty.')
 
-const createWorkbookData = (): Partial<IWorkbookData> => ({
-  id: 'shipment-order-workbook',
-  name: 'Shipment Order',
-  locale: LocaleType.EN_US,
-  sheetOrder: [sheetId],
-  styles: {
-    header: {
-      bg: { rgb: '#334155' },
-      bl: BooleanNumber.TRUE,
-      cl: { rgb: '#FFFFFF' },
-    },
-  },
-  sheets: {
-    [sheetId]: {
-      id: sheetId,
-      name: 'Shipment Orders',
-      rowCount: editableRowCount + 1,
-      columnCount: shipmentOrderFields.length,
-      defaultRowHeight: 40,
-      cellData: {
-        0: Object.fromEntries(
-          shipmentOrderFields.map(({ name }, columnIndex) => [
-            columnIndex,
-            { v: name, s: 'header' },
-          ])
-        ),
-      },
-      columnData: Object.fromEntries(
-        shipmentOrderFields.map(({ width }, columnIndex) => [
-          columnIndex,
-          { w: width },
-        ])
-      ),
-      rowData: {
-        0: { h: 48 },
-      },
-      showGridlines: BooleanNumber.TRUE,
-    },
-  },
-})
+  const [headerRow, ...dataRows] = sheetRows
+  const headerPositions = new Map<string, number>()
 
-type UniverAPI = ReturnType<typeof createUniver>['univerAPI']
-type UniverWorkbook = ReturnType<UniverAPI['createWorkbook']>
+  headerRow.forEach((header, index) => {
+    headerPositions.set(String(header), index)
+  })
 
-function hasShipmentOrderHeaders(snapshot: IWorkbookData) {
-  const worksheetId = snapshot.sheetOrder[0]
-  const headerCells = snapshot.sheets[worksheetId]?.cellData?.[0]
-  return shipmentOrderFields.every(({ name }, columnIndex) => String(headerCells?.[columnIndex]?.v ?? '').trim() === name)
-}
+  const missingHeaders = importColumns.filter(({ header }) => !headerPositions.has(String(header)))
 
-async function lockWorkbookHeaders(
-  univerAPI: UniverAPI,
-  workbook: UniverWorkbook
-) {
-  for (const worksheet of workbook.getSheets()) {
-    worksheet.setFrozenRows(1)
-    const rule = await worksheet
-      .getRange(0, 0, 1, worksheet.getMaxColumns())
-      .getRangePermission()
-      .protect({
-        name: 'Shipment Order Headers',
-        allowViewByOthers: true,
-      })
-    await rule.setPoint(univerAPI.Enum.RangePermissionPoint.Edit, false)
-    await rule.setPoint(univerAPI.Enum.RangePermissionPoint.View, true)
+  if (missingHeaders.length > 0) {
+    const names = missingHeaders.map(({ header }) => header).join(', ')
+    throw new Error(
+      `Missing required column${missingHeaders.length > 1 ? 's' : ''}: ${names}`
+    )
   }
+  const populatedRows = dataRows.filter((row) => row.some(isPopulatedCell))
+  if (populatedRows.length === 0) {
+    throw new Error('The workbook has headers but no order rows.')
+  }
+  if (populatedRows.length > MAX_IMPORT_ROWS) {
+    throw new Error(
+      `The workbook contains more than ${MAX_IMPORT_ROWS.toLocaleString()} rows.`
+    )
+  }
+
+  return populatedRows.map((row) => {
+    const record = {} as Record<keyof ShippingOrder, string | number | null>
+    importColumns.forEach(({ field, header, type }) => {
+      const value = row[headerPositions.get(String(header))!]
+      record[field] = type === 'number' ? fNumber(value as string) : String(value)
+    })
+    return record as ShippingOrder
+  })
 }
 
 export function ShipmentOrder() {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  const univerApiRef = useRef<UniverAPI>(null)
-  const [isEditorReady, setIsEditorReady] = useState(false)
+  const [rows, setRows] = useState<ShippingOrder[]>(createEmptyRows)
+  const [query, setQuery] = useState('')
   const [isImporting, setIsImporting] = useState(false)
-  const [isExporting, setIsExporting] = useState(false)
-  const [protectionError, setProtectionError] = useState(false)
-  const { resolvedTheme } = useTheme()
+  const searchRef = useRef<HTMLInputElement>(null)
+  const gridRef = useRef<AgGridReact<ShippingOrder>>(null)
 
   useEffect(() => {
-    if (!containerRef.current) return
-    const { univerAPI } = createUniver({
-      locale: LocaleType.EN_US,
-      locales: {
-        [LocaleType.EN_US]: mergeLocales(
-          UniverPresetSheetsCoreEnUS,
-          ExchangeClientEnUS
-        ),
-      },
-      presets: [
-        UniverSheetsCorePreset({
-          container: containerRef.current,
-        }),
-      ],
-      plugins: univerServerUrl
-        ? [
-          [UniverLicensePlugin, { license: univerLicense }],
-          [
-            UniverExchangeClientPlugin,
-            {
-              downloadEndpointUrl: `${univerServerUrl}/`,
-              uploadFileServerUrl: `${univerServerUrl}/universer-api/stream/file/upload`,
-              importServerUrl: `${univerServerUrl}/universer-api/exchange/{type}/import`,
-              exportServerUrl: `${univerServerUrl}/universer-api/exchange/{type}/export`,
-              getTaskServerUrl: `${univerServerUrl}/universer-api/exchange/task/{taskID}`,
-              signUrlServerUrl: `${univerServerUrl}/universer-api/file/{fileID}/sign-url`,
-              options: {
-                minSheetRowCount: editableRowCount + 1,
-                minSheetColumnCount: shipmentOrderFields.length,
-              },
-            },
-          ],
-        ]
-        : [],
-    })
-    univerApiRef.current = univerAPI
-    let isDisposed = false
-
-    const workbook = univerAPI.createWorkbook(createWorkbookData())
-    void lockWorkbookHeaders(univerAPI, workbook)
-      .then(() => {
-        if (!isDisposed) setIsEditorReady(true)
-      })
-      .catch(() => {
-        if (!isDisposed) setProtectionError(true)
-      })
-
-    return () => {
-      isDisposed = true
-      univerApiRef.current = null
-      univerAPI.dispose()
+    const focusSearch = (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault()
+        searchRef.current?.focus()
+      }
     }
+    window.addEventListener('keydown', focusSearch)
+    return () => window.removeEventListener('keydown', focusSearch)
   }, [])
 
-  useEffect(() => {
-    univerApiRef.current?.toggleDarkMode(resolvedTheme === 'dark')
-  }, [resolvedTheme])
-
-  const handleImport = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.currentTarget.files?.[0]
-    event.currentTarget.value = ''
-    if (!file || !univerServerUrl) return
-
-    const importSpreadsheet = async () => {
-      const univerAPI = univerApiRef.current
-      if (!univerAPI) throw new Error('The shipment order editor is not ready')
-
-      setIsImporting(true)
-      try {
-        const snapshot = await univerAPI.importXLSXToSnapshotAsync(file)
-        if (!snapshot) throw new Error('The spreadsheet could not be converted')
-        if (!hasShipmentOrderHeaders(snapshot)) {
-          throw new Error(
-            'The first row must match the shipment order template headers'
-          )
-        }
-
-        const currentWorkbook = univerAPI.getActiveWorkbook()
-        const currentSnapshot = currentWorkbook?.save()
-        if (currentWorkbook) univerAPI.disposeUnit(currentWorkbook.getId())
-
-        try {
-          const importedWorkbook = univerAPI.createWorkbook(snapshot)
-          await lockWorkbookHeaders(univerAPI, importedWorkbook)
-          setProtectionError(false)
-        } catch (error) {
-          const failedWorkbook = univerAPI.getActiveWorkbook()
-          if (failedWorkbook) univerAPI.disposeUnit(failedWorkbook.getId())
-
-          if (currentSnapshot) {
-            try {
-              univerAPI.createWorkbook(currentSnapshot)
-            } catch {
-              setIsEditorReady(false)
-              setProtectionError(true)
-            }
-          }
-
-          throw error
-        }
-      } finally {
-        setIsImporting(false)
+  const importExcel = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+    setIsImporting(true)
+    try {
+      if (!file.name.toLowerCase().endsWith('.xlsx')) {
+        throw new Error('Choose an Excel workbook in .xlsx format.')
       }
+      if (file.size > MAX_IMPORT_SIZE) {
+        throw new Error('The workbook is larger than the 10 MB import limit.')
+      }
+      const sheetRows = await readSheet(file)
+      const importedRows = parseImportedRows(sheetRows)
+      gridRef.current?.api.stopEditing()
+      gridRef.current?.api.setFilterModel(null)
+      setQuery('')
+      setRows(importedRows)
+      toast.success(`Imported ${importedRows.length} order${importedRows.length === 1 ? '' : 's'} from ${file.name}.`)
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'The workbook could not be imported.')
+    } finally {
+      setIsImporting(false)
+      event.target.value = ''
     }
-
-    toast.promise(importSpreadsheet, {
-      loading: 'Importing spreadsheet',
-      success: 'Spreadsheet imported',
-      error: (error) =>
-        error instanceof Error ? error.message : 'Spreadsheet import failed',
-    })
   }
 
-  const handleExport = () => {
-    if (!univerServerUrl) return
-
-    const exportSpreadsheet = async () => {
-      const workbook = univerApiRef.current?.getActiveWorkbook()
-      if (!workbook) throw new Error('The shipment order editor is not ready')
-
-      setIsExporting(true)
-      try {
-        const file = await univerApiRef.current?.exportXLSXBySnapshotAsync(
-          workbook.save()
-        )
-        if (!file) throw new Error('The spreadsheet could not be converted')
-        downloadFile(file, 'shipment-orders', 'xlsx')
-      } finally {
-        setIsExporting(false)
-      }
-    }
-
-    toast.promise(exportSpreadsheet, {
-      loading: 'Exporting spreadsheet',
-      success: 'Spreadsheet exported',
-      error: (error) =>
-        error instanceof Error ? error.message : 'Spreadsheet export failed',
+  const exportExcel = () => {
+    if (!gridRef.current) return
+    gridRef.current.api.stopEditing()
+    gridRef.current.api.exportDataAsCsv({
+      allColumns: true,
+      exportedRows: 'filteredAndSorted',
+      fileName: `shipment-orders-${format(new Date(), 'yyyy-MM-dd-HH-mm-ss')}.csv`,
+      processCellCallback: ({ value }) => {
+        if (value === null || value === undefined) return ''
+        if (typeof value === 'number') return String(value)
+        const text = String(value)
+        return /^[+=@\t\r-]/.test(text) ? `'${text}` : text
+      },
     })
   }
-
-  const actionsDisabled =
-    !isEditorReady || !univerServerUrl || isImporting || isExporting
 
   return (
     <>
@@ -284,80 +129,44 @@ export function ShipmentOrder() {
         </div>
       </Header>
 
-      <Main fixed fluid className='gap-4 sm:gap-6'>
+      <Main className='flex flex-1 flex-col gap-4 sm:gap-6'>
         <div className='flex flex-wrap items-end justify-between gap-2'>
           <div>
-            <h2
-              id='shipment-order-title'
-              className='text-2xl font-bold tracking-tight'
-            >
+            <h2 className='text-2xl font-bold tracking-tight'>
               Shipment Order
             </h2>
             <p className='text-muted-foreground'>
               Enter shipment orders directly into the sheet.
             </p>
           </div>
-          <div className='flex gap-2'>
-            <input
-              ref={fileInputRef}
-              type='file'
-              accept='.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-              className='sr-only'
-              onChange={handleImport}
-              tabIndex={-1}
-            />
-            <Button
-              type='button'
-              variant='outline'
-              className='space-x-1'
-              disabled={actionsDisabled}
-              onClick={() => fileInputRef.current?.click()}
-            >
-              <span>Import</span>
-              {isImporting ? (
-                <Loader2 className='size-4 animate-spin' />
-              ) : (
-                <Upload size={18} />
-              )}
-            </Button>
-            <Button
-              type='button'
-              variant='outline'
-              className='space-x-1'
-              disabled={actionsDisabled}
-              onClick={handleExport}
-            >
-              <span>Export</span>
-              {isExporting ? (
-                <Loader2 className='size-4 animate-spin' />
-              ) : (
-                <Download size={18} />
-              )}
-            </Button>
-          </div>
+          <ShipmentOrderPrimaryButtons
+            isImporting={isImporting}
+            importExcel={importExcel}
+            exportExcel={exportExcel}
+          />
+          <Input
+            ref={searchRef}
+            type='search'
+            placeholder='Search orders...'
+            aria-keyshortcuts='Control+K Meta+K'
+            value={query}
+          />
         </div>
-        {!univerServerUrl && (
-          <Alert>
-            <AlertDescription>
-              Spreadsheet import and export require a configured Univer
-              conversion server.
-            </AlertDescription>
-          </Alert>
-        )}
-        {protectionError && (
-          <Alert variant='destructive'>
-            <AlertDescription>
-              The shipment order header could not be locked. Reload the page
-              before editing the sheet.
-            </AlertDescription>
-          </Alert>
-        )}
-        <div
-          ref={containerRef}
-          role='region'
-          aria-labelledby='shipment-order-title'
-          className='min-h-0 flex-1 overflow-hidden rounded-md border bg-background'
-        />
+        <AgGridProvider modules={modules}>
+          <AgGridReact<ShippingOrder>
+            ref={gridRef}
+            theme={gridTheme}
+            rowData={rows}
+            columnDefs={columnDefs}
+            defaultColDef={defaultColDef}
+            quickFilterText={query}
+            headerHeight={64}
+            animateRows
+            singleClickEdit
+            stopEditingWhenCellsLoseFocus
+            suppressMovableColumns
+          />
+        </AgGridProvider>
       </Main>
     </>
   )

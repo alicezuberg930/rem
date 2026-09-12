@@ -1,4 +1,4 @@
-type InputValue = string | number | null
+type InputValue = string | number | null 
 
 export function fNumber(number: InputValue) {
   if (!number && number !== 0) return ''
