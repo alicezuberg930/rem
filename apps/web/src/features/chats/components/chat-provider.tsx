@@ -14,7 +14,7 @@ import {
   type SendChatMessage,
   type ChatUserStatus
 } from '@/@types'
-import { toast } from 'sonner'
+import { toast } from '@/components/ui/toast'
 import { getCookie } from '@/lib/cookies'
 import { chatKeys } from '@/lib/queries/chat'
 import { useAuth } from '@/providers/auth-provider'

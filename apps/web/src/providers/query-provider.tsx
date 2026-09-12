@@ -5,7 +5,7 @@ import {
   QueryClientProvider as QCP,
 } from '@tanstack/react-query'
 import { router } from '@/main'
-import { toast } from 'sonner'
+import { toast } from '@/components/ui/toast'
 import { handleServerError } from '@/lib/handle-server-error'
 import { HttpError } from '@/lib/repository/http-error'
 

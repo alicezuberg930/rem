@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { toast } from 'sonner'
+import { toast } from '@/components/ui/toast'
 import { HttpError } from '@/lib/repository/http-error'
 import { Button } from '@/components/ui/button'
 import {

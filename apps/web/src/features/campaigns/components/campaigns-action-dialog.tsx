@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 // types
 import { Campaign, CAMPAIGN_SEND_TYPE } from '@/@types'
-import { toast } from 'sonner'
+import { toast } from '@/components/ui/toast'
 import { campaigns } from '@/lib/queries/campaign'
 import { HttpError } from '@/lib/repository/http-error'
 import { CampaignValidators } from '@/lib/validators'

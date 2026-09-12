@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 // types
 import { Template } from '@/@types'
-import { toast } from 'sonner'
+import { toast } from '@/components/ui/toast'
 import { templates } from '@/lib/queries/template'
 import { HttpError } from '@/lib/repository/http-error'
 import { inlineQuillStyles } from '@/lib/utils'

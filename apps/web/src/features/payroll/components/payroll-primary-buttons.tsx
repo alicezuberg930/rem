@@ -1,7 +1,7 @@
 import { type FormEvent, useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { Loader2, Play } from 'lucide-react'
-import { toast } from 'sonner'
+import { toast } from '@/components/ui/toast'
 import { payroll } from '@/lib/queries/payroll'
 import { HttpError } from '@/lib/repository/http-error'
 import { Button } from '@/components/ui/button'

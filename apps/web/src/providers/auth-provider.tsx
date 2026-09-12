@@ -13,7 +13,7 @@ import { useNavigate } from '@tanstack/react-router'
 import { Role, UserProvider } from '@/@types'
 // types
 import type { Profile } from '@/@types/user'
-import { toast } from 'sonner'
+import { toast } from '@/components/ui/toast'
 import { getCookie } from '@/lib/cookies'
 import { auth } from '@/lib/queries/auth'
 import { httpClient, ResponseWithHeaders } from '@/lib/repository/http-client'

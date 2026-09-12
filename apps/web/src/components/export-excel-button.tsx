@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Download } from 'lucide-react'
-import { toast } from 'sonner'
+import { toast } from '@/components/ui/toast'
 import type { ResponseWithHeaders } from '@/lib/repository/http-client'
 import { HttpError } from '@/lib/repository/http-error'
 import { Button } from './ui/button'

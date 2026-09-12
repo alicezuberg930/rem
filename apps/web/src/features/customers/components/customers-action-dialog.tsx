@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import type { Customer } from '@/@types'
-import { toast } from 'sonner'
+import { toast } from '@/components/ui/toast'
 import { customers } from '@/lib/queries/customer'
 import { HttpError } from '@/lib/repository/http-error'
 import {
