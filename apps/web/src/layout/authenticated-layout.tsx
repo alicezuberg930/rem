@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils'
 import { LayoutProvider } from '@/providers/layout-provider'
 import { SearchProvider } from '@/providers/search-provider'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
-import { AppSidebar } from '@/components/layout/app-sidebar'
+import { AppSidebar } from '@/layout/app-sidebar'
 import { SkipToMain } from '@/components/skip-to-main'
 
 type AuthenticatedLayoutProps = {

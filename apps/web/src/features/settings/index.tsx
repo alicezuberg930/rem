@@ -9,13 +9,13 @@ import {
 } from 'lucide-react'
 import { Separator } from '@/components/ui/separator'
 import { ConfigDrawer } from '@/components/config-drawer'
-import { Header } from '@/components/layout/header'
-import { Main } from '@/components/layout/main'
+import { Header } from '@/layout/header'
+import { Main } from '@/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { SidebarNav } from './components/sidebar-nav'
-import { ClockInButton } from '@/components/layout/clock-in-button'
+import { ClockInButton } from '@/layout/clock-in-button'
 
 const sidebarNavItems = [
   {

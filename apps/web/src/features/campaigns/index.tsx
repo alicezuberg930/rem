@@ -1,6 +1,6 @@
 import { ConfigDrawer } from '@/components/config-drawer'
-import { Header } from '@/components/layout/header'
-import { Main } from '@/components/layout/main'
+import { Header } from '@/layout/header'
+import { Main } from '@/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
@@ -8,7 +8,7 @@ import { CampaignsProvider } from './components/campaign-provider'
 import { CampaignsDialogs } from './components/campaigns-dialogs'
 import { CampaignsTable } from './components/campaigns-table'
 import { TemplatesPrimaryButtons } from './components/templates-primary-buttons'
-import { ClockInButton } from '@/components/layout/clock-in-button'
+import { ClockInButton } from '@/layout/clock-in-button'
 
 export function Campaigns() {
   return (

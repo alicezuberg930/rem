@@ -21,7 +21,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar'
-import { LazyLoadImage } from '../lazy-load-image'
+import { LazyLoadImage } from '../components/lazy-load-image'
 
 export function TeamSwitcher() {
   const navigate = useNavigate()

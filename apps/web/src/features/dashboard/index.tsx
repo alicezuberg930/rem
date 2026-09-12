@@ -8,16 +8,16 @@ import {
 } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ConfigDrawer } from '@/components/config-drawer'
-import { Header } from '@/components/layout/header'
-import { Main } from '@/components/layout/main'
-import { TopNav } from '@/components/layout/top-nav'
+import { Header } from '@/layout/header'
+import { Main } from '@/layout/main'
+import { TopNav } from '@/layout/top-nav'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { Analytics } from './components/analytics'
 import { Overview } from './components/overview'
 import { RecentSales } from './components/recent-sales'
-import { ClockInButton } from '@/components/layout/clock-in-button'
+import { ClockInButton } from '@/layout/clock-in-button'
 
 export function Dashboard() {
   return (

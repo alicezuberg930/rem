@@ -9,10 +9,10 @@ import { HttpError } from '@/lib/repository/http-error'
 import { getCurrentLocation } from '@/lib/utils'
 import { AttendanceValidators } from '@/lib/validators/attendance'
 import { useAuth } from '@/providers/auth-provider'
-import { ConfirmDialog } from '../confirm-dialog'
-import { FormProvider, RHFTextField } from '../hook-form'
-import { Button } from '../ui/button'
-import { FieldGroup } from '../ui/field'
+import { ConfirmDialog } from '../components/confirm-dialog'
+import { FormProvider, RHFTextField } from '../components/hook-form'
+import { Button } from '../components/ui/button'
+import { FieldGroup } from '../components/ui/field'
 
 export const ClockInButton: React.FC = memo(() => {
   const { mutateAsync: checkIn } = useMutation(
