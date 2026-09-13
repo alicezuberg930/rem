@@ -1,13 +1,25 @@
 package server.rem.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.*;
-import lombok.*;
-import server.rem.enums.Provider;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import server.rem.enums.AuthProvider;
 
 @Entity
 @Table(name = "users")
@@ -29,7 +41,7 @@ public class User extends Base {
     @Enumerated(EnumType.STRING)
     @Column(name = "provider", nullable = false)
     @Builder.Default
-    private Provider provider = Provider.LOCAL;
+    private AuthProvider provider = AuthProvider.LOCAL;
 
     @Column(name = "birthday")
     private LocalDate birthday;

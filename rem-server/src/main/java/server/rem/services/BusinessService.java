@@ -1,6 +1,9 @@
 package server.rem.services;
 
-import lombok.RequiredArgsConstructor;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.jspecify.annotations.Nullable;
 import org.springframework.core.io.ClassPathResource;
@@ -8,18 +11,25 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import server.rem.dtos.business.*;
-import server.rem.entities.*;
-import server.rem.mappers.*;
-import server.rem.repositories.*;
-import server.rem.utils.exceptions.*;
+import lombok.RequiredArgsConstructor;
+import server.rem.dtos.business.AddUserToBusinessRequest;
+import server.rem.dtos.business.BusinessResponse;
+import server.rem.dtos.business.CreateBusinessRequest;
+import server.rem.dtos.business.UpdateBusinessRequest;
+import server.rem.entities.Business;
+import server.rem.entities.BusinessUser;
+import server.rem.entities.BusinessUserId;
+import server.rem.entities.Role;
+import server.rem.entities.User;
+import server.rem.mappers.BusinessMapper;
+import server.rem.repositories.BusinessRepository;
+import server.rem.repositories.BusinessUserRepository;
+import server.rem.repositories.RoleRepository;
+import server.rem.repositories.UserRepository;
+import server.rem.utils.exceptions.ConflictException;
+import server.rem.utils.exceptions.ResourceNotFoundException;
 import server.rem.utils.mail.DynamicMail;
 import server.rem.utils.messages.BusinessMessages;
-
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +41,6 @@ public class BusinessService {
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final BusinessMapper businessMapper;
     private final DynamicMail dynamicMail;
-    private final AddUserToBusinessMapper addUserToBusinessMapper;
     private final RoleRepository roleRepository;
 
     @Transactional
@@ -77,11 +86,11 @@ public class BusinessService {
         if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
             user = userRepository.findByEmail(dto.getEmail()).get();
         } else {
-            User createdUser = addUserToBusinessMapper.toUserEntity(dto);
+            User createdUser = businessMapper.toUserEntity(dto);
             createdUser.setPassword(passwordEncoder.encode(createdUser.getPassword()));
             user = userRepository.save(createdUser);
         }
-        BusinessUser businessUser = addUserToBusinessMapper.toBusinessUserEntity(dto, business, role);
+        BusinessUser businessUser = businessMapper.toBusinessUserEntity(dto, business, role);
         businessUser.setId(new BusinessUserId(businessId, user.getId()));
         // Set invitor if invitorId is provided and valid
         userRepository.findById(invitorId).ifPresent(invitor -> {

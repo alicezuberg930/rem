@@ -31,12 +31,12 @@ import server.rem.entities.CustomerGroup;
 import server.rem.entities.Permission;
 import server.rem.entities.Role;
 import server.rem.entities.User;
+import server.rem.enums.AuthProvider;
 import server.rem.enums.CalendarBookingStatus;
 import server.rem.enums.Color;
 import server.rem.enums.ContactType;
 import server.rem.enums.MailProvider;
 import server.rem.enums.PhoneProvider;
-import server.rem.enums.Provider;
 import server.rem.repositories.BusinessRepository;
 import server.rem.repositories.BusinessUserRepository;
 import server.rem.repositories.CalendarBookingRepository;
@@ -361,7 +361,7 @@ public class DataSeeder implements CommandLineRunner {
         users.put(ALICE_ID, findOrCreate(userRepository, ALICE_ID, () -> withId(User.builder()
                 .fullname("Alice Nguyen")
                 .phone("+15550001001")
-                .provider(Provider.LOCAL)
+                .provider(AuthProvider.LOCAL)
                 .birthday(LocalDate.of(1990, 3, 12))
                 .email("alice.nguyen@example.com")
                 .password(PASSWORD)
@@ -370,7 +370,7 @@ public class DataSeeder implements CommandLineRunner {
         users.put(BRIAN_ID, findOrCreate(userRepository, BRIAN_ID, () -> withId(User.builder()
                 .fullname("Brian Tran")
                 .phone("+15550001002")
-                .provider(Provider.LOCAL)
+                .provider(AuthProvider.LOCAL)
                 .birthday(LocalDate.of(1988, 7, 24))
                 .email("brian.tran@example.com")
                 .password(PASSWORD)

@@ -1,16 +1,20 @@
 package server.rem.mappers;
 
-import server.rem.dtos.leave_request.CreateLeaveRequest;
-import server.rem.entities.LeaveRequest;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
-public class LeaveRequestMapper {
-    public static LeaveRequest toEntity(CreateLeaveRequest dto) {
-        return LeaveRequest.builder()
-                .startDate(dto.getStartDate())
-                .endDate(dto.getEndDate())
-                .days(dto.getDays())
-                .type(dto.getType())
-                .reason(dto.getReason())
-                .build();
-    }
+import server.rem.dtos.leave_request.CreateLeaveRequest;
+import server.rem.entities.Business;
+import server.rem.entities.LeaveRequest;
+import server.rem.entities.User;
+
+@Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+public interface LeaveRequestMapper {
+    @Mapping(target = "business", source = "business")
+    @Mapping(target = "user", source = "user")
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "approver", ignore = true)
+    @Mapping(target = "approverNote", ignore = true)
+    LeaveRequest toEntity(CreateLeaveRequest dto, Business business, User user);
 }

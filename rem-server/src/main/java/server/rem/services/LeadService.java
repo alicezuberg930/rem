@@ -38,6 +38,7 @@ import server.rem.entities.Customer;
 import server.rem.entities.Lead;
 import server.rem.enums.LeadStatus;
 import server.rem.mappers.ContactMapper;
+import server.rem.mappers.LeadMapper;
 import server.rem.repositories.ContactRepository;
 import server.rem.repositories.CustomerRepository;
 import server.rem.repositories.LeadRepository;
@@ -97,6 +98,7 @@ public class LeadService {
     private final ContactMapper contactMapper;
     private final CustomerService customerService;
     private final EntityManager entityManager;
+    private final LeadMapper leadMapper;
 
     @Transactional(readOnly = true)
     public CustomPageResponse<LeadResponse> getAll(QueryLead dto, String businessId) {
@@ -120,11 +122,7 @@ public class LeadService {
         if (leadRepository.existsByContact_Id(contact.getId())) {
             throw new ConflictException("Contact is already a lead");
         }
-        Lead lead = Lead.builder()
-                .contact(contact)
-                .source(dto.getSource())
-                .status(dto.getStatus())
-                .build();
+        Lead lead = leadMapper.toEntity(dto, contact);
         return toResponse(leadRepository.save(lead));
     }
 

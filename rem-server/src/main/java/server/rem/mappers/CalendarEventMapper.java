@@ -1,18 +1,18 @@
 package server.rem.mappers;
 
-import server.rem.dtos.calendar_event.CreateCalendarEventRequest;
-import server.rem.entities.CalendarEvent;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
-public class CalendarEventMapper {
-    public static CalendarEvent toEntity(CreateCalendarEventRequest dto) {
-        return CalendarEvent.builder()
-                .title(dto.getTitle())
-                .description(dto.getDescription())
-                .startDate(dto.getStartDate())
-                .endDate(dto.getEndDate())
-                .startTime(dto.getStartTime())
-                .endTime(dto.getEndTime())
-                .type(dto.getType())
-                .build();
-    }
+import server.rem.dtos.calendar_event.CreateCalendarEventRequest;
+import server.rem.entities.Business;
+import server.rem.entities.CalendarEvent;
+import server.rem.entities.User;
+
+@Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+public interface CalendarEventMapper {
+    @Mapping(target = "business", source = "business")
+    @Mapping(target = "createdBy", source = "createdBy")
+    @Mapping(target = "description", source = "dto.description")
+    CalendarEvent toEntity(CreateCalendarEventRequest dto, Business business, User createdBy);
 }

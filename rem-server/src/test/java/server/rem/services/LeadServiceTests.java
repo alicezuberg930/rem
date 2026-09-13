@@ -23,6 +23,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mapstruct.factory.Mappers;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -45,6 +46,7 @@ import server.rem.enums.ContactType;
 import server.rem.enums.LeadSource;
 import server.rem.enums.LeadStatus;
 import server.rem.mappers.ContactMapper;
+import server.rem.mappers.LeadMapper;
 import server.rem.repositories.ContactRepository;
 import server.rem.repositories.CustomerRepository;
 import server.rem.repositories.LeadRepository;
@@ -76,7 +78,8 @@ class LeadServiceTests {
                 customerRepository,
                 contactMapper,
                 customerService,
-                entityManager
+                entityManager,
+                Mappers.getMapper(LeadMapper.class)
         );
     }
 

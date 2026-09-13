@@ -23,6 +23,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mapstruct.factory.Mappers;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -41,6 +42,7 @@ import server.rem.entities.CustomerGroup;
 import server.rem.enums.Color;
 import server.rem.enums.ContactType;
 import server.rem.mappers.ContactMapper;
+import server.rem.mappers.CustomerMapper;
 import server.rem.repositories.ContactRepository;
 import server.rem.repositories.CustomerGroupRepository;
 import server.rem.repositories.CustomerRepository;
@@ -69,7 +71,8 @@ class CustomerServiceTests {
                 contactRepository,
                 customerGroupRepository,
                 contactMapper,
-                entityManager
+                entityManager,
+                Mappers.getMapper(CustomerMapper.class)
         );
     }
 
@@ -104,6 +107,25 @@ class CustomerServiceTests {
         assertEquals(LocalDate.of(2026, 1, 10), captor.getValue().getCustomerSince());
         assertEquals("customer-1", response.getId());
         assertEquals("group-1", response.getCustomerGroup().getId());
+    }
+
+    @Test
+    void createDefaultsCustomerSinceWhenRequestOmitsIt() {
+        Contact contact = contact("contact-1", business("business-1"));
+        CreateCustomerRequest request = new CreateCustomerRequest("contact-1", null, null);
+        LocalDate today = LocalDate.now();
+
+        when(contactRepository.findByIdAndBusinessId("contact-1", "business-1"))
+                .thenReturn(Optional.of(contact));
+        when(customerRepository.save(any(Customer.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        CustomerResponse response = customerService.create(request, "business-1");
+
+        ArgumentCaptor<Customer> captor = ArgumentCaptor.forClass(Customer.class);
+        verify(customerRepository).save(captor.capture());
+        assertSame(contact, captor.getValue().getContact());
+        assertNull(captor.getValue().getCustomerGroup());
+        assertEquals(today, response.getCustomerSince());
     }
 
     @Test

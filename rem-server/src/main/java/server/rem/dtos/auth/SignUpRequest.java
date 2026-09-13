@@ -1,10 +1,13 @@
 package server.rem.dtos.auth;
 
-import jakarta.validation.constraints.*;
-import lombok.*;
-import server.rem.enums.Provider;
-
 import java.time.LocalDate;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import server.rem.enums.AuthProvider;
 
 @Getter
 @AllArgsConstructor
@@ -21,7 +24,7 @@ public class SignUpRequest {
     private final String avatar;
 
     // Optional (default can be handled in service)
-    private final Provider provider;
+    private final AuthProvider provider;
 
     // Optional
     private final LocalDate birthday;

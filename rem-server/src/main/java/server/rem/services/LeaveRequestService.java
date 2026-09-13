@@ -28,11 +28,14 @@ public class LeaveRequestService {
     private final LeaveRequestRepository leaveRequestRepository;
     private final UserRepository userRepository;
     private final BusinessRepository businessRepository;
+    private final LeaveRequestMapper leaveRequestMapper;
 
-    public LeaveRequestService(LeaveRequestRepository leaveRequestRepository, UserRepository userRepository, BusinessRepository businessRepository) {
+    public LeaveRequestService(LeaveRequestRepository leaveRequestRepository, UserRepository userRepository,
+            BusinessRepository businessRepository, LeaveRequestMapper leaveRequestMapper) {
         this.leaveRequestRepository = leaveRequestRepository;
         this.userRepository = userRepository;
         this.businessRepository = businessRepository;
+        this.leaveRequestMapper = leaveRequestMapper;
     }
 
     public LeaveRequest createLeaveRequest(@RequestUser String userId, CreateLeaveRequest dto) {
@@ -40,9 +43,7 @@ public class LeaveRequestService {
 
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        LeaveRequest leaveRequest = LeaveRequestMapper.toEntity(dto);
-        leaveRequest.setUser(user);
-        leaveRequest.setBusiness(business);
+        LeaveRequest leaveRequest = leaveRequestMapper.toEntity(dto, business, user);
         return leaveRequestRepository.save(leaveRequest);
     }
 

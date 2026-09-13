@@ -2,7 +2,6 @@ package server.rem.services;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.time.LocalDate;
 
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
@@ -30,6 +29,7 @@ import server.rem.entities.ContactTag;
 import server.rem.entities.Customer;
 import server.rem.entities.CustomerGroup;
 import server.rem.mappers.ContactMapper;
+import server.rem.mappers.CustomerMapper;
 import server.rem.repositories.ContactRepository;
 import server.rem.repositories.CustomerGroupRepository;
 import server.rem.repositories.CustomerRepository;
@@ -90,6 +90,7 @@ public class CustomerService {
     private final CustomerGroupRepository customerGroupRepository;
     private final ContactMapper contactMapper;
     private final EntityManager entityManager;
+    private final CustomerMapper customerMapper;
 
     @Transactional(readOnly = true)
     public CustomPageResponse<CustomerResponse> getAll(QueryCustomer dto, String businessId) {
@@ -110,11 +111,8 @@ public class CustomerService {
         if (customerRepository.existsByContact_Id(contact.getId())) {
             throw new ConflictException("Contact is already a customer");
         }
-        Customer customer = Customer.builder()
-                .contact(contact)
-                .customerGroup(resolveCustomerGroup(dto.getCustomerGroupId(), businessId))
-                .customerSince(dto.getCustomerSince() == null ? LocalDate.now() : dto.getCustomerSince())
-                .build();
+        Customer customer = customerMapper.toEntity(
+                dto, contact, resolveCustomerGroup(dto.getCustomerGroupId(), businessId));
         return toResponse(customerRepository.save(customer));
     }
 

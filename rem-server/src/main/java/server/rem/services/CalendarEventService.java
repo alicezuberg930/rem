@@ -18,14 +18,12 @@ public class CalendarEventService {
     private final CalendarEventRepository calendarEventRepository;
     private final BusinessRepository businessRepository;
     private final UserRepository userRepository;
+    private final CalendarEventMapper calendarEventMapper;
 
     public CalendarEvent createCalendarEvent(CreateCalendarEventRequest dto, String userId) {
         Business business = businessRepository.findById(dto.getBusinessId()).orElseThrow(() -> new ResourceNotFoundException("Business not found"));
         User user =  userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("Creator not found"));
-        CalendarEvent calendarEvent = CalendarEventMapper.toEntity(dto);
-        calendarEvent.setBusiness(business);
-        calendarEvent.setCreatedBy(user);
-        return calendarEvent;
+        return calendarEventMapper.toEntity(dto, business, user);
     }
 
     public List<CalendarEvent> getAll(QueryCalendarEvent dto, String businessId) {

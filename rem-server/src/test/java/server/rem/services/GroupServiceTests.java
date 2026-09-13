@@ -14,6 +14,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mapstruct.factory.Mappers;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -25,6 +26,7 @@ import server.rem.entities.BusinessUser;
 import server.rem.entities.Group;
 import server.rem.entities.Role;
 import server.rem.entities.User;
+import server.rem.mappers.GroupMapper;
 import server.rem.repositories.BusinessUserRepository;
 import server.rem.repositories.GroupRepository;
 import server.rem.utils.exceptions.ConflictException;
@@ -44,7 +46,7 @@ class GroupServiceTests {
 
     @BeforeEach
     void setUp() {
-        groupService = new GroupService(groupRepository, businessUserRepository);
+        groupService = new GroupService(groupRepository, businessUserRepository, Mappers.getMapper(GroupMapper.class));
     }
 
     @Test

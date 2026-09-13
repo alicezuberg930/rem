@@ -16,14 +16,13 @@ import server.rem.entities.Business;
 import server.rem.entities.BusinessUser;
 import server.rem.entities.Role;
 import server.rem.entities.User;
-import server.rem.enums.Provider;
 
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface UserMapper {
     @Mapping(target = "fullname", source = "fullname", qualifiedByName = "trim")
     @Mapping(target = "phone", source = "phone", qualifiedByName = "trim")
     @Mapping(target = "email", source = "email", qualifiedByName = "trim")
-    @Mapping(target = "provider", expression = "java(dto.getProvider() == null ? Provider.LOCAL : dto.getProvider())")
+    @Mapping(target = "provider", expression = "java(dto.getProvider() == null ? AuthProvider.LOCAL : dto.getProvider())")
     @Mapping(target = "isVerified", ignore = true)
     @Mapping(target = "verifyToken", ignore = true)
     @Mapping(target = "verifyTokenExpires", ignore = true)

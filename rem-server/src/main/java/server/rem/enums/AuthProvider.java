@@ -1,6 +1,6 @@
 package server.rem.enums;
 
-public enum Provider {
+public enum AuthProvider {
     LOCAL,
     FACEBOOK,
     GOOGLE

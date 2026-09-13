@@ -2,7 +2,7 @@ package server.rem.dtos.user;
 
 import java.time.LocalDate;
 
-import server.rem.enums.Provider;
+import server.rem.enums.AuthProvider;
 
 public record UserListResponse(
         String id,
@@ -10,7 +10,7 @@ public record UserListResponse(
         String email,
         String phone,
         LocalDate birthday,
-        Provider provider,
+        AuthProvider provider,
         Boolean isVerified,
         String businessId,
         String roleId,

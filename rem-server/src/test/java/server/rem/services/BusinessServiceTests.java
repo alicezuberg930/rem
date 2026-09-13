@@ -1,19 +1,17 @@
 package server.rem.services;
 
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.mockito.Mockito.when;
-
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertSame;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import server.rem.dtos.business.BusinessResponse;
 import server.rem.entities.Business;
-import server.rem.mappers.AddUserToBusinessMapper;
 import server.rem.mappers.BusinessMapper;
 import server.rem.repositories.BusinessRepository;
 import server.rem.repositories.BusinessUserRepository;
@@ -36,8 +34,6 @@ class BusinessServiceTests {
     @Mock
     private DynamicMail dynamicMail;
     @Mock
-    private AddUserToBusinessMapper addUserToBusinessMapper;
-    @Mock
     private RoleRepository roleRepository;
 
     private BusinessService businessService;
@@ -51,7 +47,6 @@ class BusinessServiceTests {
                 emailService,
                 businessMapper,
                 dynamicMail,
-                addUserToBusinessMapper,
                 roleRepository
         );
     }

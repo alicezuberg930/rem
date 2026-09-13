@@ -16,8 +16,7 @@ import { ThemeSwitch } from '@/components/theme-switch'
 import { columnDefs, defaultColDef, gridTheme, importColumns, modules, createEmptyRows, MAX_IMPORT_SIZE, MAX_IMPORT_ROWS } from './components/const'
 import { ShipmentOrderPrimaryButtons } from './components/shipment-order-primary-buttons'
 
-const isPopulatedCell = (value: unknown) =>
-  value !== null && value !== undefined && String(value).trim() !== ''
+const isPopulatedCell = (value: unknown) => value !== null && value !== undefined && String(value).trim() !== ''
 
 const parseImportedRows = (sheetRows: unknown[][]): ShippingOrder[] => {
   if (sheetRows.length === 0) throw new Error('The selected workbook is empty.')
@@ -29,7 +28,7 @@ const parseImportedRows = (sheetRows: unknown[][]): ShippingOrder[] => {
     headerPositions.set(String(header), index)
   })
 
-  const missingHeaders = importColumns.filter(({ header }) => !headerPositions.has(String(header)))
+  const missingHeaders = importColumns.filter(({ header }) => !headerPositions.has(header))
 
   if (missingHeaders.length > 0) {
     const names = missingHeaders.map(({ header }) => header).join(', ')

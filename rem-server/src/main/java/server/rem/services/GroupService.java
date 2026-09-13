@@ -18,6 +18,7 @@ import server.rem.dtos.group.GroupResponse;
 import server.rem.entities.BusinessUser;
 import server.rem.entities.Group;
 import server.rem.entities.User;
+import server.rem.mappers.GroupMapper;
 import server.rem.repositories.BusinessUserRepository;
 import server.rem.repositories.GroupRepository;
 import server.rem.utils.exceptions.ConflictException;
@@ -31,6 +32,7 @@ public class GroupService {
 
     private final GroupRepository groupRepository;
     private final BusinessUserRepository businessUserRepository;
+    private final GroupMapper groupMapper;
 
     @Transactional(readOnly = true)
     public List<GroupResponse> getAll(String userId, String businessId) {
@@ -56,12 +58,7 @@ public class GroupService {
         Set<User> members = new LinkedHashSet<>(selectedMembers);
         members.add(ownerMembership.getUser());
 
-        Group group = Group.builder()
-                .name(request.getName().trim())
-                .avatar(request.getAvatar().trim())
-                .business(ownerMembership.getBusiness())
-                .members(members)
-                .build();
+        Group group = groupMapper.toEntity(request, ownerMembership.getBusiness(), members);
         return toResponse(groupRepository.save(group));
     }
 

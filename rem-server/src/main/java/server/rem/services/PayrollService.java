@@ -101,6 +101,7 @@ public class PayrollService {
     private final WorkingDaysCalculator workingDaysCalculator;
     private final TaxCalculator taxCalculator;
     private final EntityManager entityManager;
+    private final PayrollPeriodMapper payrollPeriodMapper;
 
     public CustomPageResponse<PayrollItemResponse> getItems(String businessId, QueryPaginate dto) {
         Pageable pageable = PageRequest.of(dto.getPage(), dto.getPageSize());
@@ -112,9 +113,7 @@ public class PayrollService {
     public PayrollPeriod createPeriod(CreatePayrollPeriodRequest dto) {
         Business business = businessRepository.findById(dto.getBusinessId())
                 .orElseThrow(() -> new ResourceNotFoundException("No business found"));
-        PayrollPeriod payrollPeriod = PayrollPeriodMapper.toEntity(dto);
-        payrollPeriod.setBusiness(business);
-        return payrollPeriod;
+        return payrollPeriodMapper.toEntity(dto, business);
     }
 
     public PayrollItem generateEmployeePayroll(String userId, String periodId) {

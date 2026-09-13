@@ -1,13 +1,14 @@
 package server.rem.dtos.auth;
 
-import lombok.*;
-import server.rem.enums.Provider;
-import server.rem.views.Views;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonView;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import server.rem.enums.AuthProvider;
+import server.rem.views.Views;
 
 @Getter
 @AllArgsConstructor
@@ -34,7 +35,7 @@ public class UserProfileResponse {
     private final String phone;
 
     @JsonView(Views.Public.class)
-    private final Provider provider;
+    private final AuthProvider provider;
 
     @JsonView(Views.Public.class)
     private final Boolean isVerified;

@@ -1,9 +1,11 @@
 package server.rem.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import jakarta.persistence.EntityManager;
@@ -11,11 +13,15 @@ import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mapstruct.factory.Mappers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import server.rem.dtos.payroll.CreatePayrollPeriodRequest;
+import server.rem.entities.Business;
 import server.rem.entities.PayrollPeriod;
 import server.rem.enums.PayrollStatus;
+import server.rem.mappers.PayrollPeriodMapper;
 import server.rem.repositories.AllowanceRepository;
 import server.rem.repositories.AttendanceRepository;
 import server.rem.repositories.BusinessRepository;
@@ -71,8 +77,28 @@ class PayrollServiceTests {
                 holidayRepository,
                 workingDaysCalculator,
                 taxCalculator,
-                entityManager
+                entityManager,
+                Mappers.getMapper(PayrollPeriodMapper.class)
         );
+    }
+
+    @Test
+    void createsDraftPayrollPeriodForResolvedBusiness() {
+        Business business = Business.builder().name("REM").build();
+        business.setId("business-id");
+        CreatePayrollPeriodRequest request = new CreatePayrollPeriodRequest(
+                "business-id", "September payroll", LocalDate.of(2026, 9, 1), LocalDate.of(2026, 9, 30));
+        when(businessRepository.findById("business-id")).thenReturn(Optional.of(business));
+
+        PayrollPeriod period = payrollService.createPeriod(request);
+
+        assertSame(business, period.getBusiness());
+        assertEquals(request.getName(), period.getName());
+        assertEquals(request.getStartDate(), period.getStartDate());
+        assertEquals(request.getEndDate(), period.getEndDate());
+        assertEquals(PayrollStatus.DRAFT, period.getStatus());
+        assertNull(period.getId());
+        assertNull(period.getItems());
     }
 
     @Test
