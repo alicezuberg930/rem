@@ -14,7 +14,6 @@ import server.rem.entities.BusinessUserId;
 import server.rem.entities.User;
 
 public interface BusinessUserRepository extends JpaRepository<BusinessUser, BusinessUserId> {
-
     List<BusinessUser> findByBusiness(Business business);
 
     List<BusinessUser> findByUser(User user);

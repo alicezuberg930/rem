@@ -46,6 +46,8 @@ public interface TaskMapper {
     @Mapping(target = "description", source = "dto.description")
     @Mapping(target = "labels", ignore = true)
     @Mapping(target = "attachments", ignore = true)
+    @Mapping(target = "comments", ignore = true)
+    @Mapping(target = "histories", ignore = true)
     Task toEntity(CreateTaskRequest dto, Business business, User assignee, Task subTask);
 
     @Mapping(target = "id", ignore = true)
@@ -57,9 +59,13 @@ public interface TaskMapper {
     @Mapping(target = "title", source = "title", qualifiedByName = "trim")
     @Mapping(target = "labels", ignore = true)
     @Mapping(target = "attachments", ignore = true)
+    @Mapping(target = "comments", ignore = true)
+    @Mapping(target = "histories", ignore = true)
     void updateEntity(UpdateTaskRequest dto, @MappingTarget Task task);
 
     @Mapping(target = "businessId", source = "business.id")
+    @Mapping(target = "labels", ignore = true)
+    @Mapping(target = "attachments", ignore = true)
     TaskResponse toTaskResponse(Task task);
 
     TaskBoardResponse toTaskBoardResponse(Task task);

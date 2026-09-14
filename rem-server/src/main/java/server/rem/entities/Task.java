@@ -1,6 +1,7 @@
 package server.rem.entities;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -13,6 +14,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -64,10 +66,21 @@ public class Task extends Base {
     private String description;
 
     @OneToMany(mappedBy = "task", fetch = FetchType.LAZY)
+    @OrderBy("createdAt ASC, id ASC")
     @JsonIgnoreProperties("task")
-    private Set<TaskLabel> labels;
+    private List<TaskLabel> labels;
 
     @OneToMany(mappedBy = "task", fetch = FetchType.LAZY)
     @JsonIgnoreProperties("task")
     private Set<TaskAttachment> attachments;
+
+    @OneToMany(mappedBy = "task", fetch = FetchType.LAZY)
+    @OrderBy("createdAt ASC, id ASC")
+    @JsonIgnoreProperties("task")
+    private List<TaskComment> comments;
+
+    @OneToMany(mappedBy = "task", fetch = FetchType.LAZY)
+    @OrderBy("createdAt DESC, id DESC")
+    @JsonIgnoreProperties("task")
+    private List<TaskHistory> histories;
 }

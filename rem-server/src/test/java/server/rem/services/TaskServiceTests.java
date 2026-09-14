@@ -3,11 +3,14 @@ package server.rem.services;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,13 +19,19 @@ import org.mapstruct.factory.Mappers;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.mock.web.MockMultipartFile;
 
+import server.rem.dtos.CustomPageResponse;
 import server.rem.dtos.tasks.CreateTaskCommentRequest;
 import server.rem.dtos.tasks.CreateTaskRequest;
+import server.rem.dtos.tasks.QueryTask;
 import server.rem.dtos.tasks.TaskAttachmentResponse;
 import server.rem.dtos.tasks.TaskBoardResponse;
 import server.rem.dtos.tasks.TaskCommentResponse;
+import server.rem.dtos.tasks.TaskDetailResponse;
 import server.rem.dtos.tasks.TaskResponse;
 import server.rem.dtos.tasks.UpdateTaskRequest;
 import server.rem.entities.Business;
@@ -32,6 +41,7 @@ import server.rem.entities.TaskAttachment;
 import server.rem.entities.TaskComment;
 import server.rem.entities.TaskCommentAttachment;
 import server.rem.entities.TaskHistory;
+import server.rem.entities.TaskLabel;
 import server.rem.entities.User;
 import server.rem.enums.TaskHistoryAction;
 import server.rem.enums.TaskHistoryType;
@@ -141,7 +151,7 @@ class TaskServiceTests {
         request.setAssigneeId("assignee-2");
         request.setStatus(TaskStatus.TESTING);
 
-        when(taskRepository.findByIdAndBusiness_Id("task-1", "business-1")).thenReturn(Optional.of(task));
+        when(taskRepository.findByIdAndBusinessId("task-1", "business-1")).thenReturn(Optional.of(task));
         when(userRepository.findById("user-1")).thenReturn(Optional.of(editor));
         when(businessUserRepository.findActiveByUserIdAndBusinessId("assignee-2", "business-1"))
                 .thenReturn(Optional.of(membership(business, newAssignee)));
@@ -161,13 +171,73 @@ class TaskServiceTests {
     }
 
     @Test
+    void getAllDoesNotAccessDetailCollections() {
+        Business business = business("business-1");
+        Task task = spy(task("task-1", business, user("assignee-1", "Assignee")));
+        QueryTask query = new QueryTask(10, 0, null, null, null);
+
+        when(taskRepository.findAll(any(Specification.class), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(task)));
+
+        CustomPageResponse<TaskResponse> response = taskService.getAll(query, "business-1");
+
+        assertEquals(1, response.getContent().size());
+        assertEquals(List.of(), response.getContent().getFirst().getLabels());
+        assertEquals(List.of(), response.getContent().getFirst().getAttachments());
+        verify(task, never()).getLabels();
+        verify(task, never()).getAttachments();
+        verify(task, never()).getComments();
+        verify(task, never()).getHistories();
+    }
+
+    @Test
+    void getOneReturnsDetailOnlyCollections() {
+        Business business = business("business-1");
+        User user = user("user-1", "User");
+        Task task = task("task-1", business, user);
+        TaskLabel label = TaskLabel.builder().title("Backend").task(task).build();
+        TaskAttachment attachment = TaskAttachment.builder()
+                .title("spec.pdf")
+                .url("https://cdn.example.com/spec.pdf")
+                .task(task)
+                .build();
+        TaskComment comment = TaskComment.builder().content("Ready for review").task(task).user(user).build();
+        TaskHistory history = TaskHistory.builder()
+                .title("Task created")
+                .task(task)
+                .user(user)
+                .action(TaskHistoryAction.CREATE)
+                .build();
+        label.setId("label-1");
+        attachment.setId("attachment-1");
+        comment.setId("comment-1");
+        history.setId("history-1");
+        task.setLabels(List.of(label));
+        task.setAttachments(Set.of(attachment));
+        task.setComments(List.of(comment));
+        task.setHistories(List.of(history));
+
+        when(taskRepository.findByIdAndBusinessId("task-1", "business-1")).thenReturn(Optional.of(task));
+        when(taskCommentRepository.findByTaskIdOrderByCreatedAtAsc("task-1")).thenReturn(task.getComments());
+        when(taskCommentAttachmentRepository.findByTaskComment_Task_Id("task-1")).thenReturn(List.of());
+        when(taskHistoryRepository.findByTask_IdOrderByCreatedAtDesc("task-1")).thenReturn(task.getHistories());
+
+        TaskDetailResponse response = taskService.getOne("task-1", "business-1");
+
+        assertEquals("Backend", response.getLabels().getFirst().title());
+        assertEquals("spec.pdf", response.getAttachments().getFirst().title());
+        assertEquals("Ready for review", response.getComments().getFirst().content());
+        assertEquals("Task created", response.getHistories().getFirst().title());
+    }
+
+    @Test
     void getBoardReturnsTasksForBusiness() {
         Business business = business("business-1");
         User assignee = user("assignee-1", "Assignee");
         Task task = task("task-1", business, assignee);
         task.setStatus(TaskStatus.IN_PROGRESS);
 
-        when(taskRepository.findAllByBusiness_IdOrderByCreatedAtDesc("business-1"))
+        when(taskRepository.findAllByBusinessIdOrderByCreatedAtDesc("business-1"))
                 .thenReturn(List.of(task));
 
         List<TaskBoardResponse> response = taskService.getBoard("business-1");
@@ -176,7 +246,7 @@ class TaskServiceTests {
         assertEquals("task-1", response.get(0).id());
         assertEquals(TaskStatus.IN_PROGRESS, response.get(0).status());
         assertEquals("Assignee", response.get(0).assignee().fullname());
-        verify(taskRepository).findAllByBusiness_IdOrderByCreatedAtDesc("business-1");
+        verify(taskRepository).findAllByBusinessIdOrderByCreatedAtDesc("business-1");
     }
 
     @Test
@@ -191,7 +261,7 @@ class TaskServiceTests {
                 "application/pdf",
                 "content".getBytes());
 
-        when(taskRepository.findByIdAndBusiness_Id("task-1", "business-1")).thenReturn(Optional.of(task));
+        when(taskRepository.findByIdAndBusinessId("task-1", "business-1")).thenReturn(Optional.of(task));
         when(userRepository.findById("user-1")).thenReturn(Optional.of(creator));
         when(cloudinaryService.uploadFile(file, "/tasks/task-1/attachments", null))
                 .thenReturn("https://cdn.example.com/quarterly-report.pdf");
@@ -225,7 +295,7 @@ class TaskServiceTests {
                 "image/png",
                 "content".getBytes());
 
-        when(taskRepository.findByIdAndBusiness_Id("task-1", "business-1")).thenReturn(Optional.of(task));
+        when(taskRepository.findByIdAndBusinessId("task-1", "business-1")).thenReturn(Optional.of(task));
         when(userRepository.findById("user-1")).thenReturn(Optional.of(user));
         when(taskCommentRepository.save(any(TaskComment.class))).thenAnswer(invocation -> {
             TaskComment comment = invocation.getArgument(0);

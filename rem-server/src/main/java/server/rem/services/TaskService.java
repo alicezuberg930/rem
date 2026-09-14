@@ -98,7 +98,7 @@ public class TaskService {
 
     @Transactional(readOnly = true)
     public List<TaskBoardResponse> getBoard(String businessId) {
-        return taskRepository.findAllByBusiness_IdOrderByCreatedAtDesc(businessId)
+        return taskRepository.findAllByBusinessIdOrderByCreatedAtDesc(businessId)
                 .stream()
                 .map(taskMapper::toTaskBoardResponse)
                 .toList();
@@ -107,7 +107,7 @@ public class TaskService {
     @Transactional(readOnly = true)
     public TaskDetailResponse getOne(String id, String businessId) {
         Task task = getTask(id, businessId);
-        List<TaskComment> comments = taskCommentRepository.findByTask_IdOrderByCreatedAtAsc(id);
+        List<TaskComment> comments = taskCommentRepository.findByTaskIdOrderByCreatedAtAsc(id);
         Map<String, TaskCommentAttachment> attachmentsByCommentId = taskCommentAttachmentRepository
                 .findByTaskComment_Task_Id(id)
                 .stream()
@@ -365,7 +365,7 @@ public class TaskService {
     }
 
     private Task getTask(String id, String businessId) {
-        return taskRepository.findByIdAndBusiness_Id(id, businessId)
+        return taskRepository.findByIdAndBusinessId(id, businessId)
                 .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
     }
 
