@@ -1,7 +1,7 @@
 import { useMemo, useRef, useState, type CSSProperties, type KeyboardEvent } from 'react'
 import { format } from 'date-fns'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { TASK_HISTORY_ACTION, TASK_PRIORITY, TASK_STATUS, type TaskBoardItem, type TaskStatus } from '@/@types'
+import { TASK_PRIORITY, TASK_STATUS, type TaskBoardItem, type TaskStatus } from '@/@types'
 import {
     closestCorners,
     DndContext,
