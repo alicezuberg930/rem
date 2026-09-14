@@ -11,6 +11,15 @@ import server.rem.entities.ChatMessage;
 
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, String> {
 
+    /**
+     * Gets conversation messages between two users inside one business.
+     *
+     * @param businessId owning business id
+     * @param currentUserId current user id
+     * @param otherUserId counterpart user id
+     * @param pageable paging request (used as limit/offset)
+     * @return latest-first message list for the 1:1 conversation
+     */
     @Query("""
             SELECT message
             FROM ChatMessage message
@@ -25,6 +34,14 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, String
             @Param("otherUserId") String otherUserId,
             Pageable pageable);
 
+    /**
+     * Gets messages in a group conversation for a business.
+     *
+     * @param businessId owning business id
+     * @param groupId target group id
+     * @param pageable paging request (used as limit/offset)
+     * @return latest-first message list for the group conversation
+     */
     @Query("""
             SELECT message
             FROM ChatMessage message

@@ -3,6 +3,7 @@ package server.rem.services;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
@@ -107,7 +108,7 @@ public class CampaignService {
 
     @Transactional
     public CampaignResponse update(UpdateCampaignRequest dto, String businessId, String id) throws Exception {
-        Campaign campaign = campaignRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(CampaignMessages.NOT_FOUND));
+        Campaign campaign = campaignRepository.findByIdAndBusinessId(id, businessId).orElseThrow(() -> new ResourceNotFoundException(CampaignMessages.NOT_FOUND));
         Optional<Template> template = templateRepository.findById(dto.getTemplateId());
         List<Contact> contacts = contactRepository.findAllById(dto.getContactIds());
         if(dto.getSendType() == CampaignSendType.IMMEDIATE) {
@@ -123,10 +124,13 @@ public class CampaignService {
         return campaignMapper.toCampaignResponse(updatedCampaign);
     }
 
+    @Transactional(readOnly = true)
     public CustomPageResponse<CampaignResponse> getAll(QueryCampaign dto, String businessId) {
         Pageable pageable = PageRequest.of(dto.getPage(), dto.getPageSize());
         Specification<Campaign> spec = CampaignSpecification.withFilters(dto, businessId);
-        Page<CampaignResponse> result = campaignRepository.findAll(spec, pageable).map(campaignMapper::toCampaignResponse);
+        Page<Campaign> campaigns = campaignRepository.findAll(spec, pageable);
+        Map<String, Campaign> campaignsWithContacts = preloadContacts(campaigns.getContent());
+        Page<CampaignResponse> result = campaigns.map(campaign -> campaignMapper.toCampaignResponse(campaignsWithContacts.getOrDefault(campaign.getId(), campaign)));
         return new CustomPageResponse<CampaignResponse>(result);
     }
 
@@ -179,6 +183,14 @@ public class CampaignService {
         } finally {
             campaignRepository.save(campaign);
         }
+    }
+
+    private Map<String, Campaign> preloadContacts(List<Campaign> campaigns) {
+        if (campaigns.isEmpty()) 
+            return Map.of();
+        return campaignRepository.findAllWithContactsByIdIn(campaigns.stream().map(Campaign::getId).toList())
+                .stream()
+                .collect(Collectors.toMap(Campaign::getId, Function.identity()));
     }
 
     private SXSSFSheet createExportSheet(SXSSFWorkbook workbook, int sheetNumber, CellStyle headerStyle) {

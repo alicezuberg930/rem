@@ -45,7 +45,7 @@ public class BusinessService {
 
     @Transactional
     public Business create(String ownerId, CreateBusinessRequest dto) {
-        User owner = userRepository.findById(ownerId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        User owner = userRepository.findWithMembershipRolesById(ownerId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         // user cannot create more than 3 businesses
         List<BusinessUser> ownedBusinesses = owner.getBusinessUsers().stream().filter(b -> b.getRole().getName().equals("OWNER")).collect(Collectors.toList());
         if(ownedBusinesses.size() == 3) throw new ConflictException(BusinessMessages.EXCEED_OWNED_BUSINESS);

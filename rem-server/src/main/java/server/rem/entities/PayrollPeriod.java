@@ -34,6 +34,6 @@ public class PayrollPeriod extends Base {
     @Builder.Default
     private PayrollStatus status = PayrollStatus.DRAFT;
 
-    @OneToMany(mappedBy = "payrollPeriod", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "payrollPeriod", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PayrollItem> items;
 }

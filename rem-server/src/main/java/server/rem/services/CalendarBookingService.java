@@ -23,7 +23,7 @@ public class CalendarBookingService {
     private final ContactRepository contactRepository;
 
     public List<CalendarBooking> getAll(String businessId) {
-        return calendarBookingRepository.findAll();
+        return calendarBookingRepository.findAllByBusinessId(businessId);
     }
 
     public CalendarBooking find(String id) {

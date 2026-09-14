@@ -39,7 +39,7 @@ public class Campaign extends Base {
     @Column(name = "schedule_at", nullable = true)
     private Instant scheduleAt;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "campaign_contact", joinColumns = @JoinColumn(name = "campaign_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "contact_id", referencedColumnName = "id"))
     @JsonIgnoreProperties({ "business", "customerGroup", "tag", "campaigns" })
     private Set<Contact> contacts;

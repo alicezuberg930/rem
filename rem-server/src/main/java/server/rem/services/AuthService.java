@@ -99,7 +99,7 @@ public class AuthService {
     }
 
     public UserProfileResponse profile(String userId) {
-        User user = userRepository.findById(userId)
+        User user = userRepository.findProfileById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Your profile doesn't exist"));
         return authMapper.toSummaryResponse(user);
     }

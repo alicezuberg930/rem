@@ -5,8 +5,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import server.rem.entities.Allowance;
 import server.rem.entities.Business;
-import server.rem.entities.User;
 
 public interface AllowanceRepository extends JpaRepository<Allowance, String>, JpaSpecificationExecutor<Allowance> {
-    List<Allowance> findByBusinessAndIsActive(Business business, User user, boolean b);
+    /**
+     * Returns allowances for one business, filtered by active flag.
+     *
+     * @param business owning business
+     * @param isActive active state filter
+     * @return matching allowances for that business
+     */
+    List<Allowance> findByBusinessAndIsActive(Business business, boolean isActive);
 }

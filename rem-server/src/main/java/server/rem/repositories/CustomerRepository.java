@@ -18,15 +18,43 @@ import server.rem.entities.Customer;
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, String>, JpaSpecificationExecutor<Customer> {
     @Override
-    @EntityGraph(attributePaths = {"contact", "contact.business", "contact.tag", "customerGroup"})
+    /**
+     * Gets a paged list of customers using dynamic filters.
+     *
+     * @param spec filter definition
+     * @param pageable paging request
+     * @return paginated customers with contact, tag, and customer group graph populated
+     */
+    @EntityGraph(attributePaths = {"contact", "contact.tag", "customerGroup"})
     Page<Customer> findAll(Specification<Customer> spec, Pageable pageable);
 
-    @EntityGraph(attributePaths = {"contact", "contact.business", "contact.tag", "customerGroup"})
+    /**
+     * Loads one customer by id and validates tenant/business ownership.
+     *
+     * @param id customer id
+     * @param businessId owning business id
+     * @return matching customer with contact/tag/group graph
+     */
+    @EntityGraph(attributePaths = {"contact", "contact.tag", "customerGroup"})
     Optional<Customer> findByIdAndContact_Business_Id(String id, String businessId);
 
-    @EntityGraph(attributePaths = {"contact", "contact.business", "contact.tag", "customerGroup"})
+    /**
+     * Finds a customer by linked contact id.
+     *
+     * @param contactId contact id
+     * @return matching customer with graph loaded
+     */
+    @EntityGraph(attributePaths = {"contact", "contact.tag", "customerGroup"})
     Optional<Customer> findByContact_Id(String contactId);
 
+    /**
+     * Returns a export-oriented slice of customers by business and optional customer group.
+     *
+     * @param businessId owning business id
+     * @param customerGroupId optional group id, or "none" for ungrouped customers
+     * @param pageable paging request
+     * @return export data slice with full contact and group graph fetched
+     */
     @Query("""
             SELECT customer
             FROM Customer customer
@@ -47,7 +75,20 @@ public interface CustomerRepository extends JpaRepository<Customer, String>, Jpa
             Pageable pageable
     );
 
+    /**
+     * Checks if a customer already exists for the given contact id.
+     *
+     * @param contactId contact id
+     * @return true when at least one customer references this contact
+     */
     boolean existsByContact_Id(String contactId);
 
+    /**
+     * Checks if a contact id is already used by another customer.
+     *
+     * @param contactId contact id
+     * @param id customer id to exclude
+     * @return true when another customer references the same contact
+     */
     boolean existsByContact_IdAndIdNot(String contactId, String id);
 }

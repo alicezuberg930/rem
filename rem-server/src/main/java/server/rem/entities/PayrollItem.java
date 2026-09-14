@@ -79,9 +79,9 @@ public class PayrollItem extends Base {
     @Column(name = "paid_at")
     private LocalDateTime paidAt;
 
-    @OneToMany(mappedBy = "payrollItem", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "payrollItem", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PayrollBonus> bonuses;
 
-    @OneToMany(mappedBy = "payrollItem", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "payrollItem", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PayrollDeduction> deductions;
 }

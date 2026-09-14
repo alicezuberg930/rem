@@ -1,6 +1,7 @@
 package server.rem.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
@@ -25,7 +26,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
+import server.rem.dtos.CustomPageResponse;
+import server.rem.dtos.campaign.CampaignResponse;
 import server.rem.dtos.campaign.QueryCampaign;
 import server.rem.entities.Business;
 import server.rem.entities.Campaign;
@@ -106,6 +110,30 @@ class CampaignServiceTests {
         );
         verify(campaignRepository, times(2)).save(campaign);
         assertEquals(CampaignStatus.SENT, campaign.getStatus());
+    }
+
+    @Test
+    void preloadsContactsForCampaignPageBeforeMapping() {
+        Campaign pageCampaign = Campaign.builder().build();
+        pageCampaign.setId("campaign-id");
+        Campaign campaignWithContacts = Campaign.builder().contacts(Set.of(new Contact())).build();
+        campaignWithContacts.setId("campaign-id");
+        CampaignResponse response = org.mockito.Mockito.mock(CampaignResponse.class);
+
+        when(campaignRepository.findAll(
+                org.mockito.ArgumentMatchers.<Specification<Campaign>>any(),
+                any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(pageCampaign)));
+        when(campaignRepository.findAllWithContactsByIdIn(List.of("campaign-id")))
+                .thenReturn(List.of(campaignWithContacts));
+        when(campaignMapper.toCampaignResponse(campaignWithContacts)).thenReturn(response);
+
+        CustomPageResponse<CampaignResponse> result = campaignService.getAll(
+                new QueryCampaign(10, 0, null),
+                "business-id");
+
+        assertSame(response, result.getContent().getFirst());
+        verify(campaignRepository).findAllWithContactsByIdIn(List.of("campaign-id"));
     }
 
     @Test

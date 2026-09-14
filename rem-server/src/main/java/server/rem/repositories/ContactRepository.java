@@ -1,6 +1,7 @@
 package server.rem.repositories;
 
 import java.util.Optional;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,16 +20,54 @@ import server.rem.enums.ContactType;
 @Repository
 public interface ContactRepository extends JpaRepository<Contact, String>, JpaSpecificationExecutor<Contact> {
     @Override
-    @EntityGraph(attributePaths = {"business", "tag"})
+    /**
+     * Gets a paged list of contacts matching a dynamic filter.
+     *
+     * @param spec filter definition
+     * @param pageable paging request
+     * @return paginated contacts with tag graph initialized
+     */
+    @EntityGraph(attributePaths = "tag")
     Page<Contact> findAll(Specification<Contact> spec, Pageable pageable);
 
     @Override
+    /**
+     * Loads a contact by id with business and tag relations initialized.
+     *
+     * @param id contact id
+     * @return matching contact with business/tag graph if found
+     */
     @EntityGraph(attributePaths = {"business", "tag"})
     Optional<Contact> findById(String id);
 
-    @EntityGraph(attributePaths = {"business", "tag"})
+    /**
+     * Loads a contact by id only if it belongs to the given business.
+     *
+     * @param id contact id
+     * @param businessId owning business id
+     * @return matching contact (tag included) for the business, or empty
+     */
+    @EntityGraph(attributePaths = "tag")
     Optional<Contact> findByIdAndBusinessId(String id, String businessId);
 
+    @Override
+    /**
+     * Loads all contacts for a list of ids using id-only input.
+     *
+     * @param ids contact ids
+     * @return contacts found with tag graph initialized
+     */
+    @EntityGraph(attributePaths = "tag")
+    List<Contact> findAllById(Iterable<String> ids);
+
+    /**
+     * Returns a slice of contacts prepared for export.
+     *
+     * @param businessId owning business id
+     * @param type optional contact type filter
+     * @param pageable paging request
+     * @return export-ready slice with business and tag fetched
+     */
     @Query("""
             SELECT contact
             FROM Contact contact
@@ -43,5 +82,12 @@ public interface ContactRepository extends JpaRepository<Contact, String>, JpaSp
             Pageable pageable
     );
 
+    /**
+     * Checks if a contact exists for an email within one business.
+     *
+     * @param email contact email
+     * @param businessId owning business id
+     * @return true when a match exists
+     */
     boolean existsByEmailAndBusinessId(String email, String businessId);
 }

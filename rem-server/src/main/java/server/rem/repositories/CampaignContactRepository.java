@@ -9,7 +9,12 @@ import server.rem.entities.CampaignContactId;
 import java.util.List;
 
 public interface CampaignContactRepository extends JpaRepository<CampaignContact, CampaignContactId> {
-
+    /**
+     * Loads all campaign-contact mapping rows for a campaign.
+     *
+     * @param campaign target campaign
+     * @return association rows for the campaign
+     */
     List<CampaignContact> findAllByCampaign(Campaign campaign);
 
     // List<BusinessUser> findByBusiness(Business business);

@@ -167,7 +167,7 @@ public class PayrollService {
         double earnedSalary = (double) (dailyRate * (actualWorkedDays - unpaidLeaveDays - absentDays));
 
         // Sum allowances
-        double totalAllowances = allowanceRepository.findByBusinessAndIsActive(period.getBusiness(), user, true)
+        double totalAllowances = allowanceRepository.findByBusinessAndIsActive(period.getBusiness(), true)
                 .stream()
                 .mapToInt(Allowance::getAmount)
                 .sum();

@@ -11,9 +11,23 @@ import server.rem.entities.Group;
 
 @Repository
 public interface GroupRepository extends JpaRepository<Group, String> {
+    /**
+     * Loads one chat group by id and business id, including members.
+     *
+     * @param id group id
+     * @param businessId owning business id
+     * @return matching group with member collection initialized
+     */
     @EntityGraph(attributePaths = "members")
     Optional<Group> findByIdAndBusinessId(String id, String businessId);
 
+    /**
+     * Loads all groups for a business that include a specific user.
+     *
+     * @param businessId owning business id
+     * @param userId user id
+     * @return groups containing the user, ordered by createdAt descending
+     */
     @EntityGraph(attributePaths = "members")
     @Query("""
             SELECT DISTINCT chatGroup
