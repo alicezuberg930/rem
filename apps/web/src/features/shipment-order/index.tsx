@@ -161,7 +161,7 @@ export function ShipmentOrder() {
             quickFilterText={query}
             headerHeight={64}
             animateRows
-            singleClickEdit
+            singleClickEdit={false}
             stopEditingWhenCellsLoseFocus
             suppressMovableColumns
           />

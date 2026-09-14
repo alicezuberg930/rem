@@ -9,15 +9,15 @@ export const MAIL_PROVIDER = {
   Other: 'OTHER',
 } as const
 
-export type MailProvider = (typeof MAIL_PROVIDER)[keyof typeof MAIL_PROVIDER]
+export type MailProvider = keyof typeof MAIL_PROVIDER
 
 export const PHONE_PROVIDER = {
-  Twilio: 'TWILIO',
-  Vonage: 'VONAGE',
-  Other: 'OTHER',
+  TWILIO: 'Twilio',
+  VONAGE: 'Vonage',
+  OTHER: 'Other',
 } as const
 
-export type PhoneProvider = (typeof MAIL_PROVIDER)[keyof typeof MAIL_PROVIDER]
+export type PhoneProvider = keyof typeof PHONE_PROVIDER
 
 export type Business = {
   id: string

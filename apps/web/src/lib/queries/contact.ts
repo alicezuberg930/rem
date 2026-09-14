@@ -22,17 +22,13 @@ const keys = {
   export: (options: QueryContact) => ['contacts', 'export', options],
 }
 
-type PageResponse<T> = PaginatedApiResponse<T[]>['data']
-
 export const contacts = () => ({
   all: {
     queryOptions: (options: QueryContact = {}) =>
       queryOptions({
         queryKey: keys.all(options),
         queryFn: async () => {
-          const { data } = await httpClient.get<
-            ApiResponse<PageResponse<Contact>>
-          >('/contacts', options as Record<string, unknown>)
+          const { data } = await httpClient.get<PaginatedApiResponse<Contact[]>>('/contacts', options as Record<string, unknown>)
           return data
         },
       }),

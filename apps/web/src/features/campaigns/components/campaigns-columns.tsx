@@ -71,9 +71,7 @@ export const campaignsColumns: ColumnDef<Campaign>[] = [
       <DataTableColumnHeader column={column} title='Scheduled at' />
     ),
     cell: ({ row }) => {
-      const date =
-        row.getValue('scheduleAt') != null &&
-        format(row.getValue('scheduleAt'), 'dd/MM/yyyy HH:mm')
+      const date = row.getValue('scheduleAt') != null && format(row.getValue('scheduleAt'), 'dd/MM/yyyy HH:mm')
       return <LongText className='max-w-36 ps-3'>{date}</LongText>
     },
     enableSorting: true,

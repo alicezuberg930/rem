@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { type Table } from '@tanstack/react-table'
+import { type Task } from '@/@types'
 import { Trash2, CircleArrowUp, ArrowUpDown, Download } from 'lucide-react'
-import { toast } from '@/components/ui/toast'
 import { sleep } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -10,14 +10,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { toast } from '@/components/ui/toast'
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { DataTableBulkActions as BulkActionsToolbar } from '@/components/data-table'
-import { priorities, statuses } from '../data/data'
-import { type Task } from '../data/schema'
+import { taskPriorities, taskStatuses } from './tasks-columns'
 import { TasksMultiDeleteDialog } from './tasks-multi-delete-dialog'
 
 type DataTableBulkActionsProps<TData> = {
@@ -93,7 +93,7 @@ export function DataTableBulkActions<TData>({
             </TooltipContent>
           </Tooltip>
           <DropdownMenuContent sideOffset={14}>
-            {statuses.map((status) => (
+            {taskStatuses.map((status) => (
               <DropdownMenuItem
                 key={status.value}
                 onClick={() => handleBulkStatusChange(status.value)}
@@ -128,7 +128,7 @@ export function DataTableBulkActions<TData>({
             </TooltipContent>
           </Tooltip>
           <DropdownMenuContent sideOffset={14}>
-            {priorities.map((priority) => (
+            {taskPriorities.map((priority) => (
               <DropdownMenuItem
                 key={priority.value}
                 onClick={() => handleBulkPriorityChange(priority.value)}

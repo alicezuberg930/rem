@@ -11,15 +11,13 @@ export const CAMPAIGN_STATUS = {
 } as const
 
 export const CAMPAIGN_SEND_TYPE = {
-  Immediate: 'IMMEDIATE',
-  Scheduled: 'SCHEDULED',
+  IMMEDIATE: 'Immediate',
+  SCHEDULED: 'Scheduled',
 } as const
 
-export type CampaignStatus =
-  (typeof CAMPAIGN_STATUS)[keyof typeof CAMPAIGN_STATUS]
+export type CampaignStatus =keyof typeof CAMPAIGN_STATUS
 
-export type CampaignSendType =
-  (typeof CAMPAIGN_SEND_TYPE)[keyof typeof CAMPAIGN_SEND_TYPE]
+export type CampaignSendType = keyof typeof CAMPAIGN_SEND_TYPE
 
 export type Campaign = {
   id: string

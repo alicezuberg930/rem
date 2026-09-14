@@ -9,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -30,6 +31,7 @@ import server.rem.entities.Customer;
 import server.rem.entities.CustomerGroup;
 import server.rem.entities.Permission;
 import server.rem.entities.Role;
+import server.rem.entities.Task;
 import server.rem.entities.User;
 import server.rem.enums.AuthProvider;
 import server.rem.enums.CalendarBookingStatus;
@@ -37,6 +39,8 @@ import server.rem.enums.Color;
 import server.rem.enums.ContactType;
 import server.rem.enums.MailProvider;
 import server.rem.enums.PhoneProvider;
+import server.rem.enums.TaskPriority;
+import server.rem.enums.TaskStatus;
 import server.rem.repositories.BusinessRepository;
 import server.rem.repositories.BusinessUserRepository;
 import server.rem.repositories.CalendarBookingRepository;
@@ -46,6 +50,7 @@ import server.rem.repositories.CustomerGroupRepository;
 import server.rem.repositories.CustomerRepository;
 import server.rem.repositories.PermissionRepository;
 import server.rem.repositories.RoleRepository;
+import server.rem.repositories.TaskRepository;
 import server.rem.repositories.UserRepository;
 
 @Component
@@ -68,6 +73,8 @@ public class DataSeeder implements CommandLineRunner {
     private static final String BUSINESS_ID = "biz_rem_seed_0000000001";
     private static final String PASSWORD = "$2a$10$/KvEJP3pNsl.TMnMmz2TRe40MuMMm4YcL2PxAdll6RwXxDfpTXPB.";
     private static final ZoneId SEED_TIME_ZONE = ZoneId.of("Asia/Ho_Chi_Minh");
+    private static final long USER_ROLE_RANDOM_SEED = 20_260_913L;
+    private static final long TASK_RANDOM_SEED = 50_260_913L;
 
     private static final List<RoleSeed> ROLE_SEEDS = List.of(
             new RoleSeed(OWNER_ROLE_ID, "OWNER", "Business owner"),
@@ -80,6 +87,17 @@ public class DataSeeder implements CommandLineRunner {
             new RoleSeed(CUSTOMER_SERVICE_ROLE_ID, "CUSTOMER_SERVICE", "Customer service"),
             new RoleSeed(RECEPTIONIST_ROLE_ID, "RECEPTIONIST", "Receptionist"),
             new RoleSeed(STAFF_ROLE_ID, "STAFF", "General staff"));
+
+    private static final List<String> NON_OWNER_ROLE_IDS = List.of(
+            HR_ROLE_ID,
+            ACCOUNTANT_ROLE_ID,
+            ADMIN_ROLE_ID,
+            MANAGER_ROLE_ID,
+            SALES_ROLE_ID,
+            MARKETING_ROLE_ID,
+            CUSTOMER_SERVICE_ROLE_ID,
+            RECEPTIONIST_ROLE_ID,
+            STAFF_ROLE_ID);
 
     private static final List<PermissionSeed> PERMISSION_SEEDS = List.of(
             new PermissionSeed(1, "attendance.create", "Create attendance records"),
@@ -188,6 +206,28 @@ public class DataSeeder implements CommandLineRunner {
             new ContactTagSeed("tag_risk_seed_000000001", "At Risk", Color.ORANGE),
             new ContactTagSeed("tag_ref_seed_0000000001", "Referral", Color.BLUE));
 
+    private static final List<UserSeed> TASK_USER_SEEDS = List.of(
+            new UserSeed("user_task_seed_000000001", "An Nguyen", "+15550002001", "1991-01-12", "task.user01@example.com"),
+            new UserSeed("user_task_seed_000000002", "Binh Tran", "+15550002002", "1989-02-23", "task.user02@example.com"),
+            new UserSeed("user_task_seed_000000003", "Chi Le", "+15550002003", "1993-03-08", "task.user03@example.com"),
+            new UserSeed("user_task_seed_000000004", "Dung Pham", "+15550002004", "1987-04-19", "task.user04@example.com"),
+            new UserSeed("user_task_seed_000000005", "Giang Hoang", "+15550002005", "1995-05-27", "task.user05@example.com"),
+            new UserSeed("user_task_seed_000000006", "Ha Vo", "+15550002006", "1990-06-14", "task.user06@example.com"),
+            new UserSeed("user_task_seed_000000007", "Hai Dang", "+15550002007", "1988-07-31", "task.user07@example.com"),
+            new UserSeed("user_task_seed_000000008", "Khanh Bui", "+15550002008", "1994-08-16", "task.user08@example.com"),
+            new UserSeed("user_task_seed_000000009", "Lam Do", "+15550002009", "1992-09-04", "task.user09@example.com"),
+            new UserSeed("user_task_seed_000000010", "Linh Phan", "+15550002010", "1986-10-22", "task.user10@example.com"),
+            new UserSeed("user_task_seed_000000011", "Minh Truong", "+15550002011", "1996-11-09", "task.user11@example.com"),
+            new UserSeed("user_task_seed_000000012", "Nam Ngo", "+15550002012", "1991-12-18", "task.user12@example.com"),
+            new UserSeed("user_task_seed_000000013", "Nga Duong", "+15550002013", "1989-01-26", "task.user13@example.com"),
+            new UserSeed("user_task_seed_000000014", "Phong Ly", "+15550002014", "1993-02-11", "task.user14@example.com"),
+            new UserSeed("user_task_seed_000000015", "Phuong Huynh", "+15550002015", "1987-03-29", "task.user15@example.com"),
+            new UserSeed("user_task_seed_000000016", "Quang Cao", "+15550002016", "1995-04-07", "task.user16@example.com"),
+            new UserSeed("user_task_seed_000000017", "Thao Mai", "+15550002017", "1990-05-24", "task.user17@example.com"),
+            new UserSeed("user_task_seed_000000018", "Trang Vu", "+15550002018", "1988-06-13", "task.user18@example.com"),
+            new UserSeed("user_task_seed_000000019", "Tuan Dinh", "+15550002019", "1994-07-20", "task.user19@example.com"),
+            new UserSeed("user_task_seed_000000020", "Vy Luong", "+15550002020", "1992-08-02", "task.user20@example.com"));
+
     private static final List<ContactSeed> CONTACT_SEEDS = List.of(
             new ContactSeed("ct_linh_seed_000000001", "grp_vip_seed_0000000001", "tag_hot_seed_0000000001",
                     "Linh", "Pham", "Thi", "+15550100001", "linh.pham@example.com", "1992-01-18", "Designer",
@@ -272,6 +312,7 @@ public class DataSeeder implements CommandLineRunner {
     private final ContactTagRepository contactTagRepository;
     private final ContactRepository contactRepository;
     private final CalendarBookingRepository calendarBookingRepository;
+    private final TaskRepository taskRepository;
 
     @Override
     @Transactional
@@ -289,6 +330,7 @@ public class DataSeeder implements CommandLineRunner {
         Map<String, Contact> contacts = seedContacts(business, contactTags);
         seedCustomers(customerGroups, contacts);
         seedCalendarBookings(business, users, contacts);
+        seedTasks(business, users);
     }
 
     private Map<String, Role> seedRoles() {
@@ -376,6 +418,17 @@ public class DataSeeder implements CommandLineRunner {
                 .password(PASSWORD)
                 .isVerified(true)
                 .build(), BRIAN_ID)));
+        for (UserSeed seed : TASK_USER_SEEDS) {
+            users.put(seed.id(), findOrCreate(userRepository, seed.id(), () -> withId(User.builder()
+                    .fullname(seed.fullname())
+                    .phone(seed.phone())
+                    .provider(AuthProvider.LOCAL)
+                    .birthday(LocalDate.parse(seed.birthday()))
+                    .email(seed.email())
+                    .password(PASSWORD)
+                    .isVerified(true)
+                    .build(), seed.id())));
+        }
         return users;
     }
 
@@ -417,6 +470,22 @@ public class DataSeeder implements CommandLineRunner {
                 .salary(24_000_000)
                 .dependants(1)
                 .build());
+
+        Random random = new Random(USER_ROLE_RANDOM_SEED);
+        for (UserSeed seed : TASK_USER_SEEDS) {
+            BusinessUserId membershipId = new BusinessUserId(BUSINESS_ID, seed.id());
+            String roleId = NON_OWNER_ROLE_IDS.get(random.nextInt(NON_OWNER_ROLE_IDS.size()));
+            findOrCreate(businessUserRepository, membershipId, () -> BusinessUser.builder()
+                    .id(membershipId)
+                    .business(business)
+                    .user(users.get(seed.id()))
+                    .invitor(users.get(ALICE_ID))
+                    .isActive(true)
+                    .isVerified(true)
+                    .role(roles.get(roleId))
+                    .dependants(0)
+                    .build());
+        }
     }
 
     private Map<String, CustomerGroup> seedCustomerGroups(Business business) {
@@ -505,6 +574,45 @@ public class DataSeeder implements CommandLineRunner {
         }
     }
 
+    private void seedTasks(Business business, Map<String, User> users) {
+        Random random = new Random(TASK_RANDOM_SEED);
+        List<User> assignees = TASK_USER_SEEDS.stream()
+                .map(seed -> users.get(seed.id()))
+                .toList();
+        TaskPriority[] priorities = TaskPriority.values();
+        TaskStatus[] statuses = TaskStatus.values();
+
+        for (int index = 0; index < 50; index++) {
+            int taskNumber = index + 1;
+            String id = taskId(taskNumber);
+            User assignee = index < 20 ? assignees.get(random.nextInt(assignees.size())) : null;
+            String description = index < 30 ? "Seeded description for task %02d".formatted(taskNumber) : null;
+            TaskPriority priority = priorities[random.nextInt(priorities.length)];
+            TaskStatus status = statuses[random.nextInt(statuses.length)];
+            Instant startDate = null;
+            Instant dueDate = null;
+            if (index >= 5) {
+                LocalDate start = LocalDate.of(2026, 9, 13).plusDays(random.nextInt(18));
+                LocalDate due = start.plusDays(random.nextInt(31 - start.getDayOfMonth()));
+                startDate = start.atTime(9, 0).atZone(SEED_TIME_ZONE).toInstant();
+                dueDate = due.atTime(17, 0).atZone(SEED_TIME_ZONE).toInstant();
+            }
+
+            Instant seededStartDate = startDate;
+            Instant seededDueDate = dueDate;
+            findOrCreate(taskRepository, id, () -> withId(Task.builder()
+                    .business(business)
+                    .assignee(assignee)
+                    .title("Seed task %02d".formatted(taskNumber))
+                    .priority(priority)
+                    .status(status)
+                    .startDate(seededStartDate)
+                    .dueDate(seededDueDate)
+                    .description(description)
+                    .build(), id));
+        }
+    }
+
     private <T, ID> T findOrCreate(JpaRepository<T, ID> repository, ID id, Supplier<T> factory) {
         return repository.findById(id).orElseGet(() -> repository.save(factory.get()));
     }
@@ -522,11 +630,19 @@ public class DataSeeder implements CommandLineRunner {
         return "cust_" + contactId.substring(3);
     }
 
+    private static String taskId(int number) {
+        return "task_seed_%012d".formatted(number);
+    }
+
     private record RoleSeed(String id, String name, String description) {
 
     }
 
     private record PermissionSeed(int number, String name, String description) {
+
+    }
+
+    private record UserSeed(String id, String fullname, String phone, String birthday, String email) {
 
     }
 

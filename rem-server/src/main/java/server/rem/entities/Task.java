@@ -35,7 +35,7 @@ public class Task extends Base {
     private Business business;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "assignee_id", nullable = false)
+    @JoinColumn(name = "assignee_id", nullable = true)
     private User assignee;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -54,13 +54,13 @@ public class Task extends Base {
     @Column(name = "status")
     private TaskStatus status;
 
-    @Column(name = "start_date")
+    @Column(name = "start_date", nullable = true)
     private Instant startDate;
 
-    @Column(name = "due_date")
+    @Column(name = "due_date", nullable = true)
     private Instant dueDate;
 
-    @Column(name = "description", columnDefinition = "LONGTEXT")
+    @Column(name = "description", columnDefinition = "LONGTEXT", nullable = true)
     private String description;
 
     @OneToMany(mappedBy = "task", fetch = FetchType.LAZY)

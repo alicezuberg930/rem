@@ -1,6 +1,5 @@
 import { type Row } from '@tanstack/react-table'
-import { EllipsisIcon } from 'lucide-react'
-import { Trash2 } from 'lucide-react'
+import { EllipsisIcon, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -15,19 +14,20 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { labels } from '../data/data'
-import { taskSchema } from '../data/schema'
 import { useTasks } from './tasks-provider'
+import { Task } from '@/@types'
 
-type DataTableRowActionsProps<TData> = {
-  row: Row<TData>
+const labels = [
+  { value: 'bug', label: 'Bug' },
+  { value: 'feature', label: 'Feature' },
+  { value: 'documentation', label: 'Documentation' },
+]
+
+type ContactRowActionsProps = {
+  row: Row<Task>
 }
 
-export function DataTableRowActions<TData>({
-  row,
-}: DataTableRowActionsProps<TData>) {
-  const task = taskSchema.parse(row.original)
-
+export function ContactRowActions({ row }: ContactRowActionsProps) {
   const { setOpen, setCurrentRow } = useTasks()
 
   return (
@@ -44,7 +44,7 @@ export function DataTableRowActions<TData>({
       <DropdownMenuContent align='end' className='w-40'>
         <DropdownMenuItem
           onClick={() => {
-            setCurrentRow(task)
+            setCurrentRow(row.original)
             setOpen('update')
           }}
         >
@@ -56,7 +56,7 @@ export function DataTableRowActions<TData>({
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>Labels</DropdownMenuSubTrigger>
           <DropdownMenuSubContent>
-            <DropdownMenuRadioGroup value={task.label}>
+            <DropdownMenuRadioGroup value={null}>
               {labels.map((label) => (
                 <DropdownMenuRadioItem key={label.value} value={label.value}>
                   {label.label}
@@ -68,7 +68,7 @@ export function DataTableRowActions<TData>({
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={() => {
-            setCurrentRow(task)
+            setCurrentRow(row.original)
             setOpen('delete')
           }}
         >

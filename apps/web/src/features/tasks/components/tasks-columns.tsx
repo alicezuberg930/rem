@@ -1,14 +1,62 @@
-import { type ColumnDef } from '@tanstack/react-table'
+import { format } from 'date-fns'
+import type { ColumnDef } from '@tanstack/react-table'
+import { TASK_PRIORITY, TASK_STATUS, type Task } from '@/@types'
+import {
+  ArrowDown,
+  ArrowRight,
+  ArrowUp,
+  ChevronsDown,
+  ChevronsUp,
+  type LucideIcon,
+} from 'lucide-react'
+import { cn, getInitials } from '@/lib/utils'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
-import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
-import { labels, priorities, statuses } from '../data/data'
-import { type Task } from '../data/schema'
-import { DataTableRowActions } from './data-table-row-actions'
+import { LongText } from '@/components/long-text'
+import { Checkbox } from '@/components/ui/checkbox'
+import { ContactRowActions } from './data-table-row-actions'
+
+export const taskPriorities = [
+  {
+    label: TASK_PRIORITY.LOWEST,
+    value: 'LOWEST',
+    icon: ChevronsDown,
+  },
+  {
+    label: TASK_PRIORITY.LOW,
+    value: 'LOW',
+    icon: ArrowDown,
+  },
+  {
+    label: TASK_PRIORITY.MEDIUM,
+    value: 'MEDIUM',
+    icon: ArrowRight,
+  },
+  {
+    label: TASK_PRIORITY.HIGH,
+    value: 'HIGH',
+    icon: ArrowUp,
+  },
+  {
+    label: TASK_PRIORITY.HIGHEST,
+    value: 'HIGHEST',
+    icon: ChevronsUp,
+  },
+]
+
+export const taskStatuses: {
+  label: string
+  value: string
+  icon?: LucideIcon
+}[] = Object.entries(TASK_STATUS).map(([value, label]) => ({
+  label,
+  value,
+}))
 
 export const tasksColumns: ColumnDef<Task>[] = [
   {
-    id: 'select`',
+    id: 'select',
     header: ({ table }) => (
       <Checkbox
         checked={table.getIsAllPageRowsSelected()}
@@ -20,6 +68,9 @@ export const tasksColumns: ColumnDef<Task>[] = [
         className='translate-y-0.5'
       />
     ),
+    meta: {
+      className: cn('max-md:sticky start-0 z-10 rounded-tl-[inherit]'),
+    },
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
@@ -32,92 +83,121 @@ export const tasksColumns: ColumnDef<Task>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'id',
+    accessorKey: 'assignee',
+    accessorFn: (task) => task.assignee?.fullname ?? '',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Task' />
+      <DataTableColumnHeader column={column} title='Assignee' />
     ),
-    cell: ({ row }) => <div className='w-20'>{row.getValue('id')}</div>,
+    cell: ({ row }) => {
+      const { assignee } = row.original
+
+      if (!assignee) {
+        return <LongText className=''>Unassigned</LongText>
+      }
+
+      const assigneeName = assignee.fullname?.trim() || 'Unknown user'
+
+      return (
+        <div className='flex min-w-40 items-center gap-2'>
+          <Avatar size='sm'>
+            {assignee.avatar && (
+              <AvatarImage src={assignee.avatar} alt={assigneeName} />
+            )}
+            <AvatarFallback>{getInitials(assigneeName)}</AvatarFallback>
+          </Avatar>
+          <LongText className='max-w-44'>{assigneeName}</LongText>
+        </div>
+      )
+    },
     enableSorting: false,
-    enableHiding: false,
+    enableHiding: true,
   },
   {
     accessorKey: 'title',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Title' />
     ),
-    meta: {
-      className: 'ps-1 max-w-0 w-2/3',
-      tdClassName: 'ps-4',
-    },
-    cell: ({ row }) => {
-      const label = labels.find((label) => label.value === row.original.label)
-
-      return (
-        <div className='flex space-x-2'>
-          {label && <Badge variant='outline'>{label.label}</Badge>}
-          <span className='truncate font-medium'>{row.getValue('title')}</span>
-        </div>
-      )
-    },
-  },
-  {
-    accessorKey: 'status',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Status' />
+    cell: ({ row }) => (
+      <LongText className='max-w-80 font-medium'>
+        {row.original.title ?? '-'}
+      </LongText>
     ),
-    meta: { className: 'ps-1', tdClassName: 'ps-4' },
-    cell: ({ row }) => {
-      const status = statuses.find(
-        (status) => status.value === row.getValue('status')
-      )
-
-      if (!status) {
-        return null
-      }
-
-      return (
-        <div className='flex w-25 items-center gap-2'>
-          {status.icon && (
-            <status.icon className='size-4 text-muted-foreground' />
-          )}
-          <span>{status.label}</span>
-        </div>
-      )
-    },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id))
-    },
+    enableSorting: false,
+    enableHiding: true,
   },
   {
     accessorKey: 'priority',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Priority' />
     ),
-    meta: { className: 'ps-1', tdClassName: 'ps-3' },
     cell: ({ row }) => {
-      const priority = priorities.find(
-        (priority) => priority.value === row.getValue('priority')
+      const priority = taskPriorities.find(
+        (item) => item.value === row.original.priority
       )
 
       if (!priority) {
-        return null
+        return <span className='text-muted-foreground'>-</span>
       }
 
+      const PriorityIcon = priority.icon
+
       return (
-        <div className='flex items-center gap-2'>
-          {priority.icon && (
-            <priority.icon className='size-4 text-muted-foreground' />
-          )}
-          <span>{priority.label}</span>
-        </div>
+        <Badge variant='outline' className='gap-1.5 font-normal'>
+          <PriorityIcon className='size-3.5 text-muted-foreground' />
+          {priority.label}
+        </Badge>
       )
     },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id))
-    },
+    filterFn: (row, id, value) => value.includes(row.getValue(id)),
+    enableSorting: false,
+    enableHiding: true,
+  },
+  {
+    accessorKey: 'status',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Status' />
+    ),
+    cell: ({ row }) => (
+      <Badge variant='outline' className='gap-1.5 font-normal'>
+        {row.original.status ? TASK_STATUS[row.original.status] : '-'}
+      </Badge>
+    ),
+    filterFn: (row, id, value) => value.includes(row.getValue(id)),
+    enableSorting: false,
+    enableHiding: true,
+  },
+  {
+    accessorKey: 'startDate',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Start date' />
+    ),
+    cell: ({ row }) => (
+      <LongText>
+        {row.original.startDate
+          ? format(row.original.startDate, 'dd-MM-yyyy')
+          : '-'}
+      </LongText>
+    ),
+    enableSorting: false,
+    enableHiding: true,
+  },
+  {
+    accessorKey: 'dueDate',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Due date' />
+    ),
+    cell: ({ row }) => (
+      <LongText>
+        {row.original.dueDate
+          ? format(row.original.dueDate, 'dd-MM-yyyy')
+          : '-'}
+      </LongText>
+    ),
+    enableSorting: false,
+    enableHiding: true,
   },
   {
     id: 'actions',
-    cell: ({ row }) => <DataTableRowActions row={row} />,
+    cell: ContactRowActions,
   },
 ]

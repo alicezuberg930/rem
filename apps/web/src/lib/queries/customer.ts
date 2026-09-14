@@ -28,17 +28,13 @@ const keys = {
   export: (options: QueryCustomer) => ['customers', 'export', options],
 }
 
-type PageResponse<T> = PaginatedApiResponse<T[]>['data']
-
 export const customers = () => ({
   all: {
     queryOptions: (options: QueryCustomer = {}) =>
       queryOptions({
         queryKey: keys.all(options),
         queryFn: async () => {
-          const { data } = await httpClient.get<
-            ApiResponse<PageResponse<Customer>>
-          >('/customers', options as Record<string, unknown>)
+          const { data } = await httpClient.get<PaginatedApiResponse<Customer[]>>('/customers', options as Record<string, unknown>)
           return data
         },
       }),
@@ -49,9 +45,7 @@ export const customers = () => ({
       queryOptions({
         queryKey: keys.contacts(options),
         queryFn: async () => {
-          const { data } = await httpClient.get<
-            ApiResponse<PageResponse<Contact>>
-          >('/contacts', options as Record<string, unknown>)
+          const { data } = await httpClient.get<PaginatedApiResponse<Contact[]>>('/contacts', options as Record<string, unknown>)
           return data.content
         },
       }),

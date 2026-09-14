@@ -1,14 +1,15 @@
-import { ConfigDrawer } from '@/components/config-drawer'
 import { Header } from '@/layout/header'
 import { Main } from '@/layout/main'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { ConfigDrawer } from '@/components/config-drawer'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
+import { TaskKanbanBoard } from './components/task-kanban-board'
 import { TasksDialogs } from './components/tasks-dialogs'
 import { TasksPrimaryButtons } from './components/tasks-primary-buttons'
 import { TasksProvider } from './components/tasks-provider'
 import { TasksTable } from './components/tasks-table'
-import { tasks } from './data/tasks'
 
 export function Tasks() {
   return (
@@ -32,7 +33,25 @@ export function Tasks() {
           </div>
           <TasksPrimaryButtons />
         </div>
-        <TasksTable data={tasks} />
+
+        <Tabs defaultValue='list' className='w-full flex-col'>
+          <TabsList>
+            <TabsTrigger value='list'>List</TabsTrigger>
+            <TabsTrigger value='board'>Board</TabsTrigger>
+            <TabsTrigger value='calendar'>Calendar</TabsTrigger>
+            <TabsTrigger value='kanban'>Kanban</TabsTrigger>
+          </TabsList>
+          <TabsContent value='list'>
+            <TasksTable />
+          </TabsContent>
+          <TabsContent value='board'>
+            <TaskKanbanBoard />
+          </TabsContent>
+          <TabsContent value='calendar'>
+            {/* calendar schedule component */}
+          </TabsContent>
+          <TabsContent value='kanban'>{/* kanban component */}</TabsContent>
+        </Tabs>
       </Main>
 
       <TasksDialogs />

@@ -3,7 +3,7 @@ import { CAMPAIGN_SEND_TYPE } from '@/@types'
 
 export namespace CampaignValidators {
   const campaignSendTypeSchema = z.union(
-    Object.entries(CAMPAIGN_SEND_TYPE).map((type) => z.literal(type[1]))
+    Object.entries(CAMPAIGN_SEND_TYPE).map((type) => z.literal(type[0]))
   )
 
   // const campaignStatusSchema = z.union(Object.entries(CAMPAIGN_STATUS).map(status => z.literal(status[1])))

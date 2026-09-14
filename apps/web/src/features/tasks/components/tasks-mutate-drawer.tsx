@@ -23,12 +23,16 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet'
 import { SelectDropdown } from '@/components/select-dropdown'
-import { type Task } from '../data/schema'
 
 type TaskMutateDrawerProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
-  currentRow?: Task
+  currentRow?: {
+    id: string
+    title?: string | null
+    status?: string | null
+    priority?: string | null
+  }
 }
 
 const formSchema = z.object({
@@ -48,11 +52,11 @@ export function TasksMutateDrawer({
 
   const form = useForm<TaskForm>({
     resolver: zodResolver(formSchema),
-    defaultValues: currentRow ?? {
-      title: '',
-      status: '',
+    defaultValues: {
+      title: currentRow?.title ?? '',
+      status: currentRow?.status ?? '',
       label: '',
-      priority: '',
+      priority: currentRow?.priority ?? '',
     },
   })
 

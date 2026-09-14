@@ -36,6 +36,7 @@ import server.rem.entities.Customer;
 import server.rem.entities.CustomerGroup;
 import server.rem.entities.Permission;
 import server.rem.entities.Role;
+import server.rem.entities.Task;
 import server.rem.entities.User;
 import server.rem.enums.CalendarBookingStatus;
 import server.rem.repositories.BusinessRepository;
@@ -47,6 +48,7 @@ import server.rem.repositories.CustomerGroupRepository;
 import server.rem.repositories.CustomerRepository;
 import server.rem.repositories.PermissionRepository;
 import server.rem.repositories.RoleRepository;
+import server.rem.repositories.TaskRepository;
 import server.rem.repositories.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -71,6 +73,8 @@ class DataSeederTests {
     private ContactRepository contactRepository;
     @Mock
     private CalendarBookingRepository calendarBookingRepository;
+    @Mock
+    private TaskRepository taskRepository;
 
     private final Map<String, Role> roles = new LinkedHashMap<>();
     private final Map<String, Permission> permissions = new LinkedHashMap<>();
@@ -82,6 +86,7 @@ class DataSeederTests {
     private final Map<String, ContactTag> contactTags = new LinkedHashMap<>();
     private final Map<String, Contact> contacts = new LinkedHashMap<>();
     private final Map<String, CalendarBooking> bookings = new LinkedHashMap<>();
+    private final Map<String, Task> tasks = new LinkedHashMap<>();
 
     private DataSeeder dataSeeder;
 
@@ -98,7 +103,8 @@ class DataSeederTests {
                 customerRepository,
                 contactTagRepository,
                 contactRepository,
-                calendarBookingRepository);
+                calendarBookingRepository,
+                taskRepository);
     }
 
     @Test
@@ -109,21 +115,22 @@ class DataSeederTests {
         Profile profile = DataSeeder.class.getAnnotation(Profile.class);
         assertArrayEquals(new String[] { "seed" }, profile.value());
         assertEquals(10, roles.size());
-        assertEquals(66, permissions.size());
-        assertEquals(2, users.size());
+        assertEquals(67, permissions.size());
+        assertEquals(22, users.size());
         assertEquals(1, businesses.size());
-        assertEquals(2, businessUsers.size());
+        assertEquals(22, businessUsers.size());
         assertEquals(5, customerGroups.size());
         assertEquals(10, customers.size());
         assertEquals(5, contactTags.size());
         assertEquals(10, contacts.size());
         assertEquals(20, bookings.size());
+        assertEquals(50, tasks.size());
 
-        assertPermissionCount("role_owner_seed_00000001", 66);
-        assertPermissionCount("role_hr_seed_00000000001", 37);
-        assertPermissionCount("role_acct_seed_000000001", 13);
-        assertPermissionCount("role_admin_seed_0000001", 63);
-        assertPermissionCount("role_mgr_seed_000000001", 43);
+        assertPermissionCount("role_owner_seed_00000001", 67);
+        assertPermissionCount("role_hr_seed_00000000001", 38);
+        assertPermissionCount("role_acct_seed_000000001", 14);
+        assertPermissionCount("role_admin_seed_0000001", 64);
+        assertPermissionCount("role_mgr_seed_000000001", 44);
         assertPermissionCount("role_sales_seed_0000001", 24);
         assertPermissionCount("role_mkt_seed_000000001", 27);
         assertPermissionCount("role_cs_seed_0000000001", 21);
@@ -168,6 +175,33 @@ class DataSeederTests {
         assertSame(alice, brianMembership.getInvitor());
         assertSame(roles.get("role_hr_seed_00000000001"), brianMembership.getRole());
 
+        assertEquals(20, businessUsers.values().stream()
+                .filter(membership -> membership.getUser().getId().startsWith("user_task_seed_"))
+                .count());
+        assertTrue(businessUsers.values().stream()
+                .filter(membership -> membership.getUser().getId().startsWith("user_task_seed_"))
+                .noneMatch(membership -> "role_owner_seed_00000001".equals(membership.getRole().getId())));
+
+        assertEquals(20, tasks.values().stream().filter(task -> task.getAssignee() != null).count());
+        assertEquals(30, tasks.values().stream().filter(task -> task.getAssignee() == null).count());
+        assertEquals(5, tasks.values().stream()
+                .filter(task -> task.getStartDate() == null && task.getDueDate() == null)
+                .count());
+        assertEquals(30, tasks.values().stream().filter(task -> task.getDescription() != null).count());
+        assertEquals(20, tasks.values().stream().filter(task -> task.getDescription() == null).count());
+        Instant dateRangeStart = Instant.parse("2026-09-12T17:00:00Z");
+        Instant dateRangeEnd = Instant.parse("2026-09-30T17:00:00Z");
+        assertTrue(tasks.values().stream().allMatch(task -> task.getBusiness() == business));
+        assertTrue(tasks.values().stream()
+                .filter(task -> task.getAssignee() != null)
+                .allMatch(task -> task.getAssignee().getId().startsWith("user_task_seed_")));
+        assertTrue(tasks.values().stream()
+                .filter(task -> task.getStartDate() != null)
+                .allMatch(task -> !task.getStartDate().isBefore(dateRangeStart)
+                        && task.getStartDate().isBefore(dateRangeEnd)
+                        && !task.getDueDate().isBefore(task.getStartDate())
+                        && task.getDueDate().isBefore(dateRangeEnd)));
+
         Contact linh = contacts.get("ct_linh_seed_000000001");
         assertSame(business, linh.getBusiness());
         assertSame(contactTags.get("tag_hot_seed_0000000001"), linh.getTag());
@@ -210,6 +244,7 @@ class DataSeederTests {
         verify(contactTagRepository, never()).save(any(ContactTag.class));
         verify(contactRepository, never()).save(any(Contact.class));
         verify(calendarBookingRepository, never()).save(any(CalendarBooking.class));
+        verify(taskRepository, never()).save(any(Task.class));
     }
 
     private void assertPermissionCount(String roleId, int expectedCount) {
@@ -316,6 +351,14 @@ class DataSeederTests {
             bookings.put(booking.getId(), booking);
             return booking;
         });
+
+        when(taskRepository.findById(anyString()))
+                .thenAnswer(invocation -> Optional.ofNullable(tasks.get(invocation.getArgument(0))));
+        when(taskRepository.save(any(Task.class))).thenAnswer(invocation -> {
+            Task task = invocation.getArgument(0);
+            tasks.put(task.getId(), task);
+            return task;
+        });
     }
 
     private void clearRepositoryInvocations() {
@@ -329,6 +372,7 @@ class DataSeederTests {
                 customerRepository,
                 contactTagRepository,
                 contactRepository,
-                calendarBookingRepository);
+                calendarBookingRepository,
+                taskRepository);
     }
 }
