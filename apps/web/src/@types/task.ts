@@ -105,8 +105,6 @@ export type Task = {
   startDate: string | null
   dueDate: string | null
   description: string | null
-  labels: TaskLabel[]
-  attachments: TaskAttachment[]
   createdAt: string
   updatedAt: string
 }
@@ -114,6 +112,8 @@ export type Task = {
 export type TaskDetail = Task & {
   comments: TaskComment[]
   histories: TaskHistory[]
+  attachments: TaskAttachment[]
+  labels: TaskLabel[]
 }
 
 export type TaskBoardItem = Pick<

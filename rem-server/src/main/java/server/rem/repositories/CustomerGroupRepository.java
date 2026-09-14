@@ -1,14 +1,14 @@
 package server.rem.repositories;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import server.rem.entities.Business;
 import server.rem.entities.CustomerGroup;
-
-import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface CustomerGroupRepository extends JpaRepository<CustomerGroup, String> {
@@ -27,6 +27,7 @@ public interface CustomerGroupRepository extends JpaRepository<CustomerGroup, St
      * @param id customer group id
      * @return matching customer group if exists
      */
+    @Override
     @EntityGraph(attributePaths = { "business" })
     Optional<CustomerGroup> findById(String id);
 

@@ -5,6 +5,7 @@ import type {
   QueryTask,
   Task,
   TaskBoardItem,
+  TaskDetail,
   TaskStatus,
 } from '@/@types'
 import { queryClient } from '@/providers/query-provider'
@@ -14,6 +15,7 @@ const keys = {
   root: ['tasks'] as const,
   all: (options: QueryTask) => ['tasks', options],
   board: ['tasks', 'board'] as const,
+  detail: (id: string) => ['tasks', 'detail', id] as const,
   updateStatus: ['tasks', 'update-status'] as const,
 }
 
@@ -43,6 +45,18 @@ export const tasks = () => ({
         queryFn: async () => {
           const { data } =
             await httpClient.get<ApiResponse<TaskBoardItem[]>>('/tasks/board')
+          return data
+        },
+      }),
+  },
+  detail: {
+    queryOptions: (id: string) =>
+      queryOptions({
+        queryKey: keys.detail(id),
+        queryFn: async () => {
+          const { data } = await httpClient.get<ApiResponse<TaskDetail>>(
+            `/tasks/${id}`
+          )
           return data
         },
       }),

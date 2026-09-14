@@ -1,5 +1,6 @@
 import { showSubmittedData } from '@/lib/show-submitted-data'
 import { ConfirmDialog } from '@/components/confirm-dialog'
+import { TasksDetailsDialog } from './tasks-details-dialog'
 import { TasksImportDialog } from './tasks-import-dialog'
 import { TasksMutateDrawer } from './tasks-mutate-drawer'
 import { useTasks } from './tasks-provider'
@@ -64,6 +65,17 @@ export function TasksDialogs() {
               </>
             }
             confirmText='Delete'
+          />
+
+          <TasksDetailsDialog
+            key={`task-detail-${currentRow.id}`}
+            open={open === 'detail'}
+            onOpenChange={(isOpen) => {
+              if (isOpen) return
+              setOpen(null)
+              setTimeout(() => setCurrentRow(null), 500)
+            }}
+            currentRow={currentRow}
           />
         </>
       )}

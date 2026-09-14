@@ -5,7 +5,7 @@ import { ConfigDrawer } from '@/components/config-drawer'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
-import { TaskKanbanBoard } from './components/task-kanban-board'
+import { TaskBoard } from './components/task-board'
 import { TasksDialogs } from './components/tasks-dialogs'
 import { TasksPrimaryButtons } from './components/tasks-primary-buttons'
 import { TasksProvider } from './components/tasks-provider'
@@ -45,7 +45,7 @@ export function Tasks() {
             <TasksTable />
           </TabsContent>
           <TabsContent value='board'>
-            <TaskKanbanBoard />
+            <TaskBoard />
           </TabsContent>
           <TabsContent value='calendar'>
             {/* calendar schedule component */}
