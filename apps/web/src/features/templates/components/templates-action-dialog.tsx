@@ -5,10 +5,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 // types
 import { Template } from '@/@types'
-import { toast } from '@/components/ui/toast'
 import { templates } from '@/lib/queries/template'
 import { HttpError } from '@/lib/repository/http-error'
-import { inlineQuillStyles } from '@/lib/utils'
 import { TemplateValidators } from '@/lib/validators/template'
 // components
 import { Button } from '@/components/ui/button'
@@ -21,6 +19,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { FieldGroup } from '@/components/ui/field'
+import { toast } from '@/components/ui/toast'
 import {
   FormProvider,
   RHFRichTextEditor,
@@ -64,12 +63,6 @@ export function TemplatesActionDialog({
 
   const onSubmit = async (values: TemplateValidators.TemplateForm) => {
     const submit = async () => {
-      values = {
-        ...values,
-        header: inlineQuillStyles(values.header),
-        body: inlineQuillStyles(values.body),
-        footer: inlineQuillStyles(values.footer),
-      }
       const res =
         isEdit && currentRow?.id
           ? await update.mutateAsync(values)

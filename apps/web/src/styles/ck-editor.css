@@ -1,0 +1,350 @@
+.main-container {
+    --ckeditor5-preview-height: 400px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.dark,
+.dark .main-container,
+.dark .ck-body-wrapper {
+    --ck-color-base-background: var(--popover);
+    --ck-color-base-foreground: color-mix(in oklch, var(--background) 86%, white);
+    --ck-color-base-border: var(--border);
+    --ck-color-base-action: var(--primary);
+    --ck-color-button-action-background: var(--primary);
+    --ck-color-button-action-hover-background: color-mix(in oklch,
+            var(--primary) 86%,
+            white);
+    --ck-color-button-action-active-background: color-mix(in oklch,
+            var(--primary) 78%,
+            black);
+    --ck-color-button-action-text: var(--primary-foreground);
+    --ck-color-focus-border: var(--ring);
+    --ck-color-text: var(--foreground);
+    --ck-color-shadow-drop: oklch(0 0 0 / 35%);
+    --ck-color-shadow-inner: oklch(0 0 0 / 25%);
+    --ck-color-button-default-background: transparent;
+    --ck-color-button-default-hover-background: var(--accent);
+    --ck-color-button-default-active-background: var(--accent);
+    --ck-color-split-button-hover-background: var(--accent);
+    --ck-color-split-button-hover-border: var(--border);
+    --ck-color-button-on-background: var(--accent);
+    --ck-color-button-on-hover-background: color-mix(in oklch,
+            var(--accent) 84%,
+            white);
+    --ck-color-button-on-active-background: color-mix(in oklch,
+            var(--accent) 78%,
+            white);
+    --ck-color-button-on-color: var(--foreground);
+    --ck-color-dropdown-panel-background: var(--popover);
+    --ck-color-dropdown-panel-border: var(--border);
+    --ck-color-list-background: var(--popover);
+    --ck-color-list-button-hover-background: var(--accent);
+    --ck-color-list-button-on-background: var(--accent);
+    --ck-color-list-button-on-background-focus: var(--accent);
+    --ck-color-list-button-on-text: var(--foreground);
+    --ck-color-input-background: var(--background);
+    --ck-color-input-border: var(--input);
+    --ck-color-input-text: var(--foreground);
+    --ck-color-labeled-field-label-background: var(--popover);
+    --ck-color-dialog-background: var(--popover);
+    --ck-color-dialog-form-header-border: var(--border);
+    --ck-color-panel-background: var(--popover);
+    --ck-color-panel-border: var(--border);
+    --ck-color-toolbar-background: var(--popover);
+    --ck-color-toolbar-border: var(--border);
+    --ck-color-tooltip-background: var(--foreground);
+    --ck-color-tooltip-text: var(--background);
+    --ck-dialog-overlay-background-color: oklch(0 0 0 / 60%);
+}
+
+.ck-content {
+    line-height: 1.6;
+    word-break: break-word;
+}
+
+.editor-container__editor-wrapper {
+    display: flex;
+    width: 100%;
+}
+
+.editor-container_document-editor {
+    border: 1px solid var(--ck-color-base-border);
+}
+
+.editor-container_document-editor .editor-container__toolbar {
+    display: flex;
+    position: relative;
+    box-shadow: 0 2px 3px hsla(0, 0%, 0%, 0.078);
+}
+
+.editor-container_document-editor .editor-container__toolbar>.ck.ck-toolbar {
+    flex-grow: 1;
+    width: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
+}
+
+.editor-container_document-editor .editor-container__menu-bar>.ck.ck-menu-bar {
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
+}
+
+.editor-container_document-editor .editor-container__editor-wrapper {
+    height: var(--ckeditor5-preview-height);
+    overflow-y: auto;
+    background: var(--ck-color-base-foreground);
+}
+
+.editor-container_document-editor .editor-container__editor {
+    height: 100%;
+    width: 100%;
+}
+
+.editor-container_document-editor .editor-container__editor>div {
+    height: 100%;
+}
+
+.editor-container_document-editor .editor-container__editor .ck.ck-editor__editable {
+    box-sizing: border-box;
+    min-width: 100%;
+    max-width: 100%;
+    min-height: 100%;
+    height: auto;
+    padding: 4mm;
+    border: 1px hsl(0, 0%, 82.7%) solid;
+    background: hsl(0, 0%, 100%);
+    box-shadow: 0 2px 3px hsla(0, 0%, 0%, 0.078);
+    flex: 1 1 auto;
+}
+
+.dark .editor-container_document-editor .editor-container__editor-wrapper {
+    background: color-mix(in oklch, var(--background) 88%, white);
+}
+
+.dark .editor-container_document-editor .editor-container__editor .ck.ck-editor__editable {
+    border-color: var(--border);
+    background: var(--background);
+    color: var(--foreground);
+    box-shadow: 0 2px 4px oklch(0 0 0 / 30%);
+}
+
+.dark .ck.ck-balloon-panel {
+    background: var(--ck-color-panel-background);
+    border-color: var(--ck-color-panel-border);
+}
+
+.dark .ck.ck-balloon-panel .ck.ck-toolbar {
+    background: var(--ck-color-toolbar-background);
+    border-color: var(--ck-color-toolbar-border);
+}
+
+.dark .ck.ck-dialog {
+    background: var(--ck-color-dialog-background);
+    border-color: var(--ck-color-base-border);
+    color: var(--foreground);
+}
+
+.dark .ck.ck-dialog .ck.ck-form__header {
+    border-bottom-color: var(--ck-color-dialog-form-header-border);
+}
+
+.dark .ck.ck-dialog .ck.ck-dialog__actions {
+    background: var(--ck-color-dialog-background);
+}
+
+.dark .ck.ck-dialog .ck.ck-input,
+.dark .ck.ck-dialog .ck.ck-labeled-field-view>.ck.ck-labeled-field-view__input-wrapper {
+    background: var(--ck-color-input-background);
+    border-color: var(--ck-color-input-border);
+    color: var(--ck-color-input-text);
+}
+
+.dark .ck.ck-dialog .ck.ck-button-action {
+    background: var(--ck-color-button-action-background);
+    color: var(--ck-color-button-action-text);
+}
+
+.dark .ck.ck-splitbutton.ck-splitbutton_open>.ck-button:not(.ck-on):not(.ck-disabled),
+.dark .ck.ck-splitbutton:hover>.ck-button:not(.ck-on):not(.ck-disabled) {
+    background: var(--ck-color-button-default-hover-background);
+    color: var(--accent-foreground);
+}
+
+.dark .ck.ck-splitbutton.ck-splitbutton_open>.ck-splitbutton__arrow:not(.ck-disabled)::after,
+.dark .ck.ck-splitbutton:hover>.ck-splitbutton__arrow:not(.ck-disabled)::after {
+    background-color: var(--ck-color-split-button-hover-border);
+}
+
+.dark .ck.ck-toolbar,
+.dark .ck.ck-menu-bar,
+.dark .ck.ck-balloon-panel,
+.dark .ck.ck-dropdown__panel,
+.dark .ck.ck-list,
+.dark .ck.ck-input,
+.dark .ck.ck-labeled-field-view>.ck.ck-labeled-field-view__input-wrapper {
+    color: var(--foreground);
+}
+
+.dark .ck.ck-button,
+.dark .ck.ck-button.ck-on,
+.dark a.ck.ck-button,
+.dark a.ck.ck-button.ck-on,
+.dark .ck.ck-menu-bar__menu__button,
+.dark .ck.ck-list__item .ck-button {
+    color: var(--foreground);
+}
+
+.dark .ck.ck-button:not(.ck-disabled):hover,
+.dark a.ck.ck-button:not(.ck-disabled):hover,
+.dark .ck.ck-button.ck-on:not(.ck-disabled):hover,
+.dark a.ck.ck-button.ck-on:not(.ck-disabled):hover,
+.dark .ck.ck-menu-bar__menu__button:hover,
+.dark .ck.ck-list__item .ck-button:hover {
+    color: var(--accent-foreground);
+}
+
+.dark .ck.ck-reset_all,
+.dark .ck.ck-reset_all * {
+    color: var(--foreground);
+}
+
+.dark .ck-content a {
+    color: color-mix(in oklch, var(--primary) 72%, oklch(0.696 0.17 162.48));
+}
+
+.dark .ck-content h3.category,
+.dark .ck-content h3.document-subtitle,
+.dark .ck-content blockquote.side-quote p:last-child:not(:first-child) {
+    color: var(--muted-foreground);
+}
+
+.dark .ck-content blockquote.side-quote::before {
+    color: color-mix(in oklch, var(--foreground) 16%, transparent);
+}
+
+.ck-content h3.category {
+    font-size: 20px;
+    font-weight: bold;
+    color: #555;
+    letter-spacing: 10px;
+    margin: 0;
+    padding: 0;
+}
+
+.ck-content h2.document-title {
+    font-size: 50px;
+    font-weight: bold;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.ck-content h3.document-subtitle {
+    font-size: 20px;
+    color: #555;
+    margin: 0 0 1em;
+    font-weight: bold;
+    padding: 0;
+}
+
+.ck-content p.info-box {
+    --background-size: 30px;
+    --background-color: #e91e63;
+    padding: 1.2em 2em;
+    border: 1px solid var(--background-color);
+    background: linear-gradient(135deg,
+            var(--background-color) 0%,
+            var(--background-color) var(--background-size),
+            transparent var(--background-size)),
+        linear-gradient(135deg,
+            transparent calc(100% - var(--background-size)),
+            var(--background-color) calc(100% - var(--background-size)),
+            var(--background-color));
+    border-radius: 10px;
+    margin: 1.5em 2em;
+    box-shadow: 5px 5px 0 #ffe6ef;
+}
+
+.ck-content blockquote.side-quote {
+    font-style: normal;
+    float: right;
+    width: 35%;
+    position: relative;
+    border: 0;
+    overflow: visible;
+    z-index: 1;
+    margin-left: 1em;
+}
+
+.ck-content blockquote.side-quote::before {
+    content: '“';
+    position: absolute;
+    top: -37px;
+    left: -10px;
+    display: block;
+    font-size: 200px;
+    color: #e7e7e7;
+    z-index: -1;
+    line-height: 1;
+}
+
+.ck-content blockquote.side-quote p {
+    font-size: 2em;
+    line-height: 1;
+}
+
+.ck-content blockquote.side-quote p:last-child:not(:first-child) {
+    font-size: 1.3em;
+    text-align: right;
+    color: #555;
+}
+
+.ck-content span.marker {
+    background: yellow;
+}
+
+.ck-content span.spoiler {
+    background: #000;
+    color: #000;
+}
+
+.ck-content span.spoiler:hover {
+    background: #000;
+    color: #fff;
+}
+
+.ck-content pre.fancy-code {
+    border: 0;
+    margin-left: 2em;
+    margin-right: 2em;
+    border-radius: 10px;
+}
+
+.ck-content pre.fancy-code::before {
+    content: '';
+    display: block;
+    height: 13px;
+    background: url(data:image/svg+xml;base64,PHN2ZyBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1NCAxMyI+CiAgPGNpcmNsZSBjeD0iNi41IiBjeT0iNi41IiByPSI2LjUiIGZpbGw9IiNGMzZCNUMiLz4KICA8Y2lyY2xlIGN4PSIyNi41IiBjeT0iNi41IiByPSI2LjUiIGZpbGw9IiNGOUJFNEQiLz4KICA8Y2lyY2xlIGN4PSI0Ny41IiBjeT0iNi41IiByPSI2LjUiIGZpbGw9IiM1NkM0NTMiLz4KPC9zdmc+Cg==);
+    margin-bottom: 8px;
+    background-repeat: no-repeat;
+}
+
+.ck-content pre.fancy-code-dark {
+    background: #272822;
+    color: #fff;
+    box-shadow: 5px 5px 0 #0000001f;
+}
+
+.ck-content pre.fancy-code-bright {
+    background: #dddfe0;
+    color: #000;
+    box-shadow: 5px 5px 0 #b3b3b3;
+}

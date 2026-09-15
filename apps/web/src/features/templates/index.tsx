@@ -1,16 +1,19 @@
-import { ConfigDrawer } from '@/components/config-drawer'
+import { useState } from 'react'
 import { ClockInButton } from '@/layout/clock-in-button'
 import { Header } from '@/layout/header'
 import { Main } from '@/layout/main'
+import { CKEditor } from '@/components/ck-editor'
+import { ConfigDrawer } from '@/components/config-drawer'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { TemplatesDialogs } from './components/templates-dialogs'
 import { TemplatesPrimaryButtons } from './components/templates-primary-buttons'
 import { TemplatesProvider } from './components/templates-provider'
-import { TemplatesTable } from './components/templates-table'
 
 export function Templates() {
+  const [d, setD] = useState('')
+  console.log(d)
   return (
     <TemplatesProvider>
       <Header fixed>
@@ -33,7 +36,13 @@ export function Templates() {
           </div>
           <TemplatesPrimaryButtons />
         </div>
-        <TemplatesTable />
+        <CKEditor
+          initialData={''}
+          onChange={(e: any) => {
+            setD(e)
+          }}
+        />
+        {/* <TemplatesTable /> */}
       </Main>
 
       <TemplatesDialogs />
