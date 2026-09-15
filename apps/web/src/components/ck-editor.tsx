@@ -421,13 +421,16 @@ export const CKEditor = ({ onChange, initialData }: CKEditorProps) => {
                             {editorConfig && (
                                 <CustomCKEditor
                                     onChange={(_event, editor) => onChange?.(getStyledEditorData(editor.getData()))}
-                                    onReady={(editor) => {
-                                        editorToolbarRef.current?.appendChild(
-                                            editor.ui.view.toolbar.element
-                                        )
-                                        editorMenuBarRef.current?.appendChild(
-                                            editor.ui.view.menuBarView.element
-                                        )
+                                    onReady={(editor: DecoupledEditor) => {
+                                        const toolbarElement = editor.ui.view.toolbar.element
+                                        const menuBarElement = editor.ui.view.menuBarView.element
+
+                                        if (toolbarElement) {
+                                            editorToolbarRef.current?.appendChild(toolbarElement)
+                                        }
+                                        if (menuBarElement) {
+                                            editorMenuBarRef.current?.appendChild(menuBarElement)
+                                        }
                                     }}
                                     onAfterDestroy={() => {
                                         Array.from(
