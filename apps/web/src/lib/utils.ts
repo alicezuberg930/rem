@@ -1,5 +1,4 @@
 import { type ClassValue, clsx } from 'clsx'
-import juice from 'juice'
 import { twMerge } from 'tailwind-merge'
 
 const cn = (...inputs: ClassValue[]) => {
@@ -58,86 +57,6 @@ export function getPageNumbers(currentPage: number, totalPages: number) {
   }
 
   return rangeWithDots
-}
-
-const quillCss = `
-  .ql-align-center { text-align: center; }
-  .ql-align-right { text-align: right; }
-  .ql-align-left { text-align: left; }
-  .ql-align-justify { text-align: justify; }
-
-  .ql-indent-1 { padding-left: 3em; }
-  .ql-indent-2 { padding-left: 6em; }
-  .ql-indent-3 { padding-left: 9em; }
-
-  h1 { font-size: 2em; font-weight: bold; }
-  h2 { font-size: 1.5em; font-weight: bold; }
-  h3 { font-size: 1.17em; font-weight: bold; }
-
-  strong { font-weight: bold; }
-  em { font-style: italic; }
-  u { text-decoration: underline; }
-  s { text-decoration: line-through; }
-
-  a { color: #0066cc; text-decoration: underline; }
-
-  blockquote {
-    border-left: 4px solid #ccc;
-    margin: 0;
-    padding-left: 1em;
-    color: #666;
-  }
-
-  pre {
-    background-color: #f4f4f4;
-    padding: 1em;
-    font-family: monospace;
-    white-space: pre-wrap;
-  }
-
-  li[data-list="ordered"] {
-    counter-increment: list-0;
-  }
-
-  li {
-    padding-left: 1.5em;
-    list-style-type: none;
-    position: relative;
-  }
-
-  .ql-ui {
-    position: absolute;
-  }
-
-  li > .ql-ui::before {
-    text-align: right;
-    white-space: nowrap;
-    width: 1.2em;
-    margin-left: -1.5em;
-    margin-right: .3em;
-    display: inline-block;
-  }
-
-  li[data-list="bullet"] > .ql-ui::before {
-    content: "•";
-  }
-
-  li[data-list="ordered"] > .ql-ui::before {
-    content: counter(list-0, decimal) ". ";
-  }
-
-  ul { list-style-type: disc; }
-  ol { list-style-type: decimal; }
-`
-
-const inlineQuillStyles = (html: string): string => {
-  const wrapped = `<div>${html}</div>`
-  const inlined = juice.inlineContent(wrapped, quillCss, {
-    inlinePseudoElements: true,
-    removeStyleTags: true,
-    applyStyleTags: true,
-  })
-  return inlined
 }
 
 const getBaseUrl = () => import.meta.env.VITE_API_URL
@@ -207,4 +126,4 @@ const getInitials = (name: string) =>
     .join('')
     .toUpperCase()
 
-export { getInitials, getCurrentLocation, alpha, slugify, getBaseUrl, inlineQuillStyles, sleep, cn }
+export { getInitials, getCurrentLocation, alpha, slugify, getBaseUrl, sleep, cn }

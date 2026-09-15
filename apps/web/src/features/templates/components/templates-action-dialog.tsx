@@ -37,44 +37,40 @@ export function TemplatesActionDialog({
   open,
   onOpenChange,
 }: TemplateActionDialogProps) {
-  const update = useMutation(templates().update.mutationOptions())
-  const create = useMutation(templates().create.mutationOptions())
+  const { mutateAsync: update } = useMutation(templates().update.mutationOptions())
+  const { mutateAsync: create } = useMutation(templates().create.mutationOptions())
 
   const isEdit = !!currentRow
   const form = useForm<TemplateValidators.TemplateForm>({
     resolver: zodResolver(TemplateValidators.formSchema),
     defaultValues: isEdit
       ? {
-          ...currentRow,
-          isEdit,
-        }
+        ...currentRow,
+        isEdit,
+      }
       : {
-          name: '',
-          header: '',
-          body: '',
-          footer: '',
-          websiteUrl: null,
-          contactPhone: null,
-          isEdit,
-        },
+        name: '',
+        header: '',
+        body: '',
+        footer: '',
+        websiteUrl: null,
+        contactPhone: null,
+        isEdit,
+      },
   })
 
   const { handleSubmit, reset } = form
 
   const onSubmit = async (values: TemplateValidators.TemplateForm) => {
     const submit = async () => {
-      const res =
-        isEdit && currentRow?.id
-          ? await update.mutateAsync(values)
-          : await create.mutateAsync(values)
+      const res = isEdit && currentRow?.id ? await update(values) : await create(values)
       form.reset()
       onOpenChange(false)
       return res
     }
     toast.promise(submit, {
       loading: 'Submitting data',
-      error: (err) =>
-        err instanceof HttpError ? err.message : 'Internal server error',
+      error: (err) => err instanceof HttpError ? err.message : 'Internal server error',
       success: (res) => res.message,
     })
   }

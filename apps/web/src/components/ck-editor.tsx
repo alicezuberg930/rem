@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from 'react'
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import '@/styles/ck-editor.css'
 import ckEditorStyles from '@/styles/ck-editor.css?inline'
 import { CKEditor as CustomCKEditor } from '@ckeditor/ckeditor5-react'
@@ -84,24 +84,6 @@ const LICENSE_KEY = 'GPL' // or <YOUR_LICENSE_KEY>.
 type CKEditorProps = {
     initialData?: string
     onChange?: (data: string) => void
-}
-
-const getStyledEditorData = (data: string) => {
-    if (!data.trim()) return ''
-
-    const container = document.createElement('div')
-    container.innerHTML = data
-    const contentRoot =
-        container.children.length === 1 &&
-            container.firstElementChild?.classList.contains('ck-content')
-            ? container.firstElementChild.outerHTML
-            : `<div class="ck-content">${data}</div>`
-
-    return juice.inlineContent(contentRoot, ckEditorStyles, {
-        inlinePseudoElements: true,
-        removeStyleTags: true,
-        applyStyleTags: true,
-    })
 }
 
 export const CKEditor = ({ onChange, initialData }: CKEditorProps) => {
@@ -404,6 +386,21 @@ export const CKEditor = ({ onChange, initialData }: CKEditorProps) => {
         }
     }, [initialData, isLayoutReady])
 
+    const getStyledEditorData = useCallback((data: string) => {
+        if (!data.trim()) return ''
+        const container = document.createElement('div')
+        container.innerHTML = data
+        const contentRoot = container.children.length === 1 && container.firstElementChild?.classList.contains('ck-content')
+            ? container.firstElementChild.outerHTML
+            : `<div class="ck-content">${data}</div>`
+
+        return juice.inlineContent(contentRoot, ckEditorStyles, {
+            inlinePseudoElements: true,
+            removeStyleTags: true,
+            applyStyleTags: true,
+        })
+    }, [])
+
     return (
         <div className='main-container'>
             <div
@@ -424,7 +421,6 @@ export const CKEditor = ({ onChange, initialData }: CKEditorProps) => {
                                     onReady={(editor: DecoupledEditor) => {
                                         const toolbarElement = editor.ui.view.toolbar.element
                                         const menuBarElement = editor.ui.view.menuBarView.element
-
                                         if (toolbarElement) {
                                             editorToolbarRef.current?.appendChild(toolbarElement)
                                         }
@@ -433,12 +429,8 @@ export const CKEditor = ({ onChange, initialData }: CKEditorProps) => {
                                         }
                                     }}
                                     onAfterDestroy={() => {
-                                        Array.from(
-                                            editorToolbarRef.current?.children ?? []
-                                        ).forEach((child) => child.remove())
-                                        Array.from(
-                                            editorMenuBarRef.current?.children ?? []
-                                        ).forEach((child) => child.remove())
+                                        Array.from(editorToolbarRef.current?.children ?? []).forEach((child) => child.remove())
+                                        Array.from(editorMenuBarRef.current?.children ?? []).forEach((child) => child.remove())
                                     }}
                                     editor={DecoupledEditor}
                                     config={editorConfig}

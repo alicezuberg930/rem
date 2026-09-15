@@ -4,6 +4,81 @@ import react from '@vitejs/plugin-react-swc'
 import tailwindcss from '@tailwindcss/vite'
 import { tanstackRouter } from '@tanstack/router-plugin/vite'
 
+const PACKAGE_CHUNKS: Record<string, string> = {
+  '@base-ui/react': 'ui-primitives',
+  '@ckeditor/ckeditor5-react': 'editor-ckeditor',
+  '@dnd-kit/core': 'drag-drop',
+  '@dnd-kit/sortable': 'drag-drop',
+  '@dnd-kit/utilities': 'drag-drop',
+  '@hookform/resolvers': 'forms',
+  '@tailwindcss/vite': 'build-tooling',
+  '@tanstack/react-query': 'tanstack',
+  '@tanstack/react-query-devtools': 'tanstack',
+  '@tanstack/react-router': 'tanstack',
+  '@tanstack/react-router-devtools': 'tanstack',
+  '@tanstack/react-table': 'tanstack',
+  'ag-grid-community': 'data-grid',
+  'ag-grid-react': 'data-grid',
+  ckeditor5: 'editor-ckeditor',
+  'class-variance-authority': 'ui-utilities',
+  clsx: 'ui-utilities',
+  cmdk: 'ui-primitives',
+  'date-fns': 'dates',
+  'embla-carousel-react': 'ui-widgets',
+  'framer-motion': 'motion',
+  'input-otp': 'ui-widgets',
+  juice: 'editor-html',
+  'lucide-react': 'icons',
+  react: 'react-core',
+  'react-day-picker': 'dates',
+  'react-dom': 'react-core',
+  'react-dropzone': 'file-tools',
+  'react-hook-form': 'forms',
+  'react-top-loading-bar': 'ui-widgets',
+  'read-excel-file': 'file-tools',
+  recharts: 'charts',
+  shadcn: 'build-tooling',
+  sonner: 'ui-widgets',
+  'tailwind-merge': 'ui-utilities',
+  tailwindcss: 'build-tooling',
+  'tw-animate-css': 'build-tooling',
+  zod: 'forms',
+}
+
+const PACKAGE_FAMILY_CHUNKS: ReadonlyArray<readonly [string, string]> = [
+  ['@ckeditor/', 'editor-ckeditor'],
+  ['@dnd-kit/', 'drag-drop'],
+  ['@floating-ui/', 'ui-primitives'],
+  ['@reduxjs/', 'state'],
+  ['@tanstack/', 'tanstack'],
+  ['ag-grid-', 'data-grid'],
+  ['d3-', 'charts'],
+]
+
+const getPackageName = (id: string) => {
+  const normalizedId = id.replace(/\\/g, '/')
+  const nodeModulesMarker = '/node_modules/'
+  const nodeModulesIndex = normalizedId.lastIndexOf(nodeModulesMarker)
+  if (nodeModulesIndex === -1) return undefined
+
+  const packagePath = normalizedId.slice(nodeModulesIndex + nodeModulesMarker.length)
+  const [scopeOrName, scopedName] = packagePath.split('/')
+  if (!scopeOrName) return undefined
+
+  return scopeOrName.startsWith('@') && scopedName ? `${scopeOrName}/${scopedName}` : scopeOrName
+}
+
+const getManualChunk = (id: string) => {
+  const packageName = getPackageName(id)
+  if (!packageName) return null
+
+  const configuredChunk = PACKAGE_CHUNKS[packageName]
+  if (configuredChunk) return configuredChunk
+
+  const familyChunk = PACKAGE_FAMILY_CHUNKS.find(([prefix]) => packageName.startsWith(prefix))
+  return familyChunk?.[1] ?? 'vendor-misc'
+}
+
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
@@ -15,51 +90,22 @@ export default defineConfig({
     tailwindcss(),
   ],
   build: {
-    rollupOptions: {
+    rolldownOptions: {
       output: {
         minifyInternalExports: true,
-        manualChunks(id) {
-          if (id.includes('@tanstack/react-query')) {
-            return 'react-query-chunk'
-          }
-
-          if (id.includes('react-dom') || id.includes('react-router-dom')) {
-            return 'react-chunk'
-          }
-
-          if (id.includes('react-day-picker')) {
-            return 'react-day-picker-chunk'
-          }
-
-          if (id.includes('react-dropzone')) {
-            return 'react-dropzone-chunk'
-          }
-
-          if (
-            id.includes('@reduxjs/toolkit') ||
-            id.includes('react-redux') ||
-            id.includes('redux-persist')
-          ) {
-            return 'redux-chunk'
-          }
-
-          if (id.includes('i18next') || id.includes('react-i18next')) {
-            return 'i18next-chunk'
-          }
-
-          if (
-            id.includes('react-hook-form') ||
-            id.includes('@hookform/resolvers') ||
-            id.includes('zod')
-          ) {
-            return 'form-chunk'
-          }
-
-          if (id.includes('date-fns')) {
-            return 'date-fns'
-          }
+        codeSplitting: {
+          maxSize: 500 * 1024,
+          groups: [
+            {
+              name: getManualChunk,
+              test: /[\\/]node_modules[\\/]/,
+              priority: 10,
+              entriesAware: true,
+              entriesAwareMergeThreshold: 20 * 1024,
+            },
+          ],
         },
-        chunkFileNames: 'chunks/[name]-[hash].js',
+        chunkFileNames: ({ name }) => `chunks/${name.split('~', 1)[0]}-[hash].js`,
         entryFileNames: 'entries/[name]-[hash].js',
         assetFileNames: 'assets/[name]-[hash].[ext]',
       },
