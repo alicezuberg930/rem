@@ -8,6 +8,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -235,7 +236,9 @@ class TaskServiceTests {
         Business business = business("business-1");
         User assignee = user("assignee-1", "Assignee");
         Task task = task("task-1", business, assignee);
+        Instant startDate = Instant.parse("2026-09-14T00:00:00Z");
         task.setStatus(TaskStatus.IN_PROGRESS);
+        task.setStartDate(startDate);
 
         when(taskRepository.findAllByBusinessIdOrderByCreatedAtDesc("business-1"))
                 .thenReturn(List.of(task));
@@ -245,6 +248,7 @@ class TaskServiceTests {
         assertEquals(1, response.size());
         assertEquals("task-1", response.get(0).id());
         assertEquals(TaskStatus.IN_PROGRESS, response.get(0).status());
+        assertEquals(startDate, response.get(0).startDate());
         assertEquals("Assignee", response.get(0).assignee().fullname());
         verify(taskRepository).findAllByBusinessIdOrderByCreatedAtDesc("business-1");
     }

@@ -118,5 +118,5 @@ export type TaskDetail = Task & {
 
 export type TaskBoardItem = Pick<
   Task,
-  'id' | 'title' | 'priority' | 'status' | 'dueDate' | 'assignee'
+  'id' | 'title' | 'priority' | 'status' | 'startDate' | 'dueDate' | 'assignee'
 >

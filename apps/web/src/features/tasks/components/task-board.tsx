@@ -52,21 +52,17 @@ function TaskCardContent({
         <Card
             size='sm'
             className={cn(
-                'gap-3 rounded-md py-3 shadow-none ring-border',
+                'gap-3 rounded-md py-1 shadow-none ring-border',
                 overlay && 'w-72 rotate-1 shadow-lg ring-primary/30'
             )}
         >
-            <CardHeader className='px-3'>
+            <CardHeader>
                 <CardTitle className='line-clamp-2 leading-5'>
                     {task.title?.trim() || 'Untitled task'}
                 </CardTitle>
             </CardHeader>
 
-            <CardContent className='space-y-3 px-3'>
-                <Badge variant='outline' className='font-normal'>
-                    {task.priority ? TASK_PRIORITY[task.priority] : 'No priority'}
-                </Badge>
-
+            <CardContent className='space-y-3'>
                 <div className='flex items-center justify-between gap-3 text-xs text-muted-foreground'>
                     <div className='flex min-w-0 items-center gap-2'>
                         {task.assignee ? (
@@ -81,7 +77,9 @@ function TaskCardContent({
                                 <UserRound className='size-3.5' aria-hidden='true' />
                             </span>
                         )}
-                        <span className='truncate'>{assigneeName}</span>
+                        <Badge variant='outline' className='font-normal'>
+                            {task.priority ? TASK_PRIORITY[task.priority] : 'No priority'}
+                        </Badge>
                     </div>
 
                     {task.dueDate && (

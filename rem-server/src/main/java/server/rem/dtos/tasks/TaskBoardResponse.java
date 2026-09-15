@@ -10,6 +10,7 @@ public record TaskBoardResponse(
         String title,
         TaskPriority priority,
         TaskStatus status,
+        Instant startDate,
         Instant dueDate,
         TaskUserResponse assignee) {
 }

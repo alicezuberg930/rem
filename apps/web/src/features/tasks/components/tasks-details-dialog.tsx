@@ -264,7 +264,7 @@ function TaskDetails({ task }: { task: TaskDetail }) {
                         Activity
                     </h2>
                     <Tabs defaultValue='comments' className='w-full flex-col'>
-                        <TabsList variant='line'>
+                        <TabsList>
                             <TabsTrigger value='comments'>
                                 Comments
                                 <Badge variant='secondary'>{task.comments.length}</Badge>

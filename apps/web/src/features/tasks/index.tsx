@@ -6,6 +6,8 @@ import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { TaskBoard } from './components/task-board'
+import { TaskCalendar } from './components/task-calendar'
+import { TaskGantt } from './components/task-gantt'
 import { TasksDialogs } from './components/tasks-dialogs'
 import { TasksPrimaryButtons } from './components/tasks-primary-buttons'
 import { TasksProvider } from './components/tasks-provider'
@@ -39,7 +41,7 @@ export function Tasks() {
             <TabsTrigger value='list'>List</TabsTrigger>
             <TabsTrigger value='board'>Board</TabsTrigger>
             <TabsTrigger value='calendar'>Calendar</TabsTrigger>
-            <TabsTrigger value='kanban'>Kanban</TabsTrigger>
+            <TabsTrigger value='gantt'>Gantt</TabsTrigger>
           </TabsList>
           <TabsContent value='list'>
             <TasksTable />
@@ -48,9 +50,11 @@ export function Tasks() {
             <TaskBoard />
           </TabsContent>
           <TabsContent value='calendar'>
-            {/* calendar schedule component */}
+            <TaskCalendar />
           </TabsContent>
-          <TabsContent value='kanban'>{/* kanban component */}</TabsContent>
+          <TabsContent value='gantt'>
+            <TaskGantt />
+          </TabsContent>
         </Tabs>
       </Main>
 
