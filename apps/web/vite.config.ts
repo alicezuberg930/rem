@@ -6,7 +6,6 @@ import { tanstackRouter } from '@tanstack/router-plugin/vite'
 
 const PACKAGE_CHUNKS: Record<string, string> = {
   '@base-ui/react': 'ui-primitives',
-  '@ckeditor/ckeditor5-react': 'editor-ckeditor',
   '@dnd-kit/core': 'drag-drop',
   '@dnd-kit/sortable': 'drag-drop',
   '@dnd-kit/utilities': 'drag-drop',
@@ -19,7 +18,6 @@ const PACKAGE_CHUNKS: Record<string, string> = {
   '@tanstack/react-table': 'tanstack',
   'ag-grid-community': 'data-grid',
   'ag-grid-react': 'data-grid',
-  ckeditor5: 'editor-ckeditor',
   'class-variance-authority': 'ui-utilities',
   clsx: 'ui-utilities',
   cmdk: 'ui-primitives',
@@ -46,7 +44,6 @@ const PACKAGE_CHUNKS: Record<string, string> = {
 }
 
 const PACKAGE_FAMILY_CHUNKS: ReadonlyArray<readonly [string, string]> = [
-  ['@ckeditor/', 'editor-ckeditor'],
   ['@dnd-kit/', 'drag-drop'],
   ['@floating-ui/', 'ui-primitives'],
   ['@reduxjs/', 'state'],
@@ -68,9 +65,17 @@ const getPackageName = (id: string) => {
   return scopeOrName.startsWith('@') && scopedName ? `${scopeOrName}/${scopedName}` : scopeOrName
 }
 
+const isCKEditorPackage = (packageName: string) => packageName === 'ckeditor5' || packageName.startsWith('@ckeditor/')
+
+const isCKEditorModule = (id: string) => {
+  const packageName = getPackageName(id)
+  return packageName ? isCKEditorPackage(packageName) : false
+}
+
 const getManualChunk = (id: string) => {
   const packageName = getPackageName(id)
   if (!packageName) return null
+  if (isCKEditorPackage(packageName)) return null
 
   const configuredChunk = PACKAGE_CHUNKS[packageName]
   if (configuredChunk) return configuredChunk
@@ -94,12 +99,17 @@ export default defineConfig({
       output: {
         minifyInternalExports: true,
         codeSplitting: {
-          maxSize: 500 * 1024,
           groups: [
             {
+              name: 'editor-ckeditor',
+              test: isCKEditorModule,
+              priority: 20,
+            },
+            {
               name: getManualChunk,
-              test: /[\\/]node_modules[\\/]/,
+              test: (id) => /[\\/]node_modules[\\/]/.test(id) && !isCKEditorModule(id),
               priority: 10,
+              maxSize: 500 * 1024,
               entriesAware: true,
               entriesAwareMergeThreshold: 20 * 1024,
             },
