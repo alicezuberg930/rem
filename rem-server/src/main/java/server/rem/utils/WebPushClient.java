@@ -1,4 +1,4 @@
-package server.rem.services;
+package server.rem.utils;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -21,9 +21,9 @@ public class WebPushClient {
     private final PushService pushService;
 
     public WebPushClient(
-            @Value("${WEB_PUSH_PUBLIC_KEY:}") String publicKey,
-            @Value("${WEB_PUSH_PRIVATE_KEY:}") String privateKey,
-            @Value("${WEB_PUSH_SUBJECT:}") String subject) {
+            @Value("${notification.web-push-public-key}") String publicKey,
+            @Value("${notification.web-pussh-private-key}") String privateKey,
+            @Value("${notification.web-push-subject}") String subject) {
         boolean hasPublicKey = StringUtils.hasText(publicKey);
         boolean hasPrivateKey = StringUtils.hasText(privateKey);
         boolean hasSubject = StringUtils.hasText(subject);

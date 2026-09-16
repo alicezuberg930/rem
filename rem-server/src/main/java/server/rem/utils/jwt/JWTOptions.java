@@ -1,4 +1,4 @@
-package server.rem.utils;
+package server.rem.utils.jwt;
 
 import java.util.Date;
 import java.util.List;

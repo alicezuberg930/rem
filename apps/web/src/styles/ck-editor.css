@@ -1,8 +1,7 @@
+@reference './index.css';
+
 .main-container {
-    --ckeditor5-preview-height: 400px;
-    width: 100%;
-    margin-left: auto;
-    margin-right: auto;
+    --ckeditor5-preview-height: 300px;
 }
 
 .dark,
@@ -70,6 +69,7 @@
 }
 
 .editor-container_document-editor {
+    @apply overflow-hidden rounded-md;
     border: 1px solid var(--ck-color-base-border);
 }
 
@@ -79,9 +79,8 @@
     box-shadow: 0 2px 3px hsla(0, 0%, 0%, 0.078);
 }
 
-.editor-container_document-editor .editor-container__toolbar>.ck.ck-toolbar {
-    flex-grow: 1;
-    width: 0;
+.editor-container_document-editor .editor-container__toolbar>.ck.ck-toolbar,
+.editor-container_document-editor .editor-container__menu-bar>.ck.ck-menu-bar {
     border-bottom-right-radius: 0;
     border-bottom-left-radius: 0;
     border-top: 0;
@@ -89,12 +88,9 @@
     border-right: 0;
 }
 
-.editor-container_document-editor .editor-container__menu-bar>.ck.ck-menu-bar {
-    border-bottom-right-radius: 0;
-    border-bottom-left-radius: 0;
-    border-top: 0;
-    border-left: 0;
-    border-right: 0;
+.editor-container_document-editor .editor-container__toolbar>.ck.ck-toolbar {
+    flex-grow: 1;
+    width: 0;
 }
 
 .editor-container_document-editor .editor-container__editor-wrapper {
@@ -189,10 +185,7 @@
 .dark .ck.ck-dropdown__panel,
 .dark .ck.ck-list,
 .dark .ck.ck-input,
-.dark .ck.ck-labeled-field-view>.ck.ck-labeled-field-view__input-wrapper {
-    color: var(--foreground);
-}
-
+.dark .ck.ck-labeled-field-view>.ck.ck-labeled-field-view__input-wrapper,
 .dark .ck.ck-button,
 .dark .ck.ck-button.ck-on,
 .dark a.ck.ck-button,
@@ -317,7 +310,6 @@
 }
 
 .ck-content span.spoiler:hover {
-    background: #000;
     color: #fff;
 }
 

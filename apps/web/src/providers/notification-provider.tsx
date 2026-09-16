@@ -1,0 +1,43 @@
+import { useEffect, useRef } from "react"
+import { useAuth } from "./auth-provider"
+import {
+    checkPermissionNotification,
+    getWebPushNotificationKey,
+    onMessageForeground,
+    registerPushNotification,
+} from "@/lib/web-push-notification"
+import { toast } from "@/components/ui/toast"
+
+const NotificationProvider = ({ children }: { children: React.ReactNode }) => {
+    const { isAuthenticated, isInitialized } = useAuth()
+    const isRegisteringRef = useRef(false)
+
+    useEffect(() => {
+        const unsubscribeForegroundMessage = onMessageForeground((payload) => {
+            console.log(payload)
+            const title = payload?.data?.title || payload?.title || "Notification"
+            const body = payload?.data?.body || payload?.body
+            toast.message(title, { description: body })
+        })
+        return unsubscribeForegroundMessage
+    }, [])
+
+    useEffect(() => {
+        if (!isInitialized || !isAuthenticated) {
+            isRegisteringRef.current = false
+            return
+        }
+        if (isRegisteringRef.current || getWebPushNotificationKey()) return
+        if (checkPermissionNotification() === "denied") return
+        isRegisteringRef.current = true
+        registerPushNotification().catch((error) => {
+            console.error("Failed to register push notification:", error)
+        }).finally(() => {
+            isRegisteringRef.current = false
+        })
+    }, [isAuthenticated, isInitialized])
+
+    return children
+}
+
+export { NotificationProvider }

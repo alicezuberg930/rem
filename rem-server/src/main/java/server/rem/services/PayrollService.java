@@ -47,7 +47,7 @@ import server.rem.repositories.PayrollItemRepository;
 import server.rem.repositories.PayrollPeriodRepository;
 import server.rem.repositories.UserRepository;
 import server.rem.utils.ExportExcel;
-import server.rem.utils.RemConstants;
+import server.rem.utils.Constants;
 import server.rem.utils.TaxCalculator;
 import server.rem.utils.WorkingDaysCalculator;
 import server.rem.utils.exceptions.ConflictException;
@@ -176,14 +176,14 @@ public class PayrollService {
         int insuranceContributionSalary = period.getBusiness().getInsuranceContributionSalary();
         double insuranceAmount = 0;
         if (insuranceContributionSalary > 0) {
-            insuranceAmount = insuranceContributionSalary * RemConstants.HEALTH_INSURANCE_RATE + insuranceContributionSalary * RemConstants.SOCIAL_INSURANCE_RATE + insuranceContributionSalary * RemConstants.UNEMPLOYMENT_INSURANCE_RATE;
+            insuranceAmount = insuranceContributionSalary * Constants.HEALTH_INSURANCE_RATE + insuranceContributionSalary * Constants.SOCIAL_INSURANCE_RATE + insuranceContributionSalary * Constants.UNEMPLOYMENT_INSURANCE_RATE;
         } else {
-            insuranceAmount = earnedSalary * RemConstants.HEALTH_INSURANCE_RATE + earnedSalary * RemConstants.SOCIAL_INSURANCE_RATE + earnedSalary * RemConstants.UNEMPLOYMENT_INSURANCE_RATE;
+            insuranceAmount = earnedSalary * Constants.HEALTH_INSURANCE_RATE + earnedSalary * Constants.SOCIAL_INSURANCE_RATE + earnedSalary * Constants.UNEMPLOYMENT_INSURANCE_RATE;
         }
 
         // Calculate tax after reducing insurance
         double taxAmount = 0;
-        double taxableIncome = earnedSalary - RemConstants.SELF_CIRCUMSTANCE_DEDUCTION - (RemConstants.FAMILY_CIRCUMSTANCE_DEDUCTION * businessUser.getDependants());
+        double taxableIncome = earnedSalary - Constants.SELF_CIRCUMSTANCE_DEDUCTION - (Constants.FAMILY_CIRCUMSTANCE_DEDUCTION * businessUser.getDependants());
         if (taxableIncome > 0) {
             taxAmount = taxCalculator.calculate(taxableIncome);
         }

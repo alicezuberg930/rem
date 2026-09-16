@@ -20,10 +20,10 @@ import server.rem.mappers.AuthMapper;
 import server.rem.mappers.UserMapper;
 import server.rem.repositories.BusinessUserRepository;
 import server.rem.repositories.UserRepository;
-import server.rem.utils.JWT;
-import server.rem.utils.JWTOptions;
 import server.rem.utils.exceptions.ResourceNotFoundException;
 import server.rem.utils.exceptions.UnauthorizedException;
+import server.rem.utils.jwt.JWT;
+import server.rem.utils.jwt.JWTOptions;
 import server.rem.utils.messages.AuthMessages;
 
 @Service

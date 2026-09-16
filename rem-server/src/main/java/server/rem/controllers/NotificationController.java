@@ -1,8 +1,5 @@
 package server.rem.controllers;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +23,7 @@ import server.rem.dtos.notification.PushSubscriptionRequest;
 import server.rem.dtos.notification.QueryNotification;
 import server.rem.services.NotificationService;
 import server.rem.services.PushNotificationService;
+import server.rem.utils.Utils;
 
 @RestController
 @RequestMapping("/notifications")
@@ -82,7 +80,7 @@ public class NotificationController {
             @RequestUser String userId,
             HttpServletRequest httpRequest) {
         PushClientMetadata metadata = PushNotificationService.clientMetadata(
-                headers(httpRequest),
+                Utils.extractHeaders(httpRequest),
                 httpRequest.getRemoteAddr());
         return ResponseEntity.ok(APIResponse.success(
                 201,
@@ -99,12 +97,5 @@ public class NotificationController {
                 200,
                 "Push notification unsubscribed",
                 null));
-    }
-
-    private Map<String, String> headers(HttpServletRequest request) {
-        Map<String, String> headers = new LinkedHashMap<>();
-        request.getHeaderNames().asIterator().forEachRemaining(name ->
-                headers.put(name.toLowerCase(), request.getHeader(name)));
-        return headers;
     }
 }

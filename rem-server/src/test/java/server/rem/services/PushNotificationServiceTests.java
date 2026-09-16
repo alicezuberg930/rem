@@ -32,6 +32,7 @@ import server.rem.entities.User;
 import server.rem.events.NotificationCreatedEvent;
 import server.rem.repositories.PushNotificationRepository;
 import server.rem.repositories.UserRepository;
+import server.rem.utils.WebPushClient;
 
 @ExtendWith(MockitoExtension.class)
 class PushNotificationServiceTests {

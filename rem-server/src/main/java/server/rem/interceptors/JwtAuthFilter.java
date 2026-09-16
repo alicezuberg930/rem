@@ -25,8 +25,8 @@ import lombok.NonNull;
 import server.rem.enums.JWTAlgorithm;
 import server.rem.repositories.UserRepository;
 import server.rem.utils.Constants;
-import server.rem.utils.JWT;
-import server.rem.utils.JWTOptions;
+import server.rem.utils.jwt.JWT;
+import server.rem.utils.jwt.JWTOptions;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {

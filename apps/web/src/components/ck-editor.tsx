@@ -87,10 +87,8 @@ type CKEditorProps = {
 }
 
 export const CKEditor = ({ onChange, initialData }: CKEditorProps) => {
-    const editorContainerRef = useRef<HTMLDivElement | null>(null)
-    const editorMenuBarRef = useRef<HTMLDivElement | null>(null)
-    const editorToolbarRef = useRef<HTMLDivElement | null>(null)
-    const editorRef = useRef<HTMLDivElement | null>(null)
+    const editorMenuBarRef = useRef<HTMLDivElement>(null)
+    const editorToolbarRef = useRef<HTMLDivElement>(null)
     const [isLayoutReady, setIsLayoutReady] = useState(false)
 
     useEffect(() => {
@@ -403,40 +401,32 @@ export const CKEditor = ({ onChange, initialData }: CKEditorProps) => {
 
     return (
         <div className='main-container'>
-            <div
-                className='editor-container editor-container_document-editor editor-container_include-style'
-                ref={editorContainerRef}
-            >
-                <div
-                    className='editor-container__menu-bar'
-                    ref={editorMenuBarRef}
-                ></div>
-                <div className='editor-container__toolbar' ref={editorToolbarRef}></div>
+            <div className='editor-container_document-editor'>
+                <div className='editor-container__menu-bar' ref={editorMenuBarRef} />
+                <div className='editor-container__toolbar' ref={editorToolbarRef} />
                 <div className='editor-container__editor-wrapper'>
                     <div className='editor-container__editor'>
-                        <div ref={editorRef}>
-                            {editorConfig && (
-                                <CustomCKEditor
-                                    onChange={(_event, editor) => onChange?.(getStyledEditorData(editor.getData()))}
-                                    onReady={(editor: DecoupledEditor) => {
-                                        const toolbarElement = editor.ui.view.toolbar.element
-                                        const menuBarElement = editor.ui.view.menuBarView.element
-                                        if (toolbarElement) {
-                                            editorToolbarRef.current?.appendChild(toolbarElement)
-                                        }
-                                        if (menuBarElement) {
-                                            editorMenuBarRef.current?.appendChild(menuBarElement)
-                                        }
-                                    }}
-                                    onAfterDestroy={() => {
-                                        Array.from(editorToolbarRef.current?.children ?? []).forEach((child) => child.remove())
-                                        Array.from(editorMenuBarRef.current?.children ?? []).forEach((child) => child.remove())
-                                    }}
-                                    editor={DecoupledEditor}
-                                    config={editorConfig}
-                                />
-                            )}
-                        </div>
+                        {editorConfig && (
+                            <CustomCKEditor
+                                onChange={(_event, editor) => onChange?.(getStyledEditorData(editor.getData()))}
+                                onReady={(editor: DecoupledEditor) => {
+                                    const toolbarElement = editor.ui.view.toolbar.element
+                                    const menuBarElement = editor.ui.view.menuBarView.element
+                                    if (toolbarElement) {
+                                        editorToolbarRef.current?.appendChild(toolbarElement)
+                                    }
+                                    if (menuBarElement) {
+                                        editorMenuBarRef.current?.appendChild(menuBarElement)
+                                    }
+                                }}
+                                onAfterDestroy={() => {
+                                    Array.from(editorToolbarRef.current?.children ?? []).forEach((child) => child.remove())
+                                    Array.from(editorMenuBarRef.current?.children ?? []).forEach((child) => child.remove())
+                                }}
+                                editor={DecoupledEditor}
+                                config={editorConfig}
+                            />
+                        )}
                     </div>
                 </div>
             </div>

@@ -42,3 +42,7 @@ cloudinary.base-folder=rem-app
 # resend
 resend.api-key=
 resend.email=
+# web push notifications
+notification.web-push-public-key=
+notification.web-push-private-key=
+notification.web-push-subject=

@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -24,6 +23,8 @@ import server.rem.entities.PushNotification;
 import server.rem.events.NotificationCreatedEvent;
 import server.rem.repositories.PushNotificationRepository;
 import server.rem.repositories.UserRepository;
+import server.rem.utils.Utils;
+import server.rem.utils.WebPushClient;
 import server.rem.utils.exceptions.ResourceNotFoundException;
 
 @Service
@@ -119,9 +120,9 @@ public class PushNotificationService {
         payload.put("title", event.title());
         payload.put("body", event.body());
         payload.put("type", event.type());
-        putIfPresent(payload, "link", event.link());
-        putIfPresent(payload, "icon", event.icon());
-        putIfPresent(payload, "badge", event.badge());
+        payload.put("link", StringUtils.hasText(event.link()) ? event.link() : null);
+        payload.put("icon", StringUtils.hasText(event.icon()) ? event.icon() : null);
+        payload.put("badge", StringUtils.hasText(event.badge()) ? event.badge() : null);
         payload.put("data", data);
         return payload;
     }
@@ -136,27 +137,13 @@ public class PushNotificationService {
         if (!"https".equalsIgnoreCase(endpoint.getScheme()) || !StringUtils.hasText(endpoint.getHost())) {
             throw new IllegalArgumentException("Push endpoint must be an absolute HTTPS URL");
         }
-        byte[] publicKey = decodeBase64Url(request.keys().p256dh(), "p256dh");
-        byte[] auth = decodeBase64Url(request.keys().auth(), "auth");
+        byte[] publicKey = Base64.getUrlDecoder().decode(request.keys().p256dh());
+        byte[] auth = Base64.getUrlDecoder().decode(request.keys().auth());
         if (publicKey.length != 65 || publicKey[0] != 4) {
             throw new IllegalArgumentException("p256dh key is invalid");
         }
         if (auth.length != 16) {
             throw new IllegalArgumentException("Auth key is invalid");
-        }
-    }
-
-    private byte[] decodeBase64Url(String value, String field) {
-        try {
-            return Base64.getUrlDecoder().decode(value);
-        } catch (IllegalArgumentException exception) {
-            throw new IllegalArgumentException(field + " key is invalid");
-        }
-    }
-
-    private void putIfPresent(Map<String, Object> payload, String key, String value) {
-        if (StringUtils.hasText(value)) {
-            payload.put(key, value);
         }
     }
 
@@ -174,8 +161,8 @@ public class PushNotificationService {
         String mobileHint = headers.get("sec-ch-ua-mobile");
         String deviceType = "?1".equals(mobileHint)
                 ? "mobile"
-                : "?0".equals(mobileHint) ? "desktop" : detectDeviceType(userAgent);
-        String os = firstPresent(unquote(headers.get("sec-ch-ua-platform")), detectOs(userAgent));
+                : "?0".equals(mobileHint) ? "desktop" : Utils.detectDeviceType(userAgent);
+        String os = firstPresent(unquote(headers.get("sec-ch-ua-platform")), Utils.detectOs(userAgent));
         return new PushClientMetadata(
                 ip,
                 browser,
@@ -184,33 +171,6 @@ public class PushNotificationService {
                 unquote(headers.get("sec-ch-ua-model")),
                 unquote(headers.get("sec-ch-ua-arch")),
                 os);
-    }
-
-    private static String detectDeviceType(String userAgent) {
-        if (!StringUtils.hasText(userAgent)) {
-            return null;
-        }
-        String normalized = userAgent.toLowerCase(Locale.ROOT);
-        if (normalized.contains("tablet") || normalized.contains("ipad")) {
-            return "tablet";
-        }
-        if (normalized.contains("mobile") || normalized.contains("android") || normalized.contains("iphone")) {
-            return "mobile";
-        }
-        return "desktop";
-    }
-
-    private static String detectOs(String userAgent) {
-        if (!StringUtils.hasText(userAgent)) {
-            return null;
-        }
-        String normalized = userAgent.toLowerCase(Locale.ROOT);
-        if (normalized.contains("windows")) return "Windows";
-        if (normalized.contains("android")) return "Android";
-        if (normalized.contains("iphone") || normalized.contains("ipad")) return "iOS";
-        if (normalized.contains("mac os")) return "macOS";
-        if (normalized.contains("linux")) return "Linux";
-        return null;
     }
 
     private static String firstPresent(String first, String second) {
