@@ -25,6 +25,7 @@ import { Route as AuthenticatedSettingsRouteRouteImport } from './routes/_authen
 import { Route as AuthenticatedUsersIndexRouteImport } from './routes/_authenticated/users/index'
 import { Route as AuthenticatedTemplatesIndexRouteImport } from './routes/_authenticated/templates/index'
 import { Route as AuthenticatedTasksIndexRouteImport } from './routes/_authenticated/tasks/index'
+import { Route as AuthenticatedStorageIndexRouteImport } from './routes/_authenticated/storage/index'
 import { Route as AuthenticatedShipmentOrderIndexRouteImport } from './routes/_authenticated/shipment-order/index'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
 import { Route as AuthenticatedPayrollIndexRouteImport } from './routes/_authenticated/payroll/index'
@@ -124,6 +125,12 @@ const AuthenticatedTasksIndexRoute = AuthenticatedTasksIndexRouteImport.update({
   path: '/tasks/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedStorageIndexRoute =
+  AuthenticatedStorageIndexRouteImport.update({
+    id: '/storage/',
+    path: '/storage/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedShipmentOrderIndexRoute =
   AuthenticatedShipmentOrderIndexRouteImport.update({
     id: '/shipment-order/',
@@ -254,6 +261,7 @@ export interface FileRoutesByFullPath {
   '/payroll/': typeof AuthenticatedPayrollIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/shipment-order/': typeof AuthenticatedShipmentOrderIndexRoute
+  '/storage/': typeof AuthenticatedStorageIndexRoute
   '/tasks/': typeof AuthenticatedTasksIndexRoute
   '/templates/': typeof AuthenticatedTemplatesIndexRoute
   '/users/': typeof AuthenticatedUsersIndexRoute
@@ -287,6 +295,7 @@ export interface FileRoutesByTo {
   '/payroll': typeof AuthenticatedPayrollIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/shipment-order': typeof AuthenticatedShipmentOrderIndexRoute
+  '/storage': typeof AuthenticatedStorageIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
   '/templates': typeof AuthenticatedTemplatesIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
@@ -323,6 +332,7 @@ export interface FileRoutesById {
   '/_authenticated/payroll/': typeof AuthenticatedPayrollIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/shipment-order/': typeof AuthenticatedShipmentOrderIndexRoute
+  '/_authenticated/storage/': typeof AuthenticatedStorageIndexRoute
   '/_authenticated/tasks/': typeof AuthenticatedTasksIndexRoute
   '/_authenticated/templates/': typeof AuthenticatedTemplatesIndexRoute
   '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
@@ -359,6 +369,7 @@ export interface FileRouteTypes {
     | '/payroll/'
     | '/settings/'
     | '/shipment-order/'
+    | '/storage/'
     | '/tasks/'
     | '/templates/'
     | '/users/'
@@ -392,6 +403,7 @@ export interface FileRouteTypes {
     | '/payroll'
     | '/settings'
     | '/shipment-order'
+    | '/storage'
     | '/tasks'
     | '/templates'
     | '/users'
@@ -427,6 +439,7 @@ export interface FileRouteTypes {
     | '/_authenticated/payroll/'
     | '/_authenticated/settings/'
     | '/_authenticated/shipment-order/'
+    | '/_authenticated/storage/'
     | '/_authenticated/tasks/'
     | '/_authenticated/templates/'
     | '/_authenticated/users/'
@@ -558,6 +571,13 @@ declare module '@tanstack/react-router' {
       path: '/tasks'
       fullPath: '/tasks/'
       preLoaderRoute: typeof AuthenticatedTasksIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/storage/': {
+      id: '/_authenticated/storage/'
+      path: '/storage'
+      fullPath: '/storage/'
+      preLoaderRoute: typeof AuthenticatedStorageIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/shipment-order/': {
@@ -720,6 +740,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedLeadsIndexRoute: typeof AuthenticatedLeadsIndexRoute
   AuthenticatedPayrollIndexRoute: typeof AuthenticatedPayrollIndexRoute
   AuthenticatedShipmentOrderIndexRoute: typeof AuthenticatedShipmentOrderIndexRoute
+  AuthenticatedStorageIndexRoute: typeof AuthenticatedStorageIndexRoute
   AuthenticatedTasksIndexRoute: typeof AuthenticatedTasksIndexRoute
   AuthenticatedTemplatesIndexRoute: typeof AuthenticatedTemplatesIndexRoute
   AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
@@ -740,6 +761,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedLeadsIndexRoute: AuthenticatedLeadsIndexRoute,
   AuthenticatedPayrollIndexRoute: AuthenticatedPayrollIndexRoute,
   AuthenticatedShipmentOrderIndexRoute: AuthenticatedShipmentOrderIndexRoute,
+  AuthenticatedStorageIndexRoute: AuthenticatedStorageIndexRoute,
   AuthenticatedTasksIndexRoute: AuthenticatedTasksIndexRoute,
   AuthenticatedTemplatesIndexRoute: AuthenticatedTemplatesIndexRoute,
   AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,

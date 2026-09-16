@@ -8,11 +8,8 @@ import {
 } from '@/@types'
 import { Tasks } from '@/features/tasks'
 
-const taskStatuses = Object.keys(TASK_STATUS) as [TaskStatus, ...TaskStatus[]]
-const taskPriorities = Object.keys(TASK_PRIORITY) as [
-  TaskPriority,
-  ...TaskPriority[],
-]
+const taskStatuses = Object.keys(TASK_STATUS) as TaskStatus[]
+const taskPriorities = Object.keys(TASK_PRIORITY) as TaskPriority[]
 
 const taskSearchSchema = z.object({
   page: z.number().optional().catch(1),

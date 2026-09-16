@@ -7,3 +7,10 @@
 - Lương tháng 13 = (Số tháng làm việc trong năm / 12) x Tiền lương trung bình
 
 - Bảo hiểm: dựa trên lương gốc hoặc mức cơ bản -->
+
+
+notification unfinished
+task still doesnt have update 
+
+
+

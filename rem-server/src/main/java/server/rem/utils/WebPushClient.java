@@ -22,7 +22,7 @@ public class WebPushClient {
 
     public WebPushClient(
             @Value("${notification.web-push-public-key}") String publicKey,
-            @Value("${notification.web-pussh-private-key}") String privateKey,
+            @Value("${notification.web-push-private-key}") String privateKey,
             @Value("${notification.web-push-subject}") String subject) {
         boolean hasPublicKey = StringUtils.hasText(publicKey);
         boolean hasPrivateKey = StringUtils.hasText(privateKey);

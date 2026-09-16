@@ -28,6 +28,7 @@ import { Main } from '@/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -47,11 +48,10 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
+import { fData } from '@/lib/format-number'
+import { User } from '@/@types'
 
-type StorageOwner = {
-  name: string
-  avatar: string
-}
+type StorageOwner = Partial<User>
 
 type StorageBaseItem = {
   id: string
@@ -83,7 +83,7 @@ const storageItems: StorageItem[] = [
     type: 'folder',
     name: 'Brand Assets',
     modifiedAt: 'Today, 9:48 AM',
-    owner: { name: 'Avery Stone', avatar: 'AS' },
+    owner: { fullname: 'Avery Stone', avatar: 'AS' },
     starred: true,
     shared: true,
     children: [
@@ -94,7 +94,7 @@ const storageItems: StorageItem[] = [
         fileType: 'archive',
         size: 18200000,
         modifiedAt: 'Today, 9:42 AM',
-        owner: { name: 'Avery Stone', avatar: 'AS' },
+        owner: { fullname: 'Avery Stone', avatar: 'AS' },
         starred: true,
       },
       {
@@ -104,7 +104,7 @@ const storageItems: StorageItem[] = [
         fileType: 'pdf',
         size: 8400000,
         modifiedAt: 'Yesterday, 4:16 PM',
-        owner: { name: 'Mina Lee', avatar: 'ML' },
+        owner: { fullname: 'Mina Lee', avatar: 'ML' },
         shared: true,
       },
       {
@@ -112,7 +112,7 @@ const storageItems: StorageItem[] = [
         type: 'folder',
         name: 'Campaign Stills',
         modifiedAt: 'Sep 12, 2026',
-        owner: { name: 'Mina Lee', avatar: 'ML' },
+        owner: { fullname: 'Mina Lee', avatar: 'ML' },
         children: [
           {
             id: 'file-hero-shot',
@@ -121,7 +121,7 @@ const storageItems: StorageItem[] = [
             fileType: 'image',
             size: 12400000,
             modifiedAt: 'Sep 12, 2026',
-            owner: { name: 'Mina Lee', avatar: 'ML' },
+            owner: { fullname: 'Mina Lee', avatar: 'ML' },
           },
           {
             id: 'file-product-grid',
@@ -130,7 +130,7 @@ const storageItems: StorageItem[] = [
             fileType: 'image',
             size: 9300000,
             modifiedAt: 'Sep 11, 2026',
-            owner: { name: 'Avery Stone', avatar: 'AS' },
+            owner: { fullname: 'Avery Stone', avatar: 'AS' },
           },
         ],
       },
@@ -141,7 +141,7 @@ const storageItems: StorageItem[] = [
     type: 'folder',
     name: 'Sales Operations',
     modifiedAt: 'Yesterday, 2:10 PM',
-    owner: { name: 'Noah Kim', avatar: 'NK' },
+    owner: { fullname: 'Noah Kim', avatar: 'NK' },
     shared: true,
     children: [
       {
@@ -151,7 +151,7 @@ const storageItems: StorageItem[] = [
         fileType: 'spreadsheet',
         size: 3200000,
         modifiedAt: 'Yesterday, 2:04 PM',
-        owner: { name: 'Noah Kim', avatar: 'NK' },
+        owner: { fullname: 'Noah Kim', avatar: 'NK' },
       },
       {
         id: 'file-territory-plan',
@@ -160,7 +160,7 @@ const storageItems: StorageItem[] = [
         fileType: 'document',
         size: 960000,
         modifiedAt: 'Sep 10, 2026',
-        owner: { name: 'Rina Patel', avatar: 'RP' },
+        owner: { fullname: 'Rina Patel', avatar: 'RP' },
         starred: true,
       },
       {
@@ -168,7 +168,7 @@ const storageItems: StorageItem[] = [
         type: 'folder',
         name: 'Renewals',
         modifiedAt: 'Sep 7, 2026',
-        owner: { name: 'Noah Kim', avatar: 'NK' },
+        owner: { fullname: 'Noah Kim', avatar: 'NK' },
         children: [
           {
             id: 'file-enterprise-renewals',
@@ -177,7 +177,7 @@ const storageItems: StorageItem[] = [
             fileType: 'spreadsheet',
             size: 2100000,
             modifiedAt: 'Sep 7, 2026',
-            owner: { name: 'Noah Kim', avatar: 'NK' },
+            owner: { fullname: 'Noah Kim', avatar: 'NK' },
           },
         ],
       },
@@ -188,7 +188,7 @@ const storageItems: StorageItem[] = [
     type: 'folder',
     name: 'Contracts',
     modifiedAt: 'Sep 9, 2026',
-    owner: { name: 'Harper Fox', avatar: 'HF' },
+    owner: { fullname: 'Harper Fox', avatar: 'HF' },
     children: [
       {
         id: 'file-vendor-msa',
@@ -197,7 +197,7 @@ const storageItems: StorageItem[] = [
         fileType: 'pdf',
         size: 1500000,
         modifiedAt: 'Sep 9, 2026',
-        owner: { name: 'Harper Fox', avatar: 'HF' },
+        owner: { fullname: 'Harper Fox', avatar: 'HF' },
       },
       {
         id: 'file-dpa-template',
@@ -206,7 +206,7 @@ const storageItems: StorageItem[] = [
         fileType: 'document',
         size: 620000,
         modifiedAt: 'Sep 5, 2026',
-        owner: { name: 'Harper Fox', avatar: 'HF' },
+        owner: { fullname: 'Harper Fox', avatar: 'HF' },
       },
     ],
   },
@@ -217,7 +217,7 @@ const storageItems: StorageItem[] = [
     fileType: 'pdf',
     size: 5600000,
     modifiedAt: 'Today, 8:30 AM',
-    owner: { name: 'Iris Chen', avatar: 'IC' },
+    owner: { fullname: 'Iris Chen', avatar: 'IC' },
     starred: true,
     shared: true,
   },
@@ -228,7 +228,7 @@ const storageItems: StorageItem[] = [
     fileType: 'video',
     size: 148000000,
     modifiedAt: 'Sep 13, 2026',
-    owner: { name: 'Avery Stone', avatar: 'AS' },
+    owner: { fullname: 'Avery Stone', avatar: 'AS' },
   },
   {
     id: 'file-support-export',
@@ -237,7 +237,7 @@ const storageItems: StorageItem[] = [
     fileType: 'spreadsheet',
     size: 4900000,
     modifiedAt: 'Sep 8, 2026',
-    owner: { name: 'Rina Patel', avatar: 'RP' },
+    owner: { fullname: 'Rina Patel', avatar: 'RP' },
   },
 ]
 
@@ -271,15 +271,15 @@ const getItemColorClassName = (item: StorageItem) => {
   return fileTypeColors[item.fileType]
 }
 
-const formatBytes = (bytes: number) => {
-  if (!bytes) return '0 B'
+// const formatBytes = (bytes: number) => {
+//   if (!bytes) return '0 B'
 
-  const units = ['B', 'KB', 'MB', 'GB']
-  const unitIndex = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1)
-  const value = bytes / 1024 ** unitIndex
+//   const units = ['B', 'KB', 'MB', 'GB']
+//   const unitIndex = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1)
+//   const value = bytes / 1024 ** unitIndex
 
-  return `${value.toFixed(value >= 10 || unitIndex === 0 ? 0 : 1)} ${units[unitIndex]}`
-}
+//   return `${value.toFixed(value >= 10 || unitIndex === 0 ? 0 : 1)} ${units[unitIndex]}`
+// }
 
 const getFolderSize = (items: StorageItem[]): number =>
   items.reduce((total, item) => {
@@ -333,7 +333,7 @@ const getItemMeta = (item: StorageItem) => {
     return `${count} ${count === 1 ? 'item' : 'items'}`
   }
 
-  return formatBytes(item.size)
+  return fData(item.size)
 }
 
 export function Storage() {
@@ -353,8 +353,8 @@ export function Storage() {
     const normalizedQuery = query.trim().toLowerCase()
     const visibleItems = normalizedQuery
       ? currentItems.filter((item) =>
-          item.name.toLowerCase().includes(normalizedQuery)
-        )
+        item.name.toLowerCase().includes(normalizedQuery)
+      )
       : currentItems
 
     return sortStorageItems(visibleItems)
@@ -402,7 +402,7 @@ export function Storage() {
           <StorageMetric
             icon={HardDrive}
             label='Used storage'
-            value={formatBytes(getFolderSize(storageItems))}
+            value={fData(getFolderSize(storageItems))}
           />
           <StorageMetric
             icon={Folder}
@@ -485,7 +485,7 @@ export function Storage() {
 
           <div className='flex flex-wrap items-center gap-2 text-sm text-muted-foreground'>
             <Badge variant='outline'>{currentItems.length} items</Badge>
-            <Badge variant='outline'>{formatBytes(currentFolderSize)}</Badge>
+            <Badge variant='outline'>{fData(currentFolderSize)}</Badge>
             {currentFolder?.shared && (
               <Badge variant='outline'>
                 <Users />
@@ -629,7 +629,7 @@ const StorageList = ({ items, onOpenFolder }: StorageViewProps) => {
                         )}
                       </div>
                       <p className='truncate text-xs text-muted-foreground md:hidden'>
-                        {item.owner.name} · {item.modifiedAt}
+                        {item.owner.fullname} · {item.modifiedAt}
                       </p>
                     </div>
                   </div>
@@ -657,10 +657,11 @@ const StorageList = ({ items, onOpenFolder }: StorageViewProps) => {
 
 const StorageOwner = ({ owner }: { owner: StorageOwner }) => (
   <div className='flex min-w-0 items-center gap-2'>
-    <span className='flex size-6 shrink-0 items-center justify-center rounded-full bg-muted text-[10px] font-medium text-muted-foreground'>
-      {owner.avatar}
-    </span>
-    <span className='truncate text-sm text-muted-foreground'>{owner.name}</span>
+    <Avatar size='sm'>
+      <AvatarImage src={owner.avatar} alt={owner.fullname} />
+      <AvatarFallback>{owner.avatar}</AvatarFallback>
+    </Avatar>
+    <span className='truncate text-sm text-muted-foreground'>{owner.fullname}</span>
   </div>
 )
 

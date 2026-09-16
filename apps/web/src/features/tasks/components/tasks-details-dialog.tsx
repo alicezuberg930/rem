@@ -315,7 +315,7 @@ function DetailsSkeleton() {
                 <Skeleton className='h-20 w-full' />
                 <Skeleton className='h-52 w-full' />
             </div>
-            <Skeleton className='h-[30rem] w-full' />
+            <Skeleton className='h-120 w-full' />
         </div>
     )
 }
