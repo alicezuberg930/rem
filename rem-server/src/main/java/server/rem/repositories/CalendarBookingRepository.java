@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+
 import server.rem.entities.CalendarBooking;
 
 public interface CalendarBookingRepository extends JpaRepository<CalendarBooking, String> {
@@ -14,7 +15,7 @@ public interface CalendarBookingRepository extends JpaRepository<CalendarBooking
      * @param businessId owning business id
      * @return bookings for the business with related entities initialized
      */
-    @EntityGraph(attributePaths = { "business", "serviceStaff", "correspondent", "contact", "contact.tag" })
+    @EntityGraph(attributePaths = { "serviceStaff", "correspondent", "contact", "contact.tag" })
     List<CalendarBooking> findAllByBusinessId(String businessId);
 
     /**
@@ -24,6 +25,6 @@ public interface CalendarBookingRepository extends JpaRepository<CalendarBooking
      * @param businessId owning business id
      * @return matching booking if found
      */
-    @EntityGraph(attributePaths = { "business", "serviceStaff", "correspondent", "contact", "contact.tag" })
+    @EntityGraph(attributePaths = { "serviceStaff", "correspondent", "contact", "contact.tag" })
     Optional<CalendarBooking> findByIdAndBusinessId(String id, String businessId);
 }
