@@ -1,4 +1,4 @@
-import LazyLoadImage from '@/components/lazy-load-image/LazyLoadImage'
+import LazyLoadImage from '@/components/lazy-load-image/lazy-load-image'
 import { type CustomFile } from '../types'
 
 type Props = {

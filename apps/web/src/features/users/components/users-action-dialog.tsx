@@ -22,7 +22,7 @@ import {
   RHFPasswordField,
   RHFTextField,
 } from '@/components/hook-form'
-import RHFSwitch from '@/components/hook-form/RHFSwitch'
+import RHFSwitch from '@/components/hook-form/rhf-switch'
 import { users } from '@/lib/queries/user'
 import { type User } from '../data/schema'
 

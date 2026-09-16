@@ -9,9 +9,9 @@ import { cn } from '@/lib/utils'
 import { Button } from '../ui/button'
 import { Typography } from '../ui/typography'
 // components
-import RejectionFiles from './errors/RejectionFiles'
-import MultiFilePreview from './preview/MultiFilePreview'
-import SingleFilePreview from './preview/SingleFilePreview'
+import RejectionFiles from './errors/rejection-files'
+import MultiFilePreview from './preview/multi-file-preview'
+import SingleFilePreview from './preview/single-file-preview'
 import { type UploadProps } from './types'
 
 export default function Upload({

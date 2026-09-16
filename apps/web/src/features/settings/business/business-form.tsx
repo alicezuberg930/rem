@@ -11,7 +11,7 @@ import {
   RHFTextArea,
   RHFTextField,
 } from '@/components/hook-form'
-import { RHFUpload } from '@/components/hook-form/RHFUpload'
+import { RHFUpload } from '@/components/hook-form/rhf-upload'
 
 export function BusinessForm() {
   const form = useForm<BusinessValidators.BusinessForm>({

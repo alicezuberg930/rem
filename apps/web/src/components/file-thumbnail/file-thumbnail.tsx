@@ -4,7 +4,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import DownloadButton from './DownloadButton'
+import DownloadButton from './download-button'
 import { fileData, fileFormat, fileThumb } from './utils'
 
 type FileIconProps = {

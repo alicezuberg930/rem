@@ -2,8 +2,8 @@ import { ImagePlus } from 'lucide-react'
 import { useDropzone } from 'react-dropzone'
 import { cn } from '@/lib/utils'
 import { Typography } from '../ui/typography'
-import RejectionFiles from './errors/RejectionFiles'
-import AvatarPreview from './preview/AvatarPreview'
+import RejectionFiles from './errors/rejection-files'
+import AvatarPreview from './preview/avatar-preview'
 //
 import { type UploadProps } from './types'
 
