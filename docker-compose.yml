@@ -2,17 +2,17 @@ services:
   mysql:
     image: mysql:8
     environment:
-      - 'MYSQL_DATABASE=rem_db'
-      - 'MYSQL_PASSWORD=123456'
-      - 'MYSQL_ROOT_PASSWORD=123456'
-      - 'MYSQL_USER=rem123'
+      MYSQL_DATABASE: rem_db
+      MYSQL_PASSWORD: 123456
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_USER: rem123
     ports:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
 
   minio:
-    image: minio/minio
+    image: quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z
     restart: unless-stopped
 
     ports:
@@ -20,11 +20,11 @@ services:
       - "9001:9001"
 
     environment:
-      MINIO_ROOT_USER: admin
-      MINIO_ROOT_PASSWORD: 123456
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-admin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
 
     volumes:
-      - /mnt/minio:/data
+      - minio_data:/data
 
     command: server /data --console-address ":9001"
 
