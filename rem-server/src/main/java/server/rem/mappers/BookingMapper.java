@@ -16,6 +16,8 @@ public interface BookingMapper {
     @Mapping(target = "bookingEndDate", source = "dto.bookingEndDate")
     @Mapping(target = "status", source = "dto.status")
     @Mapping(target = "cancelReason", ignore = true)
+    @Mapping(target = "complaintReason", ignore = true)
+    @Mapping(target = "notAttendingReason", ignore = true)
     CalendarBooking toEntity(CreateBookingRequest dto, Business business, User serviceStaff, User correspondent, Contact contact);
 
     @Mapping(target = "bookingStartDate", ignore = true)
@@ -29,5 +31,7 @@ public interface BookingMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "complaintReason", source = "dto.complaintReason")
+    @Mapping(target = "notAttendingReason", source = "dto.notAttendingReason")
     void updateEntity(UpdateBookingRequest dto, User serviceStaff, User correspondent, @MappingTarget CalendarBooking entity);
 }

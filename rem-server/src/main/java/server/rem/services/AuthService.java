@@ -78,7 +78,9 @@ public class AuthService {
         Map<String, Object> claims = Map.of("userId", user.getId());
         String accessToken = accessTokenJwt.sign(claims, accessTokenOptions);
         String refreshToken = refreshTokenJwt.sign(claims, refreshTokenOptions);
-        return authMapper.toResponse(user, accessToken, refreshToken, accessTokenExpTimestamp);
+        User profile = userRepository.findProfileById(user.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Your profile doesn't exist"));
+        return authMapper.toResponse(profile, accessToken, refreshToken, accessTokenExpTimestamp);
     }
 
     public UserProfileResponse signUp(SignUpRequest dto) {

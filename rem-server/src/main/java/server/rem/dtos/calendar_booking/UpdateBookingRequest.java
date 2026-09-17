@@ -13,4 +13,8 @@ public class UpdateBookingRequest {
     private final String serviceStaffId;
 
     private final String correspondentId;
+
+    private final String complaintReason;
+
+    private final String notAttendingReason;
 }

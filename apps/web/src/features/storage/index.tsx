@@ -360,10 +360,9 @@ export function Storage() {
     return sortStorageItems(visibleItems)
   }, [currentItems, query])
 
-  const currentFolder = folderPath[folderPath.length - 1]
   const folderCount = currentItems.filter((item) => item.type === 'folder').length
   const fileCount = currentItems.length - folderCount
-  const currentFolderSize = getFolderSize(currentItems)
+  // const currentFolderSize = getFolderSize(currentItems)
 
   const openFolder = (item: StorageItem) => {
     if (item.type === 'folder') {
@@ -398,100 +397,68 @@ export function Storage() {
           {/* <StoragePrimaryButtons /> */}
         </div>
 
-        <div className='grid gap-3 md:grid-cols-3'>
-          <StorageMetric
-            icon={HardDrive}
-            label='Used storage'
-            value={fData(getFolderSize(storageItems))}
-          />
-          <StorageMetric
-            icon={Folder}
-            label='Folders here'
-            value={folderCount.toString()}
-          />
-          <StorageMetric
-            icon={File}
-            label='Files here'
-            value={fileCount.toString()}
-          />
-        </div>
-
-        <div className='flex flex-col gap-3 rounded-md border bg-background p-3 shadow-xs'>
-          <div className='flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between'>
-            <div className='flex min-w-0 flex-wrap items-center gap-1 text-sm'>
-              <Button
-                variant='ghost'
-                size='sm'
-                className='h-8 px-2'
-                onClick={() => {
-                  setCurrentFolderId(null)
-                  setQuery('')
-                }}
-              >
-                My Drive
-              </Button>
-              {folderPath.map((folder) => (
-                <div key={folder.id} className='flex min-w-0 items-center gap-1'>
-                  <ChevronRight className='size-4 shrink-0 text-muted-foreground' />
-                  <Button
-                    variant='ghost'
-                    size='sm'
-                    className='h-8 max-w-48 px-2'
-                    onClick={() => {
-                      setCurrentFolderId(folder.id)
-                      setQuery('')
-                    }}
-                  >
-                    <span className='truncate'>{folder.name}</span>
-                  </Button>
-                </div>
-              ))}
-            </div>
-
-            <div className='flex flex-col gap-2 sm:flex-row sm:items-center'>
-              <div className='relative min-w-0 sm:w-64'>
-                <SearchIcon className='pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground' />
-                <Input
-                  value={query}
-                  onChange={(event) => setQuery(event.target.value)}
-                  placeholder='Search in this folder'
-                  className='pl-8'
-                />
-              </div>
-              <div className='inline-flex h-9 rounded-md border bg-background p-0.5'>
+        <div className='flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between'>
+          <div className='flex min-w-0 flex-wrap items-center gap-1 text-sm'>
+            <Button
+              variant='ghost'
+              size='sm'
+              onClick={() => {
+                setCurrentFolderId(null)
+                setQuery('')
+              }}
+            >
+              My Drive
+            </Button>
+            {folderPath.map((folder) => (
+              <div key={folder.id} className='flex min-w-0 items-center gap-1'>
+                <ChevronRight className='size-4 shrink-0 text-muted-foreground' />
                 <Button
-                  aria-label='Grid view'
-                  variant={viewMode === 'grid' ? 'secondary' : 'ghost'}
-                  size='icon-sm'
-                  onClick={() => setViewMode('grid')}
+                  variant='ghost'
+                  size='sm'
+                  className='max-w-48'
+                  onClick={() => {
+                    setCurrentFolderId(folder.id)
+                    setQuery('')
+                  }}
                 >
-                  <Grid2X2 />
-                </Button>
-                <Button
-                  aria-label='List view'
-                  variant={viewMode === 'list' ? 'secondary' : 'ghost'}
-                  size='icon-sm'
-                  onClick={() => setViewMode('list')}
-                >
-                  <LayoutList />
+                  <span className='truncate'>{folder.name}</span>
                 </Button>
               </div>
-              <Button>
-                <Upload data-icon='inline-start' />
-                Upload
-              </Button>
-            </div>
+            ))}
           </div>
 
-          <div className='flex flex-wrap items-center gap-2 text-sm text-muted-foreground'>
-            <Badge variant='outline'>{currentItems.length} items</Badge>
-            <Badge variant='outline'>{fData(currentFolderSize)}</Badge>
-            {currentFolder?.shared && (
-              <Badge variant='outline'>
-                <Users />
-                Shared
-              </Badge>
-            )}
+          <div className='flex flex-col gap-2 sm:flex-row sm:items-center'>
+            <div className='relative min-w-0 sm:w-64'>
+              <SearchIcon className='pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground' />
+              <Input
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder='Search in this folder'
+                className='pl-8'
+              />
+            </div>
+            <div className='inline-flex h-9 rounded-md border bg-background p-0.5'>
+              <Button
+                aria-label='Grid view'
+                variant={viewMode === 'grid' ? 'secondary' : 'ghost'}
+                size='icon-sm'
+                onClick={() => setViewMode('grid')}
+              >
+                <Grid2X2 />
+              </Button>
+              <Button
+                aria-label='List view'
+                variant={viewMode === 'list' ? 'secondary' : 'ghost'}
+                size='icon-sm'
+                onClick={() => setViewMode('list')}
+              >
+                <LayoutList />
+              </Button>
+            </div>
+            <Button>
+              <Upload data-icon='inline-start' />
+              Upload
+            </Button>
           </div>
         </div>
 
@@ -506,24 +473,6 @@ export function Storage() {
     </>
   )
 }
-
-type StorageMetricProps = {
-  icon: typeof HardDrive
-  label: string
-  value: string
-}
-
-const StorageMetric = ({ icon: Icon, label, value }: StorageMetricProps) => (
-  <div className='flex min-h-20 items-center gap-3 rounded-md border bg-background p-4 shadow-xs'>
-    <div className='flex size-10 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary'>
-      <Icon className='size-5' />
-    </div>
-    <div className='min-w-0'>
-      <p className='text-sm text-muted-foreground'>{label}</p>
-      <p className='truncate text-xl font-semibold'>{value}</p>
-    </div>
-  </div>
-)
 
 type StorageViewProps = {
   items: StorageItem[]
