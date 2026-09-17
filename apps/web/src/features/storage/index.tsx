@@ -56,7 +56,7 @@ type StorageOwner = Partial<User>
 type StorageBaseItem = {
   id: string
   name: string
-  modifiedAt: string
+  updatedAt: string
   owner: StorageOwner
   starred?: boolean
   shared?: boolean
@@ -82,7 +82,7 @@ const storageItems: StorageItem[] = [
     id: 'folder-brand',
     type: 'folder',
     name: 'Brand Assets',
-    modifiedAt: 'Today, 9:48 AM',
+    updatedAt: 'Today, 9:48 AM',
     owner: { fullname: 'Avery Stone', avatar: 'AS' },
     starred: true,
     shared: true,
@@ -93,7 +93,7 @@ const storageItems: StorageItem[] = [
         name: 'rem-logo-pack.zip',
         fileType: 'archive',
         size: 18200000,
-        modifiedAt: 'Today, 9:42 AM',
+        updatedAt: 'Today, 9:42 AM',
         owner: { fullname: 'Avery Stone', avatar: 'AS' },
         starred: true,
       },
@@ -103,7 +103,7 @@ const storageItems: StorageItem[] = [
         name: 'visual-guidelines.pdf',
         fileType: 'pdf',
         size: 8400000,
-        modifiedAt: 'Yesterday, 4:16 PM',
+        updatedAt: 'Yesterday, 4:16 PM',
         owner: { fullname: 'Mina Lee', avatar: 'ML' },
         shared: true,
       },
@@ -111,7 +111,7 @@ const storageItems: StorageItem[] = [
         id: 'folder-campaign-stills',
         type: 'folder',
         name: 'Campaign Stills',
-        modifiedAt: 'Sep 12, 2026',
+        updatedAt: 'Sep 12, 2026',
         owner: { fullname: 'Mina Lee', avatar: 'ML' },
         children: [
           {
@@ -120,7 +120,7 @@ const storageItems: StorageItem[] = [
             name: 'hero-shot-final.png',
             fileType: 'image',
             size: 12400000,
-            modifiedAt: 'Sep 12, 2026',
+            updatedAt: 'Sep 12, 2026',
             owner: { fullname: 'Mina Lee', avatar: 'ML' },
           },
           {
@@ -129,7 +129,7 @@ const storageItems: StorageItem[] = [
             name: 'product-grid.jpg',
             fileType: 'image',
             size: 9300000,
-            modifiedAt: 'Sep 11, 2026',
+            updatedAt: 'Sep 11, 2026',
             owner: { fullname: 'Avery Stone', avatar: 'AS' },
           },
         ],
@@ -140,7 +140,7 @@ const storageItems: StorageItem[] = [
     id: 'folder-sales',
     type: 'folder',
     name: 'Sales Operations',
-    modifiedAt: 'Yesterday, 2:10 PM',
+    updatedAt: 'Yesterday, 2:10 PM',
     owner: { fullname: 'Noah Kim', avatar: 'NK' },
     shared: true,
     children: [
@@ -150,7 +150,7 @@ const storageItems: StorageItem[] = [
         name: 'q4-pipeline.xlsx',
         fileType: 'spreadsheet',
         size: 3200000,
-        modifiedAt: 'Yesterday, 2:04 PM',
+        updatedAt: 'Yesterday, 2:04 PM',
         owner: { fullname: 'Noah Kim', avatar: 'NK' },
       },
       {
@@ -159,7 +159,7 @@ const storageItems: StorageItem[] = [
         name: 'territory-plan.docx',
         fileType: 'document',
         size: 960000,
-        modifiedAt: 'Sep 10, 2026',
+        updatedAt: 'Sep 10, 2026',
         owner: { fullname: 'Rina Patel', avatar: 'RP' },
         starred: true,
       },
@@ -167,7 +167,7 @@ const storageItems: StorageItem[] = [
         id: 'folder-renewals',
         type: 'folder',
         name: 'Renewals',
-        modifiedAt: 'Sep 7, 2026',
+        updatedAt: 'Sep 7, 2026',
         owner: { fullname: 'Noah Kim', avatar: 'NK' },
         children: [
           {
@@ -176,7 +176,7 @@ const storageItems: StorageItem[] = [
             name: 'enterprise-renewals.xlsx',
             fileType: 'spreadsheet',
             size: 2100000,
-            modifiedAt: 'Sep 7, 2026',
+            updatedAt: 'Sep 7, 2026',
             owner: { fullname: 'Noah Kim', avatar: 'NK' },
           },
         ],
@@ -187,7 +187,7 @@ const storageItems: StorageItem[] = [
     id: 'folder-legal',
     type: 'folder',
     name: 'Contracts',
-    modifiedAt: 'Sep 9, 2026',
+    updatedAt: 'Sep 9, 2026',
     owner: { fullname: 'Harper Fox', avatar: 'HF' },
     children: [
       {
@@ -196,7 +196,7 @@ const storageItems: StorageItem[] = [
         name: 'vendor-msa.pdf',
         fileType: 'pdf',
         size: 1500000,
-        modifiedAt: 'Sep 9, 2026',
+        updatedAt: 'Sep 9, 2026',
         owner: { fullname: 'Harper Fox', avatar: 'HF' },
       },
       {
@@ -205,7 +205,7 @@ const storageItems: StorageItem[] = [
         name: 'dpa-template.docx',
         fileType: 'document',
         size: 620000,
-        modifiedAt: 'Sep 5, 2026',
+        updatedAt: 'Sep 5, 2026',
         owner: { fullname: 'Harper Fox', avatar: 'HF' },
       },
     ],
@@ -216,7 +216,7 @@ const storageItems: StorageItem[] = [
     name: 'board-report-september.pdf',
     fileType: 'pdf',
     size: 5600000,
-    modifiedAt: 'Today, 8:30 AM',
+    updatedAt: 'Today, 8:30 AM',
     owner: { fullname: 'Iris Chen', avatar: 'IC' },
     starred: true,
     shared: true,
@@ -227,7 +227,7 @@ const storageItems: StorageItem[] = [
     name: 'launch-recap.mp4',
     fileType: 'video',
     size: 148000000,
-    modifiedAt: 'Sep 13, 2026',
+    updatedAt: 'Sep 13, 2026',
     owner: { fullname: 'Avery Stone', avatar: 'AS' },
   },
   {
@@ -236,7 +236,7 @@ const storageItems: StorageItem[] = [
     name: 'support-ticket-export.csv',
     fileType: 'spreadsheet',
     size: 4900000,
-    modifiedAt: 'Sep 8, 2026',
+    updatedAt: 'Sep 8, 2026',
     owner: { fullname: 'Rina Patel', avatar: 'RP' },
   },
 ]
@@ -561,7 +561,7 @@ const StorageGrid = ({ items, onOpenFolder }: StorageViewProps) => {
               <div className='min-w-0'>
                 <p className='truncate font-medium'>{item.name}</p>
                 <p className='truncate text-sm text-muted-foreground'>
-                  {item.modifiedAt}
+                  {item.updatedAt}
                 </p>
               </div>
               <div className='flex items-center justify-between gap-2'>
@@ -629,7 +629,7 @@ const StorageList = ({ items, onOpenFolder }: StorageViewProps) => {
                         )}
                       </div>
                       <p className='truncate text-xs text-muted-foreground md:hidden'>
-                        {item.owner.fullname} · {item.modifiedAt}
+                        {item.owner.fullname} · {item.updatedAt}
                       </p>
                     </div>
                   </div>
@@ -638,7 +638,7 @@ const StorageList = ({ items, onOpenFolder }: StorageViewProps) => {
                   <StorageOwner owner={item.owner} />
                 </TableCell>
                 <TableCell className='hidden text-muted-foreground lg:table-cell'>
-                  {item.modifiedAt}
+                  {item.updatedAt}
                 </TableCell>
                 <TableCell className='hidden text-muted-foreground sm:table-cell'>
                   {getItemMeta(item)}
