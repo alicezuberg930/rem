@@ -29,7 +29,8 @@ import {
   ContactRound,
   ReceiptText,
   Truck,
-  Folders
+  Folders,
+  Scan
 } from 'lucide-react'
 import { ClerkLogo } from '@/assets/clerk-logo'
 import { type SidebarData } from '../types'
@@ -60,6 +61,11 @@ export const sidebarData: SidebarData = {
           title: 'Dashboard',
           url: '/',
           icon: LayoutDashboard,
+        },
+        {
+          title: 'Scanner',
+          url: '/scanner',
+          icon: Scan,
         },
         {
           title: 'Tasks',

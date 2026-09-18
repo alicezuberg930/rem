@@ -28,6 +28,7 @@ import { Route as AuthenticatedTasksIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedStorageIndexRouteImport } from './routes/_authenticated/storage/index'
 import { Route as AuthenticatedShipmentOrderIndexRouteImport } from './routes/_authenticated/shipment-order/index'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
+import { Route as AuthenticatedScannerIndexRouteImport } from './routes/_authenticated/scanner/index'
 import { Route as AuthenticatedPayrollIndexRouteImport } from './routes/_authenticated/payroll/index'
 import { Route as AuthenticatedLeadsIndexRouteImport } from './routes/_authenticated/leads/index'
 import { Route as AuthenticatedHelpCenterIndexRouteImport } from './routes/_authenticated/help-center/index'
@@ -142,6 +143,12 @@ const AuthenticatedSettingsIndexRoute =
     id: '/',
     path: '/',
     getParentRoute: () => AuthenticatedSettingsRouteRoute,
+  } as any)
+const AuthenticatedScannerIndexRoute =
+  AuthenticatedScannerIndexRouteImport.update({
+    id: '/scanner/',
+    path: '/scanner/',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedPayrollIndexRoute =
   AuthenticatedPayrollIndexRouteImport.update({
@@ -259,6 +266,7 @@ export interface FileRoutesByFullPath {
   '/help-center/': typeof AuthenticatedHelpCenterIndexRoute
   '/leads/': typeof AuthenticatedLeadsIndexRoute
   '/payroll/': typeof AuthenticatedPayrollIndexRoute
+  '/scanner/': typeof AuthenticatedScannerIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/shipment-order/': typeof AuthenticatedShipmentOrderIndexRoute
   '/storage/': typeof AuthenticatedStorageIndexRoute
@@ -293,6 +301,7 @@ export interface FileRoutesByTo {
   '/help-center': typeof AuthenticatedHelpCenterIndexRoute
   '/leads': typeof AuthenticatedLeadsIndexRoute
   '/payroll': typeof AuthenticatedPayrollIndexRoute
+  '/scanner': typeof AuthenticatedScannerIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/shipment-order': typeof AuthenticatedShipmentOrderIndexRoute
   '/storage': typeof AuthenticatedStorageIndexRoute
@@ -330,6 +339,7 @@ export interface FileRoutesById {
   '/_authenticated/help-center/': typeof AuthenticatedHelpCenterIndexRoute
   '/_authenticated/leads/': typeof AuthenticatedLeadsIndexRoute
   '/_authenticated/payroll/': typeof AuthenticatedPayrollIndexRoute
+  '/_authenticated/scanner/': typeof AuthenticatedScannerIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/shipment-order/': typeof AuthenticatedShipmentOrderIndexRoute
   '/_authenticated/storage/': typeof AuthenticatedStorageIndexRoute
@@ -367,6 +377,7 @@ export interface FileRouteTypes {
     | '/help-center/'
     | '/leads/'
     | '/payroll/'
+    | '/scanner/'
     | '/settings/'
     | '/shipment-order/'
     | '/storage/'
@@ -401,6 +412,7 @@ export interface FileRouteTypes {
     | '/help-center'
     | '/leads'
     | '/payroll'
+    | '/scanner'
     | '/settings'
     | '/shipment-order'
     | '/storage'
@@ -437,6 +449,7 @@ export interface FileRouteTypes {
     | '/_authenticated/help-center/'
     | '/_authenticated/leads/'
     | '/_authenticated/payroll/'
+    | '/_authenticated/scanner/'
     | '/_authenticated/settings/'
     | '/_authenticated/shipment-order/'
     | '/_authenticated/storage/'
@@ -594,6 +607,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsIndexRouteImport
       parentRoute: typeof AuthenticatedSettingsRouteRoute
     }
+    '/_authenticated/scanner/': {
+      id: '/_authenticated/scanner/'
+      path: '/scanner'
+      fullPath: '/scanner/'
+      preLoaderRoute: typeof AuthenticatedScannerIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/payroll/': {
       id: '/_authenticated/payroll/'
       path: '/payroll'
@@ -739,6 +759,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedHelpCenterIndexRoute: typeof AuthenticatedHelpCenterIndexRoute
   AuthenticatedLeadsIndexRoute: typeof AuthenticatedLeadsIndexRoute
   AuthenticatedPayrollIndexRoute: typeof AuthenticatedPayrollIndexRoute
+  AuthenticatedScannerIndexRoute: typeof AuthenticatedScannerIndexRoute
   AuthenticatedShipmentOrderIndexRoute: typeof AuthenticatedShipmentOrderIndexRoute
   AuthenticatedStorageIndexRoute: typeof AuthenticatedStorageIndexRoute
   AuthenticatedTasksIndexRoute: typeof AuthenticatedTasksIndexRoute
@@ -760,6 +781,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedHelpCenterIndexRoute: AuthenticatedHelpCenterIndexRoute,
   AuthenticatedLeadsIndexRoute: AuthenticatedLeadsIndexRoute,
   AuthenticatedPayrollIndexRoute: AuthenticatedPayrollIndexRoute,
+  AuthenticatedScannerIndexRoute: AuthenticatedScannerIndexRoute,
   AuthenticatedShipmentOrderIndexRoute: AuthenticatedShipmentOrderIndexRoute,
   AuthenticatedStorageIndexRoute: AuthenticatedStorageIndexRoute,
   AuthenticatedTasksIndexRoute: AuthenticatedTasksIndexRoute,

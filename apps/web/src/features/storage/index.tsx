@@ -18,6 +18,7 @@ import type { StorageFolder, StorageItem } from './components/storage-types'
 import { getStorageItemColorClassName, getStorageItemIcon, } from './components/storage-utils'
 import { StorageContextMenu } from './components/storage-context-menu'
 import { medias } from '@/lib/queries/media'
+import { Card, CardContent } from '@/components/ui/card'
 
 type ViewMode = 'grid' | 'list'
 
@@ -212,19 +213,18 @@ const getCurrentItems = (folderId: string | null): StorageItem[] => {
 
 const getFolderPath = (folderId: string | null): StorageFolder[] => folderId ? (findFolderPath(storageItems, folderId) ?? []) : []
 
-const sortStorageItems = (items: StorageItem[]) =>
-  [...items].sort((first, second) => {
-    if (first.type !== second.type) return first.type === 'folder' ? -1 : 1
-    return first.name.localeCompare(second.name)
-  })
+const sortStorageItems = (items: StorageItem[]) => [...items].sort((first, second) => {
+  if (first.type !== second.type) return first.type === 'folder' ? -1 : 1
+  return first.name.localeCompare(second.name)
+})
 
 export function Storage() {
   const [currentFolderId, setCurrentFolderId] = useState<string | null>(null)
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
-  const [query, setQuery] = useState('')
-  const [isDraggingFile, setIsDraggingFile] = useState(false)
+  const [query, setQuery] = useState<string>('')
+  const [isDraggingFile, setIsDraggingFile] = useState<boolean>(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const dragDepthRef = useRef(0)
+  const dragDepthRef = useRef<number>(0)
   const uploadMedia = useMutation(medias().upload.mutationOptions())
 
   const currentItems = useMemo(() => getCurrentItems(currentFolderId), [currentFolderId])
@@ -248,25 +248,21 @@ export function Storage() {
     }
   }
 
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const input = event.currentTarget
-    const file = input.files?.[0]
-    input.value = ''
-    if (!file) return
-
-    uploadFile(file)
-  }
-
   const uploadFile = (file: File) => {
     const formData = new FormData()
     formData.append('file', file, file.name)
     uploadMedia.mutate(formData)
   }
 
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.currentTarget.files?.[0]
+    if (!file) return
+    uploadFile(file)
+  }
+
   const handleDragEnter = (event: DragEvent<HTMLElement>) => {
     event.preventDefault()
     if (!event.dataTransfer.types.includes('Files')) return
-
     dragDepthRef.current += 1
     setIsDraggingFile(true)
   }
@@ -286,7 +282,6 @@ export function Storage() {
     event.preventDefault()
     dragDepthRef.current = 0
     setIsDraggingFile(false)
-
     const file = event.dataTransfer.files?.[0]
     if (file) uploadFile(file)
   }
@@ -305,18 +300,7 @@ export function Storage() {
         </Header>
 
         <StorageContextMenu>
-          <Main
-            className='relative flex flex-1 flex-col gap-4 sm:gap-6'
-            onDragEnter={handleDragEnter}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-          >
-            {isDraggingFile && (
-              <div className='pointer-events-none absolute inset-0 z-20 flex items-center justify-center rounded-md border-2 border-dashed border-primary bg-background/85 backdrop-blur-xs'>
-                <p className='font-medium'>Drop file to upload</p>
-              </div>
-            )}
+          <Main className='flex flex-1 flex-col gap-4 sm:gap-6'          >
             <div className='flex flex-wrap items-end justify-between gap-2'>
               <div>
                 <h2 className='text-2xl font-bold tracking-tight'>
@@ -329,7 +313,7 @@ export function Storage() {
               {/* <StoragePrimaryButtons /> */}
             </div>
 
-            <div className='flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between'>
+            <div className='flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between'            >
               <div className='flex min-w-0 flex-wrap items-center gap-1 text-sm'>
                 <Button
                   variant='ghost'
@@ -406,11 +390,29 @@ export function Storage() {
                 </Button>
               </div>
             </div>
-            {viewMode === 'grid' ? (
-              <StorageGrid data={filteredItems} onOpenFolder={openFolder} />
-            ) : (
-              <StorageTable data={filteredItems} onOpenFolder={openFolder} />
-            )}
+            <div
+              className='w-full h-full relative'
+              onDragEnter={handleDragEnter}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+            >
+              {isDraggingFile && (
+                <div className='pointer-events-none absolute inset-0 z-20 flex items-end justify-center rounded-md border-2 border-dashed border-primary backdrop-blur-xs'>
+                  <Card className='-translate-y-6'>
+                    <CardContent>
+                      <Upload className='mx-auto mb-4 animate-bounce' size={42} />
+                      <p>Drop files/folders to upload</p>
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
+              {viewMode === 'grid' ? (
+                <StorageGrid data={filteredItems} onOpenFolder={openFolder} />
+              ) : (
+                <StorageTable data={filteredItems} onOpenFolder={openFolder} />
+              )}
+            </div>
           </Main>
         </StorageContextMenu>
         {/* <StorageDialogs /> */}
