@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import Scanner from "@/lib/scanner"
+import ScannerComponent from "@/lib/scanner"
 import { Header } from "@/layout/header"
 import { Search } from "@/components/search"
 import { ClockInButton } from "@/layout/clock-in-button"
@@ -70,7 +70,7 @@ export function ScannerFeature() {
                     <div className='w-full max-w-2xl'>
                         <div className='aspect-video w-full overflow-hidden rounded-md bg-black'>
                             {running ? (
-                                <Scanner
+                                <ScannerComponent
                                     deviceId={deviceId}
                                     onScan={(r) => toast.message(`Scanned: ${r.content} (${r.format ?? 'unknown'})`)}
                                     onError={(e) => toast.error(e.message)}
@@ -88,5 +88,7 @@ export function ScannerFeature() {
         </>
     )
 }
+
+export const Scanner = ScannerFeature
 
 export default ScannerFeature
