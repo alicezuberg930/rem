@@ -1,8 +1,9 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState, type ChangeEvent, type DragEvent } from 'react'
+import { useMutation } from '@tanstack/react-query'
 import { ClockInButton } from '@/layout/clock-in-button'
 import { Header } from '@/layout/header'
 import { Main } from '@/layout/main'
-import { Archive, ChevronRight, FileUp, FolderPlus, FolderUp, Grid2X2, List, SearchIcon, Upload } from 'lucide-react'
+import { Archive, ChevronRight, Grid2X2, List, SearchIcon, Upload } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -16,6 +17,7 @@ import { StorageTable } from './components/storage-table'
 import type { StorageFolder, StorageItem } from './components/storage-types'
 import { getStorageItemColorClassName, getStorageItemIcon, } from './components/storage-utils'
 import { StorageContextMenu } from './components/storage-context-menu'
+import { medias } from '@/lib/queries/media'
 
 type ViewMode = 'grid' | 'list'
 
@@ -220,6 +222,10 @@ export function Storage() {
   const [currentFolderId, setCurrentFolderId] = useState<string | null>(null)
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
   const [query, setQuery] = useState('')
+  const [isDraggingFile, setIsDraggingFile] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const dragDepthRef = useRef(0)
+  const uploadMedia = useMutation(medias().upload.mutationOptions())
 
   const currentItems = useMemo(() => getCurrentItems(currentFolderId), [currentFolderId])
   const folderPath = useMemo(() => getFolderPath(currentFolderId), [currentFolderId])
@@ -242,6 +248,49 @@ export function Storage() {
     }
   }
 
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const input = event.currentTarget
+    const file = input.files?.[0]
+    input.value = ''
+    if (!file) return
+
+    uploadFile(file)
+  }
+
+  const uploadFile = (file: File) => {
+    const formData = new FormData()
+    formData.append('file', file, file.name)
+    uploadMedia.mutate(formData)
+  }
+
+  const handleDragEnter = (event: DragEvent<HTMLElement>) => {
+    event.preventDefault()
+    if (!event.dataTransfer.types.includes('Files')) return
+
+    dragDepthRef.current += 1
+    setIsDraggingFile(true)
+  }
+
+  const handleDragOver = (event: DragEvent<HTMLElement>) => {
+    event.preventDefault()
+    event.dataTransfer.dropEffect = 'copy'
+  }
+
+  const handleDragLeave = (event: DragEvent<HTMLElement>) => {
+    event.preventDefault()
+    dragDepthRef.current = Math.max(0, dragDepthRef.current - 1)
+    if (dragDepthRef.current === 0) setIsDraggingFile(false)
+  }
+
+  const handleDrop = (event: DragEvent<HTMLElement>) => {
+    event.preventDefault()
+    dragDepthRef.current = 0
+    setIsDraggingFile(false)
+
+    const file = event.dataTransfer.files?.[0]
+    if (file) uploadFile(file)
+  }
+
   return (
     <>
       <StorageProvider>
@@ -256,7 +305,18 @@ export function Storage() {
         </Header>
 
         <StorageContextMenu>
-          <Main className='flex flex-1 flex-col gap-4 sm:gap-6'>
+          <Main
+            className='relative flex flex-1 flex-col gap-4 sm:gap-6'
+            onDragEnter={handleDragEnter}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+          >
+            {isDraggingFile && (
+              <div className='pointer-events-none absolute inset-0 z-20 flex items-center justify-center rounded-md border-2 border-dashed border-primary bg-background/85 backdrop-blur-xs'>
+                <p className='font-medium'>Drop file to upload</p>
+              </div>
+            )}
             <div className='flex flex-wrap items-end justify-between gap-2'>
               <div>
                 <h2 className='text-2xl font-bold tracking-tight'>
@@ -330,7 +390,17 @@ export function Storage() {
                     <List />
                   </Button>
                 </div>
-                <Button>
+                <Button
+                  type='button'
+                  disabled={uploadMedia.isPending}
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <input
+                    ref={fileInputRef}
+                    type='file'
+                    className='sr-only'
+                    onChange={handleFileChange}
+                  />
                   <Upload data-icon='inline-start' />
                   Upload
                 </Button>

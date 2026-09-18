@@ -19,9 +19,11 @@ import io.minio.Http;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
+import io.minio.errors.MinioException;
 
 @Component
 public class MinioStorageClient {
+
     private static final long MAX_PRESIGNED_URL_EXPIRY_SECONDS = Duration.ofDays(7).toSeconds();
 
     private final MinioClient client;
@@ -39,29 +41,25 @@ public class MinioStorageClient {
             @Value("${minio.bucket:rem-storage}") String bucketName,
             @Value("${minio.download-url-expiry-seconds:900}") long downloadUrlExpirySeconds,
             @Value("${minio.share-url-expiry-seconds:86400}") long shareUrlExpirySeconds) {
-        String normalizedEndpoint = requireText(endpoint, "MinIO endpoint");
-        String normalizedPublicEndpoint = requireText(publicEndpoint, "MinIO public endpoint");
-        String normalizedAccessKey = requireText(accessKey, "MinIO access key");
-        String normalizedSecretKey = requireText(secretKey, "MinIO secret key");
 
-        this.bucketName = requireText(bucketName, "MinIO bucket name");
+        this.bucketName = bucketName;
         this.downloadUrlExpiry = validateExpiry(Duration.ofSeconds(downloadUrlExpirySeconds));
         this.shareUrlExpiry = validateExpiry(Duration.ofSeconds(shareUrlExpirySeconds));
         this.client = MinioClient.builder()
-                .endpoint(normalizedEndpoint)
-                .credentials(normalizedAccessKey, normalizedSecretKey)
+                .endpoint(endpoint)
+                .credentials(accessKey, secretKey)
                 .build();
-        this.presigningClient = normalizedEndpoint.equals(normalizedPublicEndpoint)
+        this.presigningClient = endpoint.equals(publicEndpoint)
                 ? client
                 : MinioClient
                         .builder()
-                        .endpoint(normalizedPublicEndpoint)
-                        .credentials(normalizedAccessKey, normalizedSecretKey).build();
+                        .endpoint(publicEndpoint)
+                        .credentials(accessKey, secretKey).build();
     }
 
     /**
-     * Verifies the MinIO connection and creates the configured private bucket when
-     * it does not exist.
+     * Verifies the MinIO connection and creates the configured private bucket
+     * when it does not exist.
      */
     public MinioClient connect() {
         ensureBucketExists();
@@ -69,12 +67,15 @@ public class MinioStorageClient {
     }
 
     /**
-     * Uploads a multipart file under a generated, collision-resistant object key.
+     * Uploads a multipart file under a generated, collision-resistant object
+     * key.
      *
      * @return the object key to persist in {@code Media.storageKey}
      */
     public String upload(MultipartFile file) {
-        requireFile(file);
+        if (file == null || file.isEmpty()) {
+            throw new IllegalArgumentException("A non-empty file is required");
+        }
         return upload(file, generateObjectKey(file.getOriginalFilename()));
     }
 
@@ -84,7 +85,6 @@ public class MinioStorageClient {
      * @return the normalized object key to persist in {@code Media.storageKey}
      */
     public String upload(MultipartFile file, String objectKey) {
-        requireFile(file);
         String normalizedObjectKey = normalizeObjectKey(objectKey);
         String contentType = StringUtils.hasText(file.getContentType())
                 ? file.getContentType()
@@ -93,13 +93,13 @@ public class MinioStorageClient {
         try (InputStream input = file.getInputStream()) {
             return upload(input, file.getSize(), contentType, normalizedObjectKey);
         } catch (IOException exception) {
-            throw storageFailure("read upload", normalizedObjectKey, exception);
+            throw new IllegalStateException("Failed to read upload for object '" + normalizedObjectKey + "'", exception);
         }
     }
 
     /**
-     * Streams data to MinIO. The caller remains responsible for closing the input
-     * stream.
+     * Streams data to MinIO. The caller remains responsible for closing the
+     * input stream.
      */
     public String upload(InputStream input, long objectSize, String contentType, String objectKey) {
         if (input == null) {
@@ -108,26 +108,24 @@ public class MinioStorageClient {
         if (objectSize <= 0) {
             throw new IllegalArgumentException("Upload size must be greater than zero");
         }
-
         String normalizedObjectKey = normalizeObjectKey(objectKey);
         String normalizedContentType = StringUtils.hasText(contentType)
                 ? contentType
                 : MediaType.APPLICATION_OCTET_STREAM_VALUE;
 
         ensureBucketExists();
-        execute(
-                "upload object '" + normalizedObjectKey + "'",
-                () -> client.putObject(PutObjectArgs.builder()
-                        .bucket(bucketName)
-                        .object(normalizedObjectKey)
-                        .stream(input, objectSize, null)
-                        .contentType(normalizedContentType)
-                        .build()));
+        execute("upload object '" + normalizedObjectKey + "'", () -> client.putObject(PutObjectArgs.builder()
+                .bucket(bucketName)
+                .object(normalizedObjectKey)
+                .stream(input, objectSize, null)
+                .contentType(normalizedContentType)
+                .build()));
         return normalizedObjectKey;
     }
 
     /**
-     * Generates an object key while retaining a safe version of the file extension.
+     * Generates an object key while retaining a safe version of the file
+     * extension.
      */
     public String generateObjectKey(String originalFilename) {
         String extension = safeExtension(originalFilename);
@@ -135,7 +133,8 @@ public class MinioStorageClient {
     }
 
     /**
-     * Creates a short-lived GET URL that asks the browser to download the object.
+     * Creates a short-lived GET URL that asks the browser to download the
+     * object.
      */
     public String createPresignedDownloadUrl(String objectKey) {
         String normalizedObjectKey = normalizeObjectKey(objectKey);
@@ -147,7 +146,7 @@ public class MinioStorageClient {
 
     public String createPresignedDownloadUrl(String objectKey, String downloadFilename, Duration expiry) {
         String normalizedObjectKey = normalizeObjectKey(objectKey);
-        String normalizedFilename = requireText(downloadFilename, "Download filename")
+        String normalizedFilename = downloadFilename
                 .replace("\r", "")
                 .replace("\n", "");
         String contentDisposition = ContentDisposition.attachment()
@@ -162,8 +161,8 @@ public class MinioStorageClient {
     }
 
     /**
-     * Creates a GET URL suitable for sharing. Anyone with the URL can access the
-     * object until it expires.
+     * Creates a GET URL suitable for sharing. Anyone with the URL can access
+     * the object until it expires.
      */
     public String createPresignedShareUrl(String objectKey) {
         return createPresignedShareUrl(objectKey, shareUrlExpiry);
@@ -178,15 +177,13 @@ public class MinioStorageClient {
     }
 
     private String presign(String objectKey, Duration expiry, Map<String, String> queryParameters) {
-        return execute(
-                "create a presigned URL for object '" + objectKey + "'",
-                () -> presigningClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
-                        .method(Http.Method.GET)
-                        .bucket(bucketName)
-                        .object(objectKey)
-                        .expiry(Math.toIntExact(expiry.toSeconds()))
-                        .extraQueryParams(queryParameters)
-                        .build()));
+        return execute("create a presigned URL for object '" + objectKey + "'", () -> presigningClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
+                .method(Http.Method.GET)
+                .bucket(bucketName)
+                .object(objectKey)
+                .expiry(Math.toIntExact(expiry.toSeconds()))
+                .extraQueryParams(queryParameters)
+                .build()));
     }
 
     private void ensureBucketExists() {
@@ -199,13 +196,12 @@ public class MinioStorageClient {
                 return;
             }
 
-            boolean exists = execute("check bucket '" + bucketName + "'",
-                    () -> client.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build()));
+            boolean exists = execute("check bucket '" + bucketName + "'", () -> client.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build()));
             if (!exists) {
                 execute("create bucket '" + bucketName + "'", () -> {
                     try {
                         client.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
-                    } catch (Exception exception) {
+                    } catch (MinioException exception) {
                         boolean createdByAnotherInstance = client
                                 .bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
                         if (!createdByAnotherInstance) {
@@ -219,14 +215,8 @@ public class MinioStorageClient {
         }
     }
 
-    private static void requireFile(MultipartFile file) {
-        if (file == null || file.isEmpty()) {
-            throw new IllegalArgumentException("A non-empty file is required");
-        }
-    }
-
     private static String normalizeObjectKey(String objectKey) {
-        String normalized = requireText(objectKey, "Object key")
+        String normalized = objectKey
                 .replace('\\', '/')
                 .replaceAll("^/+", "")
                 .replaceAll("/{2,}", "/");
@@ -273,17 +263,6 @@ public class MinioStorageClient {
         return expiry;
     }
 
-    private static String requireText(String value, String fieldName) {
-        if (!StringUtils.hasText(value)) {
-            throw new IllegalArgumentException(fieldName + " is required");
-        }
-        return value.trim();
-    }
-
-    private static IllegalStateException storageFailure(String action, String objectKey, Exception exception) {
-        return new IllegalStateException("Failed to " + action + " for object '" + objectKey + "'", exception);
-    }
-
     private static <T> T execute(String action, StorageOperation<T> operation) {
         try {
             return operation.run();
@@ -297,6 +276,7 @@ public class MinioStorageClient {
 
     @FunctionalInterface
     private interface StorageOperation<T> {
+
         T run() throws Exception;
     }
 }
