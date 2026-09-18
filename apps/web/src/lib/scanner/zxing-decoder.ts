@@ -1,9 +1,9 @@
 // Lightweight ZXing-based 1D barcode decoder wrapper using @zxing/library
-import { BrowserBarcodeReader } from '@zxing/library';
+import { BarcodeFormat, BrowserBarcodeReader } from '@zxing/library';
 
 export interface ZXingDecodeResult {
   text: string;
-  format?: string;
+  format?: BarcodeFormat;
 }
 
 export class ZXingDecoder {
@@ -25,13 +25,10 @@ export class ZXingDecoder {
       img.src = dataUrl;
       await loaded;
 
-      const result = await this.reader.decodeFromImageElement(img as any);
+      const result = await this.reader.decodeFromImageElement(img);
       if (result) {
         // result.getBarcodeFormat() may be an enum value; stringify it
-        const format = typeof result.getBarcodeFormat === 'function'
-          ? String((result as any).getBarcodeFormat())
-          : undefined;
-        return { text: result.getText(), format } as ZXingDecodeResult;
+        return { text: result.getText(), format: result.getBarcodeFormat() } as ZXingDecodeResult;
       }
       return null;
     } catch (e) {

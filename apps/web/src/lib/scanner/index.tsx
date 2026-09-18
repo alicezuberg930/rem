@@ -1,6 +1,24 @@
 import React, { useEffect, useRef } from "react";
 import type { ScannerProps } from "./types";
 
+interface BarcodeDetectorResult {
+  rawValue: string;
+  format: string;
+}
+
+interface BarcodeDetector {
+  detect(bitmap: ImageBitmap): Promise<BarcodeDetectorResult[]>;
+}
+
+interface BarcodeDetectorConstructor {
+  new (options?: { formats?: string[] }): BarcodeDetector;
+}
+
+declare global {
+  interface Window {
+    BarcodeDetector?: BarcodeDetectorConstructor;
+  }
+}
 
 const defaultFormats = [
   // Common barcode formats; BarcodeDetector will filter unsupported ones
@@ -13,8 +31,6 @@ const defaultFormats = [
   "upc_e",
 ];
 
-// Import jsQR for QR-code fallback decoder
-import jsQR from "jsqr";
 import { ZXingDecoder } from "./zxing-decoder";
 
 export const Scanner: React.FC<ScannerProps> = ({
@@ -37,8 +53,12 @@ export const Scanner: React.FC<ScannerProps> = ({
 
     const startWithBarcodeDetector = async (video: HTMLVideoElement) => {
       try {
-        // @ts-ignore
-        const detector = new (window as any).BarcodeDetector({ formats });
+        const BarcodeDetectorCtor = window.BarcodeDetector;
+        if (!BarcodeDetectorCtor) {
+          throw new Error("BarcodeDetector is not supported in this browser");
+        }
+
+        const detector = new BarcodeDetectorCtor({ formats });
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
         const interval = 1000 / fps;
@@ -47,7 +67,7 @@ export const Scanner: React.FC<ScannerProps> = ({
           if (!mounted || !runningRef.current) return;
           try {
             if (video.videoWidth === 0 || video.videoHeight === 0) {
-              rafRef.current = window.setTimeout(tick, interval) as any;
+              rafRef.current = window.setTimeout(tick, interval)
               return;
             }
             canvas.width = video.videoWidth;
@@ -63,7 +83,7 @@ export const Scanner: React.FC<ScannerProps> = ({
           } catch (err) {
             onError?.(err as Error);
           } finally {
-            rafRef.current = window.setTimeout(tick, interval) as any;
+            rafRef.current = window.setTimeout(tick, interval);
           }
         };
 
@@ -71,11 +91,11 @@ export const Scanner: React.FC<ScannerProps> = ({
         tick();
       } catch (err) {
         onError?.(err as Error);
-        // fall through to jsQR fallback handled by start()
+        // fall through to ZXing fallback handled by start()
       }
     };
 
-    const startWithJsQr = async (video: HTMLVideoElement) => {
+    const startWithZxing = async (video: HTMLVideoElement) => {
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
       const interval = 1000 / fps;
@@ -86,7 +106,7 @@ export const Scanner: React.FC<ScannerProps> = ({
         if (!mounted || !runningRef.current) return;
         try {
           if (video.videoWidth === 0 || video.videoHeight === 0) {
-            intervalRef.current = window.setTimeout(tick, interval) as any;
+            intervalRef.current = window.setTimeout(tick, interval);
             return;
           }
           canvas.width = video.videoWidth;
@@ -94,33 +114,16 @@ export const Scanner: React.FC<ScannerProps> = ({
           if (!ctx) return;
           ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-          // First try ZXing for 1D + 2D support
-          try {
-            const zres = await decoder.decodeFromCanvas(canvas);
-            if (zres && zres.text) {
-              onScan?.({ content: zres.text, format: zres.format ?? undefined });
-              intervalRef.current = window.setTimeout(tick, interval) as any;
-              return;
-            }
-          } catch (e) {
-            // ignore ZXing errors and fall through to jsQR
-          }
-
-          // Fallback to jsQR for QR decoding (if ZXing didn't find it)
-          try {
-            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            const result = jsQR(imageData.data, canvas.width, canvas.height, { inversionAttempts: "attemptBoth" });
-            if (result) {
-              onScan?.({ content: result.data, format: "qr_code" });
-            }
-          } catch (err) {
-            // jsQR errors
-            onError?.(err as Error);
+          const zres = await decoder.decodeFromCanvas(canvas);
+          if (zres && zres.text) {
+            onScan?.({ content: zres.text, format: zres.format });
+            intervalRef.current = window.setTimeout(tick, interval);
+            return;
           }
         } catch (err) {
           onError?.(err as Error);
         } finally {
-          intervalRef.current = window.setTimeout(tick, interval) as any;
+          intervalRef.current = window.setTimeout(tick, interval);
         }
       };
 
@@ -130,7 +133,9 @@ export const Scanner: React.FC<ScannerProps> = ({
       return () => {
         try {
           decoder.reset();
-        } catch (_e) {}
+        } catch (_e) {
+          // ignore
+        }
       };
     };
 
@@ -155,14 +160,14 @@ export const Scanner: React.FC<ScannerProps> = ({
         video.srcObject = stream;
         await video.play();
 
-        const hasBarcodeDetector = typeof (window as any).BarcodeDetector === "function";
+        const hasBarcodeDetector = typeof window.BarcodeDetector === "function";
         if (hasBarcodeDetector) {
           await startWithBarcodeDetector(video);
           return;
         }
 
-        // fallback to jsQR (qr-code only)
-        await startWithJsQr(video);
+        // fallback to ZXing for QR and 1D barcode decoding
+        await startWithZxing(video);
       } catch (err) {
         onError?.(err as Error);
       }
@@ -195,7 +200,4 @@ export const Scanner: React.FC<ScannerProps> = ({
   }, [fps, facingMode, formats, qrbox, onScan, onError]);
 
   return <div ref={containerRef} className={className} />;
-};
-
-export default Scanner;
-
+}

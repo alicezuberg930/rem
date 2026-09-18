@@ -1,9 +1,11 @@
 // Minimal typing for the scanner wrapper
 
+import { BarcodeFormat } from "@zxing/library";
+
 export interface ScanResult {
   content: string;
-  // format may be vendor specific (BarcodeDetector returns format string)
-  format?: string;
+  // format may be vendor specific (BarcodeDetector returns a string; ZXing may return an enum)
+  format?: string | BarcodeFormat;
 }
 
 export interface ScannerProps {

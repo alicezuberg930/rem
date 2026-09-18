@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react"
-import ScannerComponent from "@/lib/scanner"
+import { useEffect, useState } from "react"
+import { Scanner as ScannerCamera } from "@/lib/scanner"
 import { Header } from "@/layout/header"
 import { Search } from "@/components/search"
 import { ClockInButton } from "@/layout/clock-in-button"
@@ -18,6 +18,7 @@ export function ScannerFeature() {
         const update = async () => {
             try {
                 const list = await navigator.mediaDevices.enumerateDevices()
+                console.log(list)
                 const videoInputs = list.filter((d) => d.kind === "videoinput")
                 setDevices(videoInputs)
                 if (!deviceId && videoInputs.length > 0) setDeviceId(videoInputs[0].deviceId)
@@ -70,7 +71,7 @@ export function ScannerFeature() {
                     <div className='w-full max-w-2xl'>
                         <div className='aspect-video w-full overflow-hidden rounded-md bg-black'>
                             {running ? (
-                                <ScannerComponent
+                                <ScannerCamera
                                     deviceId={deviceId}
                                     onScan={(r) => toast.message(`Scanned: ${r.content} (${r.format ?? 'unknown'})`)}
                                     onError={(e) => toast.error(e.message)}
@@ -90,5 +91,3 @@ export function ScannerFeature() {
 }
 
 export const Scanner = ScannerFeature
-
-export default ScannerFeature
