@@ -3,7 +3,7 @@ package server.rem.dtos.media;
 import server.rem.enums.MediaStatus;
 import server.rem.enums.MediaType;
 
-public record MediaDto(
+public record MediaResponse(
         String id,
         String storageKey,
         String name,

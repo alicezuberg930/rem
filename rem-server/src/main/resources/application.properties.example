@@ -52,5 +52,6 @@ minio.public-endpoint=${MINIO_PUBLIC_ENDPOINT:${MINIO_ENDPOINT:http://localhost:
 minio.access-key=${MINIO_ACCESS_KEY:${MINIO_ROOT_USER:admin}}
 minio.secret-key=${MINIO_SECRET_KEY:${MINIO_ROOT_PASSWORD:minioadmin}}
 minio.bucket=${MINIO_BUCKET:rem-storage}
+minio.upload-url-expiry-seconds=${MINIO_UPLOAD_URL_EXPIRY_SECONDS:900}
 minio.download-url-expiry-seconds=${MINIO_DOWNLOAD_URL_EXPIRY_SECONDS:900}
 minio.share-url-expiry-seconds=${MINIO_SHARE_URL_EXPIRY_SECONDS:86400}

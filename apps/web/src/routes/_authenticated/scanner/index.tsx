@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { Scanner } from '@/features/scanner'
+import { Scanners } from '@/features/scanners'
 
 export const Route = createFileRoute('/_authenticated/scanner/')({
-  component: Scanner,
+  component: Scanners,
 })

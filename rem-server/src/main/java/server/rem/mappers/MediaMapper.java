@@ -3,7 +3,7 @@ package server.rem.mappers;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import server.rem.dtos.media.MediaDto;
+import server.rem.dtos.media.MediaResponse;
 import server.rem.entities.Business;
 import server.rem.entities.Media;
 import server.rem.entities.User;
@@ -32,5 +32,5 @@ public interface MediaMapper {
             String extension);
 
     @Mapping(target = "parentId", source = "parent.id")
-    MediaDto toDto(Media media);
+    MediaResponse toDto(Media media);
 }

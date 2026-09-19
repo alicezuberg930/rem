@@ -3,6 +3,9 @@ package server.rem.utils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -19,7 +22,11 @@ import io.minio.Http;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
+import io.minio.RemoveObjectsArgs;
+import io.minio.Result;
 import io.minio.errors.MinioException;
+import io.minio.messages.DeleteRequest;
+import io.minio.messages.DeleteResult;
 
 @Component
 public class MinioStorageClient {
@@ -29,6 +36,7 @@ public class MinioStorageClient {
     private final MinioClient client;
     private final MinioClient presigningClient;
     private final String bucketName;
+    private final Duration uploadUrlExpiry;
     private final Duration downloadUrlExpiry;
     private final Duration shareUrlExpiry;
     private volatile boolean bucketReady;
@@ -39,10 +47,12 @@ public class MinioStorageClient {
             @Value("${minio.access-key:${MINIO_ROOT_USER:admin}}") String accessKey,
             @Value("${minio.secret-key:${MINIO_ROOT_PASSWORD:minioadmin}}") String secretKey,
             @Value("${minio.bucket:rem-storage}") String bucketName,
+            @Value("${minio.upload-url-expiry-seconds:900}") long uploadUrlExpirySeconds,
             @Value("${minio.download-url-expiry-seconds:900}") long downloadUrlExpirySeconds,
             @Value("${minio.share-url-expiry-seconds:86400}") long shareUrlExpirySeconds) {
 
         this.bucketName = bucketName;
+        this.uploadUrlExpiry = validateExpiry(Duration.ofSeconds(uploadUrlExpirySeconds));
         this.downloadUrlExpiry = validateExpiry(Duration.ofSeconds(downloadUrlExpirySeconds));
         this.shareUrlExpiry = validateExpiry(Duration.ofSeconds(shareUrlExpirySeconds));
         this.client = MinioClient.builder()
@@ -124,12 +134,66 @@ public class MinioStorageClient {
     }
 
     /**
+     * Deletes all objects identified by the supplied storage keys.
+     */
+    public void delete(String[] storageKeys) {
+        if (storageKeys == null || storageKeys.length == 0) {
+            throw new IllegalArgumentException("At least one storage key is required");
+        }
+
+        List<DeleteRequest.Object> objects = Arrays.stream(storageKeys)
+                .map(MinioStorageClient::normalizeObjectKey)
+                .distinct()
+                .map(DeleteRequest.Object::new)
+                .toList();
+
+        ensureBucketExists();
+        execute("delete objects from bucket '" + bucketName + "'", () -> {
+            List<String> failures = new ArrayList<>();
+            Iterable<Result<DeleteResult.Error>> results = client.removeObjects(RemoveObjectsArgs.builder()
+                    .bucket(bucketName)
+                    .objects(objects)
+                    .build());
+
+            for (Result<DeleteResult.Error> result : results) {
+                DeleteResult.Error error = result.get();
+                failures.add("'" + error.objectName() + "' (" + error.code() + "): " + error.message());
+            }
+
+            if (!failures.isEmpty()) {
+                throw new IllegalStateException("MinIO failed to delete: " + String.join("; ", failures));
+            }
+            return null;
+        });
+    }
+
+    /**
      * Generates an object key while retaining a safe version of the file
      * extension.
      */
     public String generateObjectKey(String originalFilename) {
         String extension = safeExtension(originalFilename);
         return CUIDGenerator.createId() + extension;
+    }
+
+    /**
+     * Creates a short-lived PUT URL that allows a client to upload directly to
+     * MinIO under the supplied object key.
+     *
+     * <p>The caller should persist the object key and send it to the frontend
+     * together with this URL. The frontend must upload the raw file body with
+     * an HTTP PUT request.</p>
+     */
+    public String createPresignedUploadUrl(String objectKey) {
+        return createPresignedUploadUrl(objectKey, uploadUrlExpiry);
+    }
+
+    public String createPresignedUploadUrl(String objectKey, Duration expiry) {
+        return presign(
+                Http.Method.PUT,
+                normalizeObjectKey(objectKey),
+                validateExpiry(expiry),
+                Map.of());
     }
 
     /**
@@ -155,6 +219,7 @@ public class MinioStorageClient {
                 .toString();
 
         return presign(
+                Http.Method.GET,
                 normalizedObjectKey,
                 validateExpiry(expiry),
                 Map.of("response-content-disposition", contentDisposition));
@@ -169,16 +234,24 @@ public class MinioStorageClient {
     }
 
     public String createPresignedShareUrl(String objectKey, Duration expiry) {
-        return presign(normalizeObjectKey(objectKey), validateExpiry(expiry), Map.of());
+        return presign(
+                Http.Method.GET,
+                normalizeObjectKey(objectKey),
+                validateExpiry(expiry),
+                Map.of());
     }
 
     public String getBucketName() {
         return bucketName;
     }
 
-    private String presign(String objectKey, Duration expiry, Map<String, String> queryParameters) {
-        return execute("create a presigned URL for object '" + objectKey + "'", () -> presigningClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
-                .method(Http.Method.GET)
+    private String presign(
+            Http.Method method,
+            String objectKey,
+            Duration expiry,
+            Map<String, String> queryParameters) {
+        return execute("create a presigned " + method + " URL for object '" + objectKey + "'", () -> presigningClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
+                .method(method)
                 .bucket(bucketName)
                 .object(objectKey)
                 .expiry(Math.toIntExact(expiry.toSeconds()))
@@ -216,6 +289,10 @@ public class MinioStorageClient {
     }
 
     private static String normalizeObjectKey(String objectKey) {
+        if (!StringUtils.hasText(objectKey)) {
+            throw new IllegalArgumentException("Object key is required");
+        }
+
         String normalized = objectKey
                 .replace('\\', '/')
                 .replaceAll("^/+", "")
