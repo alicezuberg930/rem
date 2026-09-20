@@ -28,12 +28,12 @@ import { Route as AuthenticatedTasksIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedStorageIndexRouteImport } from './routes/_authenticated/storage/index'
 import { Route as AuthenticatedShipmentOrderIndexRouteImport } from './routes/_authenticated/shipment-order/index'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
-import { Route as AuthenticatedScannerIndexRouteImport } from './routes/_authenticated/scanner/index'
 import { Route as AuthenticatedPayrollIndexRouteImport } from './routes/_authenticated/payroll/index'
 import { Route as AuthenticatedLeadsIndexRouteImport } from './routes/_authenticated/leads/index'
 import { Route as AuthenticatedHelpCenterIndexRouteImport } from './routes/_authenticated/help-center/index'
 import { Route as AuthenticatedCustomersIndexRouteImport } from './routes/_authenticated/customers/index'
 import { Route as AuthenticatedContactsIndexRouteImport } from './routes/_authenticated/contacts/index'
+import { Route as AuthenticatedCodeScannerIndexRouteImport } from './routes/_authenticated/code-scanner/index'
 import { Route as AuthenticatedChatsIndexRouteImport } from './routes/_authenticated/chats/index'
 import { Route as AuthenticatedCampaignsIndexRouteImport } from './routes/_authenticated/campaigns/index'
 import { Route as AuthenticatedBookingsIndexRouteImport } from './routes/_authenticated/bookings/index'
@@ -144,12 +144,6 @@ const AuthenticatedSettingsIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedSettingsRouteRoute,
   } as any)
-const AuthenticatedScannerIndexRoute =
-  AuthenticatedScannerIndexRouteImport.update({
-    id: '/scanner/',
-    path: '/scanner/',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
 const AuthenticatedPayrollIndexRoute =
   AuthenticatedPayrollIndexRouteImport.update({
     id: '/payroll/',
@@ -177,6 +171,12 @@ const AuthenticatedContactsIndexRoute =
   AuthenticatedContactsIndexRouteImport.update({
     id: '/contacts/',
     path: '/contacts/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedCodeScannerIndexRoute =
+  AuthenticatedCodeScannerIndexRouteImport.update({
+    id: '/code-scanner/',
+    path: '/code-scanner/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedChatsIndexRoute = AuthenticatedChatsIndexRouteImport.update({
@@ -261,12 +261,12 @@ export interface FileRoutesByFullPath {
   '/bookings/': typeof AuthenticatedBookingsIndexRoute
   '/campaigns/': typeof AuthenticatedCampaignsIndexRoute
   '/chats/': typeof AuthenticatedChatsIndexRoute
+  '/code-scanner/': typeof AuthenticatedCodeScannerIndexRoute
   '/contacts/': typeof AuthenticatedContactsIndexRoute
   '/customers/': typeof AuthenticatedCustomersIndexRoute
   '/help-center/': typeof AuthenticatedHelpCenterIndexRoute
   '/leads/': typeof AuthenticatedLeadsIndexRoute
   '/payroll/': typeof AuthenticatedPayrollIndexRoute
-  '/scanner/': typeof AuthenticatedScannerIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/shipment-order/': typeof AuthenticatedShipmentOrderIndexRoute
   '/storage/': typeof AuthenticatedStorageIndexRoute
@@ -296,12 +296,12 @@ export interface FileRoutesByTo {
   '/bookings': typeof AuthenticatedBookingsIndexRoute
   '/campaigns': typeof AuthenticatedCampaignsIndexRoute
   '/chats': typeof AuthenticatedChatsIndexRoute
+  '/code-scanner': typeof AuthenticatedCodeScannerIndexRoute
   '/contacts': typeof AuthenticatedContactsIndexRoute
   '/customers': typeof AuthenticatedCustomersIndexRoute
   '/help-center': typeof AuthenticatedHelpCenterIndexRoute
   '/leads': typeof AuthenticatedLeadsIndexRoute
   '/payroll': typeof AuthenticatedPayrollIndexRoute
-  '/scanner': typeof AuthenticatedScannerIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/shipment-order': typeof AuthenticatedShipmentOrderIndexRoute
   '/storage': typeof AuthenticatedStorageIndexRoute
@@ -334,12 +334,12 @@ export interface FileRoutesById {
   '/_authenticated/bookings/': typeof AuthenticatedBookingsIndexRoute
   '/_authenticated/campaigns/': typeof AuthenticatedCampaignsIndexRoute
   '/_authenticated/chats/': typeof AuthenticatedChatsIndexRoute
+  '/_authenticated/code-scanner/': typeof AuthenticatedCodeScannerIndexRoute
   '/_authenticated/contacts/': typeof AuthenticatedContactsIndexRoute
   '/_authenticated/customers/': typeof AuthenticatedCustomersIndexRoute
   '/_authenticated/help-center/': typeof AuthenticatedHelpCenterIndexRoute
   '/_authenticated/leads/': typeof AuthenticatedLeadsIndexRoute
   '/_authenticated/payroll/': typeof AuthenticatedPayrollIndexRoute
-  '/_authenticated/scanner/': typeof AuthenticatedScannerIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/shipment-order/': typeof AuthenticatedShipmentOrderIndexRoute
   '/_authenticated/storage/': typeof AuthenticatedStorageIndexRoute
@@ -372,12 +372,12 @@ export interface FileRouteTypes {
     | '/bookings/'
     | '/campaigns/'
     | '/chats/'
+    | '/code-scanner/'
     | '/contacts/'
     | '/customers/'
     | '/help-center/'
     | '/leads/'
     | '/payroll/'
-    | '/scanner/'
     | '/settings/'
     | '/shipment-order/'
     | '/storage/'
@@ -407,12 +407,12 @@ export interface FileRouteTypes {
     | '/bookings'
     | '/campaigns'
     | '/chats'
+    | '/code-scanner'
     | '/contacts'
     | '/customers'
     | '/help-center'
     | '/leads'
     | '/payroll'
-    | '/scanner'
     | '/settings'
     | '/shipment-order'
     | '/storage'
@@ -444,12 +444,12 @@ export interface FileRouteTypes {
     | '/_authenticated/bookings/'
     | '/_authenticated/campaigns/'
     | '/_authenticated/chats/'
+    | '/_authenticated/code-scanner/'
     | '/_authenticated/contacts/'
     | '/_authenticated/customers/'
     | '/_authenticated/help-center/'
     | '/_authenticated/leads/'
     | '/_authenticated/payroll/'
-    | '/_authenticated/scanner/'
     | '/_authenticated/settings/'
     | '/_authenticated/shipment-order/'
     | '/_authenticated/storage/'
@@ -607,13 +607,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsIndexRouteImport
       parentRoute: typeof AuthenticatedSettingsRouteRoute
     }
-    '/_authenticated/scanner/': {
-      id: '/_authenticated/scanner/'
-      path: '/scanner'
-      fullPath: '/scanner/'
-      preLoaderRoute: typeof AuthenticatedScannerIndexRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/payroll/': {
       id: '/_authenticated/payroll/'
       path: '/payroll'
@@ -647,6 +640,13 @@ declare module '@tanstack/react-router' {
       path: '/contacts'
       fullPath: '/contacts/'
       preLoaderRoute: typeof AuthenticatedContactsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/code-scanner/': {
+      id: '/_authenticated/code-scanner/'
+      path: '/code-scanner'
+      fullPath: '/code-scanner/'
+      preLoaderRoute: typeof AuthenticatedCodeScannerIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/chats/': {
@@ -754,12 +754,12 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedBookingsIndexRoute: typeof AuthenticatedBookingsIndexRoute
   AuthenticatedCampaignsIndexRoute: typeof AuthenticatedCampaignsIndexRoute
   AuthenticatedChatsIndexRoute: typeof AuthenticatedChatsIndexRoute
+  AuthenticatedCodeScannerIndexRoute: typeof AuthenticatedCodeScannerIndexRoute
   AuthenticatedContactsIndexRoute: typeof AuthenticatedContactsIndexRoute
   AuthenticatedCustomersIndexRoute: typeof AuthenticatedCustomersIndexRoute
   AuthenticatedHelpCenterIndexRoute: typeof AuthenticatedHelpCenterIndexRoute
   AuthenticatedLeadsIndexRoute: typeof AuthenticatedLeadsIndexRoute
   AuthenticatedPayrollIndexRoute: typeof AuthenticatedPayrollIndexRoute
-  AuthenticatedScannerIndexRoute: typeof AuthenticatedScannerIndexRoute
   AuthenticatedShipmentOrderIndexRoute: typeof AuthenticatedShipmentOrderIndexRoute
   AuthenticatedStorageIndexRoute: typeof AuthenticatedStorageIndexRoute
   AuthenticatedTasksIndexRoute: typeof AuthenticatedTasksIndexRoute
@@ -776,12 +776,12 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedBookingsIndexRoute: AuthenticatedBookingsIndexRoute,
   AuthenticatedCampaignsIndexRoute: AuthenticatedCampaignsIndexRoute,
   AuthenticatedChatsIndexRoute: AuthenticatedChatsIndexRoute,
+  AuthenticatedCodeScannerIndexRoute: AuthenticatedCodeScannerIndexRoute,
   AuthenticatedContactsIndexRoute: AuthenticatedContactsIndexRoute,
   AuthenticatedCustomersIndexRoute: AuthenticatedCustomersIndexRoute,
   AuthenticatedHelpCenterIndexRoute: AuthenticatedHelpCenterIndexRoute,
   AuthenticatedLeadsIndexRoute: AuthenticatedLeadsIndexRoute,
   AuthenticatedPayrollIndexRoute: AuthenticatedPayrollIndexRoute,
-  AuthenticatedScannerIndexRoute: AuthenticatedScannerIndexRoute,
   AuthenticatedShipmentOrderIndexRoute: AuthenticatedShipmentOrderIndexRoute,
   AuthenticatedStorageIndexRoute: AuthenticatedStorageIndexRoute,
   AuthenticatedTasksIndexRoute: AuthenticatedTasksIndexRoute,

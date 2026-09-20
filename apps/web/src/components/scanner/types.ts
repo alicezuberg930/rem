@@ -12,6 +12,11 @@ export type ScannerFormat =
   | 'qr_code'
   | 'upc_a'
   | 'upc_e'
+  // | 'micro_qr_code'
+  // | 'upc_ean_extension'
+  // | 'rss_expanded'
+  // | 'rss_14'
+  // | 'maxicode'
 
 export interface ScanResult {
   content: string

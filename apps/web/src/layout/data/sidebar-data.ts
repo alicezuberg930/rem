@@ -63,11 +63,6 @@ export const sidebarData: SidebarData = {
           icon: LayoutDashboard,
         },
         {
-          title: 'Scanner',
-          url: '/scanner',
-          icon: Scan,
-        },
-        {
           title: 'Tasks',
           url: '/tasks',
           icon: ListTodo,
@@ -86,24 +81,6 @@ export const sidebarData: SidebarData = {
           title: 'Chats',
           url: '/chats',
           icon: MessagesSquare,
-        },
-        {
-          title: 'Secured by Clerk',
-          icon: ClerkLogo,
-          items: [
-            {
-              title: 'Sign In',
-              url: '/clerk/sign-in',
-            },
-            {
-              title: 'Sign Up',
-              url: '/clerk/sign-up',
-            },
-            {
-              title: 'User Management',
-              url: '/clerk/user-management',
-            },
-          ],
         },
       ],
     },
@@ -210,6 +187,11 @@ export const sidebarData: SidebarData = {
           title: 'Shipment Order',
           url: '/shipment-order',
           icon: Truck,
+        },
+        {
+          title: 'Code Scanner',
+          url: '/code-scanner',
+          icon: Scan,
         },
       ]
     },

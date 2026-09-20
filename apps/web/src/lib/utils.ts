@@ -1,3 +1,4 @@
+import { BitMatrix } from '@zxing/library'
 import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 
@@ -100,30 +101,100 @@ const getCurrentLocation = (): Promise<{ latitude: number, longitude: number }> 
       return
     }
 
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        resolve({
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-        })
-      },
-      (e) => reject(new Error(e.message)),
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 0,
-      }
-    )
+    navigator.geolocation.getCurrentPosition((position) => {
+      resolve({
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+      })
+    }, (e) => reject(new Error(e.message)), {
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 0,
+    })
   })
 }
 
-const getInitials = (name: string) =>
-  name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0])
-    .join('')
-    .toUpperCase()
+const getInitials = (name: string) => name
+  .split(/\s+/)
+  .filter(Boolean)
+  .slice(0, 2)
+  .map((part) => part[0])
+  .join('')
+  .toUpperCase()
 
-export { getInitials, getCurrentLocation, alpha, slugify, getBaseUrl, sleep, cn }
+const fileToCanvas = (file: File): Promise<HTMLCanvasElement> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+
+    img.onload = () => {
+      const canvas = document.createElement("canvas")
+      const ctx = canvas.getContext("2d")
+      if (!ctx) {
+        reject(new Error("Could not get canvas context"))
+        return
+      }
+      canvas.width = img.naturalWidth
+      canvas.height = img.naturalHeight
+      ctx.drawImage(img, 0, 0)
+      URL.revokeObjectURL(img.src)
+      resolve(canvas)
+    }
+
+    img.onerror = () => {
+      URL.revokeObjectURL(img.src)
+      reject(new Error("Failed to load image"))
+    }
+
+    img.src = URL.createObjectURL(file)
+  })
+}
+
+const bitMatrixToCanvas = (matrix: BitMatrix, scale = 1): HTMLCanvasElement => {
+  const width = matrix.getWidth();
+  const height = matrix.getHeight();
+
+  const canvas = document.createElement("canvas");
+  canvas.width = width * scale;
+  canvas.height = height * scale;
+  const ctx = canvas.getContext("2d");
+
+  if (!ctx) {
+    throw new Error("Could not get canvas context");
+  }
+
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "#000000";
+
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      if (matrix.get(x, y)) {
+        ctx.fillRect(
+          x * scale,
+          y * scale,
+          scale,
+          scale
+        );
+      }
+    }
+  }
+  return canvas;
+}
+
+const canvasToBlob = (canvas: HTMLCanvasElement, quality?: number): Promise<Blob> => {
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(
+      (blob) => {
+        if (blob) {
+          resolve(blob);
+        } else {
+          reject(new Error("Failed to convert canvas to Blob"));
+        }
+      },
+      "image/png",
+      quality ?? 1
+    );
+  });
+}
+
+export { getInitials, getCurrentLocation, alpha, slugify, getBaseUrl, sleep, cn, fileToCanvas, bitMatrixToCanvas, canvasToBlob }
