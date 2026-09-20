@@ -32,7 +32,6 @@ import {
   Folders,
   Scan
 } from 'lucide-react'
-import { ClerkLogo } from '@/assets/clerk-logo'
 import { type SidebarData } from '../types'
 
 export const sidebarData: SidebarData = {
@@ -81,6 +80,11 @@ export const sidebarData: SidebarData = {
           title: 'Chats',
           url: '/chats',
           icon: MessagesSquare,
+        },
+        {
+          title: 'Variants',
+          url: '/variants',
+          icon: LayoutTemplate,
         },
       ],
     },
