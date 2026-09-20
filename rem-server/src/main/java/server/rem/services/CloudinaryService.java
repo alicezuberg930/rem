@@ -16,7 +16,7 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -26,9 +26,10 @@ import lombok.RequiredArgsConstructor;
 import server.rem.dtos.file.CloudinaryUploadResponse;
 import server.rem.utils.CUIDGenerator;
 
-@Service
+@Component
 @RequiredArgsConstructor
 public class CloudinaryService {
+
     @Value("${cloudinary.cloud-name}")
     private String cloudName;
     @Value("${cloudinary.api-key}")
@@ -37,6 +38,7 @@ public class CloudinaryService {
     private String apiSecret;
     @Value("${cloudinary.base-folder}")
     private String baseFolder;
+
     private final ObjectMapper objectMapper;
 
     public List<String> uploadFiles(List<MultipartFile> files, String subFolder, String publicId) throws Exception {
@@ -67,8 +69,9 @@ public class CloudinaryService {
         signatureParams.put("invalidate", "true");
         signatureParams.put("use_filename", "false");
         signatureParams.put("unique_filename", "false");
-        if (folder != null)
+        if (folder != null) {
             signatureParams.put("folder", folder);
+        }
 
         String signature = generateSignature(signatureParams, apiSecret);
 
@@ -82,8 +85,7 @@ public class CloudinaryService {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         // file part
         baos.write(("--" + boundary + "\r\n").getBytes());
-        baos.write(("Content-Disposition: form-data; name=\"file\"; filename=\"" + originalFilename + "\"\r\n")
-                .getBytes());
+        baos.write(("Content-Disposition: form-data; name=\"file\"; filename=\"" + originalFilename + "\"\r\n").getBytes());
         baos.write(("Content-Type: " + file.getContentType() + "\r\n\r\n").getBytes());
         baos.write(fileBytes);
         baos.write("\r\n".getBytes());
@@ -97,8 +99,9 @@ public class CloudinaryService {
         formFields.put("invalidate", "true");
         formFields.put("use_filename", "false");
         formFields.put("unique_filename", "false");
-        if (folder != null)
+        if (folder != null) {
             formFields.put("folder", folder);
+        }
 
         for (Map.Entry<String, String> entry : formFields.entrySet()) {
             baos.write(("--" + boundary + "\r\n").getBytes());
@@ -166,8 +169,7 @@ public class CloudinaryService {
 
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://api.cloudinary.com/v1_1/" + cloudName + "/" + resourceType
-                        + "/destroy"))
+                .uri(URI.create("https://api.cloudinary.com/v1_1/" + cloudName + "/" + resourceType + "/destroy"))
                 .header("Content-Type", "multipart/form-data; boundary=" + boundary)
                 .POST(HttpRequest.BodyPublishers.ofByteArray(baos.toByteArray()))
                 .build();
@@ -182,7 +184,6 @@ public class CloudinaryService {
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────
-
     private String generateSignature(Map<String, String> params, String apiSecret) throws Exception {
         String paramString = params.entrySet().stream()
                 .map(e -> e.getKey() + "=" + e.getValue())
@@ -207,8 +208,9 @@ public class CloudinaryService {
                 break;
             }
         }
-        if (uploadIndex == -1)
+        if (uploadIndex == -1) {
             return "";
+        }
 
         String publicIdWithExt = String.join("/", Arrays.copyOfRange(parts, uploadIndex + 1, parts.length));
 
@@ -223,10 +225,12 @@ public class CloudinaryService {
 
     private String getResourceType(String url) {
         String extension = url.substring(url.lastIndexOf('.') + 1).toLowerCase();
-        if (List.of("mp3", "wav", "ogg", "flac", "m4a", "aac").contains(extension))
+        if (List.of("mp3", "wav", "ogg", "flac", "m4a", "aac").contains(extension)) {
             return "video";
-        if (List.of("jpg", "jpeg", "png", "gif", "webp", "svg", "bmp").contains(extension))
+        }
+        if (List.of("jpg", "jpeg", "png", "gif", "webp", "svg", "bmp").contains(extension)) {
             return "image";
+        }
         return "raw";
     }
 

@@ -1,11 +1,11 @@
 package server.rem.specifications;
 
+import java.time.LocalDate;
+
 import org.springframework.data.jpa.domain.Specification;
 
 import server.rem.dtos.leave_request.QueryLeaveRequest;
 import server.rem.entities.LeaveRequest;
-
-import java.time.LocalDate;
 
 public class LeaveRequestSpecification {
 

@@ -18,9 +18,6 @@ import {
   Users,
   MessagesSquare,
   ShieldCheck,
-  AudioWaveform,
-  Command,
-  GalleryVerticalEnd,
   Clock,
   LayoutTemplate,
   Megaphone,
@@ -30,28 +27,12 @@ import {
   ReceiptText,
   Truck,
   Folders,
-  Scan
+  ScanBarcode,
+  PackageSearch
 } from 'lucide-react'
 import { type SidebarData } from '../types'
 
 export const sidebarData: SidebarData = {
-  teams: [
-    {
-      name: 'Rem',
-      logo: Command,
-      plan: 'Vite + ShadcnUI',
-    },
-    {
-      name: 'Acme Inc',
-      logo: GalleryVerticalEnd,
-      plan: 'Enterprise',
-    },
-    {
-      name: 'Acme Corp.',
-      logo: AudioWaveform,
-      plan: 'Startup',
-    },
-  ],
   navGroups: [
     {
       title: 'General',
@@ -80,11 +61,6 @@ export const sidebarData: SidebarData = {
           title: 'Chats',
           url: '/chats',
           icon: MessagesSquare,
-        },
-        {
-          title: 'Variants',
-          url: '/variants',
-          icon: LayoutTemplate,
         },
       ],
     },
@@ -185,6 +161,21 @@ export const sidebarData: SidebarData = {
       ],
     },
     {
+      title: 'ERP',
+      items: [
+        {
+          title: 'Variant',
+          url: '/variants',
+          icon: LayoutTemplate,
+        },
+        {
+          title: 'Product',
+          url: '/products',
+          icon: PackageSearch,
+        },
+      ]
+    },
+    {
       title: 'Logistics',
       items: [
         {
@@ -195,7 +186,7 @@ export const sidebarData: SidebarData = {
         {
           title: 'Code Scanner',
           url: '/code-scanner',
-          icon: Scan,
+          icon: ScanBarcode,
         },
       ]
     },

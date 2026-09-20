@@ -8,8 +8,7 @@ import server.rem.entities.Campaign;
 public class CampaignSpecification {
 
     public static Specification<Campaign> withFilters(QueryCampaign dto, String businessId) {
-        return Specification
-                .where(hasBusinessId(businessId));
+        return Specification.where(hasBusinessId(businessId));
     }
 
     private static Specification<Campaign> hasBusinessId(String businessId) {

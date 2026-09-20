@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Check, X } from 'lucide-react'
+import { X } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -48,22 +48,22 @@ export function NewChat({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className='sm:max-w-[600px]'>
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>New message</DialogTitle>
         </DialogHeader>
         <div className='flex flex-col gap-4'>
-          <div className='flex flex-wrap items-baseline-last gap-2'>
-            <span className='min-h-6 text-sm text-muted-foreground'>To:</span>
+          <div className='flex flex-wrap items-center gap-2'>
+            <span className='text-sm'>To:</span>
             {selectedUser && (
               <Badge variant='default'>
                 {selectedUser.fullname}
                 <button
                   type='button'
-                  className='ms-1 rounded-full ring-offset-background outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2'
+                  className='outline-hidden'
                   onClick={() => setSelectedUser(null)}
                 >
-                  <X className='h-3 w-3 text-muted-foreground hover:text-foreground' />
+                  <X className='h-3 w-3' />
                 </button>
               </Badge>
             )}
@@ -73,43 +73,39 @@ export function NewChat({
               placeholder='Search people...'
               className='text-foreground'
             />
-            <CommandList>
+            <CommandList className='mt-1'>
               <CommandEmpty>No people found.</CommandEmpty>
               <CommandGroup>
                 {users.map((user) => (
                   <CommandItem
-                    key={user.id}
-                    value={`${user.fullname} ${user.email}`}
                     onSelect={() =>
                       setSelectedUser((current) =>
                         current?.id === user.id ? null : user
                       )
                     }
-                    className='flex items-center justify-between gap-2 hover:bg-accent hover:text-accent-foreground'
+                    key={user.id}
+                    value={`${user.fullname} ${user.email}`}
+                    data-checked={selectedUser?.id === user.id}
+                    aria-selected={selectedUser?.id === user.id}
+                    className='bg-transparent data-[checked=false]:bg-transparent'
                   >
-                    <div className='flex items-center gap-2'>
-                      <Avatar className='size-8'>
-                        <AvatarImage
-                          src={user.avatar ?? undefined}
-                          alt={user.fullname}
-                        />
-                        <AvatarFallback>
-                          {getInitials(user.fullname)}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className='flex flex-col'>
-                        <span className='text-sm font-medium'>
-                          {user.fullname}
-                        </span>
-                        <span className='text-xs text-accent-foreground/70'>
-                          {user.email}
-                        </span>
-                      </div>
+                    <Avatar className='size-8'>
+                      <AvatarImage
+                        src={user.avatar ?? undefined}
+                        alt={user.fullname}
+                      />
+                      <AvatarFallback>
+                        {getInitials(user.fullname)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className='min-w-0 flex-1'>
+                      <span className='block truncate font-medium'>
+                        {user.fullname}
+                      </span>
+                      <span className='block truncate text-xs text-muted-foreground'>
+                        {user.email}
+                      </span>
                     </div>
-
-                    {selectedUser?.id === user.id && (
-                      <Check className='h-4 w-4' />
-                    )}
                   </CommandItem>
                 ))}
               </CommandGroup>

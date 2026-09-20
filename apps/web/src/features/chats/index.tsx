@@ -28,18 +28,9 @@ type MessageGroup = {
   messages: ChatMessage[]
 }
 
-type ChatConversation = {
-  type: 'direct'
-  user: ChatUser
-} | {
-  type: 'group'
-  group: ChatGroup
-}
+type ChatConversation = { type: 'direct', user: ChatUser } | { type: 'group', group: ChatGroup }
 
-const socketStatusLabel: Record<
-  ChatUserStatus,
-  { label: string; className: string }
-> = {
+const socketStatusLabel: Record<ChatUserStatus, { label: string; className: string }> = {
   connected: { label: 'Connected', className: 'bg-green-500' },
   disconnected: { label: 'Disconnected', className: 'bg-red-500' },
 }
@@ -57,38 +48,18 @@ export function Chats() {
   const [createConversationDialogOpened, setCreateConversationDialog] = useState(false)
   const [createGroupDialogOpened, setCreateGroupDialog] = useState(false)
   const messagesRef = useRef<HTMLDivElement | null>(null)
-  const {
-    data: users = [],
-    isPending: usersPending,
-    isError: usersError,
-  } = useQuery({
+  const { data: users = [], isPending: usersPending, isError: usersError, } = useQuery({
     ...chatQueries.users(currentUserId, businessId),
     enabled: chatEnabled,
   })
-  const {
-    data: groups = [],
-    isPending: groupsPending,
-    isError: groupsError,
-  } = useQuery({
+  const { data: groups = [], isPending: groupsPending, isError: groupsError } = useQuery({
     ...chatQueries.groups(currentUserId, businessId),
     enabled: chatEnabled,
   })
-  const selectedConversationId =
-    selectedConversation?.type === 'group'
-      ? selectedConversation.group.id
-      : (selectedConversation?.user.id ?? '')
-  const messageQuery =
-    selectedConversation?.type === 'group'
-      ? chatQueries.groupMessages(
-        selectedConversation.group.id,
-        currentUserId,
-        businessId
-      )
-      : chatQueries.messages(
-        selectedConversation?.user.id ?? '',
-        currentUserId,
-        businessId
-      )
+  const selectedConversationId = selectedConversation?.type === 'group' ? selectedConversation.group.id : (selectedConversation?.user.id ?? '')
+  const messageQuery = selectedConversation?.type === 'group'
+    ? chatQueries.groupMessages(selectedConversation.group.id, currentUserId, businessId)
+    : chatQueries.messages(selectedConversation?.user.id ?? '', currentUserId, businessId)
   const {
     data: messages = [],
     isPending: messagesPending,
@@ -100,29 +71,20 @@ export function Chats() {
 
   const filteredConversations = useMemo<ChatConversation[]>(() => {
     const query = search.trim().toLowerCase()
-    const matchingGroups = groups.filter(({ name }) =>
-      name.toLowerCase().includes(query)
-    )
-    const matchingUsers = users.filter(
-      ({ fullname, email }) =>
-        fullname.toLowerCase().includes(query) ||
-        email.toLowerCase().includes(query)
+    const matchingGroups = groups.filter(({ name }) => name.toLowerCase().includes(query))
+    const matchingUsers = users.filter(({ fullname, email }) =>
+      fullname.toLowerCase().includes(query) || email.toLowerCase().includes(query)
     )
 
     return [
       ...matchingGroups.map((group) => ({ type: 'group' as const, group })),
-      ...matchingUsers.map((chatUser) => ({
-        type: 'direct' as const,
-        user: chatUser,
-      })),
+      ...matchingUsers.map((chatUser) => ({ type: 'direct' as const, user: chatUser })),
     ]
   }, [groups, search, users])
 
   const messageGroups = useMemo<MessageGroup[]>(() => {
     const groups = new Map<string, ChatMessage[]>()
-    const sortedMessages = [...messages].sort((left, right) =>
-      left.createdAt.localeCompare(right.createdAt)
-    )
+    const sortedMessages = [...messages].sort((left, right) => left.createdAt.localeCompare(right.createdAt))
 
     for (const message of sortedMessages) {
       const date = format(new Date(message.createdAt), 'd MMM, yyyy')
@@ -143,43 +105,32 @@ export function Chats() {
     container.scrollTo({ top: container.scrollHeight })
   }, [messages.length, selectedConversationId])
 
-  const handleSelectConversation = useCallback(
-    (conversation: ChatConversation) => {
-      setSelectedConversation(conversation)
-      setMobileConversationOpen(true)
-      setDraft('')
-    },
-    []
-  )
+  const handleSelectConversation = useCallback((conversation: ChatConversation) => {
+    setSelectedConversation(conversation)
+    setMobileConversationOpen(true)
+    setDraft('')
+  }, [])
 
-  const handleSelectUser = useCallback(
-    (chatUser: ChatUser) =>
-      handleSelectConversation({ type: 'direct', user: chatUser }),
-    [handleSelectConversation]
-  )
+  const handleSelectUser = useCallback((chatUser: ChatUser) => handleSelectConversation({ type: 'direct', user: chatUser }), [handleSelectConversation])
 
-  const handleGroupCreated = useCallback(
-    (group: ChatGroup) => {
-      queryClient.setQueryData<ChatGroup[]>(
-        chatKeys.groups(currentUserId, businessId),
-        (currentGroups = []) => [
-          group,
-          ...currentGroups.filter(({ id }) => id !== group.id),
-        ]
-      )
-      handleSelectConversation({ type: 'group', group })
-    },
-    [businessId, currentUserId, handleSelectConversation, queryClient]
-  )
+  const handleGroupCreated = useCallback((group: ChatGroup) => {
+    queryClient.setQueryData<ChatGroup[]>(
+      chatKeys.groups(currentUserId, businessId),
+      (currentGroups = []) => [
+        group,
+        ...currentGroups.filter(({ id }) => id !== group.id),
+      ]
+    )
+    handleSelectConversation({ type: 'group', group })
+  }, [businessId, currentUserId, handleSelectConversation, queryClient])
 
   const handleSubmit = (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault()
     const content = draft.trim()
     if (!selectedConversation || !content) return
-    const sent =
-      selectedConversation.type === 'group'
-        ? sendMessage({ groupId: selectedConversation.group.id, content })
-        : sendMessage({ recipientId: selectedConversation.user.id, content })
+    const sent = selectedConversation.type === 'group'
+      ? sendMessage({ groupId: selectedConversation.group.id, content })
+      : sendMessage({ recipientId: selectedConversation.user.id, content })
     if (!sent) {
       toast.error('Chat is reconnecting')
       return
@@ -202,9 +153,9 @@ export function Chats() {
       </Header>
 
       <Main fixed>
-        <section className='flex h-full gap-6'>
+        <section className='flex h-full gap-2'>
           <div className='flex w-full flex-col gap-2 sm:w-56 lg:w-72 2xl:w-80'>
-            <div className='sticky top-0 z-10 -mx-4 bg-background px-4 pb-3 shadow-md sm:static sm:z-auto sm:mx-0 sm:p-0 sm:shadow-none'>
+            <div className='sticky top-0 z-10 bg-background pb-3 sm:static sm:z-auto sm:mx-0 sm:p-0'>
               <div className='flex items-center justify-between py-2'>
                 <div className='flex gap-2'>
                   <h1 className='text-2xl font-bold'>Inbox</h1>
@@ -255,7 +206,7 @@ export function Chats() {
               </label>
             </div>
 
-            <ScrollArea className='-mx-3 h-full overflow-scroll p-3'>
+            <ScrollArea className='h-full overflow-scroll'>
               {(usersPending || groupsPending) && (<ChatListShimmer />)}
               {!usersPending && !groupsPending && !usersError && !groupsError && filteredConversations.length === 0 && (
                 <p className='px-2 py-4 text-sm text-muted-foreground'>
@@ -279,7 +230,7 @@ export function Chats() {
                       )}
                       onClick={() => handleSelectConversation(conversation)}
                     >
-                      <div className='flex min-w-0 gap-2'>
+                      <div className='flex items-center min-w-0 gap-2'>
                         <Avatar>
                           <AvatarImage src={avatar ?? undefined} alt={name} />
                           <AvatarFallback>{getInitials(name)}</AvatarFallback>
@@ -421,10 +372,9 @@ export function Chats() {
                             </div>
                             {group.messages.map((message) => {
                               const isOwnMessage = message.senderId === currentUserId
-                              const senderName =
-                                selectedConversation.type === 'group'
-                                  ? selectedConversation.group.members.find(({ id }) => id === message.senderId)?.fullname
-                                  : undefined
+                              const senderName = selectedConversation.type === 'group'
+                                ? selectedConversation.group.members.find(({ id }) => id === message.senderId)?.fullname
+                                : undefined
                               return (
                                 <div
                                   key={message.id}

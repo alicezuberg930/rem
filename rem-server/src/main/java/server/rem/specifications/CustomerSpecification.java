@@ -1,10 +1,12 @@
 package server.rem.specifications;
 
 import org.springframework.data.jpa.domain.Specification;
+
 import server.rem.dtos.customer.QueryCustomer;
 import server.rem.entities.Customer;
 
 public class CustomerSpecification {
+
     public static Specification<Customer> withFilters(QueryCustomer dto, String businessId) {
         return Specification
                 .where(hasBusinessId(businessId))
@@ -17,8 +19,12 @@ public class CustomerSpecification {
 
     private static Specification<Customer> hasCustomerGroup(String customerGroupId) {
         return (root, query, cb) -> {
-            if (customerGroupId == null) return null;
-            if ("none".equals(customerGroupId)) return cb.isNull(root.get("customerGroup"));
+            if (customerGroupId == null) {
+                return null;
+            }
+            if ("none".equals(customerGroupId)) {
+                return cb.isNull(root.get("customerGroup"));
+            }
             return cb.equal(root.get("customerGroup").get("id"), customerGroupId);
         };
     }

@@ -22,6 +22,7 @@ import { Route as authSignInRouteImport } from './routes/(auth)/sign-in'
 import { Route as authOtpRouteImport } from './routes/(auth)/otp'
 import { Route as authForgotPasswordRouteImport } from './routes/(auth)/forgot-password'
 import { Route as AuthenticatedSettingsRouteRouteImport } from './routes/_authenticated/settings/route'
+import { Route as AuthenticatedVariantsIndexRouteImport } from './routes/_authenticated/variants/index'
 import { Route as AuthenticatedUsersIndexRouteImport } from './routes/_authenticated/users/index'
 import { Route as AuthenticatedTemplatesIndexRouteImport } from './routes/_authenticated/templates/index'
 import { Route as AuthenticatedTasksIndexRouteImport } from './routes/_authenticated/tasks/index'
@@ -108,6 +109,12 @@ const AuthenticatedSettingsRouteRoute =
   AuthenticatedSettingsRouteRouteImport.update({
     id: '/settings',
     path: '/settings',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedVariantsIndexRoute =
+  AuthenticatedVariantsIndexRouteImport.update({
+    id: '/variants/',
+    path: '/variants/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedUsersIndexRoute = AuthenticatedUsersIndexRouteImport.update({
@@ -273,6 +280,7 @@ export interface FileRoutesByFullPath {
   '/tasks/': typeof AuthenticatedTasksIndexRoute
   '/templates/': typeof AuthenticatedTemplatesIndexRoute
   '/users/': typeof AuthenticatedUsersIndexRoute
+  '/variants/': typeof AuthenticatedVariantsIndexRoute
 }
 export interface FileRoutesByTo {
   '/forgot-password': typeof authForgotPasswordRoute
@@ -308,6 +316,7 @@ export interface FileRoutesByTo {
   '/tasks': typeof AuthenticatedTasksIndexRoute
   '/templates': typeof AuthenticatedTemplatesIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
+  '/variants': typeof AuthenticatedVariantsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -346,6 +355,7 @@ export interface FileRoutesById {
   '/_authenticated/tasks/': typeof AuthenticatedTasksIndexRoute
   '/_authenticated/templates/': typeof AuthenticatedTemplatesIndexRoute
   '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
+  '/_authenticated/variants/': typeof AuthenticatedVariantsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -384,6 +394,7 @@ export interface FileRouteTypes {
     | '/tasks/'
     | '/templates/'
     | '/users/'
+    | '/variants/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/forgot-password'
@@ -419,6 +430,7 @@ export interface FileRouteTypes {
     | '/tasks'
     | '/templates'
     | '/users'
+    | '/variants'
   id:
     | '__root__'
     | '/_authenticated'
@@ -456,6 +468,7 @@ export interface FileRouteTypes {
     | '/_authenticated/tasks/'
     | '/_authenticated/templates/'
     | '/_authenticated/users/'
+    | '/_authenticated/variants/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -563,6 +576,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof AuthenticatedSettingsRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/variants/': {
+      id: '/_authenticated/variants/'
+      path: '/variants'
+      fullPath: '/variants/'
+      preLoaderRoute: typeof AuthenticatedVariantsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/users/': {
@@ -765,6 +785,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedTasksIndexRoute: typeof AuthenticatedTasksIndexRoute
   AuthenticatedTemplatesIndexRoute: typeof AuthenticatedTemplatesIndexRoute
   AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
+  AuthenticatedVariantsIndexRoute: typeof AuthenticatedVariantsIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -787,6 +808,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedTasksIndexRoute: AuthenticatedTasksIndexRoute,
   AuthenticatedTemplatesIndexRoute: AuthenticatedTemplatesIndexRoute,
   AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
+  AuthenticatedVariantsIndexRoute: AuthenticatedVariantsIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

@@ -1,12 +1,14 @@
 package server.rem.specifications;
 
 import org.springframework.data.jpa.domain.Specification;
+
 import server.rem.dtos.lead.QueryLead;
 import server.rem.entities.Lead;
 import server.rem.enums.LeadSource;
 import server.rem.enums.LeadStatus;
 
 public class LeadSpecification {
+
     public static Specification<Lead> withFilters(QueryLead dto, String businessId) {
         return Specification
                 .where(hasBusinessId(businessId))

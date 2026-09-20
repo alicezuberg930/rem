@@ -1,6 +1,7 @@
 package server.rem.specifications;
 
 import org.springframework.data.jpa.domain.Specification;
+
 import server.rem.dtos.contact.QueryContact;
 import server.rem.entities.Contact;
 import server.rem.enums.ContactType;

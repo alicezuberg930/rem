@@ -22,16 +22,18 @@ export function RHFUploadAvatar({
       name={name}
       control={control}
       render={({ field, fieldState: { error } }) => (
-        <Field data-invalid={!!error}>
+        <Field data-invalid={!!error} className="items-start">
           <FieldLabel htmlFor={field.name} className='sr-only'>
             {fieldLabel}
           </FieldLabel>
-          <UploadAvatar
-            accept={{ 'image/*': [] }}
-            error={!!error}
-            file={field.value}
-            {...other}
-          />
+          <div className="w-fit">
+            <UploadAvatar
+              accept={{ 'image/*': [] }}
+              error={!!error}
+              file={field.value}
+              {...other}
+            />
+          </div>
           {!!error && <FieldError errors={[error]} className='mt-1' />}
         </Field>
       )}

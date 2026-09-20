@@ -6,6 +6,7 @@ import server.rem.dtos.template.QueryTemplate;
 import server.rem.entities.Template;
 
 public class TemplateSpecification {
+
     public static Specification<Template> withFilters(QueryTemplate dto, String businessId) {
         return Specification
                 .where(hasBusinessId(businessId))

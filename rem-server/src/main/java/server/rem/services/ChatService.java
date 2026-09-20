@@ -5,10 +5,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import lombok.RequiredArgsConstructor;
 import server.rem.dtos.chat.ChatMessageRequest;
 import server.rem.dtos.chat.ChatMessageResponse;
 import server.rem.dtos.chat.ChatUserResponse;
@@ -83,7 +85,7 @@ public class ChatService {
                 chatMessageRepository.findGroupConversation(
                         businessId,
                         groupId,
-                        PageRequest.of(0, normalizeLimit(limit)))));
+                        PageRequest.of(0, limit))));
         Collections.reverse(messages);
         return messages;
     }
@@ -108,8 +110,8 @@ public class ChatService {
             String senderId,
             String businessId,
             ChatMessageRequest request) {
-        String recipientId = normalizeId(request.getRecipientId());
-        String groupId = normalizeId(request.getGroupId());
+        String recipientId = request.getRecipientId();
+        String groupId = request.getGroupId();
         String content = request.getContent() == null ? "" : request.getContent().trim();
 
         if (content.isEmpty()) {
@@ -162,17 +164,6 @@ public class ChatService {
             throw new ForbiddenException("You are not a member of this group");
         }
         return group;
-    }
-
-    private int normalizeLimit(int limit) {
-        return Math.min(Math.max(limit, 1), 100);
-    }
-
-    private String normalizeId(String id) {
-        if (id == null || id.isBlank()) {
-            return null;
-        }
-        return id.trim();
     }
 
     private void requireActiveMember(String userId, String businessId) {

@@ -4,7 +4,6 @@ import { Controller, useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import { type ApiResponse, type ChatGroup, type ChatUser } from '@/@types'
-import { Check } from 'lucide-react'
 import { toast } from '@/components/ui/toast'
 import { files } from '@/lib/queries/file'
 import { httpClient } from '@/lib/repository/http-client'
@@ -27,11 +26,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import {
-  FormProvider,
-  RHFTextField,
-  RHFUploadAvatar,
-} from '@/components/hook-form'
+import { FormProvider, RHFTextField, RHFUploadAvatar } from '@/components/hook-form'
 import { Field, FieldError, FieldLabel } from '@/components/ui/field'
 import { type CustomFile } from '@/components/upload'
 import { getInitials } from '@/lib/utils'
@@ -78,29 +73,22 @@ export function CreateGroupDialog({
       members: [],
     },
   })
-  const { mutateAsync: uploadFile } = useMutation(
-    files().upload.mutationOptions()
-  )
+  const { mutateAsync: uploadFile } = useMutation(files().upload.mutationOptions())
   const avatar = useWatch({ control: form.control, name: 'avatar' })
 
   useEffect(() => () => {
     if (avatar?.preview) URL.revokeObjectURL(avatar.preview)
   }, [avatar])
 
-  const handleAvatarDrop = useCallback(
-    (files: File[]) => {
-      const file = files[0]
-      if (!file) return
-      const avatarFile = Object.assign(file, {
-        preview: URL.createObjectURL(file),
-      })
-      form.setValue('avatar', avatarFile, {
-        shouldDirty: true,
-        shouldValidate: true,
-      })
-    },
-    [form]
-  )
+  const handleAvatarDrop = useCallback((files: File[]) => {
+    const file = files[0]
+    if (!file) return
+    const avatarFile = Object.assign(file, { preview: URL.createObjectURL(file) })
+    form.setValue('avatar', avatarFile, {
+      shouldDirty: true,
+      shouldValidate: true,
+    })
+  }, [form])
 
   const handleOpenChange = (state: boolean) => {
     if (!state && form.formState.isSubmitting) return
@@ -109,7 +97,7 @@ export function CreateGroupDialog({
   }
 
   const onSubmit = async (values: GroupForm) => {
-    const request = (async () => {
+    const request = async () => {
       const uploadResponse = await uploadFile({
         file: values.avatar,
         subFolder: '/groups',
@@ -119,17 +107,16 @@ export function CreateGroupDialog({
         avatar: uploadResponse.data,
         members: values.members,
       })
-    })()
+    }
 
     toast.promise(request, {
       loading: 'Creating group…',
       success: (response) => response.message,
-      error: (error) =>
-        error instanceof HttpError ? error.message : 'Unable to create group',
+      error: (error) => error instanceof HttpError ? error.message : 'Unable to create group',
     })
 
     try {
-      const response = await request
+      const response = await request()
       onCreated(response.data)
       form.reset()
       onOpenChange(false)
@@ -140,7 +127,7 @@ export function CreateGroupDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className='sm:max-w-xl'>
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Create group</DialogTitle>
           <DialogDescription>
@@ -184,7 +171,7 @@ export function CreateGroupDialog({
                   </div>
                   <Command className='rounded-lg border'>
                     <CommandInput placeholder='Search people…' />
-                    <CommandList className='max-h-52'>
+                    <CommandList className='max-h-52 mt-1'>
                       <CommandEmpty>No people found.</CommandEmpty>
                       <CommandGroup>
                         {users.map((user) => {
@@ -197,12 +184,9 @@ export function CreateGroupDialog({
                               aria-selected={selected}
                               disabled={form.formState.isSubmitting}
                               onSelect={() =>
-                                field.onChange(
-                                  selected
-                                    ? field.value.filter((id) => id !== user.id)
-                                    : [...field.value, user.id]
-                                )
+                                field.onChange(selected ? field.value.filter((id) => id !== user.id) : [...field.value, user.id])
                               }
+                              className='bg-transparent data-[checked=false]:bg-transparent'
                             >
                               <Avatar className='size-8'>
                                 <AvatarImage
@@ -221,7 +205,6 @@ export function CreateGroupDialog({
                                   {user.email}
                                 </span>
                               </div>
-                              {selected && <Check className='size-4' />}
                             </CommandItem>
                           )
                         })}
