@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from 'react'
-import { businessEvent, businessHeaderKey, businessIdStorageKey } from './constants'
+import { businessEvent, businessIdStorageKey } from './constants'
 
 export const getSelectedBusinessId = (): string | undefined => {
     if (typeof window === 'undefined') return undefined
