@@ -1,10 +1,9 @@
 // hooks
-import { useForm } from 'react-hook-form'
+import { Control, FieldErrors, useFieldArray, useForm, UseFormRegister } from 'react-hook-form'
 // utils
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 // types
-import { Template } from '@/@types'
 import { templates } from '@/lib/queries/template'
 import { HttpError } from '@/lib/repository/http-error'
 import { TemplateValidators } from '@/lib/validators/template'
@@ -18,16 +17,20 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { FieldGroup } from '@/components/ui/field'
+import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { toast } from '@/components/ui/toast'
 import {
   FormProvider,
   RHFRichTextEditor,
   RHFTextField,
 } from '@/components/hook-form'
+import { VariantForm, variantSchema } from '@/lib/validators/variant'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
+import { X } from 'lucide-react'
 
 type VariantActionDialogProps = {
-  currentRow?: Template
+  currentRow?: VariantForm
   open: boolean
   onOpenChange: (open: boolean) => void
 }
@@ -41,38 +44,55 @@ export function VariantsActionDialog({
   const { mutateAsync: create } = useMutation(templates().create.mutationOptions())
 
   const isEdit = !!currentRow
-  const form = useForm<TemplateValidators.TemplateForm>({
-    resolver: zodResolver(TemplateValidators.formSchema),
+  const form = useForm<VariantForm>({
+    resolver: zodResolver(variantSchema),
     defaultValues: isEdit
       ? {
         ...currentRow,
         isEdit,
       }
       : {
-        name: '',
-        header: '',
-        body: '',
-        footer: '',
-        websiteUrl: null,
-        contactPhone: null,
         isEdit,
+        name: '',
+        options: [
+          {
+            id: '',
+            value: '',
+          }
+        ]
       },
   })
 
-  const { handleSubmit, reset } = form
+  const {
+    control,
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = form
 
-  const onSubmit = async (values: TemplateValidators.TemplateForm) => {
+  const {
+    fields: optionFields,
+    remove,
+    append
+  } = useFieldArray({
+    control,
+    name: 'options',
+  })
+
+  const onSubmit = async (values: VariantForm) => {
+    console.log(values)
     const submit = async () => {
-      const res = isEdit && currentRow?.id ? await update(values) : await create(values)
+      // const res = isEdit && currentRow?.id ? await update(values) : await create(values)
       form.reset()
       onOpenChange(false)
-      return res
+      // return res
     }
-    toast.promise(submit, {
-      loading: 'Submitting data',
-      error: (err) => err instanceof HttpError ? err.message : 'Internal server error',
-      success: (res) => res.message,
-    })
+    //   toast.promise(submit, {
+    //     loading: 'Submitting data',
+    //     error: (err) => err instanceof HttpError ? err.message : 'Internal server error',
+    //     success: (res) => res.message,
+    //   })
   }
 
   // const handleDropThumbnail = useCallback((acceptedFiles: File[]) => {
@@ -129,20 +149,66 @@ export function VariantsActionDialog({
           >
             <div className='space-y-4 px-0.5'>
               <FieldGroup>
-                {/* <RHFUpload
-                  multiple={false}
-                  name='thumbnail'
-                  maxSize={15728640}
-                  onDrop={handleDropThumbnail}
-                  onDelete={() => setValue('thumbnail', null, { shouldValidate: true })}
-                  fieldLabel={('song_audio_file')}
-                /> */}
-                <RHFTextField name='name' fieldLabel='Name' />
-                <RHFRichTextEditor name='header' fieldLabel='Header' />
-                <RHFRichTextEditor name='body' fieldLabel='Body' />
-                <RHFRichTextEditor name='footer' fieldLabel='Footer' />
-                <RHFTextField name='websiteUrl' fieldLabel='Website URL' />
-                <RHFTextField name='contactPhone' fieldLabel='Contact Phone' />
+                {/* Variant name */}
+                <RHFTextField fieldLabel='Variant name' placeholder='Color' name='name' />
+
+                {/* Options */}
+                <Field data-invalid={false}>
+                  <FieldLabel htmlFor='options'>Options</FieldLabel>
+
+                  {optionFields.map((option, optionIndex) => {
+                    const optionError = errors.options?.[optionIndex]
+                    return (
+                      <div
+                        key={option.id}
+                        className="flex items-start gap-2"
+                      >
+                        {/* Option value */}
+                        <div className="flex-1 space-y-1">
+                          <Input
+                            placeholder="Red"
+                            {...register(`options.${optionIndex}.value`)}
+                          />
+                          {optionError?.value && <FieldError errors={[optionError]} className='mt-1' />}
+                          {/* {optionError?.value && (
+                            <p className="text-xs text-destructive">
+                              {optionError.value.message}
+                            </p>
+                          )} */}
+                        </div>
+                        {/* Option ID */}
+                        <div className="flex-1 space-y-1">
+                          <Input
+                            placeholder="Option ID (optional)"
+                            {...register(`options.${optionIndex}.value`)}
+                          />
+                          {/* {optionError?.id && (
+                            <p className="text-xs text-destructive">
+                              {optionError.id.message}
+                            </p>
+                          )} */}
+                        </div>
+
+                        <Button
+                          type="button"
+                          size="icon"
+                          onClick={() => remove(optionIndex)}
+                          disabled={optionFields.length === 1}
+                        >
+                          <X />
+                        </Button>
+                      </div>
+                    )
+                  })}
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => append({ id: '', value: '' })}
+                  >
+                    Add option
+                  </Button>
+                </Field>
               </FieldGroup>
             </div>
           </FormProvider>
