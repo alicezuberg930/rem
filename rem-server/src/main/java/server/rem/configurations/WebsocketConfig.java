@@ -24,6 +24,7 @@ public class WebsocketConfig implements WebSocketConfigurer {
     private final ChatWebSocketHandler chatWebSocketHandler;
     // Stores the interceptor that validates the connection before allowing the socket to open.
     private final ChatHandshakeInterceptor chatHandshakeInterceptor;
+    private final CorsProperties corsProperties;
 
     // Registers the WebSocket endpoint and its security-related settings.
     @Override
@@ -33,10 +34,6 @@ public class WebsocketConfig implements WebSocketConfigurer {
                 .setHandshakeHandler(new ChatHandshakeHandler())
                 // Runs the handshake interceptor before the connection is accepted.
                 .addInterceptors(chatHandshakeInterceptor)
-                .setAllowedOriginPatterns(
-                        "http://localhost:*",
-                        "http://127.0.0.1:*",
-                        "https://rem-web-pi.vercel.app"
-                );
+                .setAllowedOriginPatterns(corsProperties.getAllowedOriginPatternsArray());
     }
 }

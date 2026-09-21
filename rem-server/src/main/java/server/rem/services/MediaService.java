@@ -15,6 +15,7 @@ import server.rem.dtos.media.MediaResponse;
 import server.rem.dtos.media.PresignedUploadResponse;
 import server.rem.entities.BusinessUser;
 import server.rem.entities.Media;
+import server.rem.enums.MediaStatus;
 import server.rem.mappers.MediaMapper;
 import server.rem.repositories.BusinessUserRepository;
 import server.rem.repositories.MediaPermissionRepository;
@@ -34,6 +35,14 @@ public class MediaService {
     private final BusinessUserRepository businessUserRepository;
     private final MinioStorageClient minioStorageClient;
     private final MediaMapper mediaMapper;
+
+    public List<MediaResponse> getAll(String businessId, String userId) {
+        getActiveMembership(userId, businessId);
+        return mediaRepository.findAllByBusinessIdAndStatusOrderByCreatedAtDesc(businessId, MediaStatus.ACTIVE)
+                .stream()
+                .map(mediaMapper::toDto)
+                .toList();
+    }
 
     public MediaResponse upload(MultipartFile file, String businessId, String userId) {
         String filename = extractFilename(file);

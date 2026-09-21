@@ -32,6 +32,7 @@ import io.minio.messages.DeleteResult;
 public class MinioStorageClient {
 
     private static final long MAX_PRESIGNED_URL_EXPIRY_SECONDS = Duration.ofDays(7).toSeconds();
+    private static final String STORAGE_UNAVAILABLE_MESSAGE = "File storage is currently unavailable, please try again later";
 
     private final MinioClient client;
     private final MinioClient presigningClient;
@@ -250,6 +251,7 @@ public class MinioStorageClient {
             String objectKey,
             Duration expiry,
             Map<String, String> queryParameters) {
+        ensureBucketExists();
         return execute("create a presigned " + method + " URL for object '" + objectKey + "'", () -> presigningClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
                 .method(method)
                 .bucket(bucketName)
@@ -345,9 +347,9 @@ public class MinioStorageClient {
             return operation.run();
         } catch (InterruptedException exception) {
             Thread.currentThread().interrupt();
-            throw new IllegalStateException("MinIO operation interrupted while attempting to " + action, exception);
+            throw new IllegalStateException(STORAGE_UNAVAILABLE_MESSAGE, exception);
         } catch (Exception exception) {
-            throw new IllegalStateException("Failed to " + action, exception);
+            throw new IllegalStateException(STORAGE_UNAVAILABLE_MESSAGE, exception);
         }
     }
 

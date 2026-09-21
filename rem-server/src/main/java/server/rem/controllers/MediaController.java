@@ -29,6 +29,16 @@ public class MediaController {
 
     private final MediaService mediaService;
 
+    @GetMapping
+    public ResponseEntity<APIResponse<List<MediaResponse>>> getAll(
+            @RequestAttribute("businessId") String businessId,
+            @RequestUser String userId) {
+        return ResponseEntity.ok(APIResponse.success(
+                200,
+                "Media fetched",
+                mediaService.getAll(businessId, userId)));
+    }
+
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<APIResponse<MediaResponse>> upload(
             @RequestPart("file") MultipartFile file,

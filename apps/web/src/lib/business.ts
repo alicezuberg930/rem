@@ -36,11 +36,3 @@ const subscribeToBusinessChange = (onChange: () => void) => {
 export const useSelectedBusinessId = () => {
     return useSyncExternalStore(subscribeToBusinessChange, getSelectedBusinessId, () => undefined)
 }
-
-export const businessHeader = (): RequestInit => {
-    const businessId = getSelectedBusinessId()
-    if (!businessId) return {}
-    const headers = new Headers()
-    if (!headers.has(businessHeaderKey)) headers.set(businessHeaderKey, businessId)
-    return { headers }
-}

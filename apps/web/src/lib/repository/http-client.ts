@@ -2,7 +2,8 @@ import type { ApiResponse } from '@/@types'
 import { HttpError } from './http-error'
 import { InterceptorManager } from './interceptor'
 import { getBaseUrl } from '../utils'
-import { businessHeader } from '../business'
+import { getSelectedBusinessId } from '../business'
+import { businessHeaderKey } from '../constants'
 
 const BASE_URL = getBaseUrl()
 
@@ -26,6 +27,11 @@ export class HttpClient {
     let config: RequestInit = {
       ...options,
       headers: {
+        ...(
+          getSelectedBusinessId() && {
+            [businessHeaderKey]: getSelectedBusinessId()
+          }
+        ),
         ...(options.body instanceof FormData
           ? {}
           : { 'Content-Type': 'application/json' }),
@@ -37,7 +43,7 @@ export class HttpClient {
     const isAbsoluteUrl = (url: string) => /^https?:\/\/[^/]+/i.test(url)
     url = isAbsoluteUrl(url) ? url : `${BASE_URL}${url}`
     try {
-      const response = await fetch(url, { ...config, ...businessHeader() })
+      const response = await fetch(url, config)
       if (!response.ok) {
         const text = await response.text()
         let data: ApiResponse<null> | string

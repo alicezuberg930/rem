@@ -8,6 +8,7 @@ import org.springframework.transaction.CannotCreateTransactionException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 
 import jakarta.validation.ConstraintViolationException;
 import server.rem.dtos.APIResponse;
@@ -78,6 +79,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(400).body(APIResponse.error(HttpStatus.BAD_REQUEST, ex.getMessage()));
     }
 
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    public ResponseEntity<APIResponse<Void>> handleUnsupportedMediaType(HttpMediaTypeNotSupportedException ex) {
+        return ResponseEntity.status(415).body(APIResponse.error(HttpStatus.UNSUPPORTED_MEDIA_TYPE, ex.getMessage()));
+    }
+
     // Forbidden
     @ExceptionHandler(ForbiddenException.class)
     public ResponseEntity<APIResponse<Void>> handleForbidden(ForbiddenException ex) {
@@ -94,6 +100,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ConflictException.class)
     public ResponseEntity<APIResponse<Void>> handleConflict(ConflictException ex) {
         return ResponseEntity.status(409).body(APIResponse.error(HttpStatus.CONFLICT, ex.getMessage()));
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<APIResponse<Void>> handleIllegalState(IllegalStateException ex) {
+        if ("File storage is currently unavailable, please try again later".equals(ex.getMessage())) {
+            return ResponseEntity.status(503).body(APIResponse.error(HttpStatus.SERVICE_UNAVAILABLE, ex.getMessage()));
+        }
+        return ResponseEntity.status(500).body(APIResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage()));
     }
 
     // Generic fallback
