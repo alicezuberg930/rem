@@ -2,7 +2,6 @@ package server.rem.interceptors;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
@@ -25,7 +24,6 @@ import server.rem.utils.Constants;
 import server.rem.utils.exceptions.UnauthorizedException;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -48,18 +46,7 @@ public class BusinessContextFilter extends OncePerRequestFilter {
     private final BusinessUserRepository businessUserRepository;
 
     private String extractBusinessId(HttpServletRequest request) {
-        String businessHeader = request.getHeader(Constants.businessIdCookieKey);
-        if (businessHeader != null) return businessHeader;
-
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            return Arrays.stream(cookies)
-                    .filter(c -> c.getName().equals(Constants.businessIdCookieKey))
-                    .map(Cookie::getValue)
-                    .findFirst()
-                    .orElse(null);
-        }
-        return null;
+        return request.getHeader(Constants.businessIdHeaderKey);
     }
 
     @Override

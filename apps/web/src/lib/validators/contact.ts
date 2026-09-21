@@ -3,7 +3,6 @@ import * as z from 'zod'
 const optionalText = z.string().nullable()
 
 export const contactFormSchema = z.object({
-  businessId: z.string().min(1, 'Business is required.'),
   tagId: z.string().min(1, 'Tag is required.'),
   type: z.enum(['PERSONAL', 'COMPANY']),
   firstName: z.string().min(1, 'First name is required.'),

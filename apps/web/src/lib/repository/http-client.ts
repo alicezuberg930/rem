@@ -1,7 +1,8 @@
-import { ApiResponse } from '@/@types'
+import type { ApiResponse } from '@/@types'
 import { HttpError } from './http-error'
 import { InterceptorManager } from './interceptor'
 import { getBaseUrl } from '../utils'
+import { businessHeader } from '../business'
 
 const BASE_URL = getBaseUrl()
 
@@ -33,10 +34,10 @@ export class HttpClient {
     for (const { onFulfilled } of this.interceptors.request.getHandlers()) {
       if (onFulfilled) config = await onFulfilled(config)
     }
-    const isAbsoluteUrl = (url: string) => /^https?:\/\/[^\/]+/i.test(url)
+    const isAbsoluteUrl = (url: string) => /^https?:\/\/[^/]+/i.test(url)
     url = isAbsoluteUrl(url) ? url : `${BASE_URL}${url}`
     try {
-      const response = await fetch(url, config)
+      const response = await fetch(url, { ...config, ...businessHeader() })
       if (!response.ok) {
         const text = await response.text()
         let data: ApiResponse<null> | string

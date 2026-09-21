@@ -3,7 +3,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import type { Contact } from '@/@types'
 import { toast } from '@/components/ui/toast'
-import { getCookie } from '@/lib/cookies'
 import { contacts } from '@/lib/queries/contact'
 import { HttpError } from '@/lib/repository/http-error'
 import { contactFormSchema, type ContactForm } from '@/lib/validators/contact'
@@ -44,7 +43,6 @@ const nullableText = (value: string | null) => {
 
 function buildDefaultValues(currentRow?: Contact): ContactForm {
   return {
-    businessId: getCookie('X-Business-Id') ?? '',
     tagId: currentRow?.tag?.id ?? '',
     type: currentRow?.type ?? 'PERSONAL',
     firstName: currentRow?.firstName ?? '',

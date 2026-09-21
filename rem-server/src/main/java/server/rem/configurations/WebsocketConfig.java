@@ -9,6 +9,7 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 
 import lombok.RequiredArgsConstructor;
 import server.rem.websockets.ChatHandshakeInterceptor;
+import server.rem.websockets.ChatHandshakeHandler;
 import server.rem.websockets.ChatWebSocketHandler;
 
 // Tells Spring to load this class as part of the application configuration.
@@ -29,11 +30,13 @@ public class WebsocketConfig implements WebSocketConfigurer {
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         // Adds the chat endpoint at /ws/chat and attaches the handshake validation logic.
         registry.addHandler(chatWebSocketHandler, "/ws/chat")
+                .setHandshakeHandler(new ChatHandshakeHandler())
                 // Runs the handshake interceptor before the connection is accepted.
                 .addInterceptors(chatHandshakeInterceptor)
                 .setAllowedOriginPatterns(
                         "http://localhost:*",
                         "http://127.0.0.1:*",
-                        "https://yvonne-one.vercel.app");
+                        "https://rem-web-pi.vercel.app"
+                );
     }
 }

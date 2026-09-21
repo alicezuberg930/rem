@@ -1,6 +1,6 @@
 import { mutationOptions } from '@tanstack/react-query'
 import type { ApiResponse } from '@/@types'
-import { getCookie } from '../cookies'
+import { getSelectedBusinessId } from '../business'
 import { httpClient } from '../repository/http-client'
 
 export type UploadFileInput = {
@@ -20,7 +20,7 @@ const keys = {
 
 const appendSubFolder = (formData: FormData, subFolder?: string) => {
   if (subFolder)
-    formData.append('subFolder', `/${getCookie('X-Business-Id')}${subFolder}`)
+    formData.append('subFolder', `/${getSelectedBusinessId()}${subFolder}`)
 }
 
 export const files = () => ({

@@ -47,7 +47,7 @@
     "dev:server": "cd rem-server && ./mvnw spring-boot:run",
     "install:server": "cd rem-server && ./mvnw clean install -DskipTests",
     "compile:server": "cd rem-server && ./mvnw clean compile",
-    "build:server": "cd rem-server && ./mvnw clean build -DskipTests",
+    "build:server": "cd rem-server && ./mvnw clean package -DskipTests",
     "test:server": "cd rem-server && ./mvnw test",
     "deps:bump": "bunx npm-check-updates --deep -u && bun install",
     "lint": "turbo run lint",

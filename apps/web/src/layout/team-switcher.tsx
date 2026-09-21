@@ -1,9 +1,5 @@
-import * as React from 'react'
 import { useNavigate } from '@tanstack/react-router'
-import { Business, Role } from '@/@types'
 import { ChevronsUpDown, Plus } from 'lucide-react'
-import { getCookie } from '@/lib/cookies'
-import { httpClient } from '@/lib/repository/http-client'
 import { useAuth } from '@/providers/auth-provider'
 import {
   DropdownMenu,
@@ -15,27 +11,16 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import {
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  useSidebar,
-} from '@/components/ui/sidebar'
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar'
 import { LazyLoadImage } from '../components/lazy-load-image'
+import { useBusiness } from '@/hooks/use-business'
 
 export function TeamSwitcher() {
   const navigate = useNavigate()
   const { user } = useAuth()
   const { isMobile } = useSidebar()
-  const [activeTeam, setActiveTeam] = React.useState<
-    (Business & { role: Role }) | undefined
-  >(undefined)
-
-  React.useEffect(() => {
-    setActiveTeam(
-      user?.businesses.find((b) => b.id === getCookie('X-Business-Id'))
-    )
-  }, [user])
+  const { businessId, selectBusiness } = useBusiness()
+  const activeTeam = user?.businesses.find((business) => business.id === businessId)
 
   return (
     <SidebarMenu>
@@ -83,12 +68,8 @@ export function TeamSwitcher() {
               {user?.businesses?.map((business, index) => (
                 <DropdownMenuItem
                   key={business.name}
-                  onClick={async () => {
-                    setActiveTeam(business)
-                    await httpClient.post('/businesses/pick', {
-                      id: business.id,
-                    })
-                    window.dispatchEvent(new Event('business-id-change'))
+                  onClick={() => {
+                    selectBusiness(business.id)
                     navigate({ to: '/' })
                   }}
                   className='gap-2 p-2'

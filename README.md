@@ -70,6 +70,12 @@ Each workspace has:
 
 ### **Authentication Flow**
 
+The web app stores the selected business ID in localStorage under `businessId`.
+API requests send it in the `X-Business-Id` header. Chat WebSocket handshakes
+send it as the `business-id.<id>` subprotocol, which the server validates against
+the authenticated user's business membership. Authentication tokens remain in
+HTTP-only cookies.
+
 ```markdown
 [1. JWT Authentication]  →  [2. Business Selection]  →  [3. Permission Loading & Caching]
 User logs in              User selects workspace      Permissions fetched from DB

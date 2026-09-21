@@ -15,9 +15,9 @@ import {
   type ChatUserStatus
 } from '@/@types'
 import { toast } from '@/components/ui/toast'
-import { getCookie } from '@/lib/cookies'
 import { chatKeys } from '@/lib/queries/chat'
 import { useAuth } from '@/providers/auth-provider'
+import { useBusiness } from '@/hooks/use-business'
 
 type ChatContextValue = {
   businessId?: string
@@ -79,18 +79,10 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth()
   const queryClient = useQueryClient()
   const currentUserId = user?.id
-  const [businessId, setBusinessId] = useState(() => getCookie('X-Business-Id'))
+  const { businessId } = useBusiness()
   const [status, setStatus] = useState<ChatUserStatus>('disconnected')
   const socketRef = useRef<WebSocket | null>(null)
   const enabled = Boolean(currentUserId && businessId)
-
-  useEffect(() => {
-    const handleBusinessChange = () => setBusinessId(getCookie('X-Business-Id'))
-
-    window.addEventListener('business-id-change', handleBusinessChange)
-    return () =>
-      window.removeEventListener('business-id-change', handleBusinessChange)
-  }, [])
 
   useEffect(() => {
     if (!currentUserId || !businessId) return
@@ -144,7 +136,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
       let socket: WebSocket
       try {
-        socket = new WebSocket(getChatWebSocketUrl())
+        socket = new WebSocket(getChatWebSocketUrl(), `business-id.${businessId}`)
       } catch (_error) {
         setStatus('disconnected')
         toast.error('Chat connection is not configured correctly')

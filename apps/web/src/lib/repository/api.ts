@@ -7,7 +7,7 @@ import type {
   QueryContact,
 } from '@/@types'
 import type { BusinessValidators, CampaignValidators } from '@/lib/validators'
-import { getCookie } from '../cookies'
+import { getSelectedBusinessId } from '../business'
 import { httpClient } from './http-client'
 
 export const getCampaigns = async (): Promise<
@@ -67,7 +67,7 @@ export const updateBusiness = async (
   data: BusinessValidators.BusinessForm
 ): Promise<ApiResponse<Business>> => {
   return await httpClient.put<ApiResponse<Business>>(
-    `/businesses/${getCookie('X-Business-Id')}`,
+    `/businesses/${getSelectedBusinessId()}`,
     { ...data }
   )
 }

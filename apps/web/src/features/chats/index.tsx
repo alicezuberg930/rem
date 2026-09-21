@@ -1,5 +1,6 @@
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState, type SubmitEvent } from 'react'
 import { format } from 'date-fns'
+import { useNavigate } from '@tanstack/react-router'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import type { ChatGroup, ChatMessage, ChatUser, ChatUserStatus } from '@/@types'
 import { useAuth } from '@/providers/auth-provider'
@@ -36,6 +37,7 @@ const socketStatusLabel: Record<ChatUserStatus, { label: string; className: stri
 }
 
 export function Chats() {
+  const navigate = useNavigate()
   const { role, user } = useAuth()
   const { businessId, status: socketStatus, sendMessage } = useChat()
   const queryClient = useQueryClient()
@@ -56,6 +58,7 @@ export function Chats() {
     ...chatQueries.groups(currentUserId, businessId),
     enabled: chatEnabled,
   })
+  const conversationsPending = chatEnabled && (usersPending || groupsPending)
   const selectedConversationId = selectedConversation?.type === 'group' ? selectedConversation.group.id : (selectedConversation?.user.id ?? '')
   const messageQuery = selectedConversation?.type === 'group'
     ? chatQueries.groupMessages(selectedConversation.group.id, currentUserId, businessId)
@@ -207,8 +210,25 @@ export function Chats() {
             </div>
 
             <ScrollArea className='h-full overflow-scroll'>
-              {(usersPending || groupsPending) && (<ChatListShimmer />)}
-              {!usersPending && !groupsPending && !usersError && !groupsError && filteredConversations.length === 0 && (
+              {!businessId && (
+                <div className='px-2 py-4 text-sm text-muted-foreground'>
+                  <p>Choose a business to view conversations.</p>
+                  <Button
+                    variant='outline'
+                    className='mt-3'
+                    onClick={() => navigate({ to: '/businesses' })}
+                  >
+                    Choose a business
+                  </Button>
+                </div>
+              )}
+              {conversationsPending && <ChatListShimmer />}
+              {chatEnabled && !conversationsPending && (usersError || groupsError) && (
+                <p className='px-2 py-4 text-sm text-destructive'>
+                  Unable to load conversations.
+                </p>
+              )}
+              {chatEnabled && !conversationsPending && !usersError && !groupsError && filteredConversations.length === 0 && (
                 <p className='px-2 py-4 text-sm text-muted-foreground'>
                   No conversations found.
                 </p>

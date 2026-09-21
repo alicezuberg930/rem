@@ -4,8 +4,6 @@ import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,11 +14,9 @@ import server.rem.dtos.APIResponse;
 import server.rem.dtos.business.*;
 import server.rem.entities.*;
 import server.rem.services.BusinessService;
-import server.rem.utils.Constants;
 import server.rem.utils.messages.BusinessMessages;
 import server.rem.views.Views;
 
-import java.time.Duration;
 import java.util.List;
 
 @RestController
@@ -71,26 +67,6 @@ public class BusinessController {
                 200,
                 "Business updated successfully",
                 businessService.update(businessId, dto)
-        ));
-    }
-
-    @PostMapping("/pick")
-    public ResponseEntity<APIResponse<String>> pickBusiness(@Valid @RequestBody PickBusinessRequest dto) {
-        ResponseCookie businessIdCookie = ResponseCookie
-                .from(Constants.businessIdCookieKey, dto.getId())
-                .httpOnly(false)
-                .secure(true)
-                .path("/")
-                .maxAge(Duration.ofSeconds(604800))
-                .sameSite("None")
-                .build();
-
-        return ResponseEntity.ok()
-            .header(HttpHeaders.SET_COOKIE, businessIdCookie.toString())
-            .body(APIResponse.success(
-                200,
-                BusinessMessages.BUSINESS_COOKIE,
-                dto.getId()
         ));
     }
 }

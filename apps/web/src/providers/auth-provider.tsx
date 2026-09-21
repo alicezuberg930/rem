@@ -5,7 +5,6 @@ import {
   useCallback,
   useMemo,
   useContext,
-  useState,
   useRef,
 } from 'react'
 import { useMutation, useQuery } from '@tanstack/react-query'
@@ -14,10 +13,10 @@ import { Role, UserProvider } from '@/@types'
 // types
 import type { Profile } from '@/@types/user'
 import { toast } from '@/components/ui/toast'
-import { getCookie } from '@/lib/cookies'
 import { auth } from '@/lib/queries/auth'
 import { httpClient, ResponseWithHeaders } from '@/lib/repository/http-client'
 import { AuthValidators } from '@/lib/validators/auth'
+import { useBusiness } from '@/hooks/use-business'
 
 export type ActionMapType<M extends { [index: string]: any }> = {
   [Key in keyof M]: M[Key] extends undefined
@@ -153,7 +152,7 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
   // states
   const [state, dispatch] = useReducer(reducer, initialState)
   const shouldRestoreSession = typeof window !== 'undefined' && Boolean(localStorage.getItem('accessTokenExpiration'))
-  const [businessId, setBusinessId] = useState<string | undefined>(getCookie('X-Business-Id'))
+  const { clearSelectedBusiness, businessId } = useBusiness()
   // refs
   const refreshTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const interceptorRegisteredRef = useRef<boolean>(false)
@@ -190,16 +189,6 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
     })
 
     interceptorRegisteredRef.current = true
-  }, [])
-
-  useEffect(() => {
-    const handler = () => {
-      setBusinessId(getCookie('X-Business-Id'))
-    }
-    window.addEventListener('business-id-change', handler)
-    return () => {
-      window.removeEventListener('business-id-change', handler)
-    }
   }, [])
 
   useEffect(() => {
@@ -349,6 +338,7 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
     async (data: AuthValidators.SignIn) => {
       await m1(data, {
         onSuccess: (response) => {
+          clearSelectedBusiness()
           dispatch({
             type: Types.LOGIN,
             payload: { user: response.data.user },
@@ -380,6 +370,7 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
   const signOut = useCallback(async () => {
     await m3(undefined, {
       onSuccess: (_) => {
+        clearSelectedBusiness()
         localStorage.removeItem('accessTokenExpiration')
         dispatch({ type: Types.LOGOUT })
         navigate({ replace: true, to: '/sign-in' })

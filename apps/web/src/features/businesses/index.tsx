@@ -1,6 +1,5 @@
 import { useNavigate } from '@tanstack/react-router'
 import { Plus } from 'lucide-react'
-import { httpClient } from '@/lib/repository/http-client'
 import { useAuth } from '@/providers/auth-provider'
 import useDialogState from '@/hooks/use-dialog-state'
 import { Badge } from '@/components/ui/badge'
@@ -15,6 +14,7 @@ import {
 import { Typography } from '@/components/ui/typography'
 import { LazyLoadImage } from '@/components/lazy-load-image'
 import { NewBusinessDialog } from './components/new-business-dialog'
+import { useBusiness } from '@/hooks/use-business'
 
 const roleColors: Record<string, string> = {
   Owner: 'bg-blue-100 text-blue-800',
@@ -27,10 +27,10 @@ export function Businesses() {
   const navigate = useNavigate()
   const { user } = useAuth()
   const [open, setOpen] = useDialogState<'add'>(null)
+  const { selectBusiness } = useBusiness()
 
-  const accessBusiness = async (businessId: string) => {
-    await httpClient.post('/businesses/pick', { id: businessId })
-    window.dispatchEvent(new Event('business-id-change'))
+  const accessBusiness = (businessId: string) => {
+    selectBusiness(businessId)
     navigate({ to: '/' })
   }
 
