@@ -9,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -33,6 +34,8 @@ import server.rem.entities.Permission;
 import server.rem.entities.Role;
 import server.rem.entities.Task;
 import server.rem.entities.User;
+import server.rem.entities.Variant;
+import server.rem.entities.VariantOption;
 import server.rem.enums.AuthProvider;
 import server.rem.enums.CalendarBookingStatus;
 import server.rem.enums.Color;
@@ -52,6 +55,7 @@ import server.rem.repositories.PermissionRepository;
 import server.rem.repositories.RoleRepository;
 import server.rem.repositories.TaskRepository;
 import server.rem.repositories.UserRepository;
+import server.rem.repositories.VariantRepository;
 
 @Component
 @Profile("seed")
@@ -192,6 +196,88 @@ public class DataSeeder implements CommandLineRunner {
     private static final List<Integer> STAFF_PERMISSION_IDS = List.of(
             1, 2, 6, 10, 19, 30, 31, 57, 61, 65);
 
+    private static final List<VariantSeed> VARIANT_SEEDS = List.of(
+            new VariantSeed(1, "Color",
+                    List.of("Black", "White", "Gray", "Red", "Blue", "Green", "Yellow", "Navy", "Beige")),
+            new VariantSeed(2, "Apparel Size",
+                    List.of("XXS", "XS", "S", "M", "L", "XL", "XXL", "3XL")),
+            new VariantSeed(3, "Material",
+                    List.of("Cotton", "Polyester", "Wool", "Linen", "Leather", "Silk", "Denim")),
+            new VariantSeed(4, "Pattern",
+                    List.of("Solid", "Striped", "Plaid", "Floral", "Polka Dot", "Graphic")),
+            new VariantSeed(5, "Fit",
+                    List.of("Slim", "Regular", "Relaxed", "Oversized")),
+            new VariantSeed(6, "Style",
+                    List.of("Casual", "Formal", "Sport", "Vintage", "Minimalist")),
+            new VariantSeed(7, "Department",
+                    List.of("Women", "Men", "Unisex", "Kids")),
+            new VariantSeed(8, "Age Group",
+                    List.of("Newborn", "Infant", "Toddler", "Kids", "Teen", "Adult")),
+            new VariantSeed(9, "Shoe Size",
+                    List.of("5", "6", "7", "8", "9", "10", "11", "12", "13")),
+            new VariantSeed(10, "Shoe Width",
+                    List.of("Narrow", "Standard", "Wide", "Extra Wide")),
+            new VariantSeed(11, "Garment Length",
+                    List.of("Cropped", "Short", "Regular", "Long", "Maxi")),
+            new VariantSeed(12, "Waist Size",
+                    List.of("26", "28", "30", "32", "34", "36", "38", "40")),
+            new VariantSeed(13, "Inseam",
+                    List.of("28 in", "30 in", "32 in", "34 in", "36 in")),
+            new VariantSeed(14, "Sleeve Length",
+                    List.of("Sleeveless", "Short Sleeve", "3/4 Sleeve", "Long Sleeve")),
+            new VariantSeed(15, "Neckline",
+                    List.of("Crew Neck", "V-Neck", "Scoop Neck", "Turtleneck", "Collared")),
+            new VariantSeed(16, "Capacity",
+                    List.of("250 ml", "500 ml", "750 ml", "1 L", "2 L")),
+            new VariantSeed(17, "Storage Capacity",
+                    List.of("64 GB", "128 GB", "256 GB", "512 GB", "1 TB", "2 TB")),
+            new VariantSeed(18, "Memory",
+                    List.of("4 GB", "8 GB", "16 GB", "32 GB", "64 GB")),
+            new VariantSeed(19, "Screen Size",
+                    List.of("11 in", "13 in", "14 in", "15 in", "17 in", "24 in", "27 in", "32 in")),
+            new VariantSeed(20, "Connectivity",
+                    List.of("Wi-Fi", "Bluetooth", "Ethernet", "Cellular", "NFC")),
+            new VariantSeed(21, "Voltage",
+                    List.of("110 V", "120 V", "220 V", "240 V", "Dual Voltage")),
+            new VariantSeed(22, "Plug Type",
+                    List.of("Type A", "Type B", "Type C", "Type G", "Type I")),
+            new VariantSeed(23, "Pack Size",
+                    List.of("Single", "Pack of 2", "Pack of 4", "Pack of 6", "Pack of 12")),
+            new VariantSeed(24, "Quantity",
+                    List.of("1 Count", "5 Count", "10 Count", "25 Count", "50 Count", "100 Count")),
+            new VariantSeed(25, "Weight",
+                    List.of("250 g", "500 g", "1 kg", "2 kg", "5 kg")),
+            new VariantSeed(26, "Flavor",
+                    List.of("Original", "Vanilla", "Chocolate", "Strawberry", "Caramel", "Mint")),
+            new VariantSeed(27, "Scent",
+                    List.of("Unscented", "Floral", "Citrus", "Lavender", "Vanilla", "Fresh Linen")),
+            new VariantSeed(28, "Skin Type",
+                    List.of("Normal", "Dry", "Oily", "Combination", "Sensitive")),
+            new VariantSeed(29, "Finish",
+                    List.of("Matte", "Glossy", "Satin", "Metallic", "Natural")),
+            new VariantSeed(30, "Shade",
+                    List.of("Light", "Medium", "Tan", "Deep", "Universal")),
+            new VariantSeed(31, "SPF",
+                    List.of("SPF 15", "SPF 30", "SPF 50", "SPF 50+")),
+            new VariantSeed(32, "Formula",
+                    List.of("Liquid", "Cream", "Gel", "Powder", "Foam", "Spray")),
+            new VariantSeed(33, "Subscription",
+                    List.of("One-time", "Monthly", "Quarterly", "Annual")),
+            new VariantSeed(34, "Condition",
+                    List.of("New", "Open Box", "Refurbished", "Used")),
+            new VariantSeed(35, "Edition",
+                    List.of("Standard", "Deluxe", "Collector's", "Limited")),
+            new VariantSeed(36, "Language",
+                    List.of("English", "Spanish", "French", "German", "Japanese")),
+            new VariantSeed(37, "Format",
+                    List.of("Physical", "Digital", "Download", "Streaming")),
+            new VariantSeed(38, "Mount Type",
+                    List.of("Wall Mount", "Ceiling Mount", "Desk Mount", "Floor Stand")),
+            new VariantSeed(39, "Frame Size",
+                    List.of("Small", "Medium", "Large", "Extra Large")),
+            new VariantSeed(40, "Compatibility",
+                    List.of("Universal", "iOS", "Android", "Windows", "macOS")));
+
     private static final List<CustomerGroupSeed> CUSTOMER_GROUP_SEEDS = List.of(
             new CustomerGroupSeed("grp_vip_seed_0000000001", "VIP", 15.0),
             new CustomerGroupSeed("grp_new_seed_0000000001", "New Customer", 0.0),
@@ -313,6 +399,7 @@ public class DataSeeder implements CommandLineRunner {
     private final ContactRepository contactRepository;
     private final CalendarBookingRepository calendarBookingRepository;
     private final TaskRepository taskRepository;
+    private final VariantRepository variantRepository;
 
     @Override
     @Transactional
@@ -324,6 +411,7 @@ public class DataSeeder implements CommandLineRunner {
         Map<String, User> users = seedUsers();
         Business business = seedBusiness(users.get(ALICE_ID));
         seedBusinessUsers(business, users, roles);
+        seedVariants(business);
 
         Map<String, CustomerGroup> customerGroups = seedCustomerGroups(business);
         Map<String, ContactTag> contactTags = seedContactTags(business);
@@ -502,6 +590,55 @@ public class DataSeeder implements CommandLineRunner {
         return customerGroups;
     }
 
+    private void seedVariants(Business business) {
+        for (VariantSeed seed : VARIANT_SEEDS) {
+            String id = variantId(seed.number());
+            Optional<Variant> existingVariant = variantRepository.findById(id)
+                    .or(() -> variantRepository.findByBusinessIdAndNameIgnoreCase(business.getId(), seed.name()));
+            Variant variant = existingVariant.orElseGet(() -> withId(Variant.builder()
+                            .business(business)
+                            .name(seed.name())
+                            .build(), id));
+            boolean changed = existingVariant.isEmpty();
+
+            if (variant.getBusiness() == null || !business.getId().equals(variant.getBusiness().getId())) {
+                variant.setBusiness(business);
+                changed = true;
+            }
+            if (!seed.name().equals(variant.getName())) {
+                variant.setName(seed.name());
+                changed = true;
+            }
+
+            for (int index = 0; index < seed.values().size(); index++) {
+                String value = seed.values().get(index);
+                VariantOption option = variant.getOptions().stream()
+                        .filter(existing -> existing.getValue().equalsIgnoreCase(value))
+                        .findFirst()
+                        .orElse(null);
+
+                if (option == null) {
+                    option = withId(VariantOption.builder()
+                            .name(value)
+                            .value(value)
+                            .variant(variant)
+                            .build(), variantOptionId(seed.number(), index + 1));
+                    variant.getOptions().add(option);
+                    changed = true;
+                } else if (!value.equals(option.getName()) || !value.equals(option.getValue())) {
+                    option.setName(value);
+                    option.setValue(value);
+                    option.setVariant(variant);
+                    changed = true;
+                }
+            }
+
+            if (changed) {
+                variantRepository.save(variant);
+            }
+        }
+    }
+
     private Map<String, ContactTag> seedContactTags(Business business) {
         Map<String, ContactTag> contactTags = new LinkedHashMap<>();
         for (ContactTagSeed seed : CONTACT_TAG_SEEDS) {
@@ -634,6 +771,14 @@ public class DataSeeder implements CommandLineRunner {
         return "task_seed_%012d".formatted(number);
     }
 
+    private static String variantId(int number) {
+        return "variant_seed_%011d".formatted(number);
+    }
+
+    private static String variantOptionId(int variantNumber, int optionNumber) {
+        return "vopt_seed_%03d_%09d".formatted(variantNumber, optionNumber);
+    }
+
     private record RoleSeed(String id, String name, String description) {
 
     }
@@ -651,6 +796,10 @@ public class DataSeeder implements CommandLineRunner {
     }
 
     private record ContactTagSeed(String id, String name, Color color) {
+
+    }
+
+    private record VariantSeed(int number, String name, List<String> values) {
 
     }
 

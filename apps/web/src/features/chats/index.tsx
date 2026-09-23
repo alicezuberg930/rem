@@ -75,9 +75,7 @@ export function Chats() {
   const filteredConversations = useMemo<ChatConversation[]>(() => {
     const query = search.trim().toLowerCase()
     const matchingGroups = groups.filter(({ name }) => name.toLowerCase().includes(query))
-    const matchingUsers = users.filter(({ fullname, email }) =>
-      fullname.toLowerCase().includes(query) || email.toLowerCase().includes(query)
-    )
+    const matchingUsers = users.filter(({ fullname, email }) => fullname.toLowerCase().includes(query) || email.toLowerCase().includes(query))
 
     return [
       ...matchingGroups.map((group) => ({ type: 'group' as const, group })),
@@ -155,7 +153,7 @@ export function Chats() {
         </div>
       </Header>
 
-      <Main fixed>
+      <Main fixed fluid className=''>
         <section className='flex h-full gap-2'>
           <div className='flex w-full flex-col gap-2 sm:w-56 lg:w-72 2xl:w-80'>
             <div className='sticky top-0 z-10 bg-background pb-3 sm:static sm:z-auto sm:mx-0 sm:p-0'>
@@ -209,7 +207,7 @@ export function Chats() {
               </label>
             </div>
 
-            <ScrollArea className='h-full overflow-scroll'>
+            <ScrollArea className='h-full overflow-scroll no-scrollbar'>
               {!businessId && (
                 <div className='px-2 py-4 text-sm text-muted-foreground'>
                   <p>Choose a business to view conversations.</p>
@@ -293,20 +291,11 @@ export function Chats() {
                   <div className='flex items-center gap-2 lg:gap-4'>
                     <Avatar className='size-9 lg:size-11 relative'>
                       <AvatarImage
-                        src={(selectedConversation.type === 'group'
-                          ? selectedConversation.group.avatar
-                          : selectedConversation.user.avatar) ?? undefined
-                        }
-                        alt={selectedConversation.type === 'group'
-                          ? selectedConversation.group.name
-                          : selectedConversation.user.fullname
-                        }
+                        src={(selectedConversation.type === 'group' ? selectedConversation.group.avatar : selectedConversation.user.avatar) ?? undefined}
+                        alt={selectedConversation.type === 'group' ? selectedConversation.group.name : selectedConversation.user.fullname}
                       />
                       <AvatarFallback>
-                        {getInitials(selectedConversation.type === 'group'
-                          ? selectedConversation.group.name
-                          : selectedConversation.user.fullname
-                        )}
+                        {getInitials(selectedConversation.type === 'group' ? selectedConversation.group.name : selectedConversation.user.fullname)}
                       </AvatarFallback>
                       {selectedConversation.type === 'direct' && (
                         <span
@@ -319,15 +308,11 @@ export function Chats() {
                     </Avatar>
                     <div className='min-w-0'>
                       <span className='block truncate text-sm font-medium lg:text-base'>
-                        {selectedConversation.type === 'group'
-                          ? selectedConversation.group.name
-                          : selectedConversation.user.fullname}
+                        {selectedConversation.type === 'group' ? selectedConversation.group.name : selectedConversation.user.fullname}
                       </span>
                       <span className='flex max-w-48 min-w-0 items-center gap-1.5 text-xs text-muted-foreground lg:max-w-none lg:text-sm'>
                         <span className='truncate'>
-                          {selectedConversation.type === 'group'
-                            ? `${selectedConversation.group.members.length} members`
-                            : selectedConversation.user.email}
+                          {selectedConversation.type === 'group' ? `${selectedConversation.group.members.length} members` : selectedConversation.user.email}
                         </span>
                       </span>
                     </div>
@@ -362,7 +347,7 @@ export function Chats() {
                 </div>
               </div>
 
-              <div className='flex flex-1 flex-col gap-2 rounded-md px-4 pt-0 pb-4'>
+              <div className='flex flex-1 flex-col'>
                 <div className='flex size-full flex-1'>
                   <div className='relative -me-4 flex flex-1 flex-col overflow-y-hidden'>
                     <div
@@ -429,12 +414,9 @@ export function Chats() {
                     </div>
                   </div>
                 </div>
-
-                <form
-                  className='flex w-full flex-none gap-2'
-                  onSubmit={handleSubmit}
-                >
-                  <div className='flex flex-1 items-center gap-2 rounded-md border border-input bg-card px-2 py-1 focus-within:ring-1 focus-within:ring-ring focus-within:outline-hidden lg:gap-4'>
+                {/* chat inputs & files sending */}
+                <form className='flex w-full flex-none gap-2' onSubmit={handleSubmit}>
+                  <div className='flex flex-1 items-center gap-2 border-t border-input px-2 py-1 focus-within:ring-1 focus-within:ring-ring focus-within:outline-hidden lg:gap-4 rounded-b-md'>
                     <div className='space-x-1'>
                       <Button
                         size='icon'
@@ -478,7 +460,7 @@ export function Chats() {
                         maxLength={4000}
                         onChange={(event) => setDraft(event.target.value)}
                         placeholder='Type your message...'
-                        className='h-8 w-full bg-inherit focus-visible:outline-hidden'
+                        className='h-8 w-full bg-inherit focus-visible:outline-hidden text-sm'
                       />
                     </label>
                     <Button

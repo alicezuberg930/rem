@@ -1,5 +1,6 @@
 import { ClockInButton } from '@/layout/clock-in-button'
 import { Header } from '@/layout/header'
+import { Main } from '@/layout/main'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
@@ -8,7 +9,6 @@ import { VariantsDialogs } from './components/variants-dialogs'
 import { VariantsPrimaryButtons } from './components/variants-primary-buttons'
 import { VariantsProvider } from './components/variants-provider'
 import { VariantsTable } from './components/variants-table'
-import { Main } from '@/layout/main'
 
 export function Variants() {
   return (
@@ -28,7 +28,7 @@ export function Variants() {
           <div>
             <h2 className='text-2xl font-bold tracking-tight'>Variants List</h2>
             <p className='text-muted-foreground'>
-              Manage your marketing variants here.
+              Manage product variants and their option values.
             </p>
           </div>
           <VariantsPrimaryButtons />

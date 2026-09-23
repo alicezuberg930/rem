@@ -15,7 +15,7 @@ import lombok.Setter;
 
 @Entity
 @Table(
-    name = "variant_values",
+    name = "variant_options",
     uniqueConstraints = @UniqueConstraint(columnNames = { "variant_id", "name" })
 )
 @Getter
@@ -23,7 +23,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class VariantValue extends Base {
+public class VariantOption extends Base {
     @Column(name = "name", length = 255, nullable = false)
     private String name;
 
@@ -34,4 +34,3 @@ public class VariantValue extends Base {
     @JoinColumn(name = "variant_id", nullable = false)
     private Variant variant;
 }
-

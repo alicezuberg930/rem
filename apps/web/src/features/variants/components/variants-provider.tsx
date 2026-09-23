@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Template } from '@/@types'
+import type { Variant } from '@/@types/variant'
 import useDialogState from '@/hooks/use-dialog-state'
 
 type VariantsDialogType = 'preview' | 'add' | 'edit' | 'delete'
@@ -7,15 +7,15 @@ type VariantsDialogType = 'preview' | 'add' | 'edit' | 'delete'
 type VariantsContextType = {
   open: VariantsDialogType | null
   setOpen: (str: VariantsDialogType | null) => void
-  currentRow: Template | null
-  setCurrentRow: React.Dispatch<React.SetStateAction<Template | null>>
+  currentRow: Variant | null
+  setCurrentRow: React.Dispatch<React.SetStateAction<Variant | null>>
 }
 
 const VariantsContext = React.createContext<VariantsContextType | null>(null)
 
 export function VariantsProvider({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useDialogState<VariantsDialogType>(null)
-  const [currentRow, setCurrentRow] = useState<Template | null>(null)
+  const [currentRow, setCurrentRow] = useState<Variant | null>(null)
 
   return (
     <VariantsContext value={{ open, setOpen, currentRow, setCurrentRow }}>
@@ -29,9 +29,7 @@ export const useVariants = () => {
   const variantsContext = React.useContext(VariantsContext)
 
   if (!variantsContext) {
-    throw new Error(
-      'useVariants hook has to be used within <VariantsContext>'
-    )
+    throw new Error('useVariants hook has to be used within <VariantsContext>')
   }
 
   return variantsContext

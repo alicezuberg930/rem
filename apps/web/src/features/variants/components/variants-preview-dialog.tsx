@@ -1,5 +1,6 @@
-import { Template } from '@/@types'
+import type { Variant } from '@/@types/variant'
 import { Eye } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -11,44 +12,40 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 
-type UserInviteDialogProps = {
+type VariantPreviewDialogProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
-  currentRow: Template
+  currentRow: Variant
 }
 
 export function VariantsPreviewDialog({
   open,
   onOpenChange,
   currentRow,
-}: UserInviteDialogProps) {
+}: VariantPreviewDialogProps) {
   return (
-    <Dialog
-      open={open}
-      onOpenChange={(state) => {
-        onOpenChange(state)
-      }}
-    >
-      <DialogContent className='flex max-h-[90vh] flex-col sm:max-w-3xl'>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className='sm:max-w-md'>
         <DialogHeader className='text-start'>
           <DialogTitle className='flex items-center gap-2'>
             <Eye />
-            Preview Email Variant
+            {currentRow.name}
           </DialogTitle>
           <DialogDescription>
-            Invite new user to join your team by sending them an email
-            invitation. Assign a role to define their access level.
+            Values available for this variant.
           </DialogDescription>
         </DialogHeader>
-        <div className='min-h-0 flex-1 overflow-scroll wrap-break-word'>
-          <div dangerouslySetInnerHTML={{ __html: currentRow.header }}></div>
-          <div dangerouslySetInnerHTML={{ __html: currentRow.body }}></div>
-          <div dangerouslySetInnerHTML={{ __html: currentRow.footer }}></div>
+
+        <div className='flex flex-wrap gap-2 py-2'>
+          {currentRow.options.map((option) => (
+            <Badge key={option.id} variant='secondary'>
+              {option.value}
+            </Badge>
+          ))}
         </div>
-        <DialogFooter className='gap-y-2'>
-          <DialogClose>
-            <Button variant='outline'>Close</Button>
-          </DialogClose>
+
+        <DialogFooter>
+          <DialogClose render={<Button variant='outline' />}>Close</DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>

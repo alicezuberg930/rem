@@ -36,9 +36,9 @@ public class ProductVariantCombination extends Base {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "variant_value_1_id", nullable = false)
-    private VariantValue variantValue1;
+    private VariantOption variantValue1;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "variant_value_2_id", nullable = false)
-    private VariantValue variantValue2;
+    private VariantOption variantValue2;
 }

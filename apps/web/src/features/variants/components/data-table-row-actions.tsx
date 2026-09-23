@@ -1,5 +1,5 @@
 import { type Row } from '@tanstack/react-table'
-import { Template } from '@/@types'
+import type { Variant } from '@/@types/variant'
 import { EllipsisVertical, Trash2, UserPen, Eye } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -13,7 +13,7 @@ import {
 import { useVariants } from './variants-provider'
 
 type DataTableRowActionsProps = {
-  row: Row<Template>
+  row: Row<Variant>
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {

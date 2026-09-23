@@ -38,6 +38,7 @@ import server.rem.entities.Permission;
 import server.rem.entities.Role;
 import server.rem.entities.Task;
 import server.rem.entities.User;
+import server.rem.entities.Variant;
 import server.rem.enums.CalendarBookingStatus;
 import server.rem.repositories.BusinessRepository;
 import server.rem.repositories.BusinessUserRepository;
@@ -50,6 +51,7 @@ import server.rem.repositories.PermissionRepository;
 import server.rem.repositories.RoleRepository;
 import server.rem.repositories.TaskRepository;
 import server.rem.repositories.UserRepository;
+import server.rem.repositories.VariantRepository;
 
 @ExtendWith(MockitoExtension.class)
 class DataSeederTests {
@@ -75,6 +77,8 @@ class DataSeederTests {
     private CalendarBookingRepository calendarBookingRepository;
     @Mock
     private TaskRepository taskRepository;
+    @Mock
+    private VariantRepository variantRepository;
 
     private final Map<String, Role> roles = new LinkedHashMap<>();
     private final Map<String, Permission> permissions = new LinkedHashMap<>();
@@ -87,6 +91,7 @@ class DataSeederTests {
     private final Map<String, Contact> contacts = new LinkedHashMap<>();
     private final Map<String, CalendarBooking> bookings = new LinkedHashMap<>();
     private final Map<String, Task> tasks = new LinkedHashMap<>();
+    private final Map<String, Variant> variants = new LinkedHashMap<>();
 
     private DataSeeder dataSeeder;
 
@@ -104,7 +109,8 @@ class DataSeederTests {
                 contactTagRepository,
                 contactRepository,
                 calendarBookingRepository,
-                taskRepository);
+                taskRepository,
+                variantRepository);
     }
 
     @Test
@@ -125,6 +131,8 @@ class DataSeederTests {
         assertEquals(10, contacts.size());
         assertEquals(20, bookings.size());
         assertEquals(50, tasks.size());
+        assertEquals(40, variants.size());
+        assertEquals(215, variants.values().stream().mapToInt(variant -> variant.getOptions().size()).sum());
 
         assertPermissionCount("role_owner_seed_00000001", 67);
         assertPermissionCount("role_hr_seed_00000000001", 38);
@@ -202,6 +210,15 @@ class DataSeederTests {
                         && !task.getDueDate().isBefore(task.getStartDate())
                         && task.getDueDate().isBefore(dateRangeEnd)));
 
+        Variant color = variants.get("variant_seed_00000000001");
+        assertSame(business, color.getBusiness());
+        assertEquals("Color", color.getName());
+        assertEquals(Set.of("Black", "White", "Gray", "Red", "Blue", "Green", "Yellow", "Navy", "Beige"),
+                color.getOptions().stream().map(option -> option.getValue()).collect(Collectors.toSet()));
+        assertTrue(variants.values().stream()
+                .flatMap(variant -> variant.getOptions().stream())
+                .allMatch(option -> option.getName().equals(option.getValue()) && option.getVariant() != null));
+
         Contact linh = contacts.get("ct_linh_seed_000000001");
         assertSame(business, linh.getBusiness());
         assertSame(contactTags.get("tag_hot_seed_0000000001"), linh.getTag());
@@ -245,6 +262,7 @@ class DataSeederTests {
         verify(contactRepository, never()).save(any(Contact.class));
         verify(calendarBookingRepository, never()).save(any(CalendarBooking.class));
         verify(taskRepository, never()).save(any(Task.class));
+        verify(variantRepository, never()).save(any(Variant.class));
     }
 
     private void assertPermissionCount(String roleId, int expectedCount) {
@@ -359,6 +377,23 @@ class DataSeederTests {
             tasks.put(task.getId(), task);
             return task;
         });
+
+        when(variantRepository.findById(anyString()))
+                .thenAnswer(invocation -> Optional.ofNullable(variants.get(invocation.getArgument(0))));
+        when(variantRepository.findByBusinessIdAndNameIgnoreCase(anyString(), anyString()))
+                .thenAnswer(invocation -> {
+                    String businessId = invocation.getArgument(0);
+                    String name = invocation.getArgument(1);
+                    return variants.values().stream()
+                            .filter(variant -> businessId.equals(variant.getBusiness().getId())
+                                    && name.equalsIgnoreCase(variant.getName()))
+                            .findFirst();
+                });
+        when(variantRepository.save(any(Variant.class))).thenAnswer(invocation -> {
+            Variant variant = invocation.getArgument(0);
+            variants.put(variant.getId(), variant);
+            return variant;
+        });
     }
 
     private void clearRepositoryInvocations() {
@@ -373,6 +408,7 @@ class DataSeederTests {
                 contactTagRepository,
                 contactRepository,
                 calendarBookingRepository,
-                taskRepository);
+                taskRepository,
+                variantRepository);
     }
 }

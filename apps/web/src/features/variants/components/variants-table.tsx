@@ -14,8 +14,8 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { type QueryTemplate } from '@/@types'
-import { templates } from '@/lib/queries/template'
+import type { QueryVariant } from '@/@types/variant'
+import { variants } from '@/lib/queries/variant'
 // utils
 import { cn } from '@/lib/utils'
 import { useTableUrlState } from '@/hooks/use-table-url-state'
@@ -47,7 +47,7 @@ export function VariantsTable() {
   // const [columnFilters, onColumnFiltersChange] = useState<ColumnFiltersState>([])
   // const [pagination, onPaginationChange] = useState<PaginationState>({ pageIndex: 0, pageSize: 10 })
 
-  // Synced with URL states (keys/defaults mirror users route search schema)
+  // Keep filters and pagination in the URL so the list is shareable.
   const {
     columnFilters,
     onColumnFiltersChange,
@@ -60,20 +60,17 @@ export function VariantsTable() {
     pagination: { defaultPage: 1, defaultPageSize: 10 },
     globalFilter: { enabled: false },
     columnFilters: [
-      // username per-column text filter
       { columnId: 'name', searchKey: 'name', type: 'string' },
-      // { columnId: 'status', searchKey: 'status', type: 'array' },
-      // { columnId: 'role', searchKey: 'role', type: 'array' },
     ],
   })
 
   // Build query params from filters and pagination
   const queryParams = useMemo(() => {
-    const validKeys: (keyof QueryTemplate)[] = ['name']
+    const validKeys: (keyof QueryVariant)[] = ['name']
     const params = columnFilters.reduce(
       (acc: Record<string, unknown>, filter: ColumnFilter) => {
         // If the filter already exists, convert it to an array (if it's not already) and add the new value
-        const key = filter.id as keyof QueryTemplate
+        const key = filter.id as keyof QueryVariant
         if (validKeys.includes(key)) {
           if (Array.isArray(acc[key])) {
             ;(acc[key] as unknown[]).push(filter.value)
@@ -86,7 +83,7 @@ export function VariantsTable() {
       {} as Record<string, unknown>
     )
     return Object.entries(params).reduce((acc, [key, value]) => {
-      acc[key as keyof QueryTemplate] = Array.isArray(value)
+      acc[key as keyof QueryVariant] = Array.isArray(value)
         ? JSON.stringify(value)
         : (value as string)
       return acc
@@ -94,7 +91,7 @@ export function VariantsTable() {
   }, [columnFilters])
 
   const { data, isLoading } = useQuery(
-    templates().all.queryOptions({
+    variants().all.queryOptions({
       page: pagination.pageIndex,
       pageSize: pagination.pageSize,
       ...queryParams,

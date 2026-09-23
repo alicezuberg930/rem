@@ -1,19 +1,19 @@
 import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
-import { Template } from '@/@types'
+import type { Variant } from '@/@types/variant'
 import { AlertTriangle } from 'lucide-react'
-import { toast } from '@/components/ui/toast'
-import { templates } from '@/lib/queries/template'
+import { variants } from '@/lib/queries/variant'
 import { HttpError } from '@/lib/repository/http-error'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { toast } from '@/components/ui/toast'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 
 type VariantDeleteDialogProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
-  currentRow: Template
+  currentRow: Variant
 }
 
 export function VariantsDeleteDialog({
@@ -22,12 +22,12 @@ export function VariantsDeleteDialog({
   currentRow,
 }: VariantDeleteDialogProps) {
   const [value, setValue] = useState<string>('')
-  const _delete = useMutation(templates().delete.mutationOptions())
+  const deleteVariant = useMutation(variants().delete.mutationOptions())
 
   const handleDelete = () => {
     if (value.trim() !== currentRow.name) return
     const submit = async () => {
-      const res = await _delete.mutateAsync(currentRow.id)
+      const res = await deleteVariant.mutateAsync(currentRow.id)
       onOpenChange(false)
       return res
     }

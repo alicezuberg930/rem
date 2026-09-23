@@ -1,12 +1,11 @@
-// hooks
 import { useFieldArray, useForm } from 'react-hook-form'
-// utils
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
-// types
-import { templates } from '@/lib/queries/template'
+import type { Variant } from '@/@types/variant'
+import { Plus, Trash2 } from 'lucide-react'
+import { variants } from '@/lib/queries/variant'
 import { HttpError } from '@/lib/repository/http-error'
-// components
+import { type VariantForm, variantSchema } from '@/lib/validators/variant'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -16,18 +15,18 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
-import { toast } from '@/components/ui/toast'
 import {
-  FormProvider,
-  RHFTextField,
-} from '@/components/hook-form'
-import { VariantForm, variantSchema } from '@/lib/validators/variant'
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
-import { X } from 'lucide-react'
+import { toast } from '@/components/ui/toast'
+import { FormProvider, RHFTextField } from '@/components/hook-form'
 
 type VariantActionDialogProps = {
-  currentRow?: VariantForm
+  currentRow?: Variant
   open: boolean
   onOpenChange: (open: boolean) => void
 }
@@ -37,26 +36,26 @@ export function VariantsActionDialog({
   open,
   onOpenChange,
 }: VariantActionDialogProps) {
-  const { mutateAsync: update } = useMutation(templates().update.mutationOptions())
-  const { mutateAsync: create } = useMutation(templates().create.mutationOptions())
+  const { mutateAsync: update } = useMutation(
+    variants().update.mutationOptions()
+  )
+  const { mutateAsync: create } = useMutation(
+    variants().create.mutationOptions()
+  )
+  const isEdit = Boolean(currentRow)
 
-  const isEdit = !!currentRow
   const form = useForm<VariantForm>({
     resolver: zodResolver(variantSchema),
     defaultValues: isEdit
       ? {
-        ...currentRow,
-        isEdit,
+        isEdit: true,
+        name: currentRow?.name ?? '',
+        options: currentRow?.options ?? [],
       }
       : {
-        isEdit,
+        isEdit: false,
         name: '',
-        options: [
-          {
-            id: '',
-            value: '',
-          }
-        ]
+        options: [{ value: '' }],
       },
   })
 
@@ -64,153 +63,114 @@ export function VariantsActionDialog({
     control,
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     reset,
   } = form
-
-  const {
-    fields: optionFields,
-    remove,
-    append
-  } = useFieldArray({
+  const { fields, remove, append } = useFieldArray({
     control,
     name: 'options',
   })
 
-  const onSubmit = async (values: VariantForm) => {
-    console.log(values)
-    const submit = async () => {
-      // const res = isEdit && currentRow?.id ? await update(values) : await create(values)
-      form.reset()
-      onOpenChange(false)
-      // return res
+  const onSubmit = async ({ name, options }: VariantForm) => {
+    const payload = {
+      name,
+      options: options.map(({ id, value }) => ({
+        ...(id ? { id } : {}),
+        value,
+      })),
     }
-    //   toast.promise(submit, {
-    //     loading: 'Submitting data',
-    //     error: (err) => err instanceof HttpError ? err.message : 'Internal server error',
-    //     success: (res) => res.message,
-    //   })
-  }
 
-  // const handleDropThumbnail = useCallback((acceptedFiles: File[]) => {
-  //   const file = acceptedFiles[0]
-  //   if (!file) return
-  //   const img = new window.Image()
-  //   img.src = URL.createObjectURL(file)
-  //   const newFile = Object.assign(file, {
-  //     preview: URL.createObjectURL(file),
-  //   })
-  // setValue('thumbnail', newFile, { shouldValidate: true })
-  // img.onload = () => {
-  //   URL.revokeObjectURL(img.src)
-  //   if (img.naturalWidth / img.naturalHeight !== 1) {
-  //     setError('thumbnail', { type: 'manual', message: ('thumbnail_must_be_square') })
-  //   } else {
-  //     const newFile = Object.assign(file, {
-  //       preview: URL.createObjectURL(file),
-  //     })
-  //     setValue('thumbnail', newFile, { shouldValidate: true })
-  //   }
-  // }
-  // img.onerror = () => {
-  //   URL.revokeObjectURL(img.src)
-  //   setError('thumbnail', { type: 'manual', message: ('thumbnail_must_be_square') })
-  // }
-  // }, [setValue, setError])
+    const submit = async () => {
+      const response = isEdit && currentRow
+        ? await update({ id: currentRow.id, ...payload })
+        : await create(payload)
+      reset()
+      onOpenChange(false)
+      return response
+    }
+
+    toast.promise(submit, {
+      loading: isEdit ? 'Updating variant' : 'Creating variant',
+      error: (error) => error instanceof HttpError ? error.message : 'Internal server error',
+      success: (response) => response.message,
+    })
+  }
 
   return (
     <Dialog
       open={open}
       onOpenChange={(state) => {
-        reset()
+        if (!state) reset()
         onOpenChange(state)
       }}
     >
-      <DialogContent className='sm:max-w-xl'>
+      <DialogContent className='sm:max-w-lg'>
         <DialogHeader className='text-start'>
-          <DialogTitle>
-            {isEdit ? 'Edit Variant' : 'Add New Variant'}
-          </DialogTitle>
+          <DialogTitle>{isEdit ? 'Edit variant' : 'Add variant'}</DialogTitle>
           <DialogDescription>
-            {isEdit ? 'Update existing Variant. ' : 'Create a new Variant. '}
-            Click save when you're done.
+            Set the variant name and the values available for this option.
           </DialogDescription>
         </DialogHeader>
-        <div className='h-105 w-[calc(100%+0.75rem)] overflow-y-auto py-1 pe-3'>
-          <FormProvider
-            id='variants-form'
-            methods={form}
-            onSubmit={handleSubmit(onSubmit)}
-          >
-            <div className='space-y-4 px-0.5'>
-              <FieldGroup>
-                {/* Variant name */}
-                <RHFTextField fieldLabel='Variant name' placeholder='Color' name='name' />
 
-                {/* Options */}
-                <Field data-invalid={false}>
-                  <FieldLabel htmlFor='options'>Options</FieldLabel>
+        <FormProvider
+          id='variants-form'
+          methods={form}
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <FieldGroup>
+            <RHFTextField
+              fieldLabel='Variant name'
+              placeholder='Color'
+              name='name'
+            />
 
-                  {optionFields.map((option, optionIndex) => {
-                    const optionError = errors.options?.[optionIndex]
-                    return (
-                      <div
-                        key={option.id}
-                        className="flex items-start gap-2"
-                      >
-                        {/* Option value */}
-                        <div className="flex-1 space-y-1">
-                          <Input
-                            placeholder="Red"
-                            {...register(`options.${optionIndex}.value`)}
-                          />
-                          {optionError?.value && <FieldError errors={[optionError]} className='mt-1' />}
-                          {/* {optionError?.value && (
-                            <p className="text-xs text-destructive">
-                              {optionError.value.message}
-                            </p>
-                          )} */}
-                        </div>
-                        {/* Option ID */}
-                        <div className="flex-1 space-y-1">
-                          <Input
-                            placeholder="Option ID (optional)"
-                            {...register(`options.${optionIndex}.value`)}
-                          />
-                          {/* {optionError?.id && (
-                            <p className="text-xs text-destructive">
-                              {optionError.id.message}
-                            </p>
-                          )} */}
-                        </div>
+            <Field data-invalid={Boolean(errors.options)}>
+              <div className='flex items-center justify-between gap-3'>
+                <FieldLabel>Option values</FieldLabel>
+                <Button
+                  type='button'
+                  variant='outline'
+                  size='sm'
+                  onClick={() => append({ value: '' })}
+                >
+                  <Plus data-icon='inline-start' />
+                  Add option
+                </Button>
+              </div>
 
-                        <Button
-                          type="button"
-                          size="icon"
-                          onClick={() => remove(optionIndex)}
-                          disabled={optionFields.length === 1}
-                        >
-                          <X />
-                        </Button>
-                      </div>
-                    )
-                  })}
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => append({ id: '', value: '' })}
-                  >
-                    Add option
-                  </Button>
-                </Field>
-              </FieldGroup>
-            </div>
-          </FormProvider>
-        </div>
+              <div className='max-h-64 space-y-3 overflow-y-auto py-1 pe-1'>
+                {fields.map((option, index) => (
+                  <div key={option.id} className='flex items-start gap-2'>
+                    <div className='min-w-0 flex-1 space-y-1'>
+                      <Input
+                        aria-invalid={Boolean(errors.options?.[index]?.value)}
+                        placeholder={index === 0 ? 'Red' : 'Option value'}
+                        {...register(`options.${index}.value`)}
+                      />
+                      <FieldError errors={[errors.options?.[index]?.value]} />
+                    </div>
+                    <Button
+                      type='button'
+                      variant='ghost'
+                      size='icon'
+                      aria-label={`Remove option ${index + 1}`}
+                      disabled={fields.length === 1}
+                      onClick={() => remove(index)}
+                    >
+                      <Trash2 />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+
+              <FieldError errors={[errors.options]} />
+            </Field>
+          </FieldGroup>
+        </FormProvider>
+
         <DialogFooter>
-          <Button type='submit' form='variants-form'>
-            Save changes
+          <Button type='submit' form='variants-form' disabled={isSubmitting}>
+            {isEdit ? 'Save changes' : 'Create variant'}
           </Button>
         </DialogFooter>
       </DialogContent>
