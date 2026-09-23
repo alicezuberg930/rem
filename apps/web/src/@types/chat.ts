@@ -27,7 +27,22 @@ export type ChatSocketError = {
   message: string
 }
 
-export type ChatSocketEvent = ChatMessage | ChatSocketError
+export type ChatPresenceSnapshot = {
+  type: 'PRESENCE_SNAPSHOT'
+  onlineUserIds: string[]
+}
+
+export type ChatPresenceChanged = {
+  type: 'PRESENCE_CHANGED'
+  userId: string
+  online: boolean
+}
+
+export type ChatSocketEvent =
+  | ChatMessage
+  | ChatSocketError
+  | ChatPresenceSnapshot
+  | ChatPresenceChanged
 
 export type SendChatMessage = {
   recipientId: string

@@ -88,6 +88,15 @@ public class NotificationController {
                 pushNotificationService.subscribe(userId, request, metadata)));
     }
 
+    @PostMapping("/push-notification/test")
+    public ResponseEntity<APIResponse<Integer>> sendTestNotification(@RequestUser String userId) {
+        int deliveryCount = pushNotificationService.sendTestNotification(userId);
+        String message = deliveryCount > 0
+                ? "Test notification sent"
+                : "Test notification could not be delivered";
+        return ResponseEntity.ok(APIResponse.success(200, message, deliveryCount));
+    }
+
     @DeleteMapping("/push-notification/unsubscribe/{subscriptionId}")
     public ResponseEntity<APIResponse<Void>> unsubscribe(
             @PathVariable String subscriptionId,

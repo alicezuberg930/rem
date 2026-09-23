@@ -10,11 +10,11 @@ import {
 import { useQueryClient } from '@tanstack/react-query'
 import {
   type ChatMessage,
-  type ChatSocketEvent,
   type SendChatMessage,
   type ChatUserStatus
 } from '@/@types'
 import { toast } from '@/components/ui/toast'
+import { parseChatSocketEvent } from '@/features/chats/lib/chat-events'
 import { chatKeys } from '@/lib/queries/chat'
 import { useAuth } from '@/providers/auth-provider'
 import { useBusiness } from '@/hooks/use-business'
@@ -22,30 +22,13 @@ import { useBusiness } from '@/hooks/use-business'
 type ChatContextValue = {
   businessId?: string
   status: ChatUserStatus
+  onlineUserIds: ReadonlySet<string>
   sendMessage: (message: SendChatMessage) => boolean
 }
 
 const ChatContext = createContext<ChatContextValue | null>(null)
 
-const isRecord = (value: unknown): value is Record<string, unknown> => typeof value === 'object' && value !== null
-
-const isChatMessage = (value: Record<string, unknown>): value is ChatMessage =>
-  value.type === 'MESSAGE' &&
-  typeof value.id === 'string' &&
-  typeof value.senderId === 'string' &&
-  (typeof value.recipientId === 'string' || typeof value.groupId === 'string') &&
-  typeof value.content === 'string' &&
-  typeof value.createdAt === 'string'
-
-const parseSocketEvent = (payload: string): ChatSocketEvent => {
-  const event: unknown = JSON.parse(payload)
-  if (!isRecord(event)) throw new Error('Invalid chat event')
-  if (isChatMessage(event)) return event
-  if (event.type === 'ERROR' && typeof event.message === 'string') {
-    return { type: 'ERROR', message: event.message }
-  }
-  throw new Error('Invalid chat event')
-}
+const EMPTY_ONLINE_USER_IDS: ReadonlySet<string> = new Set()
 
 const getChatWebSocketUrl = () => {
   const apiUrl = import.meta.env.VITE_API_URL
@@ -81,6 +64,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   const currentUserId = user?.id
   const { businessId } = useBusiness()
   const [status, setStatus] = useState<ChatUserStatus>('disconnected')
+  const [onlineUserIds, setOnlineUserIds] = useState<ReadonlySet<string>>(EMPTY_ONLINE_USER_IDS)
   const socketRef = useRef<WebSocket | null>(null)
   const enabled = Boolean(currentUserId && businessId)
 
@@ -158,9 +142,9 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       }
 
       socket.onmessage = (event) => {
-        if (!active) return
+        if (!active || socketRef.current !== socket) return
         try {
-          const chatEvent = parseSocketEvent(String(event.data))
+          const chatEvent = parseChatSocketEvent(String(event.data))
           if (chatEvent.type === 'ERROR') {
             void queryClient.invalidateQueries({
               queryKey: chatKeys.allMessages(currentUserId, businessId),
@@ -168,9 +152,22 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
             toast.error(chatEvent.message)
             return
           }
+          if (chatEvent.type === 'PRESENCE_SNAPSHOT') {
+            setOnlineUserIds(new Set(chatEvent.onlineUserIds))
+            return
+          }
+          if (chatEvent.type === 'PRESENCE_CHANGED') {
+            setOnlineUserIds((currentOnlineUserIds) => {
+              const nextOnlineUserIds = new Set(currentOnlineUserIds)
+              if (chatEvent.online) nextOnlineUserIds.add(chatEvent.userId)
+              else nextOnlineUserIds.delete(chatEvent.userId)
+              return nextOnlineUserIds
+            })
+            return
+          }
           handleMessage(chatEvent)
         } catch (_error) {
-          toast.error('Received an invalid chat message')
+          toast.error('Received an invalid chat event')
         }
       }
 
@@ -178,6 +175,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         if (socketRef.current === socket) socketRef.current = null
         if (!active) return
         setStatus('disconnected')
+        setOnlineUserIds(EMPTY_ONLINE_USER_IDS)
         // set max connection relay
         const delay = Math.min(1_000 * 2 ** reconnectAttempt, 15_000)
         reconnectAttempt += 1
@@ -189,7 +187,10 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     }
 
     queueMicrotask(() => {
-      if (active) setStatus('disconnected')
+      if (active) {
+        setStatus('disconnected')
+        setOnlineUserIds(EMPTY_ONLINE_USER_IDS)
+      }
     })
     connect()
 
@@ -240,9 +241,10 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     () => ({
       businessId,
       status: enabled ? status : 'disconnected',
+      onlineUserIds: enabled ? onlineUserIds : EMPTY_ONLINE_USER_IDS,
       sendMessage,
     }),
-    [businessId, enabled, sendMessage, status]
+    [businessId, enabled, onlineUserIds, sendMessage, status]
   )
 
   return <ChatContext value={value}>{children}</ChatContext>

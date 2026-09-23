@@ -184,6 +184,31 @@ class PushNotificationServiceTests {
         verify(webPushClient, never()).send(any(), any());
     }
 
+    @Test
+    void sendsTestNotificationWithFavicon() throws Exception {
+        PushNotification subscription = PushNotification.builder()
+                .id("subscription-id")
+                .endpoint(ENDPOINT)
+                .p256dh(validP256dh())
+                .auth(validAuth())
+                .build();
+        when(webPushClient.isConfigured()).thenReturn(true);
+        when(pushNotificationRepository.findAllByUser_Id(USER_ID)).thenReturn(List.of(subscription));
+        when(webPushClient.send(any(PushNotification.class), any(String.class))).thenReturn(201);
+
+        int deliveryCount = pushNotificationService.sendTestNotification(USER_ID);
+
+        ArgumentCaptor<String> payloadCaptor = ArgumentCaptor.forClass(String.class);
+        verify(webPushClient).send(eq(subscription), payloadCaptor.capture());
+        JsonNode payload = objectMapper.readTree(payloadCaptor.getValue());
+        assertEquals(1, deliveryCount);
+        assertEquals("Test notification", payload.get("title").asText());
+        assertEquals("Push notifications are working correctly.", payload.get("body").asText());
+        assertEquals("/favicon.ico", payload.get("icon").asText());
+        assertEquals("/favicon.ico", payload.get("badge").asText());
+        assertEquals("/settings/notifications", payload.get("link").asText());
+    }
+
     private PushSubscriptionRequest validSubscription(String endpoint) {
         return new PushSubscriptionRequest(
                 endpoint,

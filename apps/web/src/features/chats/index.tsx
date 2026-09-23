@@ -2,7 +2,7 @@ import { Fragment, useCallback, useEffect, useMemo, useRef, useState, type Submi
 import { format } from 'date-fns'
 import { useNavigate } from '@tanstack/react-router'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import type { ChatGroup, ChatMessage, ChatUser, ChatUserStatus } from '@/@types'
+import type { ChatGroup, ChatMessage, ChatUser } from '@/@types'
 import { useAuth } from '@/providers/auth-provider'
 import { ArrowLeft, Edit, ImagePlus, MessagesSquare, MoreVertical, Paperclip, Phone, Plus, Search, Send, UsersRound, Video } from 'lucide-react'
 import { toast } from '@/components/ui/toast'
@@ -31,15 +31,23 @@ type MessageGroup = {
 
 type ChatConversation = { type: 'direct', user: ChatUser } | { type: 'group', group: ChatGroup }
 
-const socketStatusLabel: Record<ChatUserStatus, { label: string; className: string }> = {
-  connected: { label: 'Connected', className: 'bg-green-500' },
-  disconnected: { label: 'Disconnected', className: 'bg-red-500' },
+function UserPresenceIndicator({ online }: { online: boolean }) {
+  return (
+    <span
+      className={cn(
+        'absolute right-0 top-0 size-3 rounded-full border-2 border-background',
+        online ? 'bg-emerald-500' : 'bg-muted-foreground/40'
+      )}
+      title={online ? 'Online' : 'Offline'}
+    >
+      <span className='sr-only'>{online ? 'Online' : 'Offline'}</span>
+    </span>
+  )
 }
-
 export function Chats() {
   const navigate = useNavigate()
   const { role, user } = useAuth()
-  const { businessId, status: socketStatus, sendMessage } = useChat()
+  const { businessId, status: socketStatus, onlineUserIds, sendMessage } = useChat()
   const queryClient = useQueryClient()
   const currentUserId = user?.id
   const chatEnabled = Boolean(currentUserId && businessId)
@@ -249,9 +257,12 @@ export function Chats() {
                       onClick={() => handleSelectConversation(conversation)}
                     >
                       <div className='flex items-center min-w-0 gap-2'>
-                        <Avatar>
+                        <Avatar className='relative'>
                           <AvatarImage src={avatar ?? undefined} alt={name} />
                           <AvatarFallback>{getInitials(name)}</AvatarFallback>
+                          {!isGroup && (
+                            <UserPresenceIndicator online={onlineUserIds.has(conversationId)} />
+                          )}
                         </Avatar>
                         <div className='min-w-0'>
                           <span className='block truncate font-medium'>
@@ -289,7 +300,7 @@ export function Chats() {
                     <ArrowLeft className='rtl:rotate-180' />
                   </Button>
                   <div className='flex items-center gap-2 lg:gap-4'>
-                    <Avatar className='size-9 lg:size-11 relative'>
+                    <Avatar className='relative size-9 lg:size-11'>
                       <AvatarImage
                         src={(selectedConversation.type === 'group' ? selectedConversation.group.avatar : selectedConversation.user.avatar) ?? undefined}
                         alt={selectedConversation.type === 'group' ? selectedConversation.group.name : selectedConversation.user.fullname}
@@ -298,11 +309,8 @@ export function Chats() {
                         {getInitials(selectedConversation.type === 'group' ? selectedConversation.group.name : selectedConversation.user.fullname)}
                       </AvatarFallback>
                       {selectedConversation.type === 'direct' && (
-                        <span
-                          className={cn(
-                            'size-3 rounded-full absolute top-0 right-0 ',
-                            socketStatusLabel[socketStatus].className
-                          )}
+                        <UserPresenceIndicator
+                          online={onlineUserIds.has(selectedConversation.user.id)}
                         />
                       )}
                     </Avatar>
@@ -311,9 +319,13 @@ export function Chats() {
                         {selectedConversation.type === 'group' ? selectedConversation.group.name : selectedConversation.user.fullname}
                       </span>
                       <span className='flex max-w-48 min-w-0 items-center gap-1.5 text-xs text-muted-foreground lg:max-w-none lg:text-sm'>
-                        <span className='truncate'>
-                          {selectedConversation.type === 'group' ? `${selectedConversation.group.members.length} members` : selectedConversation.user.email}
-                        </span>
+                        {selectedConversation.type === 'group' ? (
+                          <span className='truncate'>
+                            {selectedConversation.group.members.length} members
+                          </span>
+                        ) : (
+                          <span className='truncate'>{selectedConversation.user.email}</span>
+                        )}
                       </span>
                     </div>
                   </div>

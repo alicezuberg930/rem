@@ -33,6 +33,9 @@ import server.rem.utils.exceptions.ResourceNotFoundException;
 public class PushNotificationService {
     private static final int GONE = 410;
     private static final int NOT_FOUND = 404;
+    private static final String TEST_NOTIFICATION_TITLE = "Test notification";
+    private static final String TEST_NOTIFICATION_BODY = "Push notifications are working correctly.";
+    private static final String TEST_NOTIFICATION_ICON = "/favicon.ico";
 
     private final PushNotificationRepository pushNotificationRepository;
     private final UserRepository userRepository;
@@ -80,34 +83,59 @@ public class PushNotificationService {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Async
     public void deliver(NotificationCreatedEvent event) {
+        deliverToUser(event);
+    }
+
+    public int sendTestNotification(String userId) {
+        return deliverToUser(new NotificationCreatedEvent(
+                userId,
+                TEST_NOTIFICATION_TITLE,
+                TEST_NOTIFICATION_BODY,
+                "0",
+                LocalDateTime.now(),
+                "push-notification-test",
+                "/settings/notifications",
+                TEST_NOTIFICATION_ICON,
+                TEST_NOTIFICATION_ICON,
+                Map.of()));
+    }
+
+    private int deliverToUser(NotificationCreatedEvent event) {
         if (!webPushClient.isConfigured()) {
             log.debug("Skipping Web Push delivery because VAPID is not configured");
-            return;
+            return 0;
         }
         String payload;
         try {
             payload = objectMapper.writeValueAsString(toPayload(event));
         } catch (JsonProcessingException exception) {
             log.error("Failed to serialize Web Push notification for user {}", event.userId(), exception);
-            return;
+            return 0;
         }
         List<PushNotification> subscriptions = pushNotificationRepository.findAllByUser_Id(event.userId());
+        int deliveryCount = 0;
         for (PushNotification subscription : subscriptions) {
-            deliver(subscription, event.userId(), payload);
+            if (deliver(subscription, event.userId(), payload)) {
+                deliveryCount++;
+            }
         }
+        return deliveryCount;
     }
 
-    private void deliver(PushNotification subscription, String userId, String payload) {
+    private boolean deliver(PushNotification subscription, String userId, String payload) {
         try {
             int status = webPushClient.send(subscription, payload);
             if (status == GONE || status == NOT_FOUND) {
                 pushNotificationRepository.deleteByIdAndUser_Id(subscription.getId(), userId);
             } else if (status < 200 || status >= 300) {
                 log.warn("Web Push service returned status {} for subscription {}", status, subscription.getId());
+            } else {
+                return true;
             }
         } catch (RuntimeException exception) {
             log.warn("Web Push delivery failed for subscription {}", subscription.getId(), exception);
         }
+        return false;
     }
 
     private Map<String, Object> toPayload(NotificationCreatedEvent event) {

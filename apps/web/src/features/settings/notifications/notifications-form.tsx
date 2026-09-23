@@ -1,8 +1,13 @@
+import { useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Link } from '@tanstack/react-router'
+import type { ApiResponse } from '@/@types'
+import { handleServerError } from '@/lib/handle-server-error'
+import { httpClient } from '@/lib/repository/http-client'
 import { showSubmittedData } from '@/lib/show-submitted-data'
+import { registerPushNotification } from '@/lib/web-push-notification'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
@@ -16,6 +21,7 @@ import {
 } from '@/components/ui/form'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Switch } from '@/components/ui/switch'
+import { toast } from '@/components/ui/toast'
 
 const notificationsFormSchema = z.object({
   type: z.enum(['all', 'mentions', 'none'], {
@@ -42,10 +48,39 @@ const defaultValues: Partial<NotificationsFormValues> = {
 }
 
 export function NotificationsForm() {
+  const [isSendingTest, setIsSendingTest] = useState(false)
   const form = useForm<NotificationsFormValues>({
     resolver: zodResolver(notificationsFormSchema),
     defaultValues,
   })
+
+  const sendTestNotification = async () => {
+    if (isSendingTest) return
+
+    setIsSendingTest(true)
+    try {
+      // const isRegistered = await registerPushNotification({
+      //   forceRefresh: true,
+      // })
+      // if (!isRegistered) {
+      //   toast.error('Enable push notifications in your browser to send a test.')
+      //   return
+      // }
+
+      const response = await httpClient.post<ApiResponse<number>>(
+        '/notifications/push-notification/test'
+      )
+      if (response.data > 0) {
+        toast.success(response.message)
+      } else {
+        toast.error(response.message)
+      }
+    } catch (error) {
+      handleServerError(error)
+    } finally {
+      setIsSendingTest(false)
+    }
+  }
 
   return (
     <Form {...form}>
@@ -182,6 +217,22 @@ export function NotificationsForm() {
                 </FormItem>
               )}
             />
+            <div className='flex flex-row items-center justify-between gap-4 rounded-lg border p-4'>
+              <div className='space-y-0.5'>
+                <div className='text-base font-medium'>Test notification</div>
+                <p className='text-sm text-muted-foreground'>
+                  Send a test push notification to confirm notifications are
+                  working.
+                </p>
+              </div>
+              <Button
+                type='button'
+                onClick={sendTestNotification}
+                disabled={isSendingTest}
+              >
+                {isSendingTest ? 'Sending...' : 'Send test'}
+              </Button>
+            </div>
           </div>
         </div>
         <FormField
