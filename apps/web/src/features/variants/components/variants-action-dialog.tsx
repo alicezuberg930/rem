@@ -1,12 +1,11 @@
 // hooks
-import { Control, FieldErrors, useFieldArray, useForm, UseFormRegister } from 'react-hook-form'
+import { useFieldArray, useForm } from 'react-hook-form'
 // utils
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 // types
 import { templates } from '@/lib/queries/template'
 import { HttpError } from '@/lib/repository/http-error'
-import { TemplateValidators } from '@/lib/validators/template'
 // components
 import { Button } from '@/components/ui/button'
 import {
@@ -21,11 +20,9 @@ import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field
 import { toast } from '@/components/ui/toast'
 import {
   FormProvider,
-  RHFRichTextEditor,
   RHFTextField,
 } from '@/components/hook-form'
 import { VariantForm, variantSchema } from '@/lib/validators/variant'
-import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { X } from 'lucide-react'
 
@@ -135,9 +132,7 @@ export function VariantsActionDialog({
             {isEdit ? 'Edit Variant' : 'Add New Variant'}
           </DialogTitle>
           <DialogDescription>
-            {isEdit
-              ? 'Update the Variant here. '
-              : 'Create new Variant here. '}
+            {isEdit ? 'Update existing Variant. ' : 'Create a new Variant. '}
             Click save when you're done.
           </DialogDescription>
         </DialogHeader>

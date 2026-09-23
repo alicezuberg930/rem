@@ -28,7 +28,8 @@ import {
   Truck,
   Folders,
   ScanBarcode,
-  PackageSearch
+  PackageSearch,
+  Map
 } from 'lucide-react'
 import { type SidebarData } from '../types'
 
@@ -61,6 +62,11 @@ export const sidebarData: SidebarData = {
           title: 'Chats',
           url: '/chats',
           icon: MessagesSquare,
+        },
+        {
+          title: 'Locations',
+          url: '/locations',
+          icon: Map,
         },
       ],
     },

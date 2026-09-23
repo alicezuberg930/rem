@@ -1,0 +1,61 @@
+@reference './index.css';
+
+.mapboxgl-ctrl.mapboxgl-ctrl-group {
+  @apply overflow-hidden rounded-md border border-border bg-background/95 shadow-md backdrop-blur;
+}
+
+.mapboxgl-ctrl-group button {
+  @apply bg-transparent transition-colors hover:bg-accent;
+}
+
+.dark .mapboxgl-ctrl-group button .mapboxgl-ctrl-icon {
+  filter: invert(1);
+}
+
+.mapboxgl-ctrl-fullscreen .mapboxgl-ctrl-icon {
+  @apply scale-75;
+}
+
+.mapboxgl-ctrl-group button + button {
+  @apply border-t border-border;
+}
+
+.mapboxgl-ctrl.mapboxgl-ctrl-scale {
+  @apply rounded-sm border border-border bg-background/90 px-1 leading-[14px] font-medium text-foreground shadow-sm backdrop-blur;
+}
+
+.map-popup .mapboxgl-popup-content {
+  @apply max-w-[220px] rounded-md border border-border bg-popover p-3 text-popover-foreground shadow-xl;
+}
+
+.map-popup .mapboxgl-popup-close-button {
+  @apply size-7 rounded-sm text-base text-popover-foreground opacity-60 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring;
+}
+
+.map-popup .mapboxgl-popup-close-button:hover {
+  @apply bg-accent opacity-100;
+}
+
+.map-popup.mapboxgl-popup-anchor-top .mapboxgl-popup-tip {
+  @apply -mb-px border-b-popover;
+}
+
+.map-popup.mapboxgl-popup-anchor-right .mapboxgl-popup-tip {
+  @apply -ml-px border-l-popover;
+}
+
+.map-popup.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
+  @apply -mt-px border-t-popover;
+}
+
+.map-popup.mapboxgl-popup-anchor-left .mapboxgl-popup-tip {
+  @apply -mr-px border-r-popover;
+}
+
+.map-control-panel {
+  @apply absolute top-2 right-2 left-2 z-[9] max-h-[calc(100%-1rem)] overflow-y-auto rounded-md border border-border bg-popover/95 p-3 text-popover-foreground shadow-lg backdrop-blur-md sm:left-auto sm:w-auto sm:max-w-[320px] sm:min-w-[220px];
+}
+
+.map-control-panel > * + * {
+  @apply mt-3;
+}
