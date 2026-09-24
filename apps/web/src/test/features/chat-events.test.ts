@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { parseChatSocketEvent } from '@/features/chats/lib/chat-events'
+import { parseChatSocketEvent } from '@/lib/chat-events'
 
 describe('chat WebSocket events', () => {
   it('parses the initial online user snapshot', () => {

@@ -48,8 +48,18 @@ public class PushNotificationService {
             PushSubscriptionRequest request,
             PushClientMetadata metadata) {
         validateSubscription(request);
+        String browser = truncate(metadata.browser(), 255);
+        String deviceType = truncate(metadata.deviceType(), 255);
+        String os = truncate(metadata.os(), 255);
         List<PushNotification> matches = pushNotificationRepository
-                .findAllByEndpointOrderByCreatedDateDesc(request.endpoint());
+                .findAllByUser_IdAndBrowserAndDeviceTypeAndOsOrderByCreatedDateDescIdDesc(
+                        userId,
+                        browser,
+                        deviceType,
+                        os);
+        if (matches.isEmpty()) {
+            matches = pushNotificationRepository.findAllByEndpointOrderByCreatedDateDesc(request.endpoint());
+        }
         PushNotification subscription;
         if (matches.isEmpty()) {
             subscription = new PushNotification();
@@ -59,18 +69,18 @@ public class PushNotificationService {
                 pushNotificationRepository.deleteAll(matches.subList(1, matches.size()));
             }
         }
-        subscription.setUser(userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found")));
+        subscription.setUser(
+                userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found")));
         subscription.setEndpoint(request.endpoint());
         subscription.setP256dh(request.keys().p256dh());
         subscription.setAuth(request.keys().auth());
         subscription.setIp(truncate(metadata.ip(), 45));
-        subscription.setBrowser(truncate(metadata.browser(), 255));
-        subscription.setDeviceType(truncate(metadata.deviceType(), 255));
+        subscription.setBrowser(browser);
+        subscription.setDeviceType(deviceType);
         subscription.setDeviceVendor(truncate(metadata.deviceVendor(), 255));
         subscription.setDeviceModel(truncate(metadata.deviceModel(), 255));
         subscription.setCpu(truncate(metadata.cpu(), 255));
-        subscription.setOs(truncate(metadata.os(), 255));
+        subscription.setOs(os);
         subscription.setCreatedDate(LocalDateTime.now());
         return pushNotificationRepository.save(subscription).getId();
     }
@@ -107,7 +117,16 @@ public class PushNotificationService {
         }
         String payload;
         try {
-            payload = objectMapper.writeValueAsString(toPayload(event));
+            Map<String, Object> data = new LinkedHashMap<>();
+            data.put("title", event.title());
+            data.put("body", event.body());
+            data.put("type", event.type());
+            data.put("link", StringUtils.hasText(event.link()) ? event.link() : null);
+            data.put("icon", StringUtils.hasText(event.icon()) ? event.icon() : TEST_NOTIFICATION_ICON);
+            data.put("badge", StringUtils.hasText(event.badge()) ? event.badge() : TEST_NOTIFICATION_ICON);
+            data.put("uniqueKey", event.uniqueKey());
+            data.put("time", event.time());
+            payload = objectMapper.writeValueAsString(data);
         } catch (JsonProcessingException exception) {
             log.error("Failed to serialize Web Push notification for user {}", event.userId(), exception);
             return 0;
@@ -136,23 +155,6 @@ public class PushNotificationService {
             log.warn("Web Push delivery failed for subscription {}", subscription.getId(), exception);
         }
         return false;
-    }
-
-    private Map<String, Object> toPayload(NotificationCreatedEvent event) {
-        Map<String, Object> data = new LinkedHashMap<>(event.data());
-        data.put("time", event.time());
-        if (event.uniqueKey() != null) {
-            data.put("uniqueKey", event.uniqueKey());
-        }
-        Map<String, Object> payload = new LinkedHashMap<>();
-        payload.put("title", event.title());
-        payload.put("body", event.body());
-        payload.put("type", event.type());
-        payload.put("link", StringUtils.hasText(event.link()) ? event.link() : null);
-        payload.put("icon", StringUtils.hasText(event.icon()) ? event.icon() : null);
-        payload.put("badge", StringUtils.hasText(event.badge()) ? event.badge() : null);
-        payload.put("data", data);
-        return payload;
     }
 
     private void validateSubscription(PushSubscriptionRequest request) {

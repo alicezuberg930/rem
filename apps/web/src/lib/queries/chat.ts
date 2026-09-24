@@ -33,10 +33,10 @@ export const chatKeys = {
     currentUserId?: string,
     businessId?: string
   ) => [
-    ...chatKeys.allMessages(currentUserId, businessId),
-    'direct',
-    otherUserId,
-  ],
+      ...chatKeys.allMessages(currentUserId, businessId),
+      'direct',
+      otherUserId,
+    ],
   groupMessages: (
     groupId: string,
     currentUserId?: string,

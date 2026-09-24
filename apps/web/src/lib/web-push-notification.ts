@@ -2,6 +2,20 @@ import type { ApiResponse } from "@/@types"
 import { notificationOptions, pushNotificationKey, vapidKey } from "./constants"
 import { httpClient } from "./repository/http-client"
 
+type PushNotificationData = {
+    type: string
+    data: {
+        time: string
+        uniqueKey: string
+        title: string
+        body: string
+        icon: string
+        badge: string
+        link: string
+        type: string
+    }
+}
+
 let isServiceWorkerReadyMessageSent = false
 
 const isSwAvailable = () => {
@@ -45,27 +59,13 @@ const notifyActiveServiceWorker = () => {
         })
 }
 
-const onMessageForeground = (callback: (data: any) => void) => {
+const onMessageForeground = (callback: (data: PushNotificationData) => void) => {
     if (!isSwAvailable()) return () => { }
     notifyActiveServiceWorker()
     if (typeof callback !== "function") return () => { }
-    const handler = (event: MessageEvent) => {
-        if (event.data?.type === "push-notification") {
-            const data = {
-                ...event.data.payload.data,
-                data: {
-                    refID: event.data.payload.refID,
-                    metaData: event.data.payload.metaData,
-                    time: event.data.payload.time,
-                    uniqueKey: event.data.payload.uniqueKey,
-                    title: event.data.payload.title || "",
-                    body: event.data.payload.body || "",
-                    icon: event.data.payload.icon || "/web-app-manifest-192x192.png",
-                    link: event.data.payload.url || event.data.payload.link || "/",
-                    type: String(event.data.payload.type),
-                },
-            }
-            callback(data)
+    const handler = (event: MessageEvent<PushNotificationData>) => {
+        if (event.data.type === "push-notification") {
+            callback(event.data)
         }
     }
     navigator.serviceWorker.addEventListener("message", handler)

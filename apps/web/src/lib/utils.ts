@@ -209,4 +209,20 @@ const playNotificationSound = () => {
   cachedAudio.play().catch(e => console.error(e));
 }
 
-export { getInitials, getCurrentLocation, alpha, slugify, getBaseUrl, sleep, cn, fileToCanvas, bitMatrixToCanvas, canvasToBlob, playNotificationSound }
+const getWebsocketURL = () => {
+  const apiUrl = import.meta.env.VITE_API_URL
+  const url = new URL(apiUrl, window.location.origin)
+
+  if (url.protocol === 'http:') url.protocol = 'ws:'
+  else if (url.protocol === 'https:') url.protocol = 'wss:'
+  else if (url.protocol !== 'ws:' && url.protocol !== 'wss:') {
+    throw new Error('VITE_API_URL must use HTTP or HTTPS')
+  }
+
+  url.pathname = `${url.pathname.replace(/\/+$/, '')}/ws/chat`
+  url.search = ''
+  url.hash = ''
+  return url.toString()
+}
+
+export { getInitials, getCurrentLocation, alpha, slugify, getBaseUrl, sleep, cn, fileToCanvas, bitMatrixToCanvas, canvasToBlob, playNotificationSound, getPageNumbers, getWebsocketURL }

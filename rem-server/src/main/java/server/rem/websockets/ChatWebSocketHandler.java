@@ -7,8 +7,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.PingMessage;
 import org.springframework.web.socket.PongMessage;
@@ -27,6 +30,9 @@ import server.rem.dtos.chat.ChatMessageRequest;
 import server.rem.dtos.chat.ChatMessageResponse;
 import server.rem.dtos.chat.ChatPresenceChangedResponse;
 import server.rem.dtos.chat.ChatPresenceSnapshotResponse;
+import server.rem.dtos.notification.NotificationResponse;
+import server.rem.dtos.notification.NotificationSocketEvent;
+import server.rem.events.NotificationCreatedEvent;
 import server.rem.services.ChatService;
 import server.rem.services.ChatService.ChatMessageDelivery;
 import server.rem.utils.exceptions.ForbiddenException;
@@ -128,6 +134,19 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
                 closeQuietly(session, CloseStatus.SERVER_ERROR);
             }
         }
+    }
+
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @Async
+    public void deliverNotification(NotificationCreatedEvent event) {
+        if (event.businessId() == null || event.businessId().isBlank() || event.notification() == null) {
+            return;
+        }
+        sendNotification(event.businessId(), event.userId(), event.notification());
+    }
+
+    public void sendNotification(String businessId, String userId, NotificationResponse notification) {
+        sendToUser(businessId, userId, toTextMessage(new NotificationSocketEvent(notification)));
     }
 
     private void sendToUser(String businessId, String userId, TextMessage message) {

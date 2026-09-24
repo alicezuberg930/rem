@@ -2,7 +2,9 @@ package server.rem.services;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -14,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import server.rem.dtos.chat.ChatMessageRequest;
 import server.rem.dtos.chat.ChatMessageResponse;
 import server.rem.dtos.chat.ChatUserResponse;
+import server.rem.dtos.notification.CreateNotificationRequest;
 import server.rem.entities.ChatMessage;
 import server.rem.entities.Group;
 import server.rem.entities.User;
@@ -30,6 +33,8 @@ import server.rem.utils.exceptions.ResourceNotFoundException;
 @RequiredArgsConstructor
 public class ChatService {
     private static final int MAX_MESSAGE_LENGTH = 4000;
+    private static final String CHAT_NOTIFICATION_TYPE = "CHAT_MESSAGE";
+    private static final String CHAT_LINK = "/chats";
 
     private final ChatMessageRepository chatMessageRepository;
     private final BusinessUserRepository businessUserRepository;
@@ -37,6 +42,7 @@ public class ChatService {
     private final UserRepository userRepository;
     private final GroupRepository groupRepository;
     private final ChatMapper chatMapper;
+    private final NotificationService notificationService;
 
     public record ChatMessageDelivery(
             ChatMessageResponse message,
@@ -139,20 +145,77 @@ public class ChatService {
             deliveryRecipientIds = Set.of(senderId, recipientId);
         } else {
             group = requireGroupMember(senderId, businessId, groupId);
-            deliveryRecipientIds = group.getMembers().stream()
+            Set<String> groupRecipientIds = group.getMembers().stream()
                     .map(User::getId)
                     .filter(memberId -> !senderId.equals(memberId))
                     .collect(Collectors.toUnmodifiableSet());
+            deliveryRecipientIds = groupRecipientIds.isEmpty()
+                    ? Set.of()
+                    : businessUserRepository.findActiveUsersByBusinessIdAndUserIdIn(
+                            businessId,
+                            groupRecipientIds)
+                            .stream()
+                            .map(User::getId)
+                            .collect(Collectors.toUnmodifiableSet());
         }
 
+        User sender = userRepository.getReferenceById(senderId);
         ChatMessage message = chatMapper.toEntity(
                 request,
                 businessRepository.getReferenceById(businessId),
-                userRepository.getReferenceById(senderId),
+                sender,
                 recipient,
                 group);
         ChatMessageResponse response = chatMapper.toMessageResponse(chatMessageRepository.save(message));
+        createChatNotifications(
+                businessId,
+                sender,
+                group,
+                response,
+                deliveryRecipientIds.stream()
+                        .filter(userId -> !senderId.equals(userId))
+                        .collect(Collectors.toUnmodifiableSet()));
         return new ChatMessageDelivery(response, deliveryRecipientIds);
+    }
+
+    private void createChatNotifications(
+            String businessId,
+            User sender,
+            Group group,
+            ChatMessageResponse message,
+            Set<String> recipientIds) {
+        String senderName = sender.getFullname() == null || sender.getFullname().isBlank()
+                ? "Someone"
+                : sender.getFullname().trim();
+        String groupName = group != null && group.getName() != null && !group.getName().isBlank()
+                ? group.getName().trim()
+                : "your group";
+        String title = group != null
+                ? "New message in " + groupName
+                : "New message from " + senderName;
+        String content = group != null
+                ? senderName + ": " + message.getContent()
+                : message.getContent();
+
+        for (String recipientId : recipientIds) {
+            Map<String, Object> data = new LinkedHashMap<>();
+            data.put("messageId", message.getId());
+            data.put("senderId", sender.getId());
+            if (group != null) {
+                data.put("groupId", group.getId());
+            }
+
+            notificationService.create(new CreateNotificationRequest(
+                    title,
+                    content,
+                    CHAT_NOTIFICATION_TYPE,
+                    recipientId,
+                    "chat-message:" + message.getId() + ':' + recipientId,
+                    CHAT_LINK,
+                    null,
+                    null,
+                    data), businessId);
+        }
     }
 
     private Group requireGroupMember(String userId, String businessId, String groupId) {

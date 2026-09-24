@@ -361,10 +361,10 @@ export function Chats() {
 
               <div className='flex flex-1 flex-col'>
                 <div className='flex size-full flex-1'>
-                  <div className='relative -me-4 flex flex-1 flex-col overflow-y-hidden'>
+                  <div className='relative flex flex-1 flex-col overflow-y-hidden'>
                     <div
                       ref={messagesRef}
-                      className='flex h-40 w-full grow flex-col overflow-y-auto py-2 pe-4 pb-4'
+                      className='flex h-40 w-full grow flex-col overflow-y-auto px-4 py-6'
                     >
                       <div className='mt-auto flex shrink-0 flex-col gap-4'>
                         {messagesPending && (

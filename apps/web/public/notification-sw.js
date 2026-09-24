@@ -8,53 +8,41 @@ const safeJsonParse = (value, fallback = {}) => {
     }
 }
 
-const normalizePayload = (rawPayload) => {
-    const raw = safeJsonParse(rawPayload)
-    const data = safeJsonParse(raw.data)
-    const type = raw.type !== undefined && raw.type !== null ? String(raw.type) : ""
-    const icon = raw.icon ?? "/web-app-manifest-192x192.png"
-
-    return {
-        refID: data.refID,
-        metaData: data.metaData,
-        time: data.time,
-        uniqueKey: data.uniqueKey,
-        title: raw.title ?? "Thông báo",
-        body: raw.body ?? "",
-        icon: new URL(icon, self.location.origin).href,
-        badge: new URL(raw.badge ?? icon, self.location.origin).href,
-        link: raw.link ?? "/",
-        type,
-        data,
-    }
-}
-
-const ROUTE_TYPE = {
-    3: ({ refID, type }) => `/calendar?id=${refID ?? ""}&type=${type}`,
-    4: ({ refID }) => `/tasks/pendingIssuance?id=${refID ?? ""}`,
-    5: ({ refID, metaData }) => `/media/share-folder?typeShare=2&type=${metaData ?? ""}&parentId=${refID ?? ""}`,
-    6: ({ refID, type }) => `/ratings/rankings?id=${refID ?? ""}&type=${type}`,
-    8: ({ refID }) => `/monument-profile/view/${refID ?? ""}`,
-    9: ({ refID, type }) => `/special-calendar?id=${refID ?? ""}&type=${type}`,
-    10: ({ refID }) => `/chats?id=${refID ?? ""}`,
-    11: ({ refID }) => `/templates/wordprocessing?id=${refID ?? ""}`,
-}
+// const ROUTE_TYPE = {
+//     3: ({ refID, type }) => `/calendar?id=${refID ?? ""}&type=${type}`,
+//     4: ({ refID }) => `/tasks/pendingIssuance?id=${refID ?? ""}`,
+//     5: ({ refID, metaData }) => `/media/share-folder?typeShare=2&type=${metaData ?? ""}&parentId=${refID ?? ""}`,
+//     6: ({ refID, type }) => `/ratings/rankings?id=${refID ?? ""}&type=${type}`,
+//     8: ({ refID }) => `/monument-profile/view/${refID ?? ""}`,
+//     9: ({ refID, type }) => `/special-calendar?id=${refID ?? ""}&type=${type}`,
+//     10: ({ refID }) => `/chats?id=${refID ?? ""}`,
+//     11: ({ refID }) => `/templates/wordprocessing?id=${refID ?? ""}`,
+// }
 
 const targetUrlForNotification = (payload) => {
-    const type = Number(payload.type)
+    // const type = Number(payload.type)
     let targetUrl = payload.link ?? "/"
-    const routeBuilder = ROUTE_TYPE[type]
-    if (routeBuilder) {
-        targetUrl = routeBuilder(payload)
-    } else if (type === 7 && payload.uniqueKey === "Staff") {
-        targetUrl = "/documents/documentsPages"
-    }
+    // const routeBuilder = ROUTE_TYPE[type]
+    // if (routeBuilder) {
+    //     targetUrl = routeBuilder(payload)
+    // } else if (type === 7 && payload.uniqueKey === "Staff") {
+    //     targetUrl = "/documents/documentsPages"
+    // }
     return new URL(targetUrl, self.location.origin).href
 }
 
 self.addEventListener("push", (event) => {
-    const rawPayload = event.data ? event.data.text() : "{}"
-    const payload = normalizePayload(rawPayload)
+    const data = safeJsonParse(event.data ? event.data.text() : "{}")
+    const payload = {
+        time: data.time,
+        uniqueKey: data.uniqueKey,
+        title: data.title ?? "Thông báo",
+        body: data.body ?? "Thông báo mới",
+        icon: new URL(data.icon ?? "/web-app-manifest-192x192.png", self.location.origin).href,
+        badge: new URL(data.badge ?? "/web-app-manifest-192x192.png", self.location.origin).href,
+        link: data.link ?? "/",
+        type: data.type !== undefined && data.type !== null ? String(data.type) : "",
+    }
 
     event.waitUntil((async () => {
         const clientsList = await clients.matchAll({

@@ -8,6 +8,12 @@ import org.springframework.transaction.annotation.Transactional;
 import server.rem.entities.PushNotification;
 
 public interface PushNotificationRepository extends JpaRepository<PushNotification, String> {
+    List<PushNotification> findAllByUser_IdAndBrowserAndDeviceTypeAndOsOrderByCreatedDateDescIdDesc(
+            String userId,
+            String browser,
+            String deviceType,
+            String os);
+
     List<PushNotification> findAllByEndpointOrderByCreatedDateDesc(String endpoint);
 
     List<PushNotification> findAllByUser_Id(String userId);

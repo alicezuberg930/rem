@@ -72,6 +72,13 @@ class PushNotificationServiceTests {
                 null,
                 "x86",
                 "Linux");
+        when(pushNotificationRepository
+                .findAllByUser_IdAndBrowserAndDeviceTypeAndOsOrderByCreatedDateDescIdDesc(
+                        USER_ID,
+                        "Chromium",
+                        "desktop",
+                        "Linux"))
+                .thenReturn(List.of());
         when(pushNotificationRepository.findAllByEndpointOrderByCreatedDateDesc(ENDPOINT))
                 .thenReturn(List.of());
         when(userRepository.findById(USER_ID)).thenReturn(Optional.of(user));
@@ -182,6 +189,65 @@ class PushNotificationServiceTests {
 
         verify(pushNotificationRepository, never()).findAllByUser_Id(any());
         verify(webPushClient, never()).send(any(), any());
+    }
+
+    @Test
+    void updatesExistingSubscriptionForSameUserBrowserDeviceTypeAndOs() {
+        User user = new User();
+        user.setId(USER_ID);
+        String previousEndpoint = "https://push.example.com/previous-subscription";
+        PushNotification existing = PushNotification.builder()
+                .id("existing-subscription")
+                .user(user)
+                .endpoint(previousEndpoint)
+                .p256dh("previous-key")
+                .auth("previous-auth")
+                .browser("Chromium")
+                .deviceType("desktop")
+                .os("Linux")
+                .build();
+        PushNotification duplicate = PushNotification.builder()
+                .id("duplicate-subscription")
+                .user(user)
+                .endpoint("https://push.example.com/stale-subscription")
+                .browser("Chromium")
+                .deviceType("desktop")
+                .os("Linux")
+                .build();
+        PushClientMetadata metadata = new PushClientMetadata(
+                "127.0.0.2",
+                "Chromium",
+                "desktop",
+                "Vendor",
+                "Model",
+                "arm64",
+                "Linux");
+        when(pushNotificationRepository
+                .findAllByUser_IdAndBrowserAndDeviceTypeAndOsOrderByCreatedDateDescIdDesc(
+                        USER_ID,
+                        "Chromium",
+                        "desktop",
+                        "Linux"))
+                .thenReturn(List.of(existing, duplicate));
+        when(userRepository.findById(USER_ID)).thenReturn(Optional.of(user));
+        when(pushNotificationRepository.save(existing)).thenReturn(existing);
+
+        String id = pushNotificationService.subscribe(
+                USER_ID,
+                validSubscription(ENDPOINT),
+                metadata);
+
+        assertEquals("existing-subscription", id);
+        assertEquals(ENDPOINT, existing.getEndpoint());
+        assertEquals(validP256dh(), existing.getP256dh());
+        assertEquals(validAuth(), existing.getAuth());
+        assertEquals("127.0.0.2", existing.getIp());
+        assertEquals("Vendor", existing.getDeviceVendor());
+        assertEquals("Model", existing.getDeviceModel());
+        assertEquals("arm64", existing.getCpu());
+        verify(pushNotificationRepository).deleteAll(List.of(duplicate));
+        verify(pushNotificationRepository, never())
+                .findAllByEndpointOrderByCreatedDateDesc(any());
     }
 
     @Test

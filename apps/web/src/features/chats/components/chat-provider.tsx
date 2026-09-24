@@ -11,13 +11,15 @@ import { useQueryClient } from '@tanstack/react-query'
 import {
   type ChatMessage,
   type SendChatMessage,
-  type ChatUserStatus
+  type ChatUserStatus,
 } from '@/@types'
-import { toast } from '@/components/ui/toast'
-import { parseChatSocketEvent } from '@/features/chats/lib/chat-events'
-import { chatKeys } from '@/lib/queries/chat'
 import { useAuth } from '@/providers/auth-provider'
 import { useSelectedBusinessId } from '@/lib/business'
+import { parseNotificationSocketEvent } from '@/lib/notification-events'
+import { chatKeys } from '@/lib/queries/chat'
+import { getWebsocketURL } from '@/lib/utils'
+import { toast } from '@/components/ui/toast'
+import { parseChatSocketEvent } from '@/lib/chat-events'
 
 type ChatContextValue = {
   businessId?: string
@@ -30,22 +32,6 @@ const ChatContext = createContext<ChatContextValue | null>(null)
 
 const EMPTY_ONLINE_USER_IDS: ReadonlySet<string> = new Set()
 
-const getChatWebSocketUrl = () => {
-  const apiUrl = import.meta.env.VITE_API_URL
-  const url = new URL(apiUrl, window.location.origin)
-
-  if (url.protocol === 'http:') url.protocol = 'ws:'
-  else if (url.protocol === 'https:') url.protocol = 'wss:'
-  else if (url.protocol !== 'ws:' && url.protocol !== 'wss:') {
-    throw new Error('VITE_API_URL must use HTTP or HTTPS')
-  }
-
-  url.pathname = `${url.pathname.replace(/\/+$/, '')}/ws/chat`
-  url.search = ''
-  url.hash = ''
-  return url.toString()
-}
-
 const mergeMessage = (messages: ChatMessage[], message: ChatMessage) => {
   const existingIndex = messages.findIndex(({ id }) => id === message.id)
   const nextMessages = [...messages]
@@ -53,9 +39,7 @@ const mergeMessage = (messages: ChatMessage[], message: ChatMessage) => {
   if (existingIndex === -1) nextMessages.push(message)
   else nextMessages[existingIndex] = message
 
-  return nextMessages.sort((left, right) =>
-    left.createdAt.localeCompare(right.createdAt)
-  )
+  return nextMessages.sort((left, right) => left.createdAt.localeCompare(right.createdAt))
 }
 
 export function ChatProvider({ children }: { children: React.ReactNode }) {
@@ -120,7 +104,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
       let socket: WebSocket
       try {
-        socket = new WebSocket(getChatWebSocketUrl(), `business-id.${businessId}`)
+        socket = new WebSocket(getWebsocketURL(), `business-id.${businessId}`)
       } catch (_error) {
         setStatus('disconnected')
         toast.error('Chat connection is not configured correctly')

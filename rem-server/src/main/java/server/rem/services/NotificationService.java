@@ -39,6 +39,7 @@ public class NotificationService {
                 request,
                 target.getBusiness(),
                 target.getUser()));
+        NotificationResponse response = notificationMapper.toResponse(notification);
         eventPublisher.publishEvent(new NotificationCreatedEvent(
                 target.getUser().getId(),
                 notification.getTitle(),
@@ -49,8 +50,10 @@ public class NotificationService {
                 request.getLink(),
                 request.getIcon(),
                 request.getBadge(),
-                request.getData()));
-        return notificationMapper.toResponse(notification);
+                request.getData(),
+                businessId,
+                response));
+        return response;
     }
 
     @Transactional(readOnly = true)

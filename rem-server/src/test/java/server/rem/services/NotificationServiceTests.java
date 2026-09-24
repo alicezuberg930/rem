@@ -98,6 +98,8 @@ class NotificationServiceTests {
         verify(eventPublisher).publishEvent(eventCaptor.capture());
         assertEquals(USER_ID, eventCaptor.getValue().userId());
         assertEquals("task-id", eventCaptor.getValue().data().get("refID"));
+        assertEquals(BUSINESS_ID, eventCaptor.getValue().businessId());
+        assertSame(response, eventCaptor.getValue().notification());
     }
 
     @Test

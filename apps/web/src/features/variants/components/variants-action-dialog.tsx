@@ -36,12 +36,8 @@ export function VariantsActionDialog({
   open,
   onOpenChange,
 }: VariantActionDialogProps) {
-  const { mutateAsync: update } = useMutation(
-    variants().update.mutationOptions()
-  )
-  const { mutateAsync: create } = useMutation(
-    variants().create.mutationOptions()
-  )
+  const { mutateAsync: update } = useMutation(variants().update.mutationOptions())
+  const { mutateAsync: create } = useMutation(variants().create.mutationOptions())
   const isEdit = Boolean(currentRow)
 
   const form = useForm<VariantForm>({

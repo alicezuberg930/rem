@@ -1,5 +1,6 @@
 package server.rem.websockets;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +28,8 @@ import org.springframework.web.socket.WebSocketSession;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import server.rem.dtos.notification.NotificationResponse;
+import server.rem.events.NotificationCreatedEvent;
 import server.rem.services.ChatService;
 
 @ExtendWith(MockitoExtension.class)
@@ -40,7 +43,7 @@ class ChatWebSocketHandlerTests {
 
     @BeforeEach
     void setUp() {
-        objectMapper = new ObjectMapper();
+        objectMapper = new ObjectMapper().findAndRegisterModules();
         presenceRegistry = new ChatPresenceRegistry();
         handler = new ChatWebSocketHandler(objectMapper, chatService, presenceRegistry);
     }
@@ -87,6 +90,52 @@ class ChatWebSocketHandlerTests {
 
         assertEquals(Set.of("user-1"), presenceRegistry.getOnlineUserIds());
         verify(secondSession, org.mockito.Mockito.never()).sendMessage(org.mockito.ArgumentMatchers.any());
+    }
+
+    @Test
+    void deliversNotificationOnlyToTargetUserInBusiness() throws Exception {
+        WebSocketSession targetSession = session("session-1", "user-1", "business-1");
+        WebSocketSession otherBusinessSession = session("session-2", "user-1", "business-2");
+        WebSocketSession otherUserSession = session("session-3", "user-2", "business-1");
+        handler.afterConnectionEstablished(targetSession);
+        handler.afterConnectionEstablished(otherBusinessSession);
+        handler.afterConnectionEstablished(otherUserSession);
+        clearInvocations(targetSession, otherBusinessSession, otherUserSession);
+
+        LocalDateTime now = LocalDateTime.now();
+        NotificationResponse notification = new NotificationResponse(
+                "notification-1",
+                "business-1",
+                "Task assigned",
+                "Review the task",
+                "4",
+                now,
+                false,
+                "user-1",
+                "task-assigned",
+                now,
+                now);
+        handler.deliverNotification(new NotificationCreatedEvent(
+                "user-1",
+                notification.title(),
+                notification.content(),
+                notification.type(),
+                notification.time(),
+                notification.uniqueKey(),
+                null,
+                null,
+                null,
+                Map.of(),
+                "business-1",
+                notification));
+
+        JsonNode event = textEvents(targetSession).getFirst();
+        assertEquals("NOTIFICATION", event.path("type").asText());
+        assertEquals("notification-1", event.path("payload").path("id").asText());
+        verify(otherBusinessSession, org.mockito.Mockito.never())
+                .sendMessage(org.mockito.ArgumentMatchers.any());
+        verify(otherUserSession, org.mockito.Mockito.never())
+                .sendMessage(org.mockito.ArgumentMatchers.any());
     }
 
     private WebSocketSession session(String sessionId, String userId, String businessId) {

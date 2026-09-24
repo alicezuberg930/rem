@@ -1,6 +1,7 @@
 package server.rem.services;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -13,15 +14,18 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
 import org.mockito.ArgumentCaptor;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import org.mockito.Mock;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import server.rem.dtos.chat.ChatMessageRequest;
 import server.rem.dtos.chat.ChatMessageResponse;
+import server.rem.dtos.notification.CreateNotificationRequest;
 import server.rem.entities.Business;
 import server.rem.entities.BusinessUser;
 import server.rem.entities.ChatMessage;
@@ -53,6 +57,8 @@ class ChatServiceTests {
     private UserRepository userRepository;
     @Mock
     private GroupRepository groupRepository;
+    @Mock
+    private NotificationService notificationService;
 
     private ChatService chatService;
 
@@ -64,7 +70,8 @@ class ChatServiceTests {
                 businessRepository,
                 userRepository,
                 groupRepository,
-                Mappers.getMapper(ChatMapper.class));
+                Mappers.getMapper(ChatMapper.class),
+                notificationService);
     }
 
     @Test
@@ -99,24 +106,43 @@ class ChatServiceTests {
         assertEquals(RECIPIENT_ID, response.getRecipientId());
         assertNull(response.getGroupId());
         assertEquals("hello", response.getContent());
+
+        ArgumentCaptor<CreateNotificationRequest> notificationCaptor =
+                ArgumentCaptor.forClass(CreateNotificationRequest.class);
+        verify(notificationService).create(notificationCaptor.capture(), eq(BUSINESS_ID));
+        CreateNotificationRequest notification = notificationCaptor.getValue();
+        assertEquals(RECIPIENT_ID, notification.getToUserId());
+        assertEquals("New message from " + SENDER_ID, notification.getTitle());
+        assertEquals("hello", notification.getContent());
+        assertEquals("CHAT_MESSAGE", notification.getType());
+        assertEquals("/chats", notification.getLink());
+        assertEquals("message-id", notification.getData().get("messageId"));
+        assertEquals(SENDER_ID, notification.getData().get("senderId"));
     }
 
     @Test
-    void sendsGroupMessageToEveryMemberExceptSender() {
+    void sendsGroupMessageAndNotifiesEveryActiveMemberExceptSender() {
         String groupId = "group-id";
         String otherMemberId = "other-member-id";
+        String inactiveMemberId = "inactive-member-id";
         Business business = mock(Business.class);
         User sender = user(SENDER_ID);
         User recipient = user(RECIPIENT_ID);
         User otherMember = user(otherMemberId);
+        User inactiveMember = user(inactiveMemberId);
         Group group = mock(Group.class);
 
         when(group.getId()).thenReturn(groupId);
-        when(group.getMembers()).thenReturn(Set.of(sender, recipient, otherMember));
+        when(group.getName()).thenReturn("Operations");
+        when(group.getMembers()).thenReturn(Set.of(sender, recipient, otherMember, inactiveMember));
         when(groupRepository.findByIdAndBusinessId(groupId, BUSINESS_ID))
                 .thenReturn(Optional.of(group));
         when(businessUserRepository.findActiveByUserIdAndBusinessId(SENDER_ID, BUSINESS_ID))
                 .thenReturn(Optional.of(mock(BusinessUser.class)));
+        when(businessUserRepository.findActiveUsersByBusinessIdAndUserIdIn(
+                BUSINESS_ID,
+                Set.of(RECIPIENT_ID, otherMemberId, inactiveMemberId)))
+                .thenReturn(List.of(recipient, otherMember));
         when(businessRepository.getReferenceById(BUSINESS_ID)).thenReturn(business);
         when(userRepository.getReferenceById(SENDER_ID)).thenReturn(sender);
         when(chatMessageRepository.save(any(ChatMessage.class))).thenAnswer(invocation -> {
@@ -138,6 +164,21 @@ class ChatServiceTests {
         assertEquals(groupId, delivery.message().getGroupId());
         assertNull(delivery.message().getRecipientId());
         assertEquals(Set.of(RECIPIENT_ID, otherMemberId), delivery.recipientIds());
+
+        ArgumentCaptor<CreateNotificationRequest> notificationCaptor =
+                ArgumentCaptor.forClass(CreateNotificationRequest.class);
+        verify(notificationService, times(2)).create(notificationCaptor.capture(), eq(BUSINESS_ID));
+        assertEquals(
+                Set.of(RECIPIENT_ID, otherMemberId),
+                notificationCaptor.getAllValues().stream()
+                        .map(CreateNotificationRequest::getToUserId)
+                        .collect(java.util.stream.Collectors.toSet()));
+        notificationCaptor.getAllValues().forEach(notification -> {
+            assertEquals("New message in Operations", notification.getTitle());
+            assertEquals(SENDER_ID + ": hello group", notification.getContent());
+            assertEquals("CHAT_MESSAGE", notification.getType());
+            assertEquals(groupId, notification.getData().get("groupId"));
+        });
     }
 
     @Test
@@ -202,6 +243,7 @@ class ChatServiceTests {
     private User user(String id) {
         User user = new User();
         user.setId(id);
+        user.setFullname(id);
         return user;
     }
 }
