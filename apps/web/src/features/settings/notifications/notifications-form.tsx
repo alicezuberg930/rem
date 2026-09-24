@@ -7,7 +7,6 @@ import type { ApiResponse } from '@/@types'
 import { handleServerError } from '@/lib/handle-server-error'
 import { httpClient } from '@/lib/repository/http-client'
 import { showSubmittedData } from '@/lib/show-submitted-data'
-import { registerPushNotification } from '@/lib/web-push-notification'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
@@ -22,6 +21,7 @@ import {
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Switch } from '@/components/ui/switch'
 import { toast } from '@/components/ui/toast'
+import { playNotificationSound } from '@/lib/utils'
 
 const notificationsFormSchema = z.object({
   type: z.enum(['all', 'mentions', 'none'], {
@@ -59,19 +59,10 @@ export function NotificationsForm() {
 
     setIsSendingTest(true)
     try {
-      // const isRegistered = await registerPushNotification({
-      //   forceRefresh: true,
-      // })
-      // if (!isRegistered) {
-      //   toast.error('Enable push notifications in your browser to send a test.')
-      //   return
-      // }
-
-      const response = await httpClient.post<ApiResponse<number>>(
-        '/notifications/push-notification/test'
-      )
+      const response = await httpClient.post<ApiResponse<number>>('/notifications/push-notification/test')
       if (response.data > 0) {
         toast.success(response.message)
+        playNotificationSound()
       } else {
         toast.error(response.message)
       }

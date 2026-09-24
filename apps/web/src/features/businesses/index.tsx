@@ -14,7 +14,7 @@ import {
 import { Typography } from '@/components/ui/typography'
 import { LazyLoadImage } from '@/components/lazy-load-image'
 import { NewBusinessDialog } from './components/new-business-dialog'
-import { useBusiness } from '@/hooks/use-business'
+import { selectBusiness } from '@/lib/business'
 
 const roleColors: Record<string, string> = {
   Owner: 'bg-blue-100 text-blue-800',
@@ -27,7 +27,6 @@ export function Businesses() {
   const navigate = useNavigate()
   const { user } = useAuth()
   const [open, setOpen] = useDialogState<'add'>(null)
-  const { selectBusiness } = useBusiness()
 
   const accessBusiness = (businessId: string) => {
     selectBusiness(businessId)

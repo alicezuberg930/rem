@@ -13,13 +13,13 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar'
 import { LazyLoadImage } from '../components/lazy-load-image'
-import { useBusiness } from '@/hooks/use-business'
+import { selectBusiness, useSelectedBusinessId } from '@/lib/business'
 
 export function TeamSwitcher() {
   const navigate = useNavigate()
   const { user } = useAuth()
   const { isMobile } = useSidebar()
-  const { businessId, selectBusiness } = useBusiness()
+  const businessId = useSelectedBusinessId()      
   const activeTeam = user?.businesses.find((business) => business.id === businessId)
 
   return (

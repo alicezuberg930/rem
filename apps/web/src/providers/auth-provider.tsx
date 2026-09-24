@@ -16,7 +16,7 @@ import { toast } from '@/components/ui/toast'
 import { auth } from '@/lib/queries/auth'
 import { httpClient, ResponseWithHeaders } from '@/lib/repository/http-client'
 import { AuthValidators } from '@/lib/validators/auth'
-import { useBusiness } from '@/hooks/use-business'
+import { clearSelectedBusiness, useSelectedBusinessId } from '@/lib/business'
 
 export type ActionMapType<M extends { [index: string]: any }> = {
   [Key in keyof M]: M[Key] extends undefined
@@ -152,7 +152,7 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
   // states
   const [state, dispatch] = useReducer(reducer, initialState)
   const shouldRestoreSession = typeof window !== 'undefined' && Boolean(localStorage.getItem('accessTokenExpiration'))
-  const { clearSelectedBusiness, businessId } = useBusiness()
+  const businessId = useSelectedBusinessId()
   // refs
   const refreshTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const interceptorRegisteredRef = useRef<boolean>(false)

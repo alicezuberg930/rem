@@ -17,7 +17,7 @@ import { toast } from '@/components/ui/toast'
 import { parseChatSocketEvent } from '@/features/chats/lib/chat-events'
 import { chatKeys } from '@/lib/queries/chat'
 import { useAuth } from '@/providers/auth-provider'
-import { useBusiness } from '@/hooks/use-business'
+import { useSelectedBusinessId } from '@/lib/business'
 
 type ChatContextValue = {
   businessId?: string
@@ -62,7 +62,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth()
   const queryClient = useQueryClient()
   const currentUserId = user?.id
-  const { businessId } = useBusiness()
+  const businessId = useSelectedBusinessId()
   const [status, setStatus] = useState<ChatUserStatus>('disconnected')
   const [onlineUserIds, setOnlineUserIds] = useState<ReadonlySet<string>>(EMPTY_ONLINE_USER_IDS)
   const socketRef = useRef<WebSocket | null>(null)

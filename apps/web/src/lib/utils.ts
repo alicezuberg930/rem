@@ -22,7 +22,7 @@ const sleep = (ms: number = 1000) => {
  * - In middle: [1, '...', 4, 5, 6, '...', 10]
  * - Near end: [1, '...', 7, 8, 9, 10]
  */
-export function getPageNumbers(currentPage: number, totalPages: number) {
+const getPageNumbers = (currentPage: number, totalPages: number) => {
   const maxVisiblePages = 5 // Maximum number of page buttons to show
   const rangeWithDots = []
 
@@ -197,4 +197,16 @@ const canvasToBlob = (canvas: HTMLCanvasElement, quality?: number): Promise<Blob
   });
 }
 
-export { getInitials, getCurrentLocation, alpha, slugify, getBaseUrl, sleep, cn, fileToCanvas, bitMatrixToCanvas, canvasToBlob }
+let cachedAudio: HTMLAudioElement | undefined
+
+const playNotificationSound = () => {
+  if (!cachedAudio) {
+    cachedAudio = new Audio('/assets/audios/notification.mp3')
+    console.warn('no audio element found, creating audio element')
+  }
+  console.log('using existing audio')
+  cachedAudio.currentTime = 0;
+  cachedAudio.play().catch(e => console.error(e));
+}
+
+export { getInitials, getCurrentLocation, alpha, slugify, getBaseUrl, sleep, cn, fileToCanvas, bitMatrixToCanvas, canvasToBlob, playNotificationSound }
