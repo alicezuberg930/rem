@@ -49,8 +49,8 @@ export const sidebarData: SidebarData = {
           icon: ListTodo,
         },
         {
-          title: 'Storage',
-          url: '/storage',
+          title: 'Media',
+          url: '/media',
           icon: Folders,
         },
         {

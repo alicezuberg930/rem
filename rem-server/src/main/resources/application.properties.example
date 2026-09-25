@@ -14,6 +14,11 @@ spring.flyway.baseline-version=0
 spring.flyway.validate-on-migrate=true
 # Global prefix
 server.servlet.context-path=/api/v1
+# Multipart uploads
+spring.servlet.multipart.max-file-size=50MB
+spring.servlet.multipart.max-request-size=250MB
+server.tomcat.max-http-form-post-size=250MB
+server.tomcat.max-swallow-size=250MB
 # Cors variables
 app.cors.allowed-origin-patterns=${CORS_ALLOWED_ORIGINS}
 # jwt

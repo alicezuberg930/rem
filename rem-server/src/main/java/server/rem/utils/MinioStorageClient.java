@@ -5,12 +5,14 @@ import java.io.InputStream;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ContentDisposition;
+import org.springframework.http.InvalidMediaTypeException;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -104,7 +106,8 @@ public class MinioStorageClient {
         try (InputStream input = file.getInputStream()) {
             return upload(input, file.getSize(), contentType, normalizedObjectKey);
         } catch (IOException exception) {
-            throw new IllegalStateException("Failed to read upload for object '" + normalizedObjectKey + "'", exception);
+            throw new IllegalStateException("Failed to read upload for object '" + normalizedObjectKey + "'",
+                    exception);
         }
     }
 
@@ -181,9 +184,11 @@ public class MinioStorageClient {
      * Creates a short-lived PUT URL that allows a client to upload directly to
      * MinIO under the supplied object key.
      *
-     * <p>The caller should persist the object key and send it to the frontend
+     * <p>
+     * The caller should persist the object key and send it to the frontend
      * together with this URL. The frontend must upload the raw file body with
-     * an HTTP PUT request.</p>
+     * an HTTP PUT request.
+     * </p>
      */
     public String createPresignedUploadUrl(String objectKey) {
         return createPresignedUploadUrl(objectKey, uploadUrlExpiry);
@@ -201,21 +206,18 @@ public class MinioStorageClient {
      * Creates a short-lived GET URL that asks the browser to download the
      * object.
      */
-    public String createPresignedDownloadUrl(String objectKey) {
+    public String createPresignedDownloadUrl(String objectKey, String downloadFilename) {
         String normalizedObjectKey = normalizeObjectKey(objectKey);
         return createPresignedDownloadUrl(
                 normalizedObjectKey,
-                filenameFromObjectKey(normalizedObjectKey),
+                downloadFilename,
                 downloadUrlExpiry);
     }
 
     public String createPresignedDownloadUrl(String objectKey, String downloadFilename, Duration expiry) {
         String normalizedObjectKey = normalizeObjectKey(objectKey);
-        String normalizedFilename = downloadFilename
-                .replace("\r", "")
-                .replace("\n", "");
         String contentDisposition = ContentDisposition.attachment()
-                .filename(normalizedFilename)
+                .filename(downloadFilename)
                 .build()
                 .toString();
 
@@ -224,6 +226,39 @@ public class MinioStorageClient {
                 normalizedObjectKey,
                 validateExpiry(expiry),
                 Map.of("response-content-disposition", contentDisposition));
+    }
+
+    /**
+     * Creates a short-lived GET URL that asks the browser to display the object
+     * inline instead of downloading it.
+     */
+    public String createPresignedPreviewUrl(String objectKey, String previewFilename, String contentType) {
+        return createPresignedPreviewUrl(objectKey, previewFilename, contentType, downloadUrlExpiry);
+    }
+
+    public String createPresignedPreviewUrl(
+            String objectKey,
+            String previewFilename,
+            String contentType,
+            Duration expiry) {
+        String normalizedObjectKey = normalizeObjectKey(objectKey);
+        String contentDisposition = ContentDisposition.inline()
+                .filename(previewFilename)
+                .build()
+                .toString();
+        Map<String, String> queryParameters = new HashMap<>();
+        queryParameters.put("response-content-disposition", contentDisposition);
+
+        String normalizedContentType = normalizeContentType(contentType);
+        if (normalizedContentType != null) {
+            queryParameters.put("response-content-type", normalizedContentType);
+        }
+
+        return presign(
+                Http.Method.GET,
+                normalizedObjectKey,
+                validateExpiry(expiry),
+                queryParameters);
     }
 
     /**
@@ -252,13 +287,14 @@ public class MinioStorageClient {
             Duration expiry,
             Map<String, String> queryParameters) {
         ensureBucketExists();
-        return execute("create a presigned " + method + " URL for object '" + objectKey + "'", () -> presigningClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
-                .method(method)
-                .bucket(bucketName)
-                .object(objectKey)
-                .expiry(Math.toIntExact(expiry.toSeconds()))
-                .extraQueryParams(queryParameters)
-                .build()));
+        return execute("create a presigned " + method + " URL for object '" + objectKey + "'",
+                () -> presigningClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
+                        .method(method)
+                        .bucket(bucketName)
+                        .object(objectKey)
+                        .expiry(Math.toIntExact(expiry.toSeconds()))
+                        .extraQueryParams(queryParameters)
+                        .build()));
     }
 
     private void ensureBucketExists() {
@@ -271,7 +307,8 @@ public class MinioStorageClient {
                 return;
             }
 
-            boolean exists = execute("check bucket '" + bucketName + "'", () -> client.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build()));
+            boolean exists = execute("check bucket '" + bucketName + "'",
+                    () -> client.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build()));
             if (!exists) {
                 execute("create bucket '" + bucketName + "'", () -> {
                     try {
@@ -328,8 +365,16 @@ public class MinioStorageClient {
         return extension.isEmpty() ? "" : "." + extension.substring(0, Math.min(extension.length(), 16));
     }
 
-    private static String filenameFromObjectKey(String objectKey) {
-        return objectKey.substring(objectKey.lastIndexOf('/') + 1);
+    private static String normalizeContentType(String contentType) {
+        if (!StringUtils.hasText(contentType)) {
+            return null;
+        }
+
+        try {
+            return MediaType.parseMediaType(contentType).toString();
+        } catch (InvalidMediaTypeException exception) {
+            return null;
+        }
     }
 
     private static Duration validateExpiry(Duration expiry) {

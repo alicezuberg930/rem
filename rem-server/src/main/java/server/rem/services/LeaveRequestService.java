@@ -5,6 +5,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+
+import lombok.RequiredArgsConstructor;
 import server.rem.annotations.RequestUser;
 import server.rem.dtos.leave_request.CreateLeaveRequest;
 import server.rem.dtos.leave_request.QueryLeaveRequest;
@@ -24,32 +26,22 @@ import server.rem.utils.exceptions.UnauthorizedException;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor 
 public class LeaveRequestService {
     private final LeaveRequestRepository leaveRequestRepository;
     private final UserRepository userRepository;
     private final BusinessRepository businessRepository;
     private final LeaveRequestMapper leaveRequestMapper;
 
-    public LeaveRequestService(LeaveRequestRepository leaveRequestRepository, UserRepository userRepository,
-            BusinessRepository businessRepository, LeaveRequestMapper leaveRequestMapper) {
-        this.leaveRequestRepository = leaveRequestRepository;
-        this.userRepository = userRepository;
-        this.businessRepository = businessRepository;
-        this.leaveRequestMapper = leaveRequestMapper;
-    }
-
     public LeaveRequest createLeaveRequest(@RequestUser String userId, CreateLeaveRequest dto) {
         Business business = businessRepository.findById(dto.getBusinessId()).orElseThrow(() -> new ResourceNotFoundException("Business not found"));
-
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
-
         LeaveRequest leaveRequest = leaveRequestMapper.toEntity(dto, business, user);
         return leaveRequestRepository.save(leaveRequest);
     }
 
     public List<LeaveRequest> getLeaveRequestByUser(String userId, QueryLeaveRequest dto) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("No user found"));
-
         return leaveRequestRepository.findAllByUser(user);
     }
 

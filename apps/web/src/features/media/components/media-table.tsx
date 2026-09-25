@@ -1,14 +1,18 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
+  RowSelection,
   type SortingState,
   type VisibilityState,
   flexRender,
   getCoreRowModel,
-  getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import type { Media } from '@/@types/media'
 import { cn } from '@/lib/utils'
+import { useInView } from '@/hooks/use-in-view'
+import { Button } from '@/components/ui/button'
+import { Spinner } from '@/components/ui/spinner'
 import {
   Table,
   TableBody,
@@ -17,22 +21,50 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { storageColumns as columns } from './storage-columns'
-import type { StorageItem } from './storage-types'
+import { DataTableToolbar } from '@/components/data-table'
+import { mediaColumns as columns } from './media-columns'
 
-type StorageTableProps = {
-  data: StorageItem[]
-  onOpenFolder: (item: StorageItem) => void
+type MediaTableProps = {
+  data: Media[]
+  hasNextPage: boolean
+  isFetchingNextPage: boolean
+  isLoadMoreError: boolean
+  onLoadMore: () => void
+  onDoubleClick: (item: Media) => void
 }
 
-export function StorageTable({ data, onOpenFolder }: StorageTableProps) {
+export function MediaTable({
+  data,
+  hasNextPage,
+  isFetchingNextPage,
+  isLoadMoreError,
+  onLoadMore,
+  onDoubleClick,
+}: MediaTableProps) {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [sorting, setSorting] = useState<SortingState>([])
-  const [pagination, setPagination] = useState({
-    pageIndex: 0,
-    pageSize: 10,
+  const loadMoreRef = useRef<HTMLDivElement>(null)
+  const isLoadMoreInView = useInView(loadMoreRef, {
+    margin: '10px',
+    once: false,
   })
+
+  useEffect(() => {
+    if (
+      isLoadMoreInView &&
+      hasNextPage &&
+      !isFetchingNextPage &&
+      !isLoadMoreError
+    ) {
+      onLoadMore()
+    }
+  }, [
+    hasNextPage,
+    isFetchingNextPage,
+    isLoadMoreError,
+    isLoadMoreInView,
+    onLoadMore,
+  ])
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
@@ -40,14 +72,11 @@ export function StorageTable({ data, onOpenFolder }: StorageTableProps) {
     columns,
     state: {
       sorting,
-      pagination,
       columnVisibility,
     },
     onSortingChange: setSorting,
-    onPaginationChange: setPagination,
     onColumnVisibilityChange: setColumnVisibility,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
   })
 
@@ -87,12 +116,9 @@ export function StorageTable({ data, onOpenFolder }: StorageTableProps) {
                   key={row.id}
                   className={cn(
                     'group/row',
-                    row.original.type === 'folder' && 'cursor-pointer'
+                    row.original.type === 'FOLDER' && 'cursor-pointer'
                   )}
-                  onDoubleClick={() => onOpenFolder(row.original)}
-                  onClick={() =>
-                    row.original.type === 'folder' && onOpenFolder(row.original)
-                  }
+                  onDoubleClick={() => onDoubleClick(row.original)}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
@@ -124,9 +150,25 @@ export function StorageTable({ data, onOpenFolder }: StorageTableProps) {
           </TableBody>
         </Table>
       </div>
-      {data.length > 0 && (
-        <DataTablePagination table={table} className='mt-auto' />
-      )}
+      {/* intersection observer for loading next page */}
+      <div
+        ref={loadMoreRef}
+        className='flex min-h-8 items-center justify-center'
+        aria-live='polite'
+      >
+        {isLoadMoreError ? (
+          <Button
+            type='button'
+            variant='outline'
+            size='sm'
+            onClick={() => onLoadMore()}
+          >
+            Retry loading more
+          </Button>
+        ) : (
+          isFetchingNextPage && <Spinner />
+        )}
+      </div>
     </div>
   )
 }

@@ -16,7 +16,7 @@ public interface MediaMapper {
     @Mapping(target = "storageKey", source = "storageKey")
     @Mapping(target = "name", source = "name")
     @Mapping(target = "type", constant = "FILE")
-    @Mapping(target = "parent", ignore = true)
+    @Mapping(target = "parent", source = "parent")
     @Mapping(target = "size", source = "size")
     @Mapping(target = "mimeType", source = "mimeType")
     @Mapping(target = "extension", source = "extension")
@@ -25,6 +25,7 @@ public interface MediaMapper {
     Media toEntity(
             Business business,
             User owner,
+            Media parent,
             String storageKey,
             String name,
             long size,

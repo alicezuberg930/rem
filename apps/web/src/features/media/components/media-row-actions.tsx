@@ -1,4 +1,5 @@
 import type { Row } from '@tanstack/react-table'
+import type { Media } from '@/@types/media'
 import {
   Clock,
   Copy,
@@ -25,17 +26,19 @@ import {
   // DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { useStorage } from './storage-provider'
-import type { StorageItem } from './storage-types'
+import { useMedia } from './media-provider'
+import { useMutation } from '@tanstack/react-query'
+import { medias } from '@/lib/queries/media'
 
-type StorageRowActionsProps = {
-  row?: Row<StorageItem>
-  item?: StorageItem
+type MediaRowActionsProps = {
+  row?: Row<Media>
+  item?: Media
 }
 
-export function StorageRowActions({ row, item }: StorageRowActionsProps) {
-  const { setOpen, setCurrentRow } = useStorage()
-  const storageItem = row?.original ?? item
+export function MediaRowActions({ row, item }: MediaRowActionsProps) {
+  const { setOpen, setCurrentRow } = useMedia()
+  const { mutate: download } = useMutation(medias().download.mutationOptions())
+  const media = row?.original ?? item
 
   return (
     <DropdownMenu modal={false}>
@@ -66,7 +69,12 @@ export function StorageRowActions({ row, item }: StorageRowActionsProps) {
           Create copy
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => {
+            if (!media) return
+            download(media?.id!)
+          }}
+        >
           <Download />
           Download
         </DropdownMenuItem>
@@ -105,8 +113,8 @@ export function StorageRowActions({ row, item }: StorageRowActionsProps) {
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={() => {
-            if (!storageItem) return
-            setCurrentRow(storageItem)
+            if (!media) return
+            setCurrentRow(media)
             setOpen('delete')
           }}
         >

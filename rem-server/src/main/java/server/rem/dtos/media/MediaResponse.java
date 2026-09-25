@@ -12,5 +12,6 @@ public record MediaResponse(
         Long size,
         String mimeType,
         String extension,
-        MediaStatus status
+        MediaStatus status,
+        OwnerResponse owner
 ) {}

@@ -1,4 +1,4 @@
-import type { Business } from './business'
+import type { QueryPaginate } from '.'
 import type { User } from './user'
 
 export type MediaType = 'FILE' | 'FOLDER'
@@ -11,17 +11,17 @@ export type Media = {
   id: string
   createdAt: string | null
   updatedAt: string | null
-  business: Business
-  owner: User
+  deletedAt: string | null
   storageKey: string
   name: string
   type: MediaType
-  parent: Media | null
+  parentId: string | null
+  ownerId: string | null
   size: number | null
   mimeType: string
   extension: string
   status: MediaStatus
-  deletedAt: string | null
+  owner: Partial<User>
 }
 
 export type MediaPermission = {
@@ -42,4 +42,19 @@ export type MediaShareLink = {
   token: string
   permission: MediaPermissionType
   expiresAt: string | null
+}
+
+export type MediaQuery = QueryPaginate & {
+  name?: string
+  status?: MediaStatus
+}
+
+export type MediaUploadItem = {
+  file: File
+  relativePath: string
+}
+
+export type MediaUploadRequest = {
+  items: MediaUploadItem[]
+  parentId?: string | null
 }
