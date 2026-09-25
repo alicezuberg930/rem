@@ -62,7 +62,7 @@ describe('web push registration', () => {
     repositoryMocks.delete.mockResolvedValue({ data: null })
     repositoryMocks.post.mockResolvedValue({ data: 'current-id' })
 
-    const result = await registerPushNotification({ forceRefresh: true })
+    const result = await registerPushNotification()
 
     expect(result).toBe(true)
     expect(repositoryMocks.delete).toHaveBeenCalledWith(

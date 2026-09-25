@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import {
-  RowSelection,
   type SortingState,
   type VisibilityState,
   flexRender,
