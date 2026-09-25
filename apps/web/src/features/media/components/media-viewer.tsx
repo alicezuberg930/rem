@@ -10,7 +10,7 @@ import {
 import Lightbox, { type Slide } from '@/components/lightbox'
 import type { MediaFileKind } from './media-utils'
 import { useEffect, useState } from 'react'
-import { VideoPlayer } from '@/components/video/video-player'
+import { VideoPlayer } from '@/components/video-player/video-player'
 
 export type MediaViewerItem = {
   url: string
