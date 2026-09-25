@@ -15,7 +15,6 @@ import {
 } from '@/@types'
 import { useAuth } from '@/providers/auth-provider'
 import { useSelectedBusinessId } from '@/lib/business'
-import { parseNotificationSocketEvent } from '@/lib/notification-events'
 import { chatKeys } from '@/lib/queries/chat'
 import { getWebsocketURL } from '@/lib/utils'
 import { toast } from '@/components/ui/toast'

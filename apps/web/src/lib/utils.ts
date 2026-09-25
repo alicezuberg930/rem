@@ -225,4 +225,11 @@ const getWebsocketURL = () => {
   return url.toString()
 }
 
-export { getInitials, getCurrentLocation, alpha, slugify, getBaseUrl, sleep, cn, fileToCanvas, bitMatrixToCanvas, canvasToBlob, playNotificationSound, getPageNumbers, getWebsocketURL }
+const formatDuration = (duration: number): string => {
+  const hour = duration >= 3600 ? `${(Math.floor(duration / 3600)).toString()}:` : ''
+  const minute = ((Math.floor(duration / 60) % 60)).toString().padStart(2, '0')
+  const second = (duration % 60).toString().padStart(2, '0')
+  return `${hour}${minute}:${second}`
+}
+
+export { formatDuration, getInitials, getCurrentLocation, alpha, slugify, getBaseUrl, sleep, cn, fileToCanvas, bitMatrixToCanvas, canvasToBlob, playNotificationSound, getPageNumbers, getWebsocketURL }

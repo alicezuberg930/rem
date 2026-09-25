@@ -2,11 +2,13 @@ import type { Media, MediaUploadItem } from '@/@types/media'
 import {
   type File,
   FileArchive,
+  FileCode,
   FileImage,
   FileSpreadsheet,
   FileText,
   FileVideo,
   Folder,
+  Text,
 } from 'lucide-react'
 
 export type MediaFileKind =
@@ -16,6 +18,8 @@ export type MediaFileKind =
   | 'pdf'
   | 'spreadsheet'
   | 'video'
+  | 'markdown'
+  | 'web'
 
 export const getMediaFileKind = (media: Media): MediaFileKind => {
   const extension = media.extension.toLowerCase()
@@ -39,7 +43,16 @@ export const getMediaFileKind = (media: Media): MediaFileKind => {
   ) {
     return 'archive'
   }
-
+  if (
+    // mimeType.includes('excel') ||
+    // mimeType === 'text/csv' ||
+    ['ts', 'js', 'tsx', 'jsx', 'css', 'md', 'json', 'yaml', 'yml', 'java', 'lock', 'env', 'txt', 'sql', 'Dockerfile', 'xml'].includes(extension)
+  ) {
+    return 'markdown'
+  }
+  if (['html'].includes(extension)) {
+    return 'web'
+  }
   return 'document'
 }
 
@@ -50,6 +63,8 @@ const fileTypeIcons: Record<MediaFileKind, typeof File> = {
   pdf: FileText,
   spreadsheet: FileSpreadsheet,
   video: FileVideo,
+  markdown: Text,
+  web: FileCode
 }
 
 const fileTypeColors: Record<MediaFileKind, string> = {
@@ -59,6 +74,8 @@ const fileTypeColors: Record<MediaFileKind, string> = {
   pdf: 'text-red-600',
   spreadsheet: 'text-emerald-600',
   video: 'text-violet-600',
+  markdown: 'text-black-400',
+  web: 'text-orange-500'
 }
 
 export const getMediaItemIcon = (item: Media) => {
