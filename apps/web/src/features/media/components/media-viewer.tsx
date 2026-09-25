@@ -1,25 +1,126 @@
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { ExternalLink } from 'lucide-react'
+import { buttonVariants } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import Lightbox, { type Slide } from '@/components/lightbox'
+import type { MediaFileKind } from './media-utils'
 
-export const MediaViewer = ({ url }: { url: string | undefined }) => {
-    console.log(url)
+export type MediaViewerItem = {
+  url: string
+  kind: MediaFileKind
+  name?: string
+  mimeType?: string
+}
+
+type MediaViewerProps = {
+  item: MediaViewerItem | null
+  onClose: () => void
+}
+
+const canPreviewInLightbox = (kind: MediaFileKind) =>
+  kind === 'image' || kind === 'video'
+
+const getLightboxSlides = (item: MediaViewerItem | null): Slide[] => {
+  if (!item) return []
+
+  if (item.kind === 'image') {
+    return [
+      {
+        src: item.url,
+        alt: item.name,
+        title: item.name,
+      },
+    ]
+  }
+
+  if (item.kind === 'video') {
+    return [
+      {
+        type: 'video',
+        title: item.name,
+        controls: true,
+        playsInline: true,
+        sources: [
+          {
+            src: item.url,
+            type: item.mimeType || 'video/mp4',
+          },
+        ],
+      },
+    ]
+  }
+
+  return []
+}
+
+export function MediaViewer({ item, onClose }: MediaViewerProps) {
+  if (!item) return null
+
+  const isLightboxPreview = canPreviewInLightbox(item.kind)
+
+  if (isLightboxPreview) {
     return (
-        <Dialog open={!!url}>
-            <DialogTrigger>Open</DialogTrigger>
-            <DialogContent>
-                <div>
-                    <iframe
-                        src={url}
-                        className="w-full h-[800px]"
-                    />
-                </div>
-                <DialogHeader>
-                    <DialogTitle>Are you absolutely sure?</DialogTitle>
-                    <DialogDescription>
-                        This action cannot be undone. This will permanently delete your account
-                        and remove your data from our servers.
-                    </DialogDescription>
-                </DialogHeader>
-            </DialogContent>
-        </Dialog>
+      <Lightbox
+        open
+        close={onClose}
+        slides={getLightboxSlides(item)}
+        disabledSlideshow
+        disabledThumbnails
+        video={{
+          autoPlay: true,
+          controls: true,
+          playsInline: true,
+        }}
+      />
     )
+  }
+
+  return (
+    <Dialog
+      open
+      onOpenChange={(open) => {
+        if (!open) onClose()
+      }}
+    >
+      <DialogContent className='flex max-h-[90dvh] flex-col overflow-hidden sm:max-w-5xl'>
+        <DialogHeader className='text-start'>
+          <DialogTitle>{item.name ?? 'Media preview'}</DialogTitle>
+          <DialogDescription>
+            {item.kind === 'pdf'
+              ? 'Previewing the selected PDF.'
+              : 'This file type cannot be previewed inline.'}
+          </DialogDescription>
+        </DialogHeader>
+
+        {item.kind === 'pdf' ? (
+          <iframe
+            src={item.url}
+            title={item.name ?? 'PDF preview'}
+            className='h-[70dvh] w-full rounded-md border bg-background'
+          />
+        ) : (
+          <div className='flex min-h-48 flex-col items-center justify-center gap-4 rounded-md border border-dashed p-6 text-center'>
+            <p className='max-w-md text-sm text-muted-foreground'>
+              Download or open the file in a new tab to view it with a
+              compatible application.
+            </p>
+            <a
+              href={item.url}
+              target='_blank'
+              rel='noreferrer'
+              className={buttonVariants({ variant: 'outline' })}
+            >
+              <ExternalLink data-icon='inline-start' />
+              Open file
+            </a>
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
+  )
 }

@@ -44,6 +44,15 @@ public class MinioStorageClient {
     private final Duration shareUrlExpiry;
     private volatile boolean bucketReady;
 
+    /**
+     * Builds the MinIO clients and validates the configured URL expiry values.
+     *
+     * <p>
+     * The internal client talks to the private endpoint for storage operations,
+     * while the presigning client can use a public endpoint so generated URLs are
+     * reachable by browsers.
+     * </p>
+     */
     public MinioStorageClient(
             @Value("${minio.endpoint:http://localhost:9000}") String endpoint,
             @Value("${minio.public-endpoint:${minio.endpoint:http://localhost:9000}}") String publicEndpoint,
@@ -194,6 +203,10 @@ public class MinioStorageClient {
         return createPresignedUploadUrl(objectKey, uploadUrlExpiry);
     }
 
+    /**
+     * Creates a PUT URL for direct browser uploads using a caller-provided
+     * expiry.
+     */
     public String createPresignedUploadUrl(String objectKey, Duration expiry) {
         return presign(
                 Http.Method.PUT,
@@ -214,6 +227,10 @@ public class MinioStorageClient {
                 downloadUrlExpiry);
     }
 
+    /**
+     * Creates a GET URL with an attachment content disposition so the browser
+     * downloads the object using the provided filename.
+     */
     public String createPresignedDownloadUrl(String objectKey, String downloadFilename, Duration expiry) {
         String normalizedObjectKey = normalizeObjectKey(objectKey);
         String contentDisposition = ContentDisposition.attachment()
@@ -236,6 +253,10 @@ public class MinioStorageClient {
         return createPresignedPreviewUrl(objectKey, previewFilename, contentType, downloadUrlExpiry);
     }
 
+    /**
+     * Creates a GET URL with inline content disposition so the browser can
+     * render the object in-page when the content type is supported.
+     */
     public String createPresignedPreviewUrl(
             String objectKey,
             String previewFilename,
@@ -269,6 +290,10 @@ public class MinioStorageClient {
         return createPresignedShareUrl(objectKey, shareUrlExpiry);
     }
 
+    /**
+     * Creates a GET URL without response headers so it can be shared as a
+     * temporary object access link.
+     */
     public String createPresignedShareUrl(String objectKey, Duration expiry) {
         return presign(
                 Http.Method.GET,
@@ -277,10 +302,16 @@ public class MinioStorageClient {
                 Map.of());
     }
 
+    /**
+     * Returns the configured MinIO bucket used by this storage client.
+     */
     public String getBucketName() {
         return bucketName;
     }
 
+    /**
+     * Generates a presigned object URL after ensuring the bucket is ready.
+     */
     private String presign(
             Http.Method method,
             String objectKey,
@@ -297,6 +328,10 @@ public class MinioStorageClient {
                         .build()));
     }
 
+    /**
+     * Lazily verifies that the configured bucket exists, creating it once when
+     * necessary.
+     */
     private void ensureBucketExists() {
         if (bucketReady) {
             return;
@@ -327,6 +362,10 @@ public class MinioStorageClient {
         }
     }
 
+    /**
+     * Normalizes object keys to MinIO-safe relative paths and rejects parent
+     * directory traversal.
+     */
     private static String normalizeObjectKey(String objectKey) {
         if (!StringUtils.hasText(objectKey)) {
             throw new IllegalArgumentException("Object key is required");
@@ -347,6 +386,10 @@ public class MinioStorageClient {
         return normalized;
     }
 
+    /**
+     * Extracts and sanitizes a filename extension for use in generated object
+     * keys.
+     */
     private static String safeExtension(String originalFilename) {
         if (!StringUtils.hasText(originalFilename)) {
             return "";
@@ -365,6 +408,10 @@ public class MinioStorageClient {
         return extension.isEmpty() ? "" : "." + extension.substring(0, Math.min(extension.length(), 16));
     }
 
+    /**
+     * Parses a content type into a canonical media type string, returning null
+     * when the input is blank or invalid.
+     */
     private static String normalizeContentType(String contentType) {
         if (!StringUtils.hasText(contentType)) {
             return null;
@@ -377,6 +424,9 @@ public class MinioStorageClient {
         }
     }
 
+    /**
+     * Validates that a presigned URL expiry is within MinIO's supported range.
+     */
     private static Duration validateExpiry(Duration expiry) {
         if (expiry == null || expiry.compareTo(Duration.ofSeconds(1)) < 0) {
             throw new IllegalArgumentException("Presigned URL expiry must be at least one second");
@@ -387,6 +437,10 @@ public class MinioStorageClient {
         return expiry;
     }
 
+    /**
+     * Runs a MinIO operation and converts checked storage failures into a common
+     * application exception message.
+     */
     private static <T> T execute(String action, StorageOperation<T> operation) {
         try {
             return operation.run();
@@ -401,6 +455,10 @@ public class MinioStorageClient {
     @FunctionalInterface
     private interface StorageOperation<T> {
 
+        /**
+         * Performs a storage operation that may throw checked MinIO or IO
+         * exceptions.
+         */
         T run() throws Exception;
     }
 }

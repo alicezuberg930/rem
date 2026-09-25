@@ -1,6 +1,12 @@
-import { useMemo, useRef, useState, type ChangeEvent, type DragEvent } from 'react'
+import {
+  useMemo,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type DragEvent,
+} from 'react'
 import { useInfiniteQuery, useMutation } from '@tanstack/react-query'
-import type { Media, MediaUploadItem } from '@/@types/media'
+import type { Media as MediaItem, MediaUploadItem } from '@/@types/media'
 import { ClockInButton } from '@/layout/clock-in-button'
 import { Header } from '@/layout/header'
 import { Main } from '@/layout/main'
@@ -17,11 +23,15 @@ import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { MediaContextMenu } from './components/media-context-menu'
+import { MediaGrid } from './components/media-grid'
 import { MediaProvider } from './components/media-provider'
 import { MediaTable } from './components/media-table'
-import { MediaGrid } from './components/media-grid'
-import { findFolderPath, getDroppedFiles } from './components/media-utils'
-import { MediaViewer } from './components/media-viewer'
+import {
+  findFolderPath,
+  getDroppedFiles,
+  getMediaFileKind,
+} from './components/media-utils'
+import { MediaViewer, type MediaViewerItem } from './components/media-viewer'
 
 type ViewMode = 'grid' | 'list'
 
@@ -32,29 +42,56 @@ export function Media() {
   const [isDraggingFile, setIsDraggingFile] = useState<boolean>(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const dragDepthRef = useRef<number>(0)
-  const mediaQuery = useInfiniteQuery(medias().all.infiniteQueryOptions({ pageSize: 24 }))
-  const { mutateAsync, isPending: isUploading } = useMutation(medias().upload.mutationOptions())
+  const mediaQuery = useInfiniteQuery(
+    medias().all.infiniteQueryOptions({ pageSize: 24 })
+  )
+  const { mutateAsync, isPending: isUploading } = useMutation(
+    medias().upload.mutationOptions()
+  )
   const mediaPages = mediaQuery.data?.pages
-  const mediaItems = useMemo(() => mediaPages?.flatMap((page) => page.content) ?? [], [mediaPages])
-  const currentItems = useMemo(() => mediaItems.filter((item) => item.parentId === currentFolderId), [currentFolderId, mediaItems])
-  const folderPath = useMemo(() => findFolderPath(mediaItems, currentFolderId), [currentFolderId, mediaItems])
+  const mediaItems = useMemo(
+    () => mediaPages?.flatMap((page) => page.content) ?? [],
+    [mediaPages]
+  )
+  const currentItems = useMemo(
+    () => mediaItems.filter((item) => item.parentId === currentFolderId),
+    [currentFolderId, mediaItems]
+  )
+  const folderPath = useMemo(
+    () => findFolderPath(mediaItems, currentFolderId),
+    [currentFolderId, mediaItems]
+  )
   const filteredItems = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase()
-    const visibleItems = normalizedQuery ? currentItems.filter((item) => item.name.toLowerCase().includes(normalizedQuery)) : currentItems
+    const visibleItems = normalizedQuery
+      ? currentItems.filter((item) =>
+          item.name.toLowerCase().includes(normalizedQuery)
+        )
+      : currentItems
     return visibleItems.sort((first, second) => {
       if (first.type !== second.type) return first.type === 'FOLDER' ? -1 : 1
       return first.name.localeCompare(second.name)
     })
   }, [currentItems, query])
-  const { mutate: preview, data } = useMutation(medias().preview.mutationOptions())
+  const { mutate: preview } = useMutation(medias().preview.mutationOptions())
+  const [item, setItem] = useState<MediaViewerItem | null>(null)
 
-  const onDoubleClick = (item: Media) => {
+  const onDoubleClick = (item: MediaItem) => {
     if (item.type === 'FOLDER') {
       setCurrentFolderId(item.id)
       setQuery('')
     }
     if (item.type === 'FILE') {
-      preview(item.id)
+      preview(item.id, {
+        onSuccess(data) {
+          setItem({
+            url: data.data.previewUrl,
+            kind: getMediaFileKind(item),
+            name: item.name,
+            mimeType: item.mimeType,
+          })
+        },
+      })
     }
   }
 
@@ -65,9 +102,13 @@ export function Media() {
     }
 
     toast.promise(mutateAsync({ items, parentId: currentFolderId }), {
-      loading: items.length === 1 ? 'Uploading file' : `Uploading ${items.length} files`,
+      loading:
+        items.length === 1
+          ? 'Uploading file'
+          : `Uploading ${items.length} files`,
       success: (data) => data.message,
-      error: (error) => error instanceof HttpError ? error.message : 'Internal server error',
+      error: (error) =>
+        error instanceof HttpError ? error.message : 'Internal server error',
     })
   }
 
@@ -272,7 +313,7 @@ export function Media() {
             </div>
           </Main>
         </MediaContextMenu>
-        <MediaViewer url={data?.data.previewUrl} />
+        <MediaViewer item={item} onClose={() => setItem(null)} />
         {/* <MediaDialogs /> */}
       </MediaProvider>
     </>

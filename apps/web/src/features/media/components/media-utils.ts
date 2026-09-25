@@ -9,7 +9,7 @@ import {
   Folder,
 } from 'lucide-react'
 
-type MediaFileKind =
+export type MediaFileKind =
   | 'archive'
   | 'document'
   | 'image'
@@ -17,7 +17,7 @@ type MediaFileKind =
   | 'spreadsheet'
   | 'video'
 
-const getMediaFileKind = (media: Media): MediaFileKind => {
+export const getMediaFileKind = (media: Media): MediaFileKind => {
   const extension = media.extension.toLowerCase()
   const mimeType = media.mimeType.toLowerCase()
 

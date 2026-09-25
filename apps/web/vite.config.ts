@@ -36,7 +36,6 @@ const PACKAGE_CHUNKS: Record<string, string> = {
   'react-dropzone': 'file-tools',
   'react-hook-form': 'forms',
   'react-map-gl': 'maps',
-  'react-top-loading-bar': 'ui-widgets',
   'read-excel-file': 'file-tools',
   'recharts': 'charts',
   'shadcn': 'build-tooling',

@@ -1,0 +1,44 @@
+@reference '../../styles/index.css';
+
+.yarl__root {
+  --yarl__thumbnails_thumbnail_padding: 0;
+  --yarl__thumbnails_thumbnail_border: transparent;
+  --yarl__color_backdrop: rgb(17 24 39 / 90%);
+  --yarl__slide_captions_container_background: rgb(17 24 39 / 48%);
+}
+
+.yarl__slide_title {
+  @apply text-xl leading-7 font-semibold;
+}
+
+.yarl__slide_description {
+  @apply text-sm leading-5 font-normal;
+}
+
+.yarl__button {
+  filter: none;
+}
+
+.yarl__thumbnails_thumbnail {
+  @apply opacity-50;
+}
+
+.yarl__thumbnails_thumbnail.yarl__thumbnails_thumbnail_active {
+  @apply opacity-100;
+}
+
+.yarl__thumbnails_vignette {
+  --yarl__thumbnails_vignette_size: 0;
+}
+
+.yarl__video_container {
+  @apply bg-black;
+}
+
+.lightbox-total {
+  @apply fixed left-0 pl-6 text-sm leading-5;
+}
+
+.lightbox-total-with-captions {
+  @apply static min-w-16 px-0 text-center;
+}
