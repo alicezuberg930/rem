@@ -3,6 +3,7 @@ import { ExternalLink } from 'lucide-react'
 import { buttonVariants } from '@/components/ui/button'
 import Lightbox, { type Slide } from '@/components/lightbox'
 import { Markdown } from '@/components/markdown'
+import { ModelViewer } from '@/components/model-viewer'
 import { VideoPlayer } from '@/components/video-player/video-player'
 import type { MediaFileKind } from './media-utils'
 
@@ -39,6 +40,14 @@ const getCustomSlide = (item: MediaViewerItem, text: string) => {
         return (
             <div className='w-[min(90vw,72rem)]'>
                 <VideoPlayer videoUrl={item.url} />
+            </div>
+        )
+    }
+
+    if (item.kind === 'model') {
+        return (
+            <div className='h-[80dvh] w-[min(90vw,72rem)]'>
+                <ModelViewer modelUrl={item.url} modelName={item.name} />
             </div>
         )
     }

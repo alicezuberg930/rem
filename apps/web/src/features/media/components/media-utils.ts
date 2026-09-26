@@ -3,6 +3,7 @@ import {
   type File,
   FileArchive,
   FileCode,
+  Box,
   FileImage,
   FileSpreadsheet,
   FileText,
@@ -19,6 +20,7 @@ export type MediaFileKind =
   | 'spreadsheet'
   | 'video'
   | 'markdown'
+  | 'model'
   | 'web'
 
 export const getMediaFileKind = (media: Media): MediaFileKind => {
@@ -27,6 +29,13 @@ export const getMediaFileKind = (media: Media): MediaFileKind => {
 
   if (mimeType.startsWith('image/')) return 'image'
   if (mimeType.startsWith('video/')) return 'video'
+  if (
+    mimeType === 'model/gltf-binary' ||
+    mimeType === 'model/gltf+json' ||
+    ['glb', 'gltf'].includes(extension)
+  ) {
+    return 'model'
+  }
   if (mimeType === 'application/pdf' || extension === 'pdf') return 'pdf'
   if (
     mimeType.includes('spreadsheet') ||
@@ -64,7 +73,8 @@ const fileTypeIcons: Record<MediaFileKind, typeof File> = {
   spreadsheet: FileSpreadsheet,
   video: FileVideo,
   markdown: Text,
-  web: FileCode
+  model: Box,
+  web: FileCode,
 }
 
 const fileTypeColors: Record<MediaFileKind, string> = {
@@ -75,7 +85,8 @@ const fileTypeColors: Record<MediaFileKind, string> = {
   spreadsheet: 'text-emerald-600',
   video: 'text-violet-600',
   markdown: 'text-black-400',
-  web: 'text-orange-500'
+  model: 'text-cyan-600',
+  web: 'text-orange-500',
 }
 
 export const getMediaItemIcon = (item: Media) => {
@@ -139,30 +150,34 @@ export const getDroppedFiles = async (dataTransfer: DataTransfer) => {
     }))
   }
 
-  const droppedFiles = await Promise.all(items
-    .filter((item) => item.kind === 'file')
-    .map(async (item) => {
-      const entry = item.webkitGetAsEntry()
-      if (!entry) {
-        const file = item.getAsFile()
-        return file
-          ? [
-            {
-              file,
-              relativePath: file.webkitRelativePath || file.name,
-            },
-          ]
-          : []
-      }
+  const droppedFiles = await Promise.all(
+    items
+      .filter((item) => item.kind === 'file')
+      .map(async (item) => {
+        const entry = item.webkitGetAsEntry()
+        if (!entry) {
+          const file = item.getAsFile()
+          return file
+            ? [
+                {
+                  file,
+                  relativePath: file.webkitRelativePath || file.name,
+                },
+              ]
+            : []
+        }
 
-      return readEntryFiles(entry)
-    })
+        return readEntryFiles(entry)
+      })
   )
 
   return droppedFiles.flat()
 }
 
-export const findFolderPath = (items: Media[], folderId: string | null): Media[] => {
+export const findFolderPath = (
+  items: Media[],
+  folderId: string | null
+): Media[] => {
   if (!folderId) return []
   const mediaById = new Map(items.map((item) => [item.id, item]))
   const visitedIds = new Set<string>()

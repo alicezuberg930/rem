@@ -13,6 +13,7 @@ import { Spinner } from '@/components/ui/spinner'
 
 type ModelViewerProps = {
   modelUrl: string | null
+  modelName?: string
 }
 
 const disposeMaterial = (material: Material) => {
@@ -27,7 +28,7 @@ const disposeObject = (root: Object3D) => {
     if (object instanceof Mesh) {
       object.geometry.dispose()
       if (Array.isArray(object.material)) {
-        object.material.forEach(m => disposeMaterial(m))
+        object.material.forEach((m) => disposeMaterial(m))
       } else {
         disposeMaterial(object.material)
       }
@@ -35,9 +36,7 @@ const disposeObject = (root: Object3D) => {
   })
 }
 
-export const ModelViewer = ({
-  modelUrl,
-}: ModelViewerProps) => {
+export const ModelViewer = ({ modelUrl, modelName }: ModelViewerProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [viewerError, setViewerError] = useState<string | null>(null)
@@ -49,7 +48,9 @@ export const ModelViewer = ({
     let cancelled = false
     let resizeObserver: ResizeObserver | null = null
     let renderer: import('three').WebGLRenderer | null = null
-    let controls: import('three/examples/jsm/controls/OrbitControls.js').OrbitControls | null = null
+    let controls:
+      | import('three/examples/jsm/controls/OrbitControls.js').OrbitControls
+      | null = null
     let scene: import('three').Scene | null = null
     let environment: import('three').Texture | null = null
     let model: import('three').Object3D | null = null
@@ -58,12 +59,13 @@ export const ModelViewer = ({
     setViewerError(null)
 
     const initialize = async () => {
-      const [THREE, { GLTFLoader }, { OrbitControls }, { RoomEnvironment }] = await Promise.all([
-        import('three'),
-        import('three/examples/jsm/loaders/GLTFLoader.js'),
-        import('three/examples/jsm/controls/OrbitControls.js'),
-        import('three/examples/jsm/environments/RoomEnvironment.js'),
-      ])
+      const [THREE, { GLTFLoader }, { OrbitControls }, { RoomEnvironment }] =
+        await Promise.all([
+          import('three'),
+          import('three/examples/jsm/loaders/GLTFLoader.js'),
+          import('three/examples/jsm/controls/OrbitControls.js'),
+          import('three/examples/jsm/environments/RoomEnvironment.js'),
+        ])
       if (cancelled) return
 
       scene = new THREE.Scene()
@@ -143,7 +145,7 @@ export const ModelViewer = ({
     void initialize().catch(() => {
       if (cancelled) return
       setIsLoading(false)
-      setViewerError('The generated GLB could not be rendered.')
+      setViewerError('The 3D model could not be rendered.')
     })
 
     return () => {
@@ -162,17 +164,15 @@ export const ModelViewer = ({
     if (!modelUrl) return
     const link = document.createElement('a')
     link.href = modelUrl
-    link.download = `${'model'}.glb`
+    link.download = modelName ?? 'model.glb'
     link.click()
   }
 
   return (
-    <Card className='min-h-130 min-w-0 shadow-lg shadow-primary/10 lg:min-h-0'>
+    <Card className='h-full min-h-0 min-w-0 shadow-lg shadow-primary/10'>
       <CardHeader className='border-b'>
         <CardTitle className='text-xl'>3D model</CardTitle>
-        <CardDescription>
-          {'Model preview'}
-        </CardDescription>
+        <CardDescription>{modelName ?? 'Model preview'}</CardDescription>
       </CardHeader>
       <CardContent className='relative min-h-0 flex-1 p-0'>
         {modelUrl && (
@@ -185,11 +185,11 @@ export const ModelViewer = ({
               type='button'
               size='sm'
               variant='secondary'
-              className='absolute right-4 top-4 shadow-sm'
+              className='absolute top-4 right-4 shadow-sm'
               onClick={downloadModel}
             >
               <Download />
-              Download GLB
+              Download model
             </Button>
             {isLoading && !viewerError && (
               <div className='absolute inset-0 grid place-items-center bg-background/80'>
@@ -200,8 +200,12 @@ export const ModelViewer = ({
               <div className='absolute inset-0 grid place-items-center bg-background/90 px-6 text-center'>
                 <div className='max-w-sm'>
                   <Box className='mx-auto size-12 text-destructive' />
-                  <p className='mt-4 font-medium text-destructive'>Unable to display model</p>
-                  <p className='mt-2 text-sm text-muted-foreground'>{viewerError}</p>
+                  <p className='mt-4 font-medium text-destructive'>
+                    Unable to display model
+                  </p>
+                  <p className='mt-2 text-sm text-muted-foreground'>
+                    {viewerError}
+                  </p>
                 </div>
               </div>
             )}
