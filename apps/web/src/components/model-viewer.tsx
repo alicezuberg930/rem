@@ -1,19 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
-import { Box, Download } from 'lucide-react'
+import { Box } from 'lucide-react'
 import { Mesh, Texture, type Material, type Object3D } from 'three'
-import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
 import { Spinner } from '@/components/ui/spinner'
 
 type ModelViewerProps = {
   modelUrl: string | null
-  modelName?: string
 }
 
 const disposeMaterial = (material: Material) => {
@@ -36,7 +27,7 @@ const disposeObject = (root: Object3D) => {
   })
 }
 
-export const ModelViewer = ({ modelUrl, modelName }: ModelViewerProps) => {
+export const ModelViewer = ({ modelUrl }: ModelViewerProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [viewerError, setViewerError] = useState<string | null>(null)
@@ -48,9 +39,7 @@ export const ModelViewer = ({ modelUrl, modelName }: ModelViewerProps) => {
     let cancelled = false
     let resizeObserver: ResizeObserver | null = null
     let renderer: import('three').WebGLRenderer | null = null
-    let controls:
-      | import('three/examples/jsm/controls/OrbitControls.js').OrbitControls
-      | null = null
+    let controls: | import('three/examples/jsm/controls/OrbitControls.js').OrbitControls | null = null
     let scene: import('three').Scene | null = null
     let environment: import('three').Texture | null = null
     let model: import('three').Object3D | null = null
@@ -93,8 +82,6 @@ export const ModelViewer = ({ modelUrl, modelName }: ModelViewerProps) => {
 
       controls = new OrbitControls(camera, renderer.domElement)
       controls.enableDamping = true
-      controls.autoRotate = true
-      controls.autoRotateSpeed = 1.5
 
       const resize = () => {
         if (!renderer) return
@@ -160,58 +147,34 @@ export const ModelViewer = ({ modelUrl, modelName }: ModelViewerProps) => {
     }
   }, [modelUrl])
 
-  const downloadModel = () => {
-    if (!modelUrl) return
-    const link = document.createElement('a')
-    link.href = modelUrl
-    link.download = modelName ?? 'model.glb'
-    link.click()
-  }
-
   return (
-    <Card className='h-full min-h-0 min-w-0 shadow-lg shadow-primary/10'>
-      <CardHeader className='border-b'>
-        <CardTitle className='text-xl'>3D model</CardTitle>
-        <CardDescription>{modelName ?? 'Model preview'}</CardDescription>
-      </CardHeader>
-      <CardContent className='relative min-h-0 flex-1 p-0'>
-        {modelUrl && (
-          <>
-            <div
-              ref={containerRef}
-              className='h-full min-h-110 w-full bg-muted/40 lg:min-h-0'
-            />
-            <Button
-              type='button'
-              size='sm'
-              variant='secondary'
-              className='absolute top-4 right-4 shadow-sm'
-              onClick={downloadModel}
-            >
-              <Download />
-              Download model
-            </Button>
-            {isLoading && !viewerError && (
-              <div className='absolute inset-0 grid place-items-center bg-background/80'>
-                <Spinner className='size-8' />
+    <div className='h-full min-h-0 min-w-0'>
+      {modelUrl && (
+        <>
+          <div
+            ref={containerRef}
+            className='h-full min-h-110 w-full bg-muted/40 lg:min-h-0'
+          />
+          {isLoading && !viewerError && (
+            <div className='absolute inset-0 grid place-items-center bg-background/80'>
+              <Spinner className='size-16' />
+            </div>
+          )}
+          {viewerError && (
+            <div className='absolute inset-0 grid place-items-center bg-background/90 px-6 text-center'>
+              <div className='max-w-sm'>
+                <Box className='mx-auto size-12 text-destructive' />
+                <p className='mt-4 font-medium text-destructive'>
+                  Unable to display model
+                </p>
+                <p className='mt-2 text-sm text-muted-foreground'>
+                  {viewerError}
+                </p>
               </div>
-            )}
-            {viewerError && (
-              <div className='absolute inset-0 grid place-items-center bg-background/90 px-6 text-center'>
-                <div className='max-w-sm'>
-                  <Box className='mx-auto size-12 text-destructive' />
-                  <p className='mt-4 font-medium text-destructive'>
-                    Unable to display model
-                  </p>
-                  <p className='mt-2 text-sm text-muted-foreground'>
-                    {viewerError}
-                  </p>
-                </div>
-              </div>
-            )}
-          </>
-        )}
-      </CardContent>
-    </Card>
+            </div>
+          )}
+        </>
+      )}
+    </div>
   )
 }

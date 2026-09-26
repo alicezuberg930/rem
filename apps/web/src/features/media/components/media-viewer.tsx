@@ -47,7 +47,7 @@ const getCustomSlide = (item: MediaViewerItem, text: string) => {
     if (item.kind === 'model') {
         return (
             <div className='h-[80dvh] w-[min(90vw,72rem)]'>
-                <ModelViewer modelUrl={item.url} modelName={item.name} />
+                <ModelViewer modelUrl={item.url} />
             </div>
         )
     }

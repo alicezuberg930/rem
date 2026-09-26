@@ -179,7 +179,7 @@ export const VideoPlayer = ({ videoUrl }: VideoPlayerProps) => {
         <div ref={videoContainer} className='relative h-fit aspect-video w-full'>
             <video
                 ref={videoPlayer}
-                className='w-full h-full rounded-xl'
+                className='w-full h-full'
                 onClick={toggleVideo}
                 tabIndex={0}
                 onKeyDown={handleVideoKeyDown}
