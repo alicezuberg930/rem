@@ -24,6 +24,7 @@ import 'yet-another-react-lightbox/styles.css'
 import { cn } from '@/lib/utils'
 import type { LightBoxProps } from './types'
 
+// Renders the shared lightbox chrome and optionally replaces its slide content.
 export default function Lightbox({
   slides,
   disabledZoom,
@@ -34,6 +35,8 @@ export default function Lightbox({
   disabledThumbnails,
   disabledFullscreen,
   onGetCurrentIndex,
+  customSlide,
+  render,
   ...other
 }: LightBoxProps) {
   const totalItems = slides ? slides.length : 0
@@ -71,21 +74,24 @@ export default function Lightbox({
         ],
       }}
       render={{
-        iconClose: () => <X className='size-6' />,
-        iconZoomIn: () => <ZoomIn className='size-6' />,
-        iconZoomOut: () => <ZoomOut className='size-6' />,
-        iconSlideshowPlay: () => <Play className='size-6' />,
-        iconSlideshowPause: () => <Pause className='size-6' />,
-        iconPrev: () => <ChevronLeft className='size-8' />,
-        iconNext: () => <ChevronRight className='size-8' />,
-        iconExitFullscreen: () => <Minimize className='size-6' />,
-        iconEnterFullscreen: () => <Maximize className='size-6' />,
+        ...render,
+        slide: customSlide === undefined ? render?.slide : () => customSlide,
+        iconClose: render?.iconClose ?? (() => <X className='size-6' />),
+        iconZoomIn: render?.iconZoomIn ?? (() => <ZoomIn className='size-6' />),
+        iconZoomOut: render?.iconZoomOut ?? (() => <ZoomOut className='size-6' />),
+        iconSlideshowPlay: render?.iconSlideshowPlay ?? (() => <Play className='size-6' />),
+        iconSlideshowPause: render?.iconSlideshowPause ?? (() => <Pause className='size-6' />),
+        iconPrev: render?.iconPrev ?? (() => <ChevronLeft className='size-8' />),
+        iconNext: render?.iconNext ?? (() => <ChevronRight className='size-8' />),
+        iconExitFullscreen: render?.iconExitFullscreen ?? (() => <Minimize className='size-6' />),
+        iconEnterFullscreen: render?.iconEnterFullscreen ?? (() => <Maximize className='size-6' />),
       }}
       {...other}
     />
   )
 }
 
+// Removes plugins that the caller explicitly disabled.
 function getPlugins({
   disabledZoom,
   disabledVideo,
@@ -124,11 +130,13 @@ type DisplayTotalProps = {
   disabledCaptions?: boolean
 }
 
+// Displays the current one-based slide position in the toolbar.
 export function DisplayTotal({
   totalItems,
   disabledTotal,
   disabledCaptions,
 }: DisplayTotalProps) {
+  // Reads the active slide index from the lightbox context.
   const { currentIndex } = useLightboxState()
 
   if (disabledTotal) {
