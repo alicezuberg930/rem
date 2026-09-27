@@ -9,11 +9,14 @@ import {
   X,
   ZoomIn,
   ZoomOut,
+  Download as DownloadIcon,
+  Printer
 } from 'lucide-react'
-import ReactLightbox from 'yet-another-react-lightbox'
+import ReactLightbox, { IconButton } from 'yet-another-react-lightbox'
 import { useLightboxState } from 'yet-another-react-lightbox/core'
 import Captions from 'yet-another-react-lightbox/plugins/captions'
 import 'yet-another-react-lightbox/plugins/captions.css'
+import Download from 'yet-another-react-lightbox/plugins/download'
 import Fullscreen from 'yet-another-react-lightbox/plugins/fullscreen'
 import Slideshow from 'yet-another-react-lightbox/plugins/slideshow'
 import Thumbnails from 'yet-another-react-lightbox/plugins/thumbnails'
@@ -30,7 +33,9 @@ export default function Lightbox({
   disabledZoom,
   disabledVideo,
   disabledTotal,
+  disabledPrint,
   disabledCaptions,
+  disabledDownload,
   disabledSlideshow,
   disabledThumbnails,
   disabledFullscreen,
@@ -51,6 +56,7 @@ export default function Lightbox({
         disabledZoom,
         disabledVideo,
         disabledCaptions,
+        disabledDownload,
         disabledSlideshow,
         disabledThumbnails,
         disabledFullscreen,
@@ -70,6 +76,8 @@ export default function Lightbox({
             disabledTotal={disabledTotal}
             disabledCaptions={disabledCaptions}
           />,
+          ...(disabledPrint ? [] : [<PrintButton key='print' />]),
+          'download',
           'close',
         ],
       }}
@@ -79,6 +87,7 @@ export default function Lightbox({
         iconClose: render?.iconClose ?? (() => <X className='size-6' />),
         iconZoomIn: render?.iconZoomIn ?? (() => <ZoomIn className='size-6' />),
         iconZoomOut: render?.iconZoomOut ?? (() => <ZoomOut className='size-6' />),
+        iconDownload: render?.iconDownload ?? (() => <DownloadIcon className='size-6' />),
         iconSlideshowPlay: render?.iconSlideshowPlay ?? (() => <Play className='size-6' />),
         iconSlideshowPause: render?.iconSlideshowPause ?? (() => <Pause className='size-6' />),
         iconPrev: render?.iconPrev ?? (() => <ChevronLeft className='size-8' />),
@@ -96,17 +105,21 @@ function getPlugins({
   disabledZoom,
   disabledVideo,
   disabledCaptions,
+  disabledDownload,
   disabledSlideshow,
   disabledThumbnails,
   disabledFullscreen,
 }: LightBoxProps) {
-  let plugins = [Captions, Fullscreen, Slideshow, Thumbnails, Video, Zoom]
+  let plugins = [Captions, Fullscreen, Slideshow, Thumbnails, Video, Zoom, Download]
 
   if (disabledThumbnails) {
     plugins = plugins.filter((plugin) => plugin !== Thumbnails)
   }
   if (disabledCaptions) {
     plugins = plugins.filter((plugin) => plugin !== Captions)
+  }
+  if (disabledDownload) {
+    plugins = plugins.filter((plugin) => plugin !== Download)
   }
   if (disabledFullscreen) {
     plugins = plugins.filter((plugin) => plugin !== Fullscreen)
@@ -152,5 +165,21 @@ export function DisplayTotal({
     >
       <strong>{currentIndex + 1}</strong> / {totalItems}
     </span>
+  )
+}
+
+
+// Opens the browser print dialog for the currently rendered slide.
+function PrintButton() {
+  // Prints the visible lightbox while print styles hide its controls.
+  const handlePrint = () => window.print()
+
+  return (
+    <IconButton
+      label='Lightbox'
+      icon={Printer}
+      renderIcon={() => <Printer className='size-6' />}
+      onClick={handlePrint}
+    />
   )
 }

@@ -123,6 +123,7 @@ export function MediaViewer({ item, onClose }: MediaViewerProps) {
     if (!item) return null
     return (
         <Lightbox
+            disabledTotal
             open
             close={onClose}
             slides={getLightboxSlides(item)}
