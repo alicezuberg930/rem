@@ -42,20 +42,3 @@
 .lightbox-total-with-captions {
   @apply static min-w-16 content-center px-0 text-center;
 }
-
-@media print {
-  .yarl__root {
-    --yarl__color_backdrop: white;
-  }
-
-  .yarl__toolbar,
-  .yarl__navigation_prev,
-  .yarl__navigation_next,
-  .yarl__thumbnails_container {
-    display: none !important;
-  }
-
-  .yarl__container {
-    background: white !important;
-  }
-}
