@@ -6,6 +6,7 @@ import { Markdown } from '@/components/markdown'
 import { ModelViewer } from '@/components/model-viewer'
 import { VideoPlayer } from '@/components/video-player/video-player'
 import type { MediaFileKind } from './media-utils'
+import { AudioViewer } from '@/components/audio-viewer'
 
 export type MediaViewerItem = {
     url: string
@@ -33,7 +34,7 @@ const getLightboxSlides = (item: MediaViewerItem | null): Slide[] => {
 }
 
 // Builds custom lightbox content for every non-image media type.
-const getCustomSlide = (item: MediaViewerItem, text: string) => {
+const getCustomSlide = (item: MediaViewerItem) => {
     if (item.kind === 'image') return undefined
 
     if (item.kind === 'video') {
@@ -62,11 +63,39 @@ const getCustomSlide = (item: MediaViewerItem, text: string) => {
         )
     }
 
+    const markdownUrl = item?.kind === 'markdown' ? item.url : undefined
+    // Stores fetched markdown together with the URL that produced it.
+    const [markdown, setMarkdown] = useState('')
+
+    // Fetches markdown content and ignores stale responses when the item changes.
+    useEffect(() => {
+        const controller = new AbortController()
+
+        if (markdownUrl) {
+            fetch(markdownUrl, { signal: controller.signal })
+                .then((response) => response.text())
+                .then((content) => setMarkdown(content))
+                .catch((error: unknown) => {
+                    if (error instanceof DOMException && error.name === 'AbortError') return
+                    setMarkdown('Unable to load this file.')
+                })
+        }
+
+        return () => controller.abort()
+    }, [markdownUrl])
+
     if (item.kind === 'markdown') {
         return (
             <article className='max-h-[80dvh] w-[min(90vw,72rem)] overflow-auto rounded-md bg-background p-6 text-foreground'>
-                <Markdown string={text} />
+                <Markdown string={markdown} />
             </article>
+        )
+    }
+    if (item.kind === 'audio') {
+        return (
+            <div className='w-[min(90vw,72rem)]'>
+                <AudioViewer audioUrl={item.url} />
+            </div>
         )
     }
 
@@ -91,40 +120,13 @@ const getCustomSlide = (item: MediaViewerItem, text: string) => {
 
 // Opens the selected media item in the shared lightbox.
 export function MediaViewer({ item, onClose }: MediaViewerProps) {
-    const markdownUrl = item?.kind === 'markdown' ? item.url : undefined
-    // Stores fetched markdown together with the URL that produced it.
-    const [markdown, setMarkdown] = useState({ url: '', content: '' })
-
-    // Fetches markdown content and ignores stale responses when the item changes.
-    useEffect(() => {
-        const controller = new AbortController()
-
-        if (markdownUrl) {
-            fetch(markdownUrl, { signal: controller.signal })
-                .then((response) => response.text())
-                .then((content) => setMarkdown({ url: markdownUrl, content }))
-                .catch((error: unknown) => {
-                    if (error instanceof DOMException && error.name === 'AbortError') return
-                    setMarkdown({
-                        url: markdownUrl,
-                        content: 'Unable to load this file.',
-                    })
-                })
-        }
-
-        return () => controller.abort()
-    }, [markdownUrl])
-
     if (!item) return null
-
-    const markdownContent = markdown.url === item.url ? markdown.content : ''
-
     return (
         <Lightbox
             open
             close={onClose}
             slides={getLightboxSlides(item)}
-            customSlide={getCustomSlide(item, markdownContent)}
+            customSlide={getCustomSlide(item)}
             disabledSlideshow
             disabledThumbnails
             disabledZoom={item.kind !== 'image'}

@@ -1,10 +1,4 @@
-import {
-  useMemo,
-  useRef,
-  useState,
-  type ChangeEvent,
-  type DragEvent,
-} from 'react'
+import { useMemo, useRef, useState, type ChangeEvent, type DragEvent } from 'react'
 import { useInfiniteQuery, useMutation } from '@tanstack/react-query'
 import type { Media as MediaItem, MediaUploadItem } from '@/@types/media'
 import { ClockInButton } from '@/layout/clock-in-button'
@@ -26,11 +20,7 @@ import { MediaContextMenu } from './components/media-context-menu'
 import { MediaGrid } from './components/media-grid'
 import { MediaProvider } from './components/media-provider'
 import { MediaTable } from './components/media-table'
-import {
-  findFolderPath,
-  getDroppedFiles,
-  getMediaFileKind,
-} from './components/media-utils'
+import { findFolderPath, getDroppedFiles, getMediaFileKind } from './components/media-utils'
 import { MediaViewer, type MediaViewerItem } from './components/media-viewer'
 
 type ViewMode = 'grid' | 'list'
@@ -65,8 +55,8 @@ export function Media() {
     const normalizedQuery = query.trim().toLowerCase()
     const visibleItems = normalizedQuery
       ? currentItems.filter((item) =>
-          item.name.toLowerCase().includes(normalizedQuery)
-        )
+        item.name.toLowerCase().includes(normalizedQuery)
+      )
       : currentItems
     return visibleItems.sort((first, second) => {
       if (first.type !== second.type) return first.type === 'FOLDER' ? -1 : 1
@@ -85,10 +75,9 @@ export function Media() {
       preview(item.id, {
         onSuccess(data) {
           setItem({
+            ...item,
             url: data.data.previewUrl,
             kind: getMediaFileKind(item),
-            name: item.name,
-            mimeType: item.mimeType,
           })
         },
       })

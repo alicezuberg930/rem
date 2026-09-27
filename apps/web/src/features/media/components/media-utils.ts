@@ -10,6 +10,7 @@ import {
   FileVideo,
   Folder,
   Text,
+  Speaker,
 } from 'lucide-react'
 
 export type MediaFileKind =
@@ -22,6 +23,7 @@ export type MediaFileKind =
   | 'markdown'
   | 'model'
   | 'web'
+  | 'audio'
 
 export const getMediaFileKind = (media: Media): MediaFileKind => {
   const extension = media.extension.toLowerCase()
@@ -29,35 +31,22 @@ export const getMediaFileKind = (media: Media): MediaFileKind => {
 
   if (mimeType.startsWith('image/')) return 'image'
   if (mimeType.startsWith('video/')) return 'video'
-  if (
-    mimeType === 'model/gltf-binary' ||
-    mimeType === 'model/gltf+json' ||
-    ['glb', 'gltf'].includes(extension)
-  ) {
+  if (mimeType.startsWith('audio/')) return 'audio'
+  if (mimeType === 'model/gltf-binary' || mimeType === 'model/gltf+json' || ['glb', 'gltf'].includes(extension)) {
     return 'model'
   }
   if (mimeType === 'application/pdf' || extension === 'pdf') return 'pdf'
-  if (
-    mimeType.includes('spreadsheet') ||
-    mimeType.includes('excel') ||
-    mimeType === 'text/csv' ||
-    ['csv', 'xls', 'xlsx'].includes(extension)
-  ) {
+  if (mimeType.includes('spreadsheet') || mimeType.includes('excel') || mimeType === 'text/csv' || ['csv', 'xls', 'xlsx'].includes(extension)) {
     return 'spreadsheet'
   }
-  if (
-    mimeType.includes('zip') ||
-    mimeType.includes('compressed') ||
-    ['7z', 'rar', 'tar', 'zip'].includes(extension)
-  ) {
+  if (mimeType.includes('zip') || mimeType.includes('compressed') || ['7z', 'rar', 'tar', 'zip'].includes(extension)) {
     return 'archive'
   }
-  if (
-    // mimeType.includes('excel') ||
-    // mimeType === 'text/csv' ||
-    ['ts', 'js', 'tsx', 'jsx', 'css', 'md', 'json', 'yaml', 'yml', 'java', 'lock', 'env', 'txt', 'sql', 'Dockerfile', 'xml'].includes(extension)
-  ) {
+  if (['ts', 'js', 'tsx', 'jsx', 'css', 'md', 'json', 'yaml', 'yml', 'java', 'lock', 'env', 'txt', 'sql', 'Dockerfile', 'xml'].includes(extension)) {
     return 'markdown'
+  }
+  if (mimeType.includes('spreadsheet') || mimeType.includes('excel') || mimeType === 'text/csv' || ['csv', 'xls', 'xlsx'].includes(extension)) {
+    return 'spreadsheet'
   }
   if (['html'].includes(extension)) {
     return 'web'
@@ -75,6 +64,7 @@ const fileTypeIcons: Record<MediaFileKind, typeof File> = {
   markdown: Text,
   model: Box,
   web: FileCode,
+  audio: Speaker
 }
 
 const fileTypeColors: Record<MediaFileKind, string> = {
@@ -87,6 +77,7 @@ const fileTypeColors: Record<MediaFileKind, string> = {
   markdown: 'text-black-400',
   model: 'text-cyan-600',
   web: 'text-orange-500',
+  audio: 'text-blue-300'
 }
 
 export const getMediaItemIcon = (item: Media) => {
@@ -159,11 +150,11 @@ export const getDroppedFiles = async (dataTransfer: DataTransfer) => {
           const file = item.getAsFile()
           return file
             ? [
-                {
-                  file,
-                  relativePath: file.webkitRelativePath || file.name,
-                },
-              ]
+              {
+                file,
+                relativePath: file.webkitRelativePath || file.name,
+              },
+            ]
             : []
         }
 

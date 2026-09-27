@@ -5,10 +5,10 @@ import WaveSurfer from 'wavesurfer.js'
 import { cn, formatDuration } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
+import { Badge } from './ui/badge'
 
 export type AudioViewerProps = {
   audioUrl: string
-  title?: string
   className?: string
   autoPlay?: boolean
 }
@@ -40,7 +40,6 @@ const resolveThemeColor = (
 // Renders an interactive waveform player for a remote audio file.
 export function AudioViewer({
   audioUrl,
-  title,
   className,
   autoPlay = false,
 }: AudioViewerProps) {
@@ -63,12 +62,12 @@ export function AudioViewer({
 
     const waveColor = resolveThemeColor(
       container,
-      '--muted-foreground',
+      '--destructive',
       'oklch(0.554 0.046 257.417)'
     )
     const progressColor = resolveThemeColor(
       container,
-      '--primary',
+      '--muted-foreground',
       'oklch(0.208 0.042 265.755)'
     )
     const waveSurfer = WaveSurfer.create({
@@ -79,7 +78,7 @@ export function AudioViewer({
       progressColor,
       cursorColor: progressColor,
       cursorWidth: 2,
-      height: 72,
+      height: 100,
       barWidth: 2,
       barGap: 2,
       barRadius: 2,
@@ -170,7 +169,7 @@ export function AudioViewer({
 
       const progressColor = resolveThemeColor(
         container,
-        '--primary',
+        '--destructive',
         'oklch(0.208 0.042 265.755)'
       )
       waveSurfer.setOptions({
@@ -208,12 +207,10 @@ export function AudioViewer({
   return (
     <div
       className={cn(
-        'w-full rounded-md border bg-card p-4 text-card-foreground',
+        'w-full bg-card p-4 text-card-foreground',
         className
       )}
     >
-      {title && <p className='mb-3 truncate text-sm font-medium'>{title}</p>}
-
       <div className='flex min-w-0 items-center gap-3'>
         <Button
           type='button'
@@ -232,15 +229,15 @@ export function AudioViewer({
           )}
         </Button>
 
-        <div className='min-w-0 flex-1'>
+        <div className='min-w-0 flex-1 relative'>
           <div
             ref={waveformRef}
-            className='min-h-18 w-full overflow-hidden'
+            className='min-h-25 w-full overflow-hidden'
             aria-label='Audio waveform'
           />
-          <div className='mt-1 flex justify-between text-xs text-muted-foreground tabular-nums'>
-            <span>{formatDuration(Math.floor(activeState.currentTime))}</span>
-            <span>{formatDuration(Math.floor(activeState.duration))}</span>
+          <div className='flex justify-between w-full absolute top-1/2 -translate-y-1/2 z-999'>
+            <Badge className='text-[10px] text-muted-foreground p-1'>{formatDuration(Math.floor(activeState.currentTime))}</Badge>
+            <Badge className='text-[10px] text-muted-foreground p-1'>{formatDuration(Math.floor(activeState.duration))}</Badge>
           </div>
         </div>
       </div>

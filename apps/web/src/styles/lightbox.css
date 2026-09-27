@@ -40,5 +40,5 @@
 }
 
 .lightbox-total-with-captions {
-  @apply static min-w-16 px-0 text-center;
+  @apply static min-w-16 px-0 text-center content-center;
 }
