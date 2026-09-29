@@ -36,7 +36,7 @@ const getLightboxSlides = (item: MediaViewerItem | null): Slide[] => {
 }
 
 // Renders custom lightbox content for every non-image media type.
-const CustomSlide = ({ item }: { item: MediaViewerItem }) => {
+const CustomSlide = (item: MediaViewerItem) => {
     const markdownUrl = item.kind === 'code' || item.kind === 'text' ? item.url : undefined
     // Stores fetched markdown together with the URL that produced it.
     const [markdown, setMarkdown] = useState('')
@@ -141,23 +141,20 @@ const CustomSlide = ({ item }: { item: MediaViewerItem }) => {
     )
 }
 
-const getCustomSlide = (item: MediaViewerItem) => {
-    if (item.kind === 'image') return undefined
-    return <CustomSlide item={item} />
-}
-
 // Opens the selected media item in the shared lightbox.
 export function MediaViewer({ item, onClose }: MediaViewerProps) {
     if (!item) return null
+    const disabledPrint = item.kind === 'video' || item.kind === 'archive' || item.kind === 'audio' || item.kind === 'model'
     return (
         <Lightbox
             disabledTotal
             open
             close={onClose}
             slides={getLightboxSlides(item)}
-            customSlide={getCustomSlide(item)}
+            customSlide={CustomSlide(item)}
             disabledSlideshow
             disabledThumbnails
+            disabledPrint={disabledPrint}
             disabledZoom={item.kind !== 'image'}
         />
     )

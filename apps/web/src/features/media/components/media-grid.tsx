@@ -1,6 +1,6 @@
 import { Media } from "@/@types"
 import { useInView } from "@/hooks/use-in-view"
-import { useEffect, useRef } from "react"
+import { useEffect, useMemo, useRef } from "react"
 import { getMediaItemColorClassName, getMediaItemIcon } from "../../../lib/media"
 import { cn } from "@/lib/utils"
 import { MediaRowActions } from "./media-row-actions"
@@ -30,6 +30,8 @@ export const MediaGrid = ({
         margin: '10px',
         once: false,
     })
+    const folders = useMemo(() => data.filter(d => d.type === 'FOLDER'), [data])
+    const files = useMemo(() => data.filter(d => d.type === 'FILE'), [data])
 
     useEffect(() => {
         if (isLoadMoreInView && hasNextPage && !isFetchingNextPage && !isLoadMoreError) {
@@ -39,37 +41,17 @@ export const MediaGrid = ({
 
     return (
         <div className='flex flex-col gap-3'>
-            {data.length ? (
-                <div className='grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
-                    {data.map((item) => {
-                        const Icon = getMediaItemIcon(item)
-
-                        return (
-                            <button
-                                key={item.id}
-                                type='button'
-                                onDoubleClick={() => onDoubleClick(item)}
-                                className='aspect-square rounded-md border p-2 text-left shadow-xs transition-colors hover:bg-muted/40 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none'
-                            >
-                                <div className='mb-2 flex items-center justify-start gap-3'>
-                                    <div
-                                        className={cn(
-                                            'flex size-6 shrink-0 items-center justify-center rounded-md',
-                                            getMediaItemColorClassName(item)
-                                        )}
-                                    >
-                                        <Icon className='size-6' />
-                                    </div>
-                                    <p className='flex-auto truncate'>{item.name}</p>
-                                    {/* options icon */}
-                                    <MediaRowActions item={item} />
-                                </div>
-                                <div className='h-full w-full rounded-md bg-foreground/10'></div>
-                            </button>
-                        )
-                    })}
+            {folders.length && (
+                <div className='w-full grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
+                    {folders.map((item) => <MediaItem item={item} onDoubleClick={onDoubleClick} />)}
                 </div>
-            ) : (
+            )}
+            {files.length && (
+                <div className='w-full grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
+                    {files.map((item) => <MediaItem item={item} onDoubleClick={onDoubleClick} />)}
+                </div>
+            )}
+            {!folders.length && !files.length && (
                 <div className='flex min-h-64 flex-col items-center justify-center rounded-md border border-dashed p-6 text-center'>
                     <Archive className='mb-3 size-10 text-muted-foreground' />
                     <p className='font-medium'>No items found</p>
@@ -98,5 +80,35 @@ export const MediaGrid = ({
                 )}
             </div>
         </div>
+    )
+}
+
+const MediaItem = ({ item, onDoubleClick }: { item: Media, onDoubleClick: (item: Media) => void }) => {
+    const Icon = getMediaItemIcon(item)
+    return (
+        <button
+            key={item.id}
+            type='button'
+            onDoubleClick={() => onDoubleClick(item)}
+            className={cn(
+                'rounded-md border p-2 text-left shadow-xs transition-colors hover:bg-muted/40 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none',
+                item.type === 'FILE' ? 'aspect-square' : 'h-fit'
+            )}
+        >
+            <div className='flex items-center justify-start gap-3'>
+                <div
+                    className={cn(
+                        'flex size-6 shrink-0 items-center justify-center rounded-md',
+                        getMediaItemColorClassName(item)
+                    )}
+                >
+                    <Icon className='size-6' />
+                </div>
+                <p className='flex-auto truncate'>{item.name}</p>
+                {/* options icon */}
+                <MediaRowActions item={item} />
+            </div>
+            {item.type === 'FILE' && <div className='mt-2 h-full w-full rounded-md bg-foreground/10'></div>}
+        </button>
     )
 }

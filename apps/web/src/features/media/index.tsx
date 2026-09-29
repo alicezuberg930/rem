@@ -32,12 +32,8 @@ export function Media() {
   const [isDraggingFile, setIsDraggingFile] = useState<boolean>(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const dragDepthRef = useRef<number>(0)
-  const mediaQuery = useInfiniteQuery(
-    medias().all.infiniteQueryOptions({ pageSize: 24 })
-  )
-  const { mutateAsync, isPending: isUploading } = useMutation(
-    medias().upload.mutationOptions()
-  )
+  const mediaQuery = useInfiniteQuery(medias().all.infiniteQueryOptions({ pageSize: 24 }))
+  const { mutateAsync, isPending: isUploading } = useMutation(medias().upload.mutationOptions())
   const mediaPages = mediaQuery.data?.pages
   const mediaItems = useMemo(
     () => mediaPages?.flatMap((page) => page.content) ?? [],
@@ -54,9 +50,7 @@ export function Media() {
   const filteredItems = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase()
     const visibleItems = normalizedQuery
-      ? currentItems.filter((item) =>
-        item.name.toLowerCase().includes(normalizedQuery)
-      )
+      ? currentItems.filter((item) => item.name.toLowerCase().includes(normalizedQuery))
       : currentItems
     return visibleItems.sort((first, second) => {
       if (first.type !== second.type) return first.type === 'FOLDER' ? -1 : 1
@@ -91,13 +85,9 @@ export function Media() {
     }
 
     toast.promise(mutateAsync({ items, parentId: currentFolderId }), {
-      loading:
-        items.length === 1
-          ? 'Uploading file'
-          : `Uploading ${items.length} files`,
+      loading: items.length === 1 ? 'Uploading file' : `Uploading ${items.length} files`,
       success: (data) => data.message,
-      error: (error) =>
-        error instanceof HttpError ? error.message : 'Internal server error',
+      error: (error) => error instanceof HttpError ? error.message : 'Internal server error',
     })
   }
 

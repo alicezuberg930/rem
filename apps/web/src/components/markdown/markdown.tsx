@@ -13,8 +13,6 @@ import './styles.css'
 //
 import type { MarkdownProps } from './types'
 
-// ----------------------------------------------------------------------
-
 export default function Markdown({ className, ...other }: MarkdownProps) {
   return (
     <div className={cn('markdown', className)}>
@@ -30,8 +28,6 @@ export default function Markdown({ className, ...other }: MarkdownProps) {
     </div>
   )
 }
-
-// ----------------------------------------------------------------------
 
 const components = {
   h1: ({ ...props }) => <Typography variant='h1' {...props} />,
