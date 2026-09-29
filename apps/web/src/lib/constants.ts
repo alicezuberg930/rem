@@ -13,4 +13,6 @@ const businessEvent = 'business-id-event'
 
 const businessHeaderKey = 'X-Business-Id'
 
-export { vapidKey, pushNotificationKey, notificationOptions, businessIdStorageKey, businessEvent, businessHeaderKey }
+const microsoftOfficeViewerUrl = 'https://view.officeapps.live.com/op/embed.aspx'
+
+export { vapidKey, pushNotificationKey, notificationOptions, businessIdStorageKey, businessEvent, businessHeaderKey, microsoftOfficeViewerUrl }

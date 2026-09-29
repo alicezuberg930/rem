@@ -1,0 +1,73 @@
+@reference '../../styles/index.css';
+
+.markdown ul,
+.markdown ol {
+  @apply pl-10 text-base;
+}
+
+.markdown ul {
+  @apply list-disc;
+}
+
+.markdown ol {
+  @apply list-decimal;
+}
+
+.markdown :is(ul, ol) li {
+  @apply leading-8;
+}
+
+.markdown blockquote {
+  @apply relative mx-auto my-10 rounded-[8px] bg-muted p-6 pl-16 font-serif text-[1.5em] leading-6 text-muted-foreground md:w-4/5;
+}
+
+.markdown blockquote :is(p, span) {
+  @apply mb-0 font-serif text-[inherit] text-muted-foreground;
+}
+
+.markdown blockquote::before {
+  content: '\201c';
+  @apply absolute -top-2 left-4 block text-[3em] text-muted-foreground/50;
+}
+
+.markdown pre,
+.markdown pre > code {
+  @apply overflow-x-auto rounded-md bg-zinc-900 p-4 text-base whitespace-pre text-white dark:bg-muted/40;
+}
+
+.markdown code {
+  @apply rounded-[4px] bg-amber-100 px-1 py-[0.1rem] text-sm whitespace-pre text-amber-900 dark:bg-amber-950 dark:text-amber-200;
+}
+
+.markdown code.hljs {
+  @apply bg-transparent p-0;
+}
+
+.markdown table {
+  @apply w-full border-collapse border border-border;
+}
+
+.markdown :is(th, td) {
+  @apply border border-border p-2;
+}
+
+.markdown tbody tr:nth-of-type(odd) {
+  @apply bg-muted;
+}
+
+.markdown input[type='checkbox'] {
+  @apply relative size-[17px] cursor-pointer appearance-none rounded-[3px] bg-muted align-middle;
+}
+
+.markdown input[type='checkbox']:checked {
+  @apply bg-primary;
+}
+
+.markdown input[type='checkbox']::after {
+  content: '';
+  @apply absolute top-px left-[6px] hidden h-[9px] w-1 rotate-45 border-r-2 border-b-2 border-white;
+}
+
+.markdown input[type='checkbox']:checked::after {
+  @apply block;
+}

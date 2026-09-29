@@ -145,6 +145,13 @@ JWT token issued          X-Business-Id header        Cached per business
 - Twilio, Vonage SDKs (SMS delivery)
 - SendGrid, Mailgun, Resend SDKs (Email delivery)
 
+## Public MinIO presigned URLs
+
+MinIO can be exposed through a Cloudflare Tunnel so browser upload, download,
+and preview URLs work outside the local network. See
+[Cloudflare Tunnel for MinIO](docs/minio-cloudflare-tunnel.md) for the required
+hostname, environment variables, and startup commands.
+
 ## To deploy on render
 
 ```docker build -t tien1411/rem-server:latest -f Dockerfile .```

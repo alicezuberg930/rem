@@ -2,7 +2,6 @@ import type { Media, MediaUploadItem } from '@/@types/media'
 import {
   type File,
   FileArchive,
-  FileCode,
   Box,
   FileImage,
   FileSpreadsheet,
@@ -11,6 +10,8 @@ import {
   Folder,
   Text,
   Speaker,
+  Sliders,
+  Code,
 } from 'lucide-react'
 
 export type MediaFileKind =
@@ -18,12 +19,14 @@ export type MediaFileKind =
   | 'document'
   | 'image'
   | 'pdf'
+  | 'csv'
   | 'spreadsheet'
   | 'video'
-  | 'markdown'
+  | 'code'
   | 'model'
-  | 'web'
   | 'audio'
+  | 'slideshow'
+  | 'text'
 
 export const getMediaFileKind = (media: Media): MediaFileKind => {
   const extension = media.extension.toLowerCase()
@@ -36,20 +39,21 @@ export const getMediaFileKind = (media: Media): MediaFileKind => {
     return 'model'
   }
   if (mimeType === 'application/pdf' || extension === 'pdf') return 'pdf'
-  if (mimeType.includes('spreadsheet') || mimeType.includes('excel') || mimeType === 'text/csv' || ['csv', 'xls', 'xlsx'].includes(extension)) {
+  if (mimeType === 'text/csv' || extension === 'csv') return 'csv'
+  if (mimeType.includes('spreadsheet') || mimeType.includes('excel') || ['xls', 'xlsx'].includes(extension)) {
     return 'spreadsheet'
   }
   if (mimeType.includes('zip') || mimeType.includes('compressed') || ['7z', 'rar', 'tar', 'zip'].includes(extension)) {
     return 'archive'
   }
-  if (['ts', 'js', 'tsx', 'jsx', 'css', 'md', 'json', 'yaml', 'yml', 'java', 'lock', 'env', 'txt', 'sql', 'Dockerfile', 'xml'].includes(extension)) {
-    return 'markdown'
+  if (['ts', 'html', 'js', 'tsx', 'jsx', 'css', 'md', 'json', 'yaml', 'yml', 'java', 'lock', 'env', 'sql', 'Dockerfile', 'xml', 'py'].includes(extension)) {
+    return 'code'
   }
-  if (mimeType.includes('spreadsheet') || mimeType.includes('excel') || mimeType === 'text/csv' || ['csv', 'xls', 'xlsx'].includes(extension)) {
-    return 'spreadsheet'
+  if (['txt'].includes(extension)) {
+    return 'text'
   }
-  if (['html'].includes(extension)) {
-    return 'web'
+  if (['pptx', 'ppsx', 'potx', 'pptm', 'potm', 'ppt', 'pps', 'pot'].includes(extension)) {
+    return 'slideshow'
   }
   return 'document'
 }
@@ -57,27 +61,31 @@ export const getMediaFileKind = (media: Media): MediaFileKind => {
 const fileTypeIcons: Record<MediaFileKind, typeof File> = {
   archive: FileArchive,
   document: FileText,
+  csv: FileSpreadsheet,
   image: FileImage,
   pdf: FileText,
   spreadsheet: FileSpreadsheet,
   video: FileVideo,
-  markdown: Text,
   model: Box,
-  web: FileCode,
-  audio: Speaker
+  audio: Speaker,
+  slideshow: Sliders,
+  code: Code,
+  text: Text
 }
 
 const fileTypeColors: Record<MediaFileKind, string> = {
   archive: 'text-slate-600',
   document: 'text-sky-600',
+  csv: 'text-emerald-600',
   image: 'text-pink-600',
   pdf: 'text-red-600',
   spreadsheet: 'text-emerald-600',
   video: 'text-violet-600',
-  markdown: 'text-black-400',
   model: 'text-cyan-600',
-  web: 'text-orange-500',
-  audio: 'text-blue-300'
+  audio: 'text-blue-300',
+  slideshow: 'text-orange-700',
+  code: 'text-black-500',
+  text: 'text-black-500'
 }
 
 export const getMediaItemIcon = (item: Media) => {

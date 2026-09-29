@@ -55,7 +55,7 @@ notification.web-push-private-key=
 notification.web-push-subject=
 # MinIO object storage
 minio.endpoint=${MINIO_ENDPOINT:http://localhost:9000}
-minio.public-endpoint=${MINIO_PUBLIC_ENDPOINT:${MINIO_ENDPOINT:http://localhost:9000}}
+minio.public-endpoint=${MINIO_PUBLIC_ENDPOINT}
 minio.access-key=${MINIO_ACCESS_KEY:${MINIO_ROOT_USER:admin}}
 minio.secret-key=${MINIO_SECRET_KEY:${MINIO_ROOT_PASSWORD:minioadmin}}
 minio.bucket=${MINIO_BUCKET:rem-storage}

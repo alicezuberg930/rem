@@ -20,13 +20,27 @@ services:
       - "9001:9001"
 
     environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-admin}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      # Required when the browser uploads to or fetches from presigned URLs.
+      # Use a comma-separated list when more than one web origin is needed.
+      MINIO_API_CORS_ALLOW_ORIGIN: ${MINIO_CORS_ALLOW_ORIGIN}
 
     volumes:
       - minio_data:/data
 
     command: server /data --console-address ":9001"
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    profiles: ["cloudflare"]
+    depends_on:
+      - minio
+    environment:
+      # Environment-variable equivalent of `cloudflared tunnel run --token`.
+      TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN:-}
+    command: tunnel --no-autoupdate run
 
 volumes:
   mysql_data:

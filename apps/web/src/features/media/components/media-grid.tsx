@@ -1,7 +1,7 @@
 import { Media } from "@/@types"
 import { useInView } from "@/hooks/use-in-view"
 import { useEffect, useRef } from "react"
-import { getMediaItemColorClassName, getMediaItemIcon } from "./media-utils"
+import { getMediaItemColorClassName, getMediaItemIcon } from "../../../lib/media"
 import { cn } from "@/lib/utils"
 import { MediaRowActions } from "./media-row-actions"
 import { Archive } from "lucide-react"

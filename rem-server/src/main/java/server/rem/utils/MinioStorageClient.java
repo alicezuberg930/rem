@@ -55,7 +55,7 @@ public class MinioStorageClient {
      */
     public MinioStorageClient(
             @Value("${minio.endpoint:http://localhost:9000}") String endpoint,
-            @Value("${minio.public-endpoint:${minio.endpoint:http://localhost:9000}}") String publicEndpoint,
+            @Value("${minio.public-endpoint}") String publicEndpoint,
             @Value("${minio.access-key:${MINIO_ROOT_USER:admin}}") String accessKey,
             @Value("${minio.secret-key:${MINIO_ROOT_PASSWORD:minioadmin}}") String secretKey,
             @Value("${minio.bucket:rem-storage}") String bucketName,

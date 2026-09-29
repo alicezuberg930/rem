@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react'
 import { ExternalLink } from 'lucide-react'
+import { CsvViewer } from '@/components/csv-viewer'
 import { buttonVariants } from '@/components/ui/button'
 import Lightbox, { type Slide } from '@/components/lightbox'
-import { Markdown } from '@/components/markdown'
 import { ModelViewer } from '@/components/model-viewer'
+import { OfficeViewer } from '@/components/office-viewer'
 import { VideoPlayer } from '@/components/video-player/video-player'
-import type { MediaFileKind } from './media-utils'
+import type { MediaFileKind } from '@/lib/media'
 import { AudioViewer } from '@/components/audio-viewer'
+import Markdown from '@/components/markdown'
 
 export type MediaViewerItem = {
     url: string
@@ -33,37 +35,9 @@ const getLightboxSlides = (item: MediaViewerItem | null): Slide[] => {
     ]
 }
 
-// Builds custom lightbox content for every non-image media type.
-const getCustomSlide = (item: MediaViewerItem) => {
-    if (item.kind === 'image') return undefined
-
-    if (item.kind === 'video') {
-        return (
-            <div className='w-[min(90vw,72rem)]'>
-                <VideoPlayer videoUrl={item.url} />
-            </div>
-        )
-    }
-
-    if (item.kind === 'model') {
-        return (
-            <div className='h-[80dvh] w-[min(90vw,72rem)]'>
-                <ModelViewer modelUrl={item.url} />
-            </div>
-        )
-    }
-
-    if (item.kind === 'pdf' || item.kind === 'web') {
-        return (
-            <iframe
-                src={item.url}
-                title={item.name ?? `${item.kind} preview`}
-                className='h-[80dvh] w-[min(90vw,72rem)] rounded-md border-0 bg-white'
-            />
-        )
-    }
-
-    const markdownUrl = item?.kind === 'markdown' ? item.url : undefined
+// Renders custom lightbox content for every non-image media type.
+const CustomSlide = ({ item }: { item: MediaViewerItem }) => {
+    const markdownUrl = item.kind === 'code' || item.kind === 'text' ? item.url : undefined
     // Stores fetched markdown together with the URL that produced it.
     const [markdown, setMarkdown] = useState('')
 
@@ -84,11 +58,60 @@ const getCustomSlide = (item: MediaViewerItem) => {
         return () => controller.abort()
     }, [markdownUrl])
 
-    if (item.kind === 'markdown') {
+    if (item.kind === 'image') return null
+
+    if (item.kind === 'video') {
         return (
-            <article className='max-h-[80dvh] w-[min(90vw,72rem)] overflow-auto rounded-md bg-background p-6 text-foreground'>
-                <Markdown string={markdown} />
-            </article>
+            <div className='w-[min(90vw,72rem)]'>
+                <VideoPlayer videoUrl={item.url} />
+            </div>
+        )
+    }
+
+    if (item.kind === 'model') {
+        return (
+            <div className='h-[80dvh] w-[min(90vw,72rem)]'>
+                <ModelViewer modelUrl={item.url} />
+            </div>
+        )
+    }
+
+    if (item.kind === 'pdf') {
+        return (
+            <iframe
+                src={item.url}
+                title={item.name ?? `${item.kind} preview`}
+                className='h-[80dvh] w-[min(90vw,72rem)] rounded-md border-0 bg-white'
+            />
+        )
+    }
+
+    if (item.kind === 'csv') {
+        return (
+            <CsvViewer
+                url={item.url}
+                title={item.name ?? 'CSV preview'}
+                className='h-[80dvh] w-[min(90vw,72rem)]'
+            />
+        )
+    }
+
+    if (item.kind === 'document' || item.kind === 'spreadsheet' || item.kind === 'slideshow') {
+        return (
+            <div className='h-[80dvh] w-[min(90vw,72rem)]'>
+                <OfficeViewer
+                    url={item.url}
+                    title={item.name ?? 'Microsoft Office document preview'}
+                />
+            </div>
+        )
+    }
+
+    if (item.kind === 'code') {
+        return (
+            <div className='max-h-[80dvh] w-[min(90vw,72rem)]'>
+                <Markdown>{markdown}</Markdown>
+            </div>
         )
     }
     if (item.kind === 'audio') {
@@ -116,6 +139,11 @@ const getCustomSlide = (item: MediaViewerItem) => {
             </a>
         </div>
     )
+}
+
+const getCustomSlide = (item: MediaViewerItem) => {
+    if (item.kind === 'image') return undefined
+    return <CustomSlide item={item} />
 }
 
 // Opens the selected media item in the shared lightbox.

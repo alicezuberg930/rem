@@ -4,7 +4,7 @@ import { fData } from '@/lib/format-number'
 import { cn, getInitials } from '@/lib/utils'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { MediaRowActions } from './media-row-actions'
-import { getMediaItemColorClassName, getMediaItemIcon } from './media-utils'
+import { getMediaItemColorClassName, getMediaItemIcon } from '../../../lib/media'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 const getMediaTypeLabel = (media: Media) => {

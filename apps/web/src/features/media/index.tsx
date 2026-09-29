@@ -20,7 +20,7 @@ import { MediaContextMenu } from './components/media-context-menu'
 import { MediaGrid } from './components/media-grid'
 import { MediaProvider } from './components/media-provider'
 import { MediaTable } from './components/media-table'
-import { findFolderPath, getDroppedFiles, getMediaFileKind } from './components/media-utils'
+import { findFolderPath, getDroppedFiles, getMediaFileKind } from '../../lib/media'
 import { MediaViewer, type MediaViewerItem } from './components/media-viewer'
 
 type ViewMode = 'grid' | 'list'
