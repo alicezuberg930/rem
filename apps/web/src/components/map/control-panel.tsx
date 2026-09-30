@@ -3,7 +3,7 @@ import 'mapbox-gl/dist/mapbox-gl.css'
 import '@/styles/map-box.css'
 import { cn } from '@/lib/utils'
 
-export function ControlPanel({
+export function CustomControlPanel({
   className,
   ...props
 }: ComponentProps<'div'>) {

@@ -2,7 +2,7 @@ import { memo } from 'react'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 // components
-import { ControlPanel } from '@/components/map'
+import { CustomControlPanel } from '@/components/map'
 
 export type CityProps = {
   city: string
@@ -21,7 +21,7 @@ type Props = {
 
 function ControlPanel({ data, selectedCity, onSelectCity }: Props) {
   return (
-    <ControlPanel>
+    <CustomControlPanel>
       <p className='text-sm font-medium'>Texas cities</p>
       <RadioGroup
         value={selectedCity}
@@ -46,7 +46,7 @@ function ControlPanel({ data, selectedCity, onSelectCity }: Props) {
           )
         })}
       </RadioGroup>
-    </ControlPanel>
+    </CustomControlPanel>
   )
 }
 

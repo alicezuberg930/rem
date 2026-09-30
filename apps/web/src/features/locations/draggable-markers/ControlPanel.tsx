@@ -1,6 +1,6 @@
 import { memo } from 'react'
 import type { LngLat } from 'react-map-gl/mapbox'
-import { ControlPanel } from '@/components/map'
+import { CustomControlPanel } from '@/components/map'
 
 const EVENT_NAMES = ['onDragStart', 'onDrag', 'onDragEnd'] as const
 
@@ -14,7 +14,7 @@ type Props = {
 
 function ControlPanel({ events = {} }: Props) {
   return (
-    <ControlPanel>
+    <CustomControlPanel>
       <p className='text-sm font-medium'>Marker events</p>
       {EVENT_NAMES.map((event) => {
         const lngLat = events[event]
@@ -30,7 +30,7 @@ function ControlPanel({ events = {} }: Props) {
           </div>
         )
       })}
-    </ControlPanel>
+    </CustomControlPanel>
   )
 }
 export default memo(ControlPanel)
