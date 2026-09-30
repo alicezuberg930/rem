@@ -17,46 +17,20 @@ const iconUrl = (icon: string) => `/assets/icons/files/${icon}.svg`
 
 // get file types based on format
 export function fileFormat(fileUrl: string | undefined) {
-  let format
+  const extension = fileTypeByUrl(fileUrl)
 
-  switch (fileUrl?.includes(fileTypeByUrl(fileUrl))) {
-    case FORMAT_TEXT.includes(fileTypeByUrl(fileUrl)):
-      format = 'txt'
-      break
-    case FORMAT_ZIP.includes(fileTypeByUrl(fileUrl)):
-      format = 'zip'
-      break
-    case FORMAT_AUDIO.includes(fileTypeByUrl(fileUrl)):
-      format = 'audio'
-      break
-    case FORMAT_IMG.includes(fileTypeByUrl(fileUrl)):
-      format = 'image'
-      break
-    case FORMAT_VIDEO.includes(fileTypeByUrl(fileUrl)):
-      format = 'video'
-      break
-    case FORMAT_WORD.includes(fileTypeByUrl(fileUrl)):
-      format = 'word'
-      break
-    case FORMAT_EXCEL.includes(fileTypeByUrl(fileUrl)):
-      format = 'excel'
-      break
-    case FORMAT_POWERPOINT.includes(fileTypeByUrl(fileUrl)):
-      format = 'powerpoint'
-      break
-    case FORMAT_PDF.includes(fileTypeByUrl(fileUrl)):
-      format = 'pdf'
-      break
-    case FORMAT_PHOTOSHOP.includes(fileTypeByUrl(fileUrl)):
-      format = 'photoshop'
-      break
-    case FORMAT_ILLUSTRATOR.includes(fileTypeByUrl(fileUrl)):
-      format = 'illustrator'
-      break
-    default:
-      format = fileTypeByUrl(fileUrl)
-  }
-  return format
+  if (FORMAT_TEXT.includes(extension)) return 'txt'
+  if (FORMAT_ZIP.includes(extension)) return 'zip'
+  if (FORMAT_AUDIO.includes(extension)) return 'audio'
+  if (FORMAT_IMG.includes(extension)) return 'image'
+  if (FORMAT_VIDEO.includes(extension)) return 'video'
+  if (FORMAT_WORD.includes(extension)) return 'word'
+  if (FORMAT_EXCEL.includes(extension)) return 'excel'
+  if (FORMAT_POWERPOINT.includes(extension)) return 'powerpoint'
+  if (FORMAT_PDF.includes(extension)) return 'pdf'
+  if (FORMAT_PHOTOSHOP.includes(extension)) return 'photoshop'
+  if (FORMAT_ILLUSTRATOR.includes(extension)) return 'illustrator'
+  return extension
 }
 
 // get thumbnail based on file type
@@ -107,11 +81,17 @@ export function fileThumb(fileUrl: string) {
 }
 
 export function fileTypeByUrl(fileUrl = '') {
-  return (fileUrl && fileUrl.split('.').pop()) || ''
+  const path = fileUrl.split(/[?#]/, 1)[0]
+  const fileName = path.split('/').pop() || ''
+  const extensionIndex = fileName.lastIndexOf('.')
+  return (extensionIndex === -1
+    ? fileName
+    : fileName.slice(extensionIndex + 1)
+  ).toLowerCase()
 }
 
 export function fileNameByUrl(fileUrl: string) {
-  return fileUrl.split('/').pop()
+  return fileUrl.split(/[?#]/, 1)[0].split('/').pop()
 }
 
 export function fileData(file: ExtendFile | string) {

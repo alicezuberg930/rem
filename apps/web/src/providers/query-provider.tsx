@@ -4,7 +4,6 @@ import {
   QueryClient,
   QueryClientProvider as QCP,
 } from '@tanstack/react-query'
-import { router } from '@/main'
 import { toast } from '@/components/ui/toast'
 import { handleServerError } from '@/lib/handle-server-error'
 import { HttpError } from '@/lib/repository/http-error'
@@ -56,17 +55,22 @@ const createQueryClient = () =>
         if (error instanceof HttpError) {
           if (error.status === 401) {
             toast.error('Session expired!')
-            const redirect = `${router.history.location.href}`
-            router.navigate({ to: '/sign-in', search: { redirect } })
+            void import('@/main').then(({ router }) => {
+              const redirect = `${router.history.location.href}`
+              return router.navigate({
+                to: '/sign-in',
+                search: { redirect },
+              })
+            })
           }
           if (error.status === 500) {
             toast.error('Internal Server Error!')
             // Only navigate to error page in production to avoid disrupting HMR in development
             if (import.meta.env.PROD) {
-              router.navigate({ to: '/500' })
+              void import('@/main').then(({ router }) =>
+                router.navigate({ to: '/500' })
+              )
             }
-          }
-          if (error.status === 403) {
           }
         }
       },

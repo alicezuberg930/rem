@@ -2,7 +2,7 @@ import { memo } from 'react'
 import { format } from 'date-fns'
 import { Slider } from '@/components/ui/slider'
 import { Switch } from '@/components/ui/switch'
-import { StyledControlPanel } from '@/components/map'
+import { ControlPanel } from '@/components/map'
 
 type Props = {
   startTime: number
@@ -33,7 +33,7 @@ function ControlPanel({
   }
 
   return (
-    <StyledControlPanel>
+    <ControlPanel>
       <div className='flex w-full items-center justify-between'>
         <span className='text-sm font-medium'>All days</span>
 
@@ -58,7 +58,7 @@ function ControlPanel({
           if (typeof value === 'number') handleChangeDays(value)
         }}
       />
-    </StyledControlPanel>
+    </ControlPanel>
   )
 }
 

@@ -46,7 +46,7 @@ export const getMediaFileKind = (media: Media): MediaFileKind => {
   if (mimeType.includes('zip') || mimeType.includes('compressed') || ['7z', 'rar', 'tar', 'zip'].includes(extension)) {
     return 'archive'
   }
-  if (['ts', 'html', 'js', 'tsx', 'jsx', 'css', 'md', 'json', 'yaml', 'yml', 'java', 'lock', 'env', 'sql', 'Dockerfile', 'xml', 'py'].includes(extension)) {
+  if (['ts', 'html', 'js', 'tsx', 'jsx', 'css', 'md', 'json', 'yaml', 'yml', 'java', 'lock', 'env', 'sql', 'dockerfile', 'xml', 'py'].includes(extension)) {
     return 'code'
   }
   if (['txt'].includes(extension)) {

@@ -57,10 +57,6 @@ export class HttpClient {
           data instanceof Object ? data.message : data,
           data
         )
-        // if error is due to authentication, handle it here (e.g., redirect to login)
-        for (const { onRejected } of this.interceptors.response.getHandlers()) {
-          if (onRejected) onRejected(error)
-        }
         throw error
       }
       const data = await response.json()
@@ -89,7 +85,7 @@ export class HttpClient {
     for (const { onFulfilled } of this.interceptors.request.getHandlers()) {
       if (onFulfilled) config = await onFulfilled(config)
     }
-    const isAbsoluteUrl = (url: string) => /^https?:\/\/[^\/]+/i.test(url)
+    const isAbsoluteUrl = (url: string) => /^https?:\/\/[^/]+/i.test(url)
     url = isAbsoluteUrl(url) ? url : `${BASE_URL}${url}`
     try {
       const response = await fetch(url, config)

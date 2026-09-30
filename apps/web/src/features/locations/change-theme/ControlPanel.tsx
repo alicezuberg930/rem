@@ -1,7 +1,7 @@
 import { memo } from 'react'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { StyledControlPanel } from '@/components/map'
+import { ControlPanel } from '@/components/map'
 
 type Props = {
   themes: {
@@ -13,7 +13,7 @@ type Props = {
 
 function ControlPanel({ themes, selectTheme, onChangeTheme }: Props) {
   return (
-    <StyledControlPanel>
+    <ControlPanel>
       <p className='text-sm font-medium'>Map style</p>
       <RadioGroup
         value={selectTheme}
@@ -32,7 +32,7 @@ function ControlPanel({ themes, selectTheme, onChangeTheme }: Props) {
           </div>
         ))}
       </RadioGroup>
-    </StyledControlPanel>
+    </ControlPanel>
   )
 }
 

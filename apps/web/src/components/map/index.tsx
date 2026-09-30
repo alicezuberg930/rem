@@ -1,6 +1,6 @@
 export * from './types'
-export * from './styles'
+export * from './control-panel'
 
-export { default as MapPopup } from './MapPopup'
-export { default as MapMarker } from './MapMarker'
-export { default as MapControl } from './MapControl'
+export { default as MapPopup } from './map-popup'
+export { default as MapMarker } from './map-marker'
+export { default as MapControl } from './map-control'

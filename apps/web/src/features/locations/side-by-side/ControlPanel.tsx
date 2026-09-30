@@ -1,7 +1,7 @@
 import { memo } from 'react'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 // components
-import { StyledControlPanel } from '@/components/map'
+import { ControlPanel } from '@/components/map'
 
 export type ModeProps = 'side-by-side' | 'split-screen'
 
@@ -12,7 +12,7 @@ type Props = {
 
 function ControlPanel({ mode, onModeChange }: Props) {
   return (
-    <StyledControlPanel>
+    <ControlPanel>
       <ToggleGroup
         variant='outline'
         size='sm'
@@ -42,7 +42,7 @@ function ControlPanel({ mode, onModeChange }: Props) {
           Split screen
         </ToggleGroupItem>
       </ToggleGroup>
-    </StyledControlPanel>
+    </ControlPanel>
   )
 }
 

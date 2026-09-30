@@ -114,14 +114,18 @@ const registerPushNotification = async () => {
     if (permission !== "granted") return false
     const registration = await registerNotificationServiceWorker()
     if (!registration?.pushManager) return false
-    const subscription = await getOrCreatePushSubscription(registration)
     try {
+        const staleSubscriptionId = getWebPushNotificationKey()
+        if (staleSubscriptionId) {
+            await httpClient.delete(`/notifications/push-notification/unsubscribe/${staleSubscriptionId}`)
+        }
+        const subscription = await getOrCreatePushSubscription(registration)
         const response = await httpClient.post<ApiResponse<string>>("/notifications/push-notification/subscribe", subscription)
         if (!response?.data) return false
         localStorage.setItem(pushNotificationKey, response.data)
         notifyActiveServiceWorker()
         return true
-    } catch (err) {
+    } catch {
         return false
     }
 }
@@ -135,7 +139,9 @@ const unRegisterPushNotification = async () => {
         const registration = await getNotificationServiceWorkerRegistration()
         const subscription = await registration?.pushManager?.getSubscription()
         await subscription?.unsubscribe()
-    } catch { }
+    } catch {
+        return true
+    }
     return true
 }
 

@@ -1,6 +1,8 @@
 import { BitMatrix } from '@zxing/library'
 import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
+import hljs from 'highlight.js'
+import 'highlight.js/styles/monokai-sublime.css'
 
 const cn = (...inputs: ClassValue[]) => {
   return twMerge(clsx(inputs))
@@ -8,6 +10,22 @@ const cn = (...inputs: ClassValue[]) => {
 
 const sleep = (ms: number = 1000) => {
   return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+/** Encodes a string so it can be safely rendered as HTML text. */
+const encodeHtml = (value: string): string => {
+  const htmlEntities = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+  } as const
+
+  return value.replace(
+    /[&<>"']/g,
+    (character) => htmlEntities[character as keyof typeof htmlEntities]
+  )
 }
 
 /**
@@ -232,4 +250,25 @@ const formatDuration = (duration: number): string => {
   return `${hour}${minute}:${second}`
 }
 
-export { formatDuration, getInitials, getCurrentLocation, alpha, slugify, getBaseUrl, sleep, cn, fileToCanvas, bitMatrixToCanvas, canvasToBlob, playNotificationSound, getPageNumbers, getWebsocketURL }
+declare global {
+  interface Window {
+    hljs: typeof hljs;
+  }
+}
+
+hljs.configure({
+  languages: ['javascript', 'jsx', 'sh', 'bash', 'html', 'scss', 'css', 'json'],
+});
+
+if (typeof window !== 'undefined') {
+  window.hljs = hljs;
+}
+
+const highlightCodeElement = (element: HTMLElement, code: string) => {
+  // Reset previously generated markup before highlighting updated content.
+  element.textContent = code
+  element.removeAttribute('data-highlighted')
+  hljs.highlightElement(element)
+}
+
+export { formatDuration, getInitials, getCurrentLocation, alpha, slugify, getBaseUrl, sleep, cn, fileToCanvas, bitMatrixToCanvas, canvasToBlob, playNotificationSound, getPageNumbers, getWebsocketURL, encodeHtml, highlightCodeElement }

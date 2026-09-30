@@ -2,7 +2,7 @@ import { memo } from 'react'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import {
-  StyledControlPanel,
+  ControlPanel,
   type MapSettingKeys,
   type MapSettings,
 } from '@/components/map'
@@ -55,12 +55,12 @@ function ControlPanel({ settings, onChange }: Props) {
   }
 
   return (
-    <StyledControlPanel className='sm:min-w-[260px]'>
+    <ControlPanel className='sm:min-w-[260px]'>
       <p className='text-sm font-medium'>Map interaction</p>
       {Object.keys(settings).map((name) =>
         renderSetting(name as MapSettingKeys, settings[name as MapSettingKeys])
       )}
-    </StyledControlPanel>
+    </ControlPanel>
   )
 }
 

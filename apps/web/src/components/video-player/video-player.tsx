@@ -1,11 +1,10 @@
 import '@/styles/video-player.css'
 import { useEffect, useRef, useState } from 'react'
 import { formatDuration } from '@/lib/utils'
-import type { VideoPlayerProps } from './types'
 import { Maximize, Minimize, PauseCircle, PictureInPicture, PlayCircle, Settings, Volume1, Volume2, VolumeOff } from 'lucide-react'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 
-export const VideoPlayer = ({ videoUrl }: VideoPlayerProps) => {
+export const VideoPlayer = ({ videoUrl }: { videoUrl: string }) => {
     const [isPlaying, setIsPlaying] = useState(false)
     const [isFullscreen, setIsFullscreen] = useState(false)
     const [volume, setVolume] = useState(50)

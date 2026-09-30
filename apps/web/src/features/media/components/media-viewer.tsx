@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ExternalLink } from 'lucide-react'
 import { CsvViewer } from '@/components/csv-viewer'
 import { buttonVariants } from '@/components/ui/button'
@@ -6,15 +6,15 @@ import Lightbox, { type Slide } from '@/components/lightbox'
 import { ModelViewer } from '@/components/model-viewer'
 import { OfficeViewer } from '@/components/office-viewer'
 import { VideoPlayer } from '@/components/video-player/video-player'
+import { highlightCodeElement } from '@/lib/utils'
 import type { MediaFileKind } from '@/lib/media'
 import { AudioViewer } from '@/components/audio-viewer'
-import Markdown from '@/components/markdown'
+import { CodeViewer } from '@/components/code-viewer'
 
 export type MediaViewerItem = {
     url: string
     kind: MediaFileKind
     name?: string
-    mimeType?: string
 }
 
 type MediaViewerProps = {
@@ -37,29 +37,7 @@ const getLightboxSlides = (item: MediaViewerItem | null): Slide[] => {
 
 // Renders custom lightbox content for every non-image media type.
 const CustomSlide = (item: MediaViewerItem) => {
-    const markdownUrl = item.kind === 'code' || item.kind === 'text' ? item.url : undefined
-    // Stores fetched markdown together with the URL that produced it.
-    const [markdown, setMarkdown] = useState('')
-
-    // Fetches markdown content and ignores stale responses when the item changes.
-    useEffect(() => {
-        const controller = new AbortController()
-
-        if (markdownUrl) {
-            fetch(markdownUrl, { signal: controller.signal })
-                .then((response) => response.text())
-                .then((content) => setMarkdown(content))
-                .catch((error: unknown) => {
-                    if (error instanceof DOMException && error.name === 'AbortError') return
-                    setMarkdown('Unable to load this file.')
-                })
-        }
-
-        return () => controller.abort()
-    }, [markdownUrl])
-
     if (item.kind === 'image') return null
-
     if (item.kind === 'video') {
         return (
             <div className='w-[min(90vw,72rem)]'>
@@ -67,7 +45,6 @@ const CustomSlide = (item: MediaViewerItem) => {
             </div>
         )
     }
-
     if (item.kind === 'model') {
         return (
             <div className='h-[80dvh] w-[min(90vw,72rem)]'>
@@ -75,7 +52,6 @@ const CustomSlide = (item: MediaViewerItem) => {
             </div>
         )
     }
-
     if (item.kind === 'pdf') {
         return (
             <iframe
@@ -85,7 +61,6 @@ const CustomSlide = (item: MediaViewerItem) => {
             />
         )
     }
-
     if (item.kind === 'csv') {
         return (
             <CsvViewer
@@ -95,7 +70,6 @@ const CustomSlide = (item: MediaViewerItem) => {
             />
         )
     }
-
     if (item.kind === 'document' || item.kind === 'spreadsheet' || item.kind === 'slideshow') {
         return (
             <div className='h-[80dvh] w-[min(90vw,72rem)]'>
@@ -106,11 +80,10 @@ const CustomSlide = (item: MediaViewerItem) => {
             </div>
         )
     }
-
-    if (item.kind === 'code') {
+    if (item.kind === 'text' || item.kind === 'code') {
         return (
-            <div className='max-h-[80dvh] w-[min(90vw,72rem)]'>
-                <Markdown>{markdown}</Markdown>
+            <div className='h-[80dvh] w-[min(90vw,72rem)] overflow-y-auto'>
+                <CodeViewer markdownUrl={item.url} />
             </div>
         )
     }
@@ -121,7 +94,6 @@ const CustomSlide = (item: MediaViewerItem) => {
             </div>
         )
     }
-
     return (
         <div className='flex min-h-48 w-[min(90vw,36rem)] flex-col items-center justify-center gap-4 rounded-md border border-dashed bg-background p-6 text-center text-foreground'>
             <p className='max-w-md text-sm text-muted-foreground'>
