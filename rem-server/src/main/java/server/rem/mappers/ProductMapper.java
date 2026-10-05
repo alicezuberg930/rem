@@ -1,12 +1,18 @@
 package server.rem.mappers;
 
+import java.util.List;
+
 import org.mapstruct.Builder;
+import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 import server.rem.dtos.product.CreateProductRequest;
+import server.rem.dtos.product.ProductResponse;
+import server.rem.dtos.product.ProductResponse.ProductVariantCombinationResponse;
+import server.rem.dtos.variant.VariantResponse;
 import server.rem.entities.Business;
 import server.rem.entities.Product;
 
@@ -42,5 +48,25 @@ public interface ProductMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "variants", ignore = true)
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL)
     void updateEntity(CreateProductRequest dto, @MappingTarget Product product);
+
+    @Mapping(target = "id", source = "product.id")
+    @Mapping(target = "createdAt", source = "product.createdAt")
+    @Mapping(target = "updatedAt", source = "product.updatedAt")
+    @Mapping(target = "name", source = "product.name")
+    @Mapping(target = "sku", source = "product.sku")
+    @Mapping(target = "unit", source = "product.unit")
+    @Mapping(target = "barCodeType", source = "product.barCodeType")
+    @Mapping(target = "expiredDate", source = "product.expiredDate")
+    @Mapping(target = "description", source = "product.description")
+    @Mapping(target = "previewImageUrl", source = "product.previewImageUrl")
+    @Mapping(target = "price", source = "product.price")
+    @Mapping(target = "variantMode", source = "product.variantMode")
+    @Mapping(target = "variants", source = "variants")
+    @Mapping(target = "combinations", source = "combinations")
+    ProductResponse toResponse(
+            Product product,
+            List<VariantResponse> variants,
+            List<ProductVariantCombinationResponse> combinations);
 }

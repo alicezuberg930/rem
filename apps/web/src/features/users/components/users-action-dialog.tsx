@@ -3,7 +3,8 @@ import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { toast } from '@/components/ui/toast'
+import { type User } from '@/@types/user'
+import { users } from '@/lib/queries/user'
 import { HttpError } from '@/lib/repository/http-error'
 import { Button } from '@/components/ui/button'
 import {
@@ -16,6 +17,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { FieldGroup } from '@/components/ui/field'
+import { toast } from '@/components/ui/toast'
 import {
   FormProvider,
   RFHStyledSelect,
@@ -23,31 +25,28 @@ import {
   RHFTextField,
 } from '@/components/hook-form'
 import RHFSwitch from '@/components/hook-form/rhf-switch'
-import { users } from '@/lib/queries/user'
-import { type User } from '../data/schema'
 
 const userFormSchema = z
   .object({
     fullname: z.string().trim().min(1, 'Full name is required.').max(100),
     email: z.email('A valid email is required.').max(100),
     phone: z.string().trim().min(1, 'Phone is required.').max(20),
-    birthday: z.string(),
+    birthday: z.string().nullable(),
     password: z.string(),
     confirmPassword: z.string(),
     roleId: z.string().min(1, 'Role is required.'),
     salary: z
-      .string()
-      .trim()
-      .regex(/^\d+$/, 'Salary must be a non-negative whole number.'),
+      .number()
+      .min(1, 'Salary must be a non-negative whole number.')
+      .max(100000000, 'Salary must not exceed this value.'),
     dependants: z
-      .string()
-      .trim()
-      .regex(/^\d+$/, 'Dependants must be a non-negative whole number.'),
-    bankOwner: z.string().max(255),
-    bankAccount: z.string().max(255),
-    bankName: z.string().max(255),
-    bankCode: z.string().max(255),
-    bankBranch: z.string().max(255),
+      .number()
+      .min(1, 'Dependants must be a non-negative whole number.'),
+    bankOwner: z.string().max(255).nullable(),
+    bankAccount: z.string().max(255).nullable(),
+    bankName: z.string().max(255).nullable(),
+    bankCode: z.string().max(255).nullable(),
+    bankBranch: z.string().max(255).nullable(),
     isActive: z.boolean(),
     isVerified: z.boolean(),
     isEdit: z.boolean(),
@@ -79,8 +78,7 @@ const userFormSchema = z
   )
   .refine(
     ({ isEdit, password, confirmPassword }) =>
-      (isEdit && !password && !confirmPassword) ||
-      password === confirmPassword,
+      (isEdit && !password && !confirmPassword) || password === confirmPassword,
     { message: "Passwords don't match.", path: ['confirmPassword'] }
   )
 
@@ -108,33 +106,31 @@ export function UsersActionDialog({
   const form = useForm<UserForm>({
     resolver: zodResolver(userFormSchema),
     defaultValues: {
-      fullname:
-        currentRow?.fullname ??
-        [currentRow?.firstName, currentRow?.lastName].filter(Boolean).join(' '),
-      email: currentRow?.email ?? '',
-      phone: currentRow?.phone ?? currentRow?.phoneNumber ?? '',
-      birthday: currentRow?.birthday ?? '',
-      password: '',
-      confirmPassword: '',
-      roleId: currentRow?.roleId ?? '',
-      salary: String(currentRow?.salary ?? 0),
-      dependants: String(currentRow?.dependants ?? 0),
-      bankOwner: currentRow?.bankOwner ?? '',
-      bankAccount: currentRow?.bankAccount ?? '',
-      bankName: currentRow?.bankName ?? '',
-      bankCode: currentRow?.bankCode ?? '',
-      bankBranch: currentRow?.bankBranch ?? '',
-      isActive: currentRow?.isActive ?? currentRow?.status === 'active',
-      isVerified: currentRow?.isVerified ?? !isEdit,
+      // fullname: currentRow?.fullname ?? '',
+      // email: currentRow?.email ?? '',
+      // phone: currentRow?.phone ?? '',
+      // birthday: currentRow?.birthday ?? '',
+      // password: '',
+      // confirmPassword: '',
+      // roleId: currentRow?.roleId ?? '',
+      // salary: currentRow?.salary ?? 0,
+      // dependants: currentRow?.dependants ?? 0,
+      // bankOwner: currentRow?.bankOwner ?? '',
+      // bankAccount: currentRow?.bankAccount ?? '',
+      // bankName: currentRow?.bankName ?? '',
+      // bankCode: currentRow?.bankCode ?? '',
+      // bankBranch: currentRow?.bankBranch ?? '',
+      // isActive: currentRow?.isActive ?? false,
+      // isVerified: currentRow?.isVerified ?? !isEdit,
+      ...currentRow,
       isEdit,
     },
   })
 
   useEffect(() => {
     if (!currentRow || form.getValues('roleId')) return
-    const role = roles.find(
-      ({ name }) => name.toLowerCase() === currentRow.role.toLowerCase()
-    )
+    if (!currentRow.roleName) return
+    const role = roles.find(({ name }) => name.toLowerCase() === currentRow.roleName?.toLowerCase())
     if (role) form.setValue('roleId', role.id)
   }, [currentRow, form, roles])
 

@@ -2,10 +2,13 @@ import type { ColumnDef } from '@tanstack/react-table'
 import type { Media } from '@/@types/media'
 import { fData } from '@/lib/format-number'
 import { cn, getInitials } from '@/lib/utils'
-import { DataTableColumnHeader } from '@/components/data-table'
-import { MediaRowActions } from './media-row-actions'
-import { getMediaItemColorClassName, getMediaItemIcon } from '../../../lib/media'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { DataTableColumnHeader } from '@/components/data-table'
+import {
+  getMediaItemColorClassName,
+  getMediaItemIcon,
+} from '../../../lib/media'
+import { MediaRowActions } from './media-row-actions'
 
 const getMediaTypeLabel = (media: Media) => {
   if (media.type === 'FOLDER') return 'Folder'
@@ -54,7 +57,7 @@ export const mediaColumns: ColumnDef<Media>[] = [
       return (
         <div className='flex min-w-0 items-center gap-2'>
           <Avatar size='sm'>
-            <AvatarImage src={owner.avatar} alt={owner.fullname} />
+            <AvatarImage src={owner.avatar ?? undefined} alt={owner.fullname} />
             <AvatarFallback>{getInitials(owner.fullname!)}</AvatarFallback>
           </Avatar>
           <span className='truncate text-sm text-muted-foreground'>
@@ -81,7 +84,8 @@ export const mediaColumns: ColumnDef<Media>[] = [
   {
     id: 'size',
     header: 'Size',
-    cell: ({ row }) => row.original.type === 'FOLDER' ? '-' : fData(row.original.size),
+    cell: ({ row }) =>
+      row.original.type === 'FOLDER' ? '-' : fData(row.original.size),
     meta: {
       className: 'hidden text-muted-foreground sm:table-cell',
     },

@@ -23,6 +23,12 @@ public interface VariantRepository extends JpaRepository<Variant, String>, JpaSp
     @Query("SELECT DISTINCT variant FROM Variant variant WHERE variant.id IN :ids")
     List<Variant> findAllWithOptionsByIdIn(@Param("ids") Collection<String> ids);
 
+    @EntityGraph(attributePaths = "options")
+    @Query("SELECT DISTINCT variant FROM Variant variant WHERE variant.business.id = :businessId AND variant.id IN :ids")
+    List<Variant> findAllWithOptionsByBusinessIdAndIdIn(
+            @Param("businessId") String businessId,
+            @Param("ids") Collection<String> ids);
+
     boolean existsByBusinessIdAndNameIgnoreCase(String businessId, String name);
 
     boolean existsByBusinessIdAndNameIgnoreCaseAndIdNot(String businessId, String name, String id);

@@ -1,12 +1,24 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { type User } from '@/@types/user'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
-import { callTypes } from '../data/data'
-import { type User } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
+
+type UserStatus = 'active' | 'inactive'
+type MembershipStatus = 'verified' | 'unverified'
+
+const statusStyles = new Map<UserStatus, string>([
+  ['active', 'bg-teal-100/30 text-teal-900 dark:text-teal-200 border-teal-200'],
+  ['inactive', 'bg-neutral-300/40 border-neutral-300'],
+])
+
+const membershipStyles = new Map<MembershipStatus, string>([
+  ['verified', 'bg-teal-100/30 text-teal-900 dark:text-teal-200 border-teal-200'],
+  ['unverified', 'bg-amber-100/40 text-amber-900 dark:text-amber-200 border-amber-200'],
+])
 
 export const usersColumns: ColumnDef<User>[] = [
   {
@@ -37,31 +49,13 @@ export const usersColumns: ColumnDef<User>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'username',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Username' />
-    ),
-    cell: ({ row }) => (
-      <LongText className='max-w-36'>{row.getValue('username')}</LongText>
-    ),
-    meta: {
-      className: cn(
-        'drop-shadow-[0_1px_2px_rgb(0_0_0_/_0.1)] dark:drop-shadow-[0_1px_2px_rgb(255_255_255_/_0.1)]',
-        'ps-0.5 max-md:sticky start-6 @4xl/content:table-cell @4xl/content:drop-shadow-none'
-      ),
-    },
-    enableHiding: false,
-  },
-  {
-    id: 'fullName',
+    accessorKey: 'fullname',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Name' />
     ),
-    cell: ({ row }) => {
-      const { firstName, lastName } = row.original
-      const fullName = `${firstName} ${lastName}`
-      return <LongText className='max-w-36'>{fullName}</LongText>
-    },
+    cell: ({ row }) => (
+      <LongText className='max-w-36'>{row.original.fullname}</LongText>
+    ),
     meta: { className: 'w-36' },
   },
   {
@@ -74,21 +68,22 @@ export const usersColumns: ColumnDef<User>[] = [
     ),
   },
   {
-    accessorKey: 'phoneNumber',
+    accessorKey: 'phone',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Phone Number' />
     ),
-    cell: ({ row }) => <div>{row.getValue('phoneNumber')}</div>,
+    cell: ({ row }) => <div>{row.getValue('phone')}</div>,
     enableSorting: false,
   },
   {
-    accessorKey: 'status',
+    id: 'status',
+    accessorFn: (user) => user.isActive === true ? 'active' : 'inactive',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Status' />
     ),
     cell: ({ row }) => {
-      const { status } = row.original
-      const badgeColor = callTypes.get(status)
+      const status = row.original.isActive === true ? 'active' : 'inactive'
+      const badgeColor = statusStyles.get(status)
       return (
         <div className='flex space-x-2'>
           <Badge variant='outline' className={cn('capitalize', badgeColor)}>
@@ -104,15 +99,37 @@ export const usersColumns: ColumnDef<User>[] = [
     enableSorting: false,
   },
   {
-    accessorKey: 'role',
+    id: 'membershipVerified',
+    accessorFn: (user) => user.membershipVerified === true ? 'verified' : 'unverified',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Membership' />
+    ),
+    cell: ({ row }) => {
+      const membershipStatus = row.original.membershipVerified === true ? 'verified' : 'unverified'
+      const badgeColor = membershipStyles.get(membershipStatus)
+      return (
+        <div className='flex space-x-2'>
+          <Badge variant='outline' className={cn('capitalize', badgeColor)}>
+            {membershipStatus}
+          </Badge>
+        </div>
+      )
+    },
+    filterFn: (row, id, value) => value.includes(row.getValue(id)),
+    enableHiding: false,
+    enableSorting: false,
+  },
+  {
+    id: 'role',
+    accessorFn: (user) => user.roleName?.toLowerCase() ?? '',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Role' />
     ),
     cell: ({ row }) => {
-      const { role } = row.original
+      const role = row.getValue<string>('role')
       return (
         <div className='flex items-center'>
-          <span className='text-sm capitalize'>{role.toLowerCase()}</span>
+          <span className='text-sm capitalize'>{role || '—'}</span>
         </div>
       )
     },

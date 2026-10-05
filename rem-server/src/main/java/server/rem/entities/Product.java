@@ -1,6 +1,7 @@
 package server.rem.entities;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.Column;
@@ -13,6 +14,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OrderColumn;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -74,5 +76,7 @@ public class Product extends Base {
         joinColumns = @JoinColumn(name = "product_id"),
         inverseJoinColumns = @JoinColumn(name = "variant_id")
     )
-    private List<Variant> variants;
+    @OrderColumn(name = "variant_order")
+    @Builder.Default
+    private List<Variant> variants = new ArrayList<>();
 }

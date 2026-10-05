@@ -1,24 +1,27 @@
-import { Business } from './business'
-import { Role } from './role'
+import type { Business } from './business'
+import type { Role } from './role'
 
 export type UserProvider = 'GOOGLE' | 'FACEBOOK' | 'LOCAL'
 
-type UserBussinessDetails = {
+type UserBusinessDetails = {
+  businessId: string
+  roleId: string
+  roleName: string
+  membershipVerified: boolean
   dependants: number
-  bankBranch: string
-  bankCode: string
-  bankName: string
-  bankAccount: string
-  bankOwner: string
-  salary: string
-  isVerified: boolean
+  bankBranch: string | null
+  bankCode: string | null
+  bankName: string | null
+  bankAccount: string | null
+  bankOwner: string | null
+  salary: number
   isActive: boolean
 }
 
-export type User = Partial<UserBussinessDetails> & {
+export type User = Partial<UserBusinessDetails> & {
   id: string
-  avatar: string
-  birthday: string
+  avatar: string | null
+  birthday: string | null
   createdAt: string
   fullname: string
   email: string

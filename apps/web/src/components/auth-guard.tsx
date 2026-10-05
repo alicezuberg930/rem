@@ -18,6 +18,7 @@ const dashboardRoutes = [
   '/users',
   '/campaigns',
   '/templates',
+  '/products',
   '/bookings',
   '/shipment-order',
   '/attendances',

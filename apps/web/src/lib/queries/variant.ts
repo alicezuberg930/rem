@@ -5,6 +5,7 @@ import type {
   QueryVariant,
   Variant,
 } from '@/@types'
+import { getSelectedBusinessId } from '@/lib/business'
 import { queryClient } from '@/providers/query-provider'
 import type { VariantForm } from '@/lib/validators/variant'
 import { httpClient } from '../repository/http-client'
@@ -14,11 +15,15 @@ type UpdateVariantPayload = VariantPayload & { id: string }
 
 const keys = {
   root: ['variants'] as const,
-  all: (options: QueryVariant) => ['variants', 'list', options] as const,
-  one: (id: string) => ['variants', 'detail', id] as const,
-  create: () => ['variants', 'create'] as const,
-  update: () => ['variants', 'update'] as const,
-  delete: () => ['variants', 'delete'] as const,
+  all: (options: QueryVariant) =>
+    ['variants', getSelectedBusinessId(), 'list', options] as const,
+  selection: () =>
+    ['variants', getSelectedBusinessId(), 'selection'] as const,
+  one: (id: string) =>
+    ['variants', getSelectedBusinessId(), 'detail', id] as const,
+  create: () => ['variants', getSelectedBusinessId(), 'create'] as const,
+  update: () => ['variants', getSelectedBusinessId(), 'update'] as const,
+  delete: () => ['variants', getSelectedBusinessId(), 'delete'] as const,
 }
 
 export const variants = () => ({
@@ -32,6 +37,38 @@ export const variants = () => ({
             PaginatedApiResponse<Variant[]>
           >('/variants', options as Record<string, unknown>)
           return response.data
+        },
+      }),
+  },
+
+  selection: {
+    queryKey: keys.selection,
+    queryOptions: () =>
+      queryOptions({
+        queryKey: keys.selection(),
+        queryFn: async () => {
+          const fetchPage = async (page: number) => {
+            const response = await httpClient.get<
+              PaginatedApiResponse<Variant[]>
+            >('/variants', { page, pageSize: 10 })
+            return response.data
+          }
+
+          const firstPage = await fetchPage(0)
+          const remainingPages = await Promise.all(
+            Array.from(
+              { length: Math.max(firstPage.totalPages - 1, 0) },
+              (_, index) => fetchPage(index + 1)
+            )
+          )
+
+          const variantsById = new Map<string, Variant>()
+          ;[firstPage, ...remainingPages].forEach((page) => {
+            page.content.forEach((variant) => {
+              variantsById.set(variant.id, variant)
+            })
+          })
+          return Array.from(variantsById.values())
         },
       }),
   },

@@ -6,7 +6,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,10 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(
-        name = "product_variant_combinations",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"product_id", "variant_value_1_id", "variant_value_2_id"})
-)
+@Table(name = "product_variant_combinations")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -39,6 +35,6 @@ public class ProductVariantCombination extends Base {
     private VariantOption variantValue1;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "variant_value_2_id", nullable = false)
+    @JoinColumn(name = "variant_value_2_id")
     private VariantOption variantValue2;
 }

@@ -10,6 +10,7 @@ import {
   TemplateValidators,
 } from '@/lib/validators'
 import { AttendanceValidators } from '@/lib/validators/attendance'
+import { productSchema } from '@/lib/validators/product'
 import { variantSchema } from '@/lib/validators/variant'
 
 describe('authentication validators', () => {
@@ -112,5 +113,136 @@ describe('entity validators', () => {
 
     expect(result.success).toBe(false)
     expect(result.error?.issues[0]?.path).toEqual(['options', 1, 'value'])
+  })
+
+  it('requires a base price for simple products', () => {
+    const result = productSchema.safeParse({
+      name: 'T-Shirt',
+      sku: 'TSHIRT',
+      unit: 'piece',
+      barCodeType: 'CODE_128',
+      expiredDate: '',
+      description: '',
+      previewImageUrl: '',
+      price: null,
+      variantMode: 'SIMPLE',
+      variantIds: [],
+      combinations: [],
+    })
+
+    expect(result.success).toBe(false)
+    expect(result.error?.issues[0]?.path).toEqual(['price'])
+  })
+
+  it('accepts inventory rows containing two product variation options', () => {
+    const result = productSchema.safeParse({
+      name: 'T-Shirt',
+      sku: 'TSHIRT',
+      unit: 'piece',
+      barCodeType: 'CODE_128',
+      expiredDate: '',
+      description: '',
+      previewImageUrl: '',
+      price: null,
+      variantMode: 'VARIABLE',
+      variantIds: ['variant-color', 'variant-size'],
+      combinations: [
+        {
+          variantOptionIds: ['option-red', 'option-small'],
+          sku: 'TSHIRT-RED-S',
+          price: 1200,
+        },
+        {
+          variantOptionIds: ['option-red', 'option-large'],
+          sku: 'TSHIRT-RED-L',
+          price: 1300,
+        },
+      ],
+    })
+
+    expect(result.success).toBe(true)
+  })
+
+  it('rejects duplicate product variations', () => {
+    const result = productSchema.safeParse({
+      name: 'T-Shirt',
+      sku: 'TSHIRT',
+      unit: 'piece',
+      barCodeType: 'CODE_128',
+      expiredDate: '',
+      description: '',
+      previewImageUrl: '',
+      price: null,
+      variantMode: 'VARIABLE',
+      variantIds: ['variant-color', 'variant-color'],
+      combinations: [
+        {
+          variantOptionIds: ['option-red', 'option-blue'],
+          sku: 'TSHIRT-RED-BLUE',
+          price: 1200,
+        },
+      ],
+    })
+
+    expect(result.success).toBe(false)
+    expect(result.error?.issues).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ path: ['variantIds', 1] }),
+      ])
+    )
+  })
+
+  it('rejects more than two product variations', () => {
+    const result = productSchema.safeParse({
+      name: 'T-Shirt',
+      sku: 'TSHIRT',
+      unit: 'piece',
+      barCodeType: 'CODE_128',
+      expiredDate: '',
+      description: '',
+      previewImageUrl: '',
+      price: null,
+      variantMode: 'VARIABLE',
+      variantIds: ['variant-color', 'variant-size', 'variant-material'],
+      combinations: [],
+    })
+
+    expect(result.success).toBe(false)
+    expect(result.error?.issues).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ path: ['variantIds'] }),
+      ])
+    )
+  })
+
+  it('requires one option per selected product variation', () => {
+    const result = productSchema.safeParse({
+      name: 'T-Shirt',
+      sku: 'TSHIRT',
+      unit: 'piece',
+      barCodeType: 'CODE_128',
+      expiredDate: '',
+      description: '',
+      previewImageUrl: '',
+      price: null,
+      variantMode: 'VARIABLE',
+      variantIds: ['variant-color', 'variant-size'],
+      combinations: [
+        {
+          variantOptionIds: ['option-red'],
+          sku: 'TSHIRT-RED',
+          price: 1200,
+        },
+      ],
+    })
+
+    expect(result.success).toBe(false)
+    expect(result.error?.issues).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          path: ['combinations', 0, 'variantOptionIds'],
+        }),
+      ])
+    )
   })
 })

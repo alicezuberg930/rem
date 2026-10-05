@@ -1,5 +1,5 @@
 import { mutationOptions, queryOptions } from '@tanstack/react-query'
-import type { ApiResponse } from '@/@types'
+import type { ApiResponse, User } from '@/@types'
 import { queryClient } from '@/providers/query-provider'
 import { httpClient } from '../repository/http-client'
 
@@ -37,19 +37,6 @@ export type UserRole = {
   description: string | null
 }
 
-export type CreateUserResponse = Omit<
-  CreateUserInput,
-  'password' | 'confirmPassword'
-> & {
-  id: string
-  businessId: string
-  provider: 'LOCAL' | 'GOOGLE' | 'FACEBOOK'
-  roleName: string
-  membershipVerified: boolean
-}
-
-export type UserListResponse = CreateUserResponse
-
 const keys = {
   root: ['users'] as const,
   all: ['users', 'list'] as const,
@@ -65,7 +52,7 @@ export const users = () => ({
         queryKey: keys.all,
         queryFn: async () => {
           const { data } =
-            await httpClient.get<ApiResponse<UserListResponse[]>>('/users/get')
+            await httpClient.get<ApiResponse<User[]>>('/users/get')
           return data
         },
       }),
@@ -88,7 +75,7 @@ export const users = () => ({
       mutationOptions({
         mutationKey: keys.create,
         mutationFn: async (input: CreateUserInput) =>
-          httpClient.post<ApiResponse<CreateUserResponse>>('/users', input),
+          httpClient.post<ApiResponse<User>>('/users', input),
         onSuccess: () =>
           queryClient().invalidateQueries({ queryKey: keys.root }),
       }),
@@ -99,10 +86,7 @@ export const users = () => ({
       mutationOptions({
         mutationKey: keys.update,
         mutationFn: async ({ id, ...input }: UpdateUserInput) =>
-          httpClient.put<ApiResponse<CreateUserResponse>>(
-            `/users/${id}`,
-            input
-          ),
+          httpClient.put<ApiResponse<User>>(`/users/${id}`, input),
         onSuccess: () =>
           queryClient().invalidateQueries({ queryKey: keys.root }),
       }),

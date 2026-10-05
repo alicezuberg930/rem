@@ -7,19 +7,14 @@ const usersSearchSchema = z.object({
   pageSize: z.number().optional().catch(10),
   // Facet filters
   status: z
-    .array(
-      z.union([
-        z.literal('active'),
-        z.literal('inactive'),
-        z.literal('invited'),
-        z.literal('suspended'),
-      ])
-    )
+    .array(z.union([z.literal('active'), z.literal('inactive')]))
+    .optional()
+    .catch([]),
+  membershipVerified: z.array(z.union([z.literal('verified'), z.literal('unverified')]))
     .optional()
     .catch([]),
   role: z.array(z.string()).optional().catch([]),
-  // Per-column text filter (example for username)
-  username: z.string().optional().catch(''),
+  fullname: z.string().optional().catch(''),
 })
 
 export const Route = createFileRoute('/_authenticated/users/')({

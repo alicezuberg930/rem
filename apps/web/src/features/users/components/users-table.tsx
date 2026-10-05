@@ -11,6 +11,8 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import { type User } from '@/@types/user'
+import { type UserRole } from '@/lib/queries/user'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
 import {
@@ -22,8 +24,6 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { type UserRole } from '@/lib/queries/user'
-import { type User } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { usersColumns as columns } from './users-columns'
 
@@ -66,9 +66,13 @@ export function UsersTable({
     pagination: { defaultPage: 1, defaultPageSize: 10 },
     globalFilter: { enabled: false },
     columnFilters: [
-      // username per-column text filter
-      { columnId: 'username', searchKey: 'username', type: 'string' },
+      { columnId: 'fullname', searchKey: 'fullname', type: 'string' },
       { columnId: 'status', searchKey: 'status', type: 'array' },
+      {
+        columnId: 'membershipVerified',
+        searchKey: 'membershipVerified',
+        type: 'array',
+      },
       { columnId: 'role', searchKey: 'role', type: 'array' },
     ],
   })
@@ -112,7 +116,7 @@ export function UsersTable({
       <DataTableToolbar
         table={table}
         searchPlaceholder='Filter users...'
-        searchKey='username'
+        searchKey='fullname'
         filters={[
           {
             columnId: 'status',
@@ -120,8 +124,14 @@ export function UsersTable({
             options: [
               { label: 'Active', value: 'active' },
               { label: 'Inactive', value: 'inactive' },
-              { label: 'Invited', value: 'invited' },
-              { label: 'Suspended', value: 'suspended' },
+            ],
+          },
+          {
+            columnId: 'membershipVerified',
+            title: 'Membership',
+            options: [
+              { label: 'Verified', value: 'verified' },
+              { label: 'Unverified', value: 'unverified' },
             ],
           },
           {

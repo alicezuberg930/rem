@@ -28,6 +28,7 @@ import { Route as AuthenticatedTemplatesIndexRouteImport } from './routes/_authe
 import { Route as AuthenticatedTasksIndexRouteImport } from './routes/_authenticated/tasks/index'
 import { Route as AuthenticatedShipmentOrderIndexRouteImport } from './routes/_authenticated/shipment-order/index'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
+import { Route as AuthenticatedProductsIndexRouteImport } from './routes/_authenticated/products/index'
 import { Route as AuthenticatedPayrollIndexRouteImport } from './routes/_authenticated/payroll/index'
 import { Route as AuthenticatedMediaIndexRouteImport } from './routes/_authenticated/media/index'
 import { Route as AuthenticatedLocationsIndexRouteImport } from './routes/_authenticated/locations/index'
@@ -145,6 +146,12 @@ const AuthenticatedSettingsIndexRoute =
     id: '/',
     path: '/',
     getParentRoute: () => AuthenticatedSettingsRouteRoute,
+  } as any)
+const AuthenticatedProductsIndexRoute =
+  AuthenticatedProductsIndexRouteImport.update({
+    id: '/products/',
+    path: '/products/',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedPayrollIndexRoute =
   AuthenticatedPayrollIndexRouteImport.update({
@@ -282,6 +289,7 @@ export interface FileRoutesByFullPath {
   '/locations/': typeof AuthenticatedLocationsIndexRoute
   '/media/': typeof AuthenticatedMediaIndexRoute
   '/payroll/': typeof AuthenticatedPayrollIndexRoute
+  '/products/': typeof AuthenticatedProductsIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/shipment-order/': typeof AuthenticatedShipmentOrderIndexRoute
   '/tasks/': typeof AuthenticatedTasksIndexRoute
@@ -319,6 +327,7 @@ export interface FileRoutesByTo {
   '/locations': typeof AuthenticatedLocationsIndexRoute
   '/media': typeof AuthenticatedMediaIndexRoute
   '/payroll': typeof AuthenticatedPayrollIndexRoute
+  '/products': typeof AuthenticatedProductsIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/shipment-order': typeof AuthenticatedShipmentOrderIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
@@ -359,6 +368,7 @@ export interface FileRoutesById {
   '/_authenticated/locations/': typeof AuthenticatedLocationsIndexRoute
   '/_authenticated/media/': typeof AuthenticatedMediaIndexRoute
   '/_authenticated/payroll/': typeof AuthenticatedPayrollIndexRoute
+  '/_authenticated/products/': typeof AuthenticatedProductsIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/shipment-order/': typeof AuthenticatedShipmentOrderIndexRoute
   '/_authenticated/tasks/': typeof AuthenticatedTasksIndexRoute
@@ -399,6 +409,7 @@ export interface FileRouteTypes {
     | '/locations/'
     | '/media/'
     | '/payroll/'
+    | '/products/'
     | '/settings/'
     | '/shipment-order/'
     | '/tasks/'
@@ -436,6 +447,7 @@ export interface FileRouteTypes {
     | '/locations'
     | '/media'
     | '/payroll'
+    | '/products'
     | '/settings'
     | '/shipment-order'
     | '/tasks'
@@ -475,6 +487,7 @@ export interface FileRouteTypes {
     | '/_authenticated/locations/'
     | '/_authenticated/media/'
     | '/_authenticated/payroll/'
+    | '/_authenticated/products/'
     | '/_authenticated/settings/'
     | '/_authenticated/shipment-order/'
     | '/_authenticated/tasks/'
@@ -631,6 +644,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/settings/'
       preLoaderRoute: typeof AuthenticatedSettingsIndexRouteImport
       parentRoute: typeof AuthenticatedSettingsRouteRoute
+    }
+    '/_authenticated/products/': {
+      id: '/_authenticated/products/'
+      path: '/products'
+      fullPath: '/products/'
+      preLoaderRoute: typeof AuthenticatedProductsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/payroll/': {
       id: '/_authenticated/payroll/'
@@ -801,6 +821,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedLocationsIndexRoute: typeof AuthenticatedLocationsIndexRoute
   AuthenticatedMediaIndexRoute: typeof AuthenticatedMediaIndexRoute
   AuthenticatedPayrollIndexRoute: typeof AuthenticatedPayrollIndexRoute
+  AuthenticatedProductsIndexRoute: typeof AuthenticatedProductsIndexRoute
   AuthenticatedShipmentOrderIndexRoute: typeof AuthenticatedShipmentOrderIndexRoute
   AuthenticatedTasksIndexRoute: typeof AuthenticatedTasksIndexRoute
   AuthenticatedTemplatesIndexRoute: typeof AuthenticatedTemplatesIndexRoute
@@ -825,6 +846,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedLocationsIndexRoute: AuthenticatedLocationsIndexRoute,
   AuthenticatedMediaIndexRoute: AuthenticatedMediaIndexRoute,
   AuthenticatedPayrollIndexRoute: AuthenticatedPayrollIndexRoute,
+  AuthenticatedProductsIndexRoute: AuthenticatedProductsIndexRoute,
   AuthenticatedShipmentOrderIndexRoute: AuthenticatedShipmentOrderIndexRoute,
   AuthenticatedTasksIndexRoute: AuthenticatedTasksIndexRoute,
   AuthenticatedTemplatesIndexRoute: AuthenticatedTemplatesIndexRoute,

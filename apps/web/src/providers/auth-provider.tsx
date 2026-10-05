@@ -151,7 +151,7 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
   const navigate = useNavigate()
   // states
   const [state, dispatch] = useReducer(reducer, initialState)
-  const shouldRestoreSession = typeof window !== 'undefined' && Boolean(localStorage.getItem('accessTokenExpiration'))
+  const shouldRestoreSession = typeof window !== 'undefined' && !!localStorage.getItem('accessTokenExpiration')
   const businessId = useSelectedBusinessId()
   // refs
   const refreshTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -161,20 +161,13 @@ export function AuthProvider({ children }: Readonly<{ children: React.ReactNode 
   const { mutateAsync: m2 } = useMutation(auth().signUp.mutationOptions())
   const { mutateAsync: m3 } = useMutation(auth().signOut.mutationOptions())
   const { mutateAsync: m4 } = useMutation(auth().refresh.mutationOptions())
-  const {
-    data: profile,
-    isError: profileError,
-  } = useQuery({
+  const { data: profile, isError: profileError } = useQuery({
     ...auth().profile.queryOptions(),
-    // enabled: shouldRestoreSession && !state.isAuthenticated,
+    enabled: shouldRestoreSession && !state.isAuthenticated,
   })
-  const {
-    data: role,
-    isError: roleError,
-    refetch: refetchRole,
-  } = useQuery({
+  const { data: role, isError: roleError, refetch: refetchRole, } = useQuery({
     ...auth().role.queryOptions(),
-    enabled: state.isAuthenticated && Boolean(businessId),
+    enabled: state.isAuthenticated && !!businessId,
   })
 
   // Register response interceptor to capture token expiration from headers only once
