@@ -64,8 +64,8 @@ public class MediaService {
         Pageable pageable = PageRequest.of(
                 page,
                 pageSize,
-                Sort.by(Sort.Direction.DESC, "createdAt"));
-                // .and(Sort.by(Sort.Direction.DESC, "id")));
+                Sort.by(Sort.Direction.DESC, "createdAt")
+                        .and(Sort.by(Sort.Direction.DESC, "id")));
         Specification<Media> specification = MediaSpecification.withFilters(MediaStatus.ACTIVE, businessId);
         Page<MediaResponse> media = mediaRepository.findAll(specification, pageable).map(mediaMapper::toDto);
         return new CustomPageResponse<>(media);

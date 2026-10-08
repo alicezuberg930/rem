@@ -56,6 +56,7 @@ notification.web-push-subject=
 # MinIO object storage
 minio.endpoint=${MINIO_ENDPOINT:http://localhost:9000}
 minio.public-endpoint=${MINIO_PUBLIC_ENDPOINT}
+minio.initialize-on-startup=${MINIO_INITIALIZE_ON_STARTUP:true}
 minio.access-key=${MINIO_ACCESS_KEY:${MINIO_ROOT_USER:admin}}
 minio.secret-key=${MINIO_SECRET_KEY:${MINIO_ROOT_PASSWORD:minioadmin}}
 minio.bucket=${MINIO_BUCKET:rem-storage}

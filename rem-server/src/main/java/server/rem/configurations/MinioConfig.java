@@ -1,6 +1,7 @@
 package server.rem.configurations;
 
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -12,6 +13,11 @@ import server.rem.utils.MinioStorageClient;
 public class MinioConfig {
 
     @Bean
+    @ConditionalOnProperty(
+            prefix = "minio",
+            name = "initialize-on-startup",
+            havingValue = "true",
+            matchIfMissing = true)
     public CommandLineRunner minioStorageInitializer(MinioStorageClient minioStorageClient) {
         return arguments -> {
             try {
