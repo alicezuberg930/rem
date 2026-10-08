@@ -165,8 +165,8 @@ class PushNotificationServiceTests {
         assertEquals("Task assigned", payload.get("title").asText());
         assertEquals("Review the task", payload.get("body").asText());
         assertEquals("4", payload.get("type").asText());
-        assertEquals("task-id", payload.get("data").get("refID").asText());
-        assertEquals("task-assigned", payload.get("data").get("uniqueKey").asText());
+        assertEquals("/tasks/pendingIssuance?id=task-id", payload.get("link").asText());
+        assertEquals("task-assigned", payload.get("uniqueKey").asText());
         verify(pushNotificationRepository).deleteByIdAndUser_Id("subscription-id", USER_ID);
     }
 

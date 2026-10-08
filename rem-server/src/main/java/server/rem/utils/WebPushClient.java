@@ -27,9 +27,9 @@ public class WebPushClient {
     private final PushService pushService;
 
     public WebPushClient(
-            @Value("${notification.web-push-public-key}") String publicKey,
-            @Value("${notification.web-push-private-key}") String privateKey,
-            @Value("${notification.web-push-subject}") String subject) {
+            @Value("${notification.web-push-public-key:}") String publicKey,
+            @Value("${notification.web-push-private-key:}") String privateKey,
+            @Value("${notification.web-push-subject:}") String subject) {
         boolean hasPublicKey = StringUtils.hasText(publicKey);
         boolean hasPrivateKey = StringUtils.hasText(privateKey);
         boolean hasSubject = StringUtils.hasText(subject);

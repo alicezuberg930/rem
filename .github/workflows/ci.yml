@@ -84,14 +84,22 @@ jobs:
       MYSQL_USER: rem_ci
       MYSQL_PASSWORD: rem_ci_password
       SPRING_DATASOURCE_URL: "jdbc:mysql://127.0.0.1:3306/rem_test?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC"
-      CORS_ALLOWED_ORIGINS: http://localhost:3000
-      ACCESS_TOKEN_SECRET: ci-access-token-secret-at-least-32-characters
-      REFRESH_TOKEN_SECRET: ci-refresh-token-secret-at-least-32-characters
-      ACCESS_TOKEN_EXPIRES_IN: 3600
-      REFRESH_TOKEN_EXPIRES_IN: 604800
-      WEB_PUSH_PUBLIC_KEY: ""
-      WEB_PUSH_PRIVATE_KEY: ""
-      WEB_PUSH_SUBJECT: ""
+      SPRING_DATASOURCE_USERNAME: rem_ci
+      SPRING_DATASOURCE_PASSWORD: rem_ci_password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+      SPRING_FLYWAY_LOCATIONS: classpath:db/migrations
+      SPRING_FLYWAY_BASELINE_ON_MIGRATE: true
+      SPRING_FLYWAY_BASELINE_VERSION: 0
+      SPRING_FLYWAY_VALIDATE_ON_MIGRATE: true
+      APP_CORS_ALLOWED_ORIGIN_PATTERNS: http://localhost:3000
+      JWT_ACCESS_TOKEN_SECRET: ci-access-token-secret-at-least-32-characters
+      JWT_REFRESH_TOKEN_SECRET: ci-refresh-token-secret-at-least-32-characters
+      JWT_ACCESS_TOKEN_EXPIRATION: 3600
+      JWT_REFRESH_TOKEN_EXPIRATION: 604800
+      NOTIFICATION_WEB_PUSH_PUBLIC_KEY: ""
+      NOTIFICATION_WEB_PUSH_PRIVATE_KEY: ""
+      NOTIFICATION_WEB_PUSH_SUBJECT: ""
+      MINIO_PUBLIC_ENDPOINT: http://localhost:9000
       TWILIO_ACCOUNT_SID: AC00000000000000000000000000000000
       TWILIO_AUTH_TOKEN: ci_twilio_auth_token
       TWILIO_PHONE_NUMBER: "+10000000000"
@@ -101,6 +109,7 @@ jobs:
       CLOUDINARY_CLOUD_NAME: ci-cloud
       CLOUDINARY_API_KEY: ci-cloudinary-key
       CLOUDINARY_API_SECRET: ci-cloudinary-secret
+      CLOUDINARY_BASE_FOLDER: rem-app
       RESEND_API_KEY: ci-resend-key
       RESEND_EMAIL: ci@example.com
       SPRING_MAIL_HOST: localhost

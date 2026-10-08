@@ -2,6 +2,7 @@ package server.rem.services;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -93,12 +94,15 @@ public class VariantService {
         Specification<Variant> specification = VariantSpecification.withFilters(dto, businessId);
         Page<Variant> variants = variantRepository.findAll(specification, pageable);
         // preload options for all variants
-        Map<String, Variant> variantsWithOptions = variantRepository.findAllWithOptionsByIdIn(variants.getContent()
+        List<String> variantIds = variants.getContent()
                 .stream()
                 .map(Variant::getId)
-                .toList())
-                .stream()
-                .collect(Collectors.toMap(Variant::getId, Function.identity()));
+                .toList();
+        Map<String, Variant> variantsWithOptions = variantIds.isEmpty()
+                ? Map.of()
+                : variantRepository.findAllWithOptionsByIdIn(variantIds)
+                        .stream()
+                        .collect(Collectors.toMap(Variant::getId, Function.identity()));
         Page<VariantResponse> response = variants
                 .map(variant -> variantMapper.toResponse(variantsWithOptions.getOrDefault(variant.getId(), variant)));
         return new CustomPageResponse<>(response);
